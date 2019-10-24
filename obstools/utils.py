@@ -12,61 +12,110 @@ Last updated: 17 November 2015
 
 '''
 
+import os
 import numpy as np
+import fnmatch
 from matplotlib import pyplot as plt
+from obspy.core import read, Stream, AttribDict
+from scipy.signal import savgol_filter
 from obs import obs_plot as obspl
 
 
-def get_trZ_p(tr, pAd, pPh, f1, f2):
-    """ 
-    Calculates predicted trace from transfer 
-    functions
+def update_stats(tr, stla, stlo, stel):
 
-    """
-    # Copy trace to predicted vertical (for consistency)
-    tr_p = tr.copy()
+    tr.stats.sac = AttribDict()
+    tr.stats.sac.stla = stla
+    tr.stats.sac.stlo = stlo
+    tr.stats.sac.stel = stel
     
-    # Fourier transform trace 
-    ftr = np.fft.fft(tr.data)
+    return tr
 
-    nt = tr.stats.npts
-    dt = tr.stats.delta
-    ff = np.fft.fftfreq(nt, dt)
+def get_data(datapath, tstart, tend):
 
-    Ad = np.zeros((nt,))
-    Ph = np.zeros((nt,))
-    ind1 = np.where((ff>f1)&(ff<f2))
-    ind2 = np.where((ff<-f1)&(ff>-f2))
+    # Define empty streams
+    trN1 = Stream()
+    trN2 = Stream()
+    trNZ = Stream()
+    trNP = Stream()
 
-    # Define analytical transfer functions
-    # Careful: phase of negative frequencies is negative
-    Ad[ind1] = pAd[0]*ff[ind1]**2 + pAd[1]*ff[ind1] + pAd[2]
-    Ad[ind2] = pAd[0]*ff[ind2]**2 + pAd[1]*ff[ind2] + pAd[2]
-    Ph[ind1] = pPh[0]*ff[ind1]**2 + pPh[1]*ff[ind1] + pPh[2]
-    Ph[ind2] = -(pPh[0]*ff[ind2]**2 + pPh[1]*ff[ind2] + pPh[2])
+    # Time iterator
+    t1 = tstart
 
-    # Define complex transfer function in frequency
-    trf = Ad*np.exp(1j*Ph)
+    # Cycle through each day withing time range
+    while t1 < tend:
 
-    # Convolve in Fourier domain
-    ftr_p = trf*ftr
+        # Time stamp used in file name
+        tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
-    # Inverse Fourier transform
-    tr_p.data = np.real(np.fft.ifft(ftr_p))
+        # Cycle through directory and load files
+        for file in os.listdir(datapath):
+            if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
+                tr = read(datapath + file)
+                trN1.append(tr[0])
+            elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
+                tr = read(datapath + file)
+                trN2.append(tr[0])
+            elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
+                tr = read(datapath + file)
+                trNZ.append(tr[0])
+            elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
+                tr = read(datapath + file)
+                trNP.append(tr[0])
 
-    return tr_p
+        # Increase increment
+        t1 += 3600.*24.
+
+    return trN1, trN2, trNZ, trNP
 
 
-def calculate_tilt(ft1, ft2, ftZ, f, goodwins, tiltfreq=[0.005, 0.035], plot=True):
+def get_event(eventpath, tstart, tend):
+
+    # Define empty streams
+    tr1 = Stream()
+    tr2 = Stream()
+    trZ = Stream()
+    trP = Stream()
+
+    # Time iterator
+    t1 = tstart
+
+    # Cycle through each day withing time range
+    while t1 < tend:
+
+        # Time stamp used in file name
+        tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
+
+        # Cycle through directory and load files
+        for file in os.listdir(datapath):
+            if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
+                tr = read(datapath + file)
+                tr1.append(tr[0])
+            elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
+                tr = read(datapath + file)
+                tr2.append(tr[0])
+            elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
+                tr = read(datapath + file)
+                trZ.append(tr[0])
+            elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
+                tr = read(datapath + file)
+                trP.append(tr[0])
+
+        # Increase increment
+        t1 += 3600.*24.
+
+    return trN1, trN2, trNZ, trNP
+
+def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     """ 
     Determines tilt direction from maximum
     coherence between H1 and Z
 
     """
 
-    direc = np.arange(0, 360, 10)
+    direc = np.arange(0., 360., 10.)
     coh = np.zeros(len(direc))
     ph = np.zeros(len(direc))
+    cZZ = np.abs(np.mean(ftZ[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0))[0:len(f)]
 
     for i, d in enumerate(direc):
 
@@ -74,16 +123,15 @@ def calculate_tilt(ft1, ft2, ftZ, f, goodwins, tiltfreq=[0.005, 0.035], plot=Tru
         ftH = rotate_dir(ft1, ft2, d)
     
         # Get transfer functions
-        ccH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))
-        ccZ = np.abs(np.mean(ftZ[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0))
-        cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)
+        cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
+        cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
 
-        Co = coherence(cHZ, ccH, ccZ)[0:len(f)]
-        Ph = phase(cHZ)[0:len(f)]
+        Co = coherence(cHZ, cHH, cZZ)
+        Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
         coh[i] = np.mean(Co[(f>tiltfreq[0]) & (f<tiltfreq[1])])
-        ph[i] = np.mean(Ph[(f>tiltfreq[0]) & (f<tiltfreq[1])])
+        ph[i] = np.pi/2. - np.mean(Ph[(f>tiltfreq[0]) & (f<tiltfreq[1])])
 
     # Index where coherence is max
     ind = np.argwhere(coh==coh.max())
@@ -92,97 +140,56 @@ def calculate_tilt(ft1, ft2, ftZ, f, goodwins, tiltfreq=[0.005, 0.035], plot=Tru
     phase_value = ph[ind[0]][0]
     coh_value = coh[ind[0]][0]
     tilt = direc[ind[0]][0]
-
-    if plot:
-        plt.figure(7)
-        plt.subplot(121)
-        plt.plot(direc, coh)
-        plt.ylim((0, 1.))
-        plt.subplot(122)
-        plt.plot(direc, ph*180./np.pi)
-        plt.tight_layout()
-        plt.show()
 
     # Refine search
-    direc = np.arange(direc[ind[0]][0]-10, direc[ind[0]][0]+10, 1)
-    coh = np.zeros(len(direc))
-    ph = np.zeros(len(direc))
+    rdirec = np.arange(direc[ind[0]][0]-10., direc[ind[0]][0]+10., 1.)
+    rcoh = np.zeros(len(direc))
+    rph = np.zeros(len(direc))
 
-    for i, d in enumerate(direc):
+    for i, d in enumerate(rdirec):
 
         # Rotate horizontals
         ftH = rotate_dir(ft1, ft2, d)
     
         # Get transfer functions
-        ccH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))
-        ccZ = np.abs(np.mean(ftZ[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0))
-        cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)
+        cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
+        cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
 
-        Co = coherence(cHZ, ccH, ccZ)[0:len(f)]
-        Ph = phase(cHZ)[0:len(f)]
+        Co = coherence(cHZ, cHH, cZZ)
+        Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        coh[i] = np.mean(Co[(f>tiltfreq[0]) & (f<tiltfreq[1])])
-        ph[i] = np.mean(Ph[(f>tiltfreq[0]) & (f<tiltfreq[1])])
+        rcoh[i] = np.mean(Co[(f>tiltfreq[0]) & (f<tiltfreq[1])])
+        rph[i] = np.pi/2. - np.mean(Ph[(f>tiltfreq[0]) & (f<tiltfreq[1])])
 
     # Index where coherence is max
-    ind = np.argwhere(coh==coh.max())
+    ind = np.argwhere(rcoh==rcoh.max())
 
     # Phase and direction at maximum coherence
-    phase_value = ph[ind[0]][0]
-    coh_value = coh[ind[0]][0]
-    tilt = direc[ind[0]][0]
+    phase_value = rph[ind[0]][0]
+    coh_value = rcoh[ind[0]][0]
+    tilt = rdirec[ind[0]][0]
 
     # Phase has to be close to zero - otherwise add pi
     if phase_value > 0.5*np.pi:
-        tilt += 180
+        tilt += 180.
+    if tilt > 360.:
+        tilt -= 360.
     
-    print('Maximum coherence for tilt = ', tilt)
+    # print('Maximum coherence for tilt = ', tilt)
 
-    return coh, ph, tilt, coh_value, phase_value
-
-
-def calculate_trfs(trX, trY):
-    """
-    Calculates transfer functions from
-    cross-spectral quantities
-
-    """
-    # Get spectral quantities
-    Gxy, Gxx, Gyy, Cxy, Qxy, nd = calculate_specs(trX, trY)
+    # Now calculate spectra at tilt direction
+    ftH = rotate_dir(ft1, ft2, tilt)
 
     # Get transfer functions
-    Ad = admittance(Gxy, Gxx)
-    Co = coherence(Gxy, Gxx, Gyy)
-    Ph = phase(Gxy)
+    cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
+    cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
+    cHP = np.mean(ftH[goodwins,:]*np.conj(ftP[goodwins,:]), axis=0)[0:len(f)]
 
-    eAd, eCo, ePh = trfs_error(Ad, Co, Ph, nd)
-
-    return Ad, Co, Ph, eAd, eCo, ePh
+    return cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value
 
 
-def calculate_xspecs(data1, data2, goodwins):
-    """
-    Calculates cross-spectral quantities
-
-    ws: window size
-    ss: step size (number of samples until next window)
-
-    """
-
-    # data1 = data1[]
-    Gxx = np.abs(np.mean(np.conj(ftx)*ftx, axis=0))
-    Gyy = np.abs(np.mean(np.conj(fty)*fty, axis=0))
-    Gxy = np.mean(np.conj(ftx)*fty, axis=0)
-
-    Cxy = np.mean(np.real(ftx)*np.real(fty) + 
-            np.imag(ftx)*np.imag(fty), axis=0)
-    Qxy = np.mean(np.real(ftx)*np.imag(fty) - 
-            np.imag(ftx)*np.real(fty), axis=0)
-
-    return Gxy, Gxx, Gyy, Cxy, Qxy, nd
-
-def calculate_windowed_fft(trace, ws, ss):
+def calculate_windowed_fft(trace, ws, ss=None, hann=True):
     """
     Calculates cross-spectral quantities
 
@@ -202,35 +209,20 @@ def calculate_windowed_fft(trace, ws, ss):
     
     return ft, f
 
+# def smooth(data, np, poly=0, axis=0):
+#     return savgol_filter(data, np, poly, axis=axis, mode='wrap')
 
-def get_trfs_lsqfit(Ad, Co, Ph, eAd, eCo, ePh, freq, f1, f2, plot=True):
-    """
-    Get best-fit analytical admittance and phase from observed
-    admittance and phase data within a given frequency range
-    
-    """
-
-    ind = np.where((freq>f1)&(freq<f2))
-    cond = np.where((Co>0.5)&(freq>f1)&(freq<f2))
-    if not cond:
-        print('no coherence above 0.5 within ',f1, f2, 'Hz')
-        return [0., 0., 0.], [0., 0., 0.]    
-    mcoh = np.mean(Co[ind])
-    if mcoh < 0.5:
-        print('mean coherence too low', mcoh)
-        return [0., 0., 0.], [0., 0., 0.]
-
-
-    pAd = np.polyfit(freq[cond],Ad[cond],2,w=1./eAd[cond])
-    pPh = np.polyfit(freq[cond],Ph[cond],2,w=1./ePh[cond])
-
-    aAd = pAd[0]*freq**2 + pAd[1]*freq + pAd[2]
-    aPh = pPh[0]*freq**2 + pPh[1]*freq + pPh[2]
-
-    if plot:
-        obspl.obs_plot_trf_analytic(Ad, Ph, eAd, ePh, aAd, aPh, freq, ind)
-
-    return pAd, pPh
+def smooth(data, nd, axis=0):
+    if data.ndim > 1:
+        filt = np.zeros(data.shape)
+        for i in range(data.shape[::-1][axis]):
+            if axis==0:
+                filt[:,i] = np.convolve(data[:,i], np.ones((nd,))/nd, mode='same')
+            elif axis==1:
+                filt[i,:] = np.convolve(data[i,:], np.ones((nd,))/nd, mode='same')
+    else:
+        filt = np.convolve(data, np.ones((nd,))/nd, mode='same')
+    return filt
 
 
 def admittance(Gxy, Gxx):
@@ -245,25 +237,10 @@ def coherence(Gxy, Gxx, Gyy):
 
 def phase(Gxy):
     
-    return np.pi/2. - np.angle(Gxy)
+    return np.angle(Gxy)
 
 
-def trfs_error(Ad, Co, Ph, nd):
-    """
-    Errors on transfer functions
-
-    """
-
-    eps = np.sqrt((1.-Co)/(2.*Co*nd))
-
-    eAd = Ad*eps
-    eCo = Co*eps
-    ePh = eps
-
-    return eAd, eCo, ePh
-
-
-def sliding_window(a, ws, ss=None):
+def sliding_window(a, ws, ss=None, hann=True):
     '''
     Parameters
         a  - a 1D array
@@ -285,11 +262,20 @@ def sliding_window(a, ws, ss=None):
     nd = (valid) // ss
     out = np.ndarray((nd,ws), dtype=a.dtype)
 
+    if nd == 0:
+        if hann:
+            out = a * np.hanning(ws)
+        else:
+            out = a
+
     for i in range(nd):
         # "slide" the window along the samples
         start = i * ss
         stop = start + ws
-        out[i] = a[start : stop] * np.hanning(ws)
+        if hann:
+            out[i] = a[start : stop] * np.hanning(ws)
+        else:
+            out[i] = a[start : stop]
      
     return out, nd
 
@@ -333,4 +319,112 @@ def ftest(res1, pars1, res2, pars2):
 
 def _npow2(x):
     return 1 if x==0 else 2**(x-1).bit_length()
+
+# def get_trZ_p(tr, pAd, pPh, f1, f2):
+#     """ 
+#     Calculates predicted trace from transfer 
+#     functions
+
+#     """
+#     # Copy trace to predicted vertical (for consistency)
+#     tr_p = tr.copy()
+    
+#     # Fourier transform trace 
+#     ftr = np.fft.fft(tr.data)
+
+#     nt = tr.stats.npts
+#     dt = tr.stats.delta
+#     ff = np.fft.fftfreq(nt, dt)
+
+#     Ad = np.zeros((nt,))
+#     Ph = np.zeros((nt,))
+#     ind1 = np.where((ff>f1)&(ff<f2))
+#     ind2 = np.where((ff<-f1)&(ff>-f2))
+
+#     # Define analytical transfer functions
+#     # Careful: phase of negative frequencies is negative
+#     Ad[ind1] = pAd[0]*ff[ind1]**2 + pAd[1]*ff[ind1] + pAd[2]
+#     Ad[ind2] = pAd[0]*ff[ind2]**2 + pAd[1]*ff[ind2] + pAd[2]
+#     Ph[ind1] = pPh[0]*ff[ind1]**2 + pPh[1]*ff[ind1] + pPh[2]
+#     Ph[ind2] = -(pPh[0]*ff[ind2]**2 + pPh[1]*ff[ind2] + pPh[2])
+
+#     # Define complex transfer function in frequency
+#     trf = Ad*np.exp(1j*Ph)
+
+#     # Convolve in Fourier domain
+#     ftr_p = trf*ftr
+
+#     # Inverse Fourier transform
+#     tr_p.data = np.real(np.fft.ifft(ftr_p))
+
+#     return tr_p
+
+
+# def calculate_xspecs(data1, data2, goodwins):
+#     """
+#     Calculates cross-spectral quantities
+
+#     ws: window size
+#     ss: step size (number of samples until next window)
+
+#     """
+
+#     # data1 = data1[]
+#     Gxx = np.abs(np.mean(np.conj(ftx)*ftx, axis=0))
+#     Gyy = np.abs(np.mean(np.conj(fty)*fty, axis=0))
+#     Gxy = np.mean(np.conj(ftx)*fty, axis=0)
+
+#     Cxy = np.mean(np.real(ftx)*np.real(fty) + 
+#             np.imag(ftx)*np.imag(fty), axis=0)
+#     Qxy = np.mean(np.real(ftx)*np.imag(fty) - 
+#             np.imag(ftx)*np.real(fty), axis=0)
+
+#     return Gxy, Gxx, Gyy, Cxy, Qxy, nd
+
+
+# def get_trfs_lsqfit(Ad, Co, Ph, eAd, eCo, ePh, freq, f1, f2, plot=True):
+#     """
+#     Get best-fit analytical admittance and phase from observed
+#     admittance and phase data within a given frequency range
+    
+#     """
+
+#     ind = np.where((freq>f1)&(freq<f2))
+#     cond = np.where((Co>0.5)&(freq>f1)&(freq<f2))
+#     if not cond:
+#         print('no coherence above 0.5 within ',f1, f2, 'Hz')
+#         return [0., 0., 0.], [0., 0., 0.]    
+#     mcoh = np.mean(Co[ind])
+#     if mcoh < 0.5:
+#         print('mean coherence too low', mcoh)
+#         return [0., 0., 0.], [0., 0., 0.]
+
+
+#     pAd = np.polyfit(freq[cond],Ad[cond],2,w=1./eAd[cond])
+#     pPh = np.polyfit(freq[cond],Ph[cond],2,w=1./ePh[cond])
+
+#     aAd = pAd[0]*freq**2 + pAd[1]*freq + pAd[2]
+#     aPh = pPh[0]*freq**2 + pPh[1]*freq + pPh[2]
+
+#     if plot:
+#         obspl.obs_plot_trf_analytic(Ad, Ph, eAd, ePh, aAd, aPh, freq, ind)
+
+#     return pAd, pPh
+
+
+
+# def trfs_error(Ad, Co, Ph, nd):
+#     """
+#     Errors on transfer functions
+
+#     """
+
+#     eps = np.sqrt((1.-Co)/(2.*Co*nd))
+
+#     eAd = Ad*eps
+#     eCo = Co*eps
+#     ePh = eps
+
+#     return eAd, eCo, ePh
+
 
