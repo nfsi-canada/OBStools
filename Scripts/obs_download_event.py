@@ -1,273 +1,174 @@
+#!/usr/bin/env python
+
 '''
-PROGRAM obs_get_data.py
+PROGRAM request_IRIS.py
 
-Grabs three component data from the IRIS archive for OBS stations
-
-Station selection is specified by a network and station codes.
-The data base is provided in stations_db.py as a dictionary.
+Program to request day-long seismograms from the IRIS archive.
 
 '''
 
 # Import modules and functions
 import numpy as np
-import numpy.fft as ft
-import matplotlib.pyplot as plt
-import obspy.core
 import os.path
 import pickle
-from math import pi, sin
-from obspy.core.event import readEvents
+import glob
 from obspy import UTCDateTime
-from obspy.core import read, Stream, Trace
-from obspy.fdsn import Client
-from obspy.core.util.geodetics import gps2DistAzimuth as epi
-from obspy.core.util.geodetics import kilometer2degrees as k2d
-from obspy.taup.taup import getTravelTimes as gtt
-from obspy.signal.rotate import rotate_NE_RT 
-from obs import obs_proc as obsp
-
-# Plot intermediate steps
-plot = False
+from obspy.core import AttribDict
+from obspy.clients.fdsn import Client
+from obspy.taup import TauPyModel
+from obspy.geodetics.base import gps2dist_azimuth as epi
+from obspy.geodetics import kilometer2degrees as k2d
+from obstools import utils
+from obstools import EventStream
 
 # Main function
-def process(db, sta_key):
+def main():
+
+    dbfile = 'M08A.pkl'
+
+    stationdb = pickle.load(open(dbfile,'rb'))
+
+    # Initialize Taup Model
+    tpmodel = TauPyModel(model='iasp91')
+
+    sta_key = ['7D.M08A']
+
+    # Get one month of data
+    tstart = UTCDateTime('2012-03-09')
+    tend = UTCDateTime('2012-03-10')
 
     # Extract station information from dictionary
-    sta = db[sta_key]
+    sta = stationdb[sta_key[0]] 
 
     # Define path to see if it exists
-    trfpath = 'OBS_DATA/'+sta.station
-    if not os.path.isdir(trfpath): 
-        print 'Path to '+trfpath+' doesn`t exist - creating it'
-        os.makedirs(trfpath)
+    eventpath = 'EVENTS/' + sta_key[0] + '/'
+    if not os.path.isdir(eventpath): 
+        print('Path to '+eventpath+' doesn`t exist - creating it')
+        os.makedirs(eventpath)
 
     # Establish client
     client = Client()
 
     # Get catalogue using deployment start and end
-    cat = client.get_events(starttime=sta.dstart, endtime=sta.dend, minmagnitude=6.0)
+    cat = client.get_events(starttime=tstart, endtime=tend,    \
+                minmagnitude=6.0, maxmagnitude=7.0)
 
-    # Read catalogue
-    for ev in cat:
+    # Total number of events in Catalogue
+    nevtT = len(cat)
+    print("|  Found {0:5d} possible events                  |".format(nevtT))
+    ievs = range(0, nevtT)
 
-        # Extract time, coordinates and depth of events
+    # Read through catalogue
+    for iev in ievs:
+
+        # Extract event
+        ev = cat[iev]
+
+        window = 7200.
+        new_sampling_rate = 5.
+
         time = ev.origins[0].time
-        lat = ev.origins[0].latitude
-        lon = ev.origins[0].longitude
         dep = ev.origins[0].depth
-        
-        # Define time stamp
-        yr = str(time.year).zfill(4)
-        jd = str(time.julday).zfill(3)
-        hr = str(time.hour).zfill(2)
-        tstamp = yr+jd+hr
-
-        # Define file names (to check if files already exist)
-        fileN1 = trfpath+'/OBS_N1.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        fileN2 = trfpath+'/OBS_N2.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        fileNZ = trfpath+'/OBS_NZ.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        fileNP = trfpath+'/OBS_NP.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        file1 = trfpath+'/OBS1.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        file2 = trfpath+'/OBS2.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        fileZ = trfpath+'/OBSZ.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        fileP = trfpath+'/OBSP.'+sta.network+'.'+sta.station+'.'+tstamp+'.'+'sac'
-        
-        # If RF file exists, continue
-        if os.path.isfile(fileZ): continue
-
-        # Calculate epicentral distance
-        epi_dist, az, baz = epi(lat, lon, sta.stla, sta.stlo)
-        epi_dist /= 1000
+        lon = ev.origins[0].longitude
+        lat = ev.origins[0].latitude
+        epi_dist, az, baz = epi(lat, lon, sta.latitude, sta.longitude)
+        epi_dist /= 1000.
         gac = k2d(epi_dist)
+
+        # Get Travel times (Careful: here dep is in meters)
+        tt = tpmodel.get_travel_times(distance_in_degree=gac, \
+            source_depth_in_km=dep/1000.)
+
+        # Loop over all times in tt
+        for t in tt:
+
+            # Extract SKS arrival
+            if t.name == 'P':
+
+                # Add SKS phase to Split object
+                tarrival = t.time
+
+                # Break out of loop 
+                break
+
+        t1 = time # + tarrival - 800.
+        t2 = t1 + window
+
+        print(t1,t2)
+        
+        # Time stamp
+        tstamp = str(time.year).zfill(4)+'.'+str(time.julday).zfill(3)+'.'
+        tstamp = tstamp + str(time.hour).zfill(2)+'.'+str(time.minute).zfill(2)
  
-        # If distance between 30 and 90 deg:
-        if gac>30. and gac<90.:
+        # Define file names (to check if files already exist)
+        filename = eventpath + tstamp + '.event.pkl'
 
-            #print
-            #print 'EARTHQUAKE INFO'
-            print
-            print 'Station:     ', sta.station
-            print 'Time:        ', time
-            print 'Backazimuth: ', baz
-            print 'Event depth: ', dep/1000.
-            if not dep:
-                dep = 10000.
+        # If data file exists, continue
+        if glob.glob(filename): 
+            print('files already exist, continuing')
+            continue
 
-            # Get Travel times (Careful: here dep is in meters)
-            tt = gtt(delta=gac, depth=dep/1000., model='iasp91')
+        channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
 
-            # Loop over all times in tt
-            for t in tt:
+        # Get waveforms from client
+        try:
+            print('Downloading Seismic data...')
+            sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                    channel=channels, starttime=t1, endtime=t2, attach_response=True)
+            print('...done')
+        except:
+            print('not able to download BH? components')
+            continue
+        try:
+            print('Downloading Pressure data...')
+            stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                    channel='??H', starttime=t1, endtime=t2, attach_response=True)
+            print('...done')
+        except:
+            print('not able to download ??H component')
+            continue
 
-                # Extract time of P arrival
-                if t['phase_name']=='P':
-                    
-                    # Extract time, phase name and slowness
-                    tp = t['time']
-                    ph = t['phase_name']
-                    slow = t['dT/dD']/111.
+        # Make sure length is ok
+        llZ = len(sth.select(component='Z')[0].data)
+        ll1 = len(sth.select(component='1')[0].data)
+        ll2 = len(sth.select(component='2')[0].data)
+        llP = len(stp[0].data)
 
-                    # Break out of loop 
-                    break
+        if (llZ != ll1) or (llZ != ll2) or (llZ != llP):
+            print('lengths not all the same - continuing')
+            continue
 
-            # Define start and end times for requests
-            tstart = time+tp-6.*3600.
-            tend = time+tp
-            
-            # Get waveforms from client
-            try:
-                sth = client.get_waveforms(sta.network,sta.station,'*', \
-                        sta.cha+'?',tstart, tend, attach_response=True)
-            except Exception as e:
-                continue
-            try:
-                stp = client.get_waveforms(sta.network,sta.station,'*', \
-                        '?XH',tstart, tend, attach_response=True)
-            except Exception as e:
-                continue
-            sth.remove_response(output='DISP')
-            stp.remove_response()
+        ll = int(window*sth[0].stats.sampling_rate)
 
-            # Detrend, filter
-            sth.detrend('demean')
-            sth.detrend('linear')
-            sth.filter('lowpass', freq=0.5*2.0, corners=2, zerophase=True)
-            sth.resample(2.0)
+        if np.abs(llZ - ll) > 1:
+            print('Time series too short - continuing')
+            print(np.abs(llZ - ll))
+            continue
 
-            stp.detrend('demean')
-            stp.detrend('linear')
-            stp.filter('lowpass', freq=0.5*2.0, corners=2, zerophase=True)
-            stp.resample(2.0)
+        # Remove responses
+        print('Removing responses - Seismic data')
+        sth.remove_response(pre_filt=[0.001,0.005, 45., 50.], output='DISP')
+        print('Removing responses - Pressure data')
+        stp.remove_response(pre_filt=[0.001,0.005, 45., 50.])
 
-            # Extract traces
-            trZ = sth.select(component='Z')[0]
-            tr1 = sth.select(component='1')[0]
-            tr2 = sth.select(component='2')[0]
-            trP = stp.select(channel='?XH')[0]
+        # Detrend, filter - seismic data
+        sth.detrend('demean')
+        sth.detrend('linear')
+        sth.filter('lowpass', freq=0.5*new_sampling_rate, corners=2, zerophase=True)
+        sth.resample(new_sampling_rate)
 
-            # Window size 
-            ws = int(2000./tr1.stats.delta)
+        # Detrend, filter - pressure data
+        stp.detrend('demean')
+        stp.detrend('linear')
+        stp.filter('lowpass', freq=0.5*new_sampling_rate, corners=2, zerophase=True)
+        stp.resample(new_sampling_rate)
 
-            # Step size
-            ss = int(2000./tr1.stats.delta)
+        eventstream = EventStream(sta, sth, stp, tstamp, lat, lon, time, window, new_sampling_rate)
 
-            # Update stats
-            tr1 = update_stats(tr1, sta.stla, sta.stlo, sta.stel, ws, ss)
-            tr2 = update_stats(tr2, sta.stla, sta.stlo, sta.stel, ws, ss)
-            trZ = update_stats(trZ, sta.stla, sta.stlo, sta.stel, ws, ss)
-            trP = update_stats(trP, sta.stla, sta.stlo, sta.stel, ws, ss)
-
-            # Save traces
-            tr1.write(fileN1,format='sac')
-            tr2.write(fileN2,format='sac')
-            trZ.write(fileNZ,format='sac')
-            trP.write(fileNP,format='sac')
-
-            # Define start and end times for requests
-            tstart = time+tp-120.
-            tend = time+tp+120.
-            
-            # Get waveforms from client
-            try:
-                sth = client.get_waveforms(sta.network,sta.station,'*', \
-                        sta.cha+'?',tstart, tend, attach_response=True)
-            except Exception as e:
-                continue
-            try:
-                stp = client.get_waveforms(sta.network,sta.station,'*', \
-                        '?XH',tstart, tend, attach_response=True)
-            except Exception as e:
-                continue
-
-            sth.remove_response(output='DISP')
-            stp.remove_response()
-
-            # Detrend, filter
-            sth.detrend('demean')
-            sth.detrend('linear')
-            sth.filter('lowpass', freq=0.5*2.0, corners=2, zerophase=True)
-            sth.resample(2.0)
-
-            stp.detrend('demean')
-            stp.detrend('linear')
-            stp.filter('lowpass', freq=0.5*2.0, corners=2, zerophase=True)
-            stp.resample(2.0)
-
-            # Extract traces
-            trZ = sth.select(component='Z')[0]
-            tr1 = sth.select(component='1')[0]
-            tr2 = sth.select(component='2')[0]
-            trP = stp.select(channel='?XH')[0]
-
-            # Update stats
-            tr1 = update_stats(tr1, sta.stla, sta.stlo, sta.stel, ws, ss)
-            tr2 = update_stats(tr2, sta.stla, sta.stlo, sta.stel, ws, ss)
-            trZ = update_stats(trZ, sta.stla, sta.stlo, sta.stel, ws, ss)
-            trP = update_stats(trP, sta.stla, sta.stlo, sta.stel, ws, ss)
-
-            # Save traces
-            tr1.write(file1,format='sac')
-            tr2.write(file2,format='sac')
-            trZ.write(fileZ,format='sac')
-            trP.write(fileP,format='sac')
+        eventstream.save(filename)
 
 
-def rotate_12_NE(tr1, tr2, az):
+if __name__ == "__main__":
 
-    a = az*np.pi/180.
-    rot_mat = np.array([[np.cos(a), np.sin(a)],
-        [-np.sin(a), np.cos(a)]])
-
-    v12 = np.array([tr2,tr1])
-    vne = np.dot(rot_mat, v12)
-    trE = vne[0,:]
-    trN = vne[1,:]
-    
-    return trN, trE
-
-
-def update_stats(tr, stla, stlo, stel, ws, ss):
-    tr.stats.sac = obspy.core.AttribDict()
-    tr.stats.sac.stla = stla
-    tr.stats.sac.stlo = stlo
-    tr.stats.sac.stel = stel
-    tr.stats.sac.user8 = ws
-    tr.stats.sac.user9 = ss
-    return tr
-
-
-# Loads station db and builds attribute dict of station stats
-def load_db(fname):
-    db = pickle.load(open(fname, 'rb'))
-    for k, v in db.items():
-        db[k] = meta_data(v)
-    return db
-
-
-# Attribute dict class
-class meta_data(dict):
-    def __init__(self, stats):
-        self.__dict__ = self
-        self.network = stats[0]
-        self.station = stats[1]
-        self.stla = stats[2]
-        self.stlo = stats[3]
-        self.stel = stats[4]
-        self.azim = stats[5]
-        self.cha = stats[6]
-        self.dstart = stats[7]
-        self.dend = stats[8]
-
-
-###############################
-# Choose one station to process
-
-dbfile = 'stations_obs.pkl'
-stationdb = load_db(dbfile)
-
-sta_keys = ['J39C']
-
-for key in sta_keys:
-    process(stationdb, key)
-
-###################
+    # Run main program
+    main()

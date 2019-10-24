@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 PROGRAM request_IRIS.py
 
@@ -13,14 +15,26 @@ import glob
 from obspy import UTCDateTime
 from obspy.core import AttribDict
 from obspy.clients.fdsn import Client
+from obstools import utils
 
 # Main function
-def process(db, sta_key):
+def main():
 
-    sta = db[sta_key]
+    dbfile = 'M08A.pkl'
+
+    stationdb = pickle.load(open(dbfile,'rb'))
+
+    sta_key = ['7D.M08A']
+
+    # Get one month of data
+    tstart = UTCDateTime('2012-03-01')
+    tend = UTCDateTime('2012-03-30')
+
+    # Extract station information from dictionary
+    sta = stationdb[sta_key[0]] 
 
     # Define path to see if it exists
-    datapath = 'DATA/' + sta.network + '/' + sta.station + '/'
+    datapath = 'DATA/' + sta_key[0] + '/'
     if not os.path.isdir(datapath): 
         print('Path to '+datapath+' doesn`t exist - creating it')
         os.makedirs(datapath)
@@ -28,18 +42,12 @@ def process(db, sta_key):
     # Establish client
     client = Client()
 
-    # Get one month of data
-    tstart = UTCDateTime('2012-03-01')
-    tend = UTCDateTime('2012-03-30')
-
     # Split into 24-hour long segments
     dt = 3600.*24.
     new_sampling_rate = 5.
 
     t1 = tstart
     t2 = tstart + dt
-
-    print(sta.station, sta.network, sta.channel, sta.location)
 
     while t2 <= tend:
 
@@ -55,7 +63,7 @@ def process(db, sta_key):
         fileP = datapath + tstamp + '.' + sta.channel + 'H.SAC'
 
         # If data file exists, continue
-        if glob.glob(fileZ) and glob.glog(file1) and glob.glob(file2) and glob.glob(fileP): 
+        if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2) and glob.glob(fileP): 
             print('files already exist, continuing')
             t1 += dt
             t2 += dt
@@ -86,22 +94,31 @@ def process(db, sta_key):
             continue
 
         # Make sure length is ok
-        llZ = len(sth.select(component='Z')[0].data) < int(dt*sth[0].stats.sampling_rate)
-        ll1 = len(sth.select(component='1')[0].data) < int(dt*sth[0].stats.sampling_rate)
-        ll2 = len(sth.select(component='2')[0].data) < int(dt*sth[0].stats.sampling_rate)
-        llP = len(stp[0].data) < int(dt*stp[0].stats.sampling_rate)
+        llZ = len(sth.select(component='Z')[0].data)
+        ll1 = len(sth.select(component='1')[0].data)
+        ll2 = len(sth.select(component='2')[0].data)
+        llP = len(stp[0].data)
 
-        if llZ or ll1 or ll2 or llP:
+        if (llZ != ll1) or (llZ != ll2) or (llZ != llP):
+            print('lengths not all the same - continuing')
+            t1 += dt
+            t2 += dt
+            continue
+
+        ll = int(dt*sth[0].stats.sampling_rate)
+
+        if np.abs(llZ - ll) > 1:
             print('Time series too short - continuing')
+            print(np.abs(llZ - ll))
             t1 += dt
             t2 += dt
             continue
 
         # Remove responses
         print('Removing responses - Seismic data')
-        sth.remove_response(output='DISP')
+        sth.remove_response(pre_filt=[0.001,0.005, 45., 50.], output='DISP')
         print('Removing responses - Pressure data')
-        stp.remove_response()
+        stp.remove_response(pre_filt=[0.001,0.005, 45., 50.])
 
         # Detrend, filter - seismic data
         sth.detrend('demean')
@@ -122,10 +139,10 @@ def process(db, sta_key):
         trP = stp[0]
 
         # Update stats
-        tr1 = update_stats(tr1, sta.latitude, sta.longitude, sta.elevation)
-        tr2 = update_stats(tr2, sta.latitude, sta.longitude, sta.elevation)
-        trZ = update_stats(trZ, sta.latitude, sta.longitude, sta.elevation)
-        trP = update_stats(trP, sta.latitude, sta.longitude, sta.elevation)
+        tr1 = utils.update_stats(tr1, sta.latitude, sta.longitude, sta.elevation)
+        tr2 = utils.update_stats(tr2, sta.latitude, sta.longitude, sta.elevation)
+        trZ = utils.update_stats(trZ, sta.latitude, sta.longitude, sta.elevation)
+        trP = utils.update_stats(trP, sta.latitude, sta.longitude, sta.elevation)
 
         # Save traces
         tr1.write(file1, format='sac')
@@ -136,26 +153,8 @@ def process(db, sta_key):
         t1 += dt
         t2 += dt
 
-def update_stats(tr, stla, stlo, stel):
-    tr.stats.sac = AttribDict()
-    tr.stats.sac.stla = stla
-    tr.stats.sac.stlo = stlo
-    tr.stats.sac.stel = stel
-    return tr
 
+if __name__ == "__main__":
 
-###############################
-# Choose one station to process
-
-dbfile = 'M08A.pkl'
-
-stationdb = pickle.load(open(dbfile,'rb'))
-
-#sta_keys = ['WHY', 'INK', 'EPYK']
-#sta_keys = ['F55A', 'G55A', 'G57A', 'H56A']
-sta_keys = ['7D.M08A']
-
-for key in sta_keys:
-    process(stationdb, key)
-
-###################
+    # Run main program
+    main()

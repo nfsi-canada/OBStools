@@ -1,0 +1,118 @@
+# Copyright 2019 Pascal Audet & Helen Janiszewski
+#
+# This file is part of OBStools.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+"""
+
+OBStools is a software for processing broadband ocean-bottom seismic data
+to remove seafloor noise from the vertical component of earthquake data. 
+It is based on calculating transfer functions across
+multiple channels from culled noise spectra and applying those
+transfer functions to the vertical component of earthquake data. This software
+is a translation of the Matlab code `ATaCR  <https://github.com/helenjanisz/ATaCR>`_
+
+Licence
+-------
+
+Copyright 2019 Pascal Audet & Helen Janiszewski
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Installation
+------------
+
+Dependencies
+++++++++++++
+
+The current version was developed using **Python3.7** \
+Also, the following packages are required:
+
+- `stdb <https://github.com/paudetseis/StDb>`_
+
+Other required packages (e.g., ``obspy``)
+will be automatically installed by ``stdb``.
+
+Conda environment
++++++++++++++++++
+
+We recommend creating a custom ``conda`` environment
+where ``OBStools`` can be installed along with some of its dependencies.
+
+.. sourcecode:: bash
+
+   conda create -n obs python=3.7 obspy -c conda-forge
+
+Activate the newly created environment:
+
+.. sourcecode:: bash
+
+   conda activate obs
+
+Install remaining dependencies using ``pip`` inside the ``split`` environment:
+
+.. sourcecode:: bash
+
+   pip install stdb
+
+Installing from Pypi
+++++++++++++++++++++
+
+.. sourcecode:: bash
+
+   pip install obstools
+
+Installing from source
+++++++++++++++++++++++
+
+- Clone the repository:
+
+.. sourcecode:: bash
+
+   git clone https://github.com/paudetseis/OBStools.git
+   cd OBStools
+
+- Install using pip:
+
+.. sourcecode:: bash
+
+   pip install .
+
+"""
+
+#__version__=0.1
+__author__ = "Pascal Audet & Helen Janiszewski"
+
+from .classes import DayNoise, StaNoise, Power, Cross, Rotation, TFNoise, EventStream
