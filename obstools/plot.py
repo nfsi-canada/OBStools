@@ -227,30 +227,100 @@ def fig_event_raw(evstream):
     evstream.stp.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
     sr = evstream.sth[0].stats.sampling_rate
     taxis = np.arange(0., 7200., 1./sr)
+    
     plt.figure(figsize=(6,6))
+
     plt.subplot(411)
     plt.plot(taxis, evstream.sth[0].data, 'k', lw=0.5)
-    plt.title(evstream.tstamp+': H1', fontdict={'fontsize': 8})
+    plt.title(evstream.key+' '+evstream.tstamp+': H1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
     plt.xlim((0., 7200.))
+
     plt.subplot(412)
     plt.plot(taxis, evstream.sth[1].data, 'k', lw=0.5)
     plt.xlim((0., 7200.))
     plt.title(evstream.tstamp+': H2', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+
     plt.subplot(413)
     plt.plot(taxis, evstream.sth[2].data, 'k', lw=0.5)
     plt.xlim((0., 7200.))
     plt.title(evstream.tstamp+': Z', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+
     plt.subplot(414)
     plt.plot(taxis, evstream.stp[0].data, 'k', lw=0.5)
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
     plt.xlim((0., 7200.))
     plt.title(evstream.tstamp+': P', fontdict={'fontsize': 8})
+
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
     plt.show()
+
+
+def fig_event_corrected(evstream, TF_list):
+
+    import matplotlib as mpl
+    evstream.sth.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
+    evstream.stp.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
+    sr = evstream.sth[0].stats.sampling_rate
+    taxis = np.arange(0., 7200., 1./sr)
+
+    plt.figure(figsize=(8,8))
+    
+    plt.subplot(611)
+    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    if TF_list['Z1']:
+        plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
+    plt.title(evstream.key+' '+evstream.tstamp+': Z1', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.xlim((0., 7200.))
+
+    plt.subplot(612)
+    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    if TF_list['Z2-1']:
+        plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
+    plt.title(evstream.tstamp+': Z2-1', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.xlim((0., 7200.))
+
+    plt.subplot(613)
+    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    if TF_list['ZP-21']:
+        plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
+    plt.title(evstream.tstamp+': ZP-21', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.xlim((0., 7200.))
+
+    plt.subplot(614)
+    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    if TF_list['ZH']:
+        plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
+    plt.title(evstream.tstamp+': ZH', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.xlim((0., 7200.))
+
+    plt.subplot(615)
+    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    if TF_list['ZP-H']:
+        plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
+    plt.title(evstream.tstamp+': ZP-H', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.xlim((0., 7200.))
+
+    plt.subplot(616)
+    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    if TF_list['ZP']:
+        plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
+    plt.title(evstream.tstamp+': ZP', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.xlim((0., 7200.))
+
+    plt.xlabel('Time since earthquake (sec)')
+    plt.tight_layout()
+    plt.show()
+
 
 
 def obs_plot_2traces(tr1, tr2, f1=0.01, f2=0.05, title=None):
