@@ -32,9 +32,8 @@ def main():
     event_files = os.listdir(eventpath)
     trans_files = os.listdir(transpath)
 
-    # List of possible transfer functions for Daily files
-    TF_list_day = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
-
+    # # List of possible transfer functions for Daily files
+    # TF_list_day = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
 
     # Cycle through available files
     for eventfile in event_files:
@@ -73,15 +72,25 @@ def main():
                         file.close()
 
                         # List of possible transfer functions for station average files
-                        TF_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
+                        TF_list = {'ZP': True, 'Z1':True, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
                         eventstream.correct_data(tfaverage, TF_list)
+
+                        correct = eventstream.correct
+                        plot.fig_event_corrected(eventstream, TF_list)
 
             else:
                 if tfprefix==evstamp:
-                    print('do nothing for now')
+                    file = open(transpath+transfile, 'rb')
+                    print(transpath+transfile)
+                    tfaverage = pickle.load(file)
+                    file.close()
 
+                    # List of possible transfer functions for station average files
+                    TF_list = {'ZP': True, 'Z1':True, 'Z2-1':False, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
+                    eventstream.correct_data(tfaverage, TF_list)
 
-
+                    correct = eventstream.correct
+                    plot.fig_event_corrected(eventstream, TF_list)
 
 
 if __name__ == "__main__":

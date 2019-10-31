@@ -515,7 +515,6 @@ class TFNoise(object):
     class TfDict(dict):
 
         def __init__(self):
-
             self = dict()
 
         def add(self, key, value):
@@ -623,6 +622,7 @@ class EventStream(object):
 
     def __init__(self, sta, sth, stp, tstamp, lat, lon, time, window, sampling_rate):
         self.sta = sta
+        self.key = sta.network+'.'+sta.station
         self.sth = sth
         self.stp = stp
         self.tstamp = tstamp
@@ -633,7 +633,17 @@ class EventStream(object):
         self.fs = sampling_rate
         self.dt = 1./sampling_rate
 
+    class CorrectDict(dict):
+
+        def __init__(self):
+            self = dict()
+
+        def add(self, key, value):
+            self[key] = value
+
     def correct_data(self, tfnoise, TF_list):
+
+        correct = self.CorrectDict()
 
         tf_list = tfnoise.tf_list
         transfunc = tfnoise.transfunc
@@ -664,22 +674,24 @@ class EventStream(object):
                     TF_ZP = transfunc[key]['TF_ZP']
                     fTF_ZP = np.hstack((TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZP*ftP
-                    self.corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
-                    plt.figure()
-                    # plt.plot(trZ, lw=0.5)
-                    plt.plot(self.corrtime, lw=0.5)
-                    plt.show()
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('ZP', corrtime)
+
+                    # plt.figure()
+                    # plt.plot(corrtime, lw=0.5)
+                    # plt.show()
 
             if key == 'Z1':
                 if value and TF_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_Z1*ft1
-                    self.corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
-                    plt.figure()
-                    # plt.plot(trZ, lw=0.5)
-                    plt.plot(self.corrtime, lw=0.5)
-                    plt.show()
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('Z1', corrtime)
+
+                    # plt.figure()
+                    # plt.plot(corrtime, lw=0.5)
+                    # plt.show()
 
             if key == 'Z2-1':
                 if value and TF_list[key]:
@@ -691,21 +703,26 @@ class EventStream(object):
 
             if key == 'ZH':
                 if value and TF_list[key]:
-                    TF_ZP = transfunc[key]['TF_ZP']
+                    TF_ZP = transfunc[key]['TF_ZH']
 
                     # Rotate horizontals
-                    ftH = rotate_dir(ft1, ft2, self.tilt)
+                    ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
                     fTF_ZP = np.hstack((TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZP*ftH
-                    self.corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('ZH', corrtime)
+
+                    # plt.figure()
+                    # plt.plot(corrtime, lw=0.5)
+                    # plt.show()
 
             if key == 'ZP-H':
                 if value and TF_list[key]:
                     TF_ZH = transfunc[key]['TF_ZH']
 
                     # Rotate horizontals
-                    ftH = rotate_dir(ft1, ft2, self.tilt)
+                    ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
                     fTF_ZH = np.hstack((TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
                     corrZH = ftZ - fTF_ZH*ftH
@@ -714,10 +731,10 @@ class EventStream(object):
 
                     fTF_ZP_H = np.hstack((TF_ZP_H, np.conj(TF_ZP_H[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZP_H*corrZH
-                    self.corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
 
 
-                    print('nothing yet')
+        self.correct = correct
 
 
 
