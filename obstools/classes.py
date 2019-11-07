@@ -115,7 +115,8 @@ class Rotation(object):
     coh_value : float
         Maximum coherence 
     phase_value : float
-        Phase at maximu coherence
+        Phase at maximum coherence
+
     """
     def __init__(self, cHH, cHZ, cHP, coh=None, ph=None, tilt=None, coh_value=None, phase_value=None):
         self.cHH = cHH
@@ -129,6 +130,23 @@ class Rotation(object):
 
 
 class DayNoise(object):
+    """
+    A DayNoise object contains attributes that associate
+    three-component raw (or deconvolved) traces, metadata information
+    and window parameters. The available methods carry out the quality 
+    control steps and the average daily spectra for windows flagged as 
+    "good". 
+
+    Note
+    ----
+    The object is initialized with the ``sta`` field only, and
+    other attributes are added to the object as the analysis proceeds.
+
+    Attributes
+    ----------
+
+
+    """
 
     def __init__(self, tr1, tr2, trZ, trP, window, overlap, key):
         self.tr1 = tr1
@@ -147,6 +165,32 @@ class DayNoise(object):
 
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
+        """
+        Method to determine daily time windows for which the spectra are 
+        anomalous and should be discarded in the calculation of the
+        transfer functions.
+
+        Parameters
+        ----------
+        pd : list
+            Frequency corners of passband for calculating the spectra
+        tol : float
+            Tolerance threshold. If spectrum > std*tol, window is flagged as bad
+        alpha : float
+            Confidence interval for f-test
+        smooth : boolean
+            Determines if the smoothed (True) or raw (False) spectra are used
+        fig_QC : boolean
+            Whether or not to produce a figure showing the results of the quality control
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        goodwins : list 
+            List of booleans representing whether a window is good (True) or not (False)
+
+        """
 
         # Points in window
         ws = int(self.window/self.dt)
@@ -273,6 +317,36 @@ class DayNoise(object):
 
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False, fig_coh_ph=False, debug=False):
+        """
+        Method to average the daily spectra for good windows. By default, the method
+        will attempt to calculate the azimuth of maximum coherence between horizontal
+        components and the vertical component (for maximum tilt direction), and use 
+        the rotated horizontals in the transfer function calculations.
+
+        Parameters
+        ----------
+        calc_rotation : boolean
+            Whether or not to calculate the tilt direction
+        fig_average : boolean
+            Whether or not to produce a figure showing the average daily spectra
+        fig_coh_ph : boolean
+            Whether or not to produce a figure showing the maximum coherence between H and Z
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        f : :class:`~numpy.ndarray` 
+            Positive frequency axis for corresponding window parameters
+        power : :class:`~obstools.classes.Power`
+            Container for the Power spectra
+        cross : :class:`~obstools.classes.Cross`
+            Container for the Cross power spectra
+        rotation : :class:`~obstools.classes.Cross`, optional
+            Container for the Rotated power and cross spectra
+
+
+        """
 
         # Points in window
         ws = int(self.window/self.dt)
@@ -322,6 +396,15 @@ class DayNoise(object):
             plot.fig_coh_ph(coh, ph, direc)
 
     def save(self, filename):
+        """
+        Method to save the object to file using Pickle.
+
+        Parameters
+        ----------
+        filename : str
+            File name 
+
+        """
 
         # Remove original traces to save disk space
         del self.tr1 
@@ -334,11 +417,25 @@ class DayNoise(object):
 
 
 class StaNoise(object):
+    """
+    A StaNoise object contains attributes that associate
+    three-component raw (or deconvolved) traces, metadata information
+    and window parameters.
 
+    Note
+    ----
+    The object is initialized with the ``sta`` field only, and
+    other attributes are added to the object as the analysis proceeds.
+
+    Attributes
+    ----------
+
+    """
     def __init__(self, power, cross, rotation, f, nwins, key):
         self.f = f
         self.nwins = nwins
         self.key = key
+        # Unwrap the container attributes
         self.c11 = power.c11.T
         self.c22 = power.c22.T
         self.cZZ = power.cZZ.T
@@ -355,7 +452,31 @@ class StaNoise(object):
         self.tilt = rotation.tilt
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False):
-       
+        """
+        Method to determine the days for which the spectra are 
+        anomalous and should be discarded in the calculation of the
+        long-term transfer functions.
+
+        Parameters
+        ----------
+        pd : list
+            Frequency corners of passband for calculating the spectra
+        tol : float
+            Tolerance threshold. If spectrum > std*tol, window is flagged as bad
+        alpha : float
+            Confidence interval for f-test
+        fig_QC : boolean
+            Whether or not to produce a figure showing the results of the quality control
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        goodwins : list 
+            List of booleans representing whether a window is good (True) or not (False)
+
+        """
+
         # Select bandpass frequencies
         ff = (self.f>pd[0]) & (self.f<pd[1])
 
@@ -436,6 +557,28 @@ class StaNoise(object):
             plot.fig_QC(self.f, power, gooddays, key=self.key)
 
     def average_sta_spectra(self, fig_average=False, debug=False):
+        """
+        Method to average the daily station spectra for good windows.
+
+        Parameters
+        ----------
+        fig_average : boolean
+            Whether or not to produce a figure showing the average daily spectra
+        fig_coh_ph : boolean
+            Whether or not to produce a figure showing the maximum coherence between H and Z
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        power : :class:`~obstools.classes.Power`
+            Container for the Power spectra
+        cross : :class:`~obstools.classes.Cross`
+            Container for the Cross power spectra
+        rotation : :class:`~obstools.classes.Cross`, optional
+            Container for the Rotated power and cross spectra
+
+        """
 
         # Power spectra
         c11 = np.sum(self.c11[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
@@ -474,6 +617,15 @@ class StaNoise(object):
             plot.fig_average(self.f, self.power, bad, self.gooddays, key=self.key)
 
     def save(self, filename):
+        """
+        Method to save the object to file using Pickle.
+
+        Parameters
+        ----------
+        filename : str
+            File name 
+
+        """
 
         # Remove traces to save disk space
         del self.c11 
