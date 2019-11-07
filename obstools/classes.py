@@ -693,7 +693,7 @@ class TFNoise(object):
                     lc1c2 = np.conj(self.c12)/self.c11
                     coh_12 = utils.coherence(self.c12, self.c11, self.c22)
                     gc2c2_c1 = self.c22*(1. - coh_12)
-                    gc2cZ_c1 = np.conj(self.c2Z) - np.conj(lc1c2*self.c1Z)
+                    gc2cZ_c1 = np.conj(self.c2Z) - lc1c2*np.conj(self.c1Z)
                     lc2cZ_c1 = gc2cZ_c1/gc2c2_c1
                     tf_Z2_1 = {'TF_21': lc1c2, 'TF_Z2-1': lc2cZ_c1}
                     transfunc.add('Z2-1', tf_Z2_1)
@@ -847,7 +847,15 @@ class EventStream(object):
 
             if key == 'Z2-1':
                 if value and TF_list[key]:
-                    print('nothing yet')
+                    TF_Z1 = transfunc['Z1']['TF_Z1']
+                    fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
+                    TF_21 = transfunc[key]['TF_21']
+                    fTF_21 = np.hstack((TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
+                    TF_Z2_1 = transfunc[key]['TF_Z2-1']
+                    fTF_Z2_1 = np.hstack((TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
+                    corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('Z2-1', corrtime)
 
             if key == 'ZP-21':
                 if value and TF_list[key]:
