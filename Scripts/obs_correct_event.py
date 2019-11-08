@@ -72,7 +72,7 @@ def main():
                         file.close()
 
                         # List of possible transfer functions for station average files
-                        TF_list = {'ZP': True, 'Z1':True, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+                        TF_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
                         eventstream.correct_data(tfaverage, TF_list)
 
                         correct = eventstream.correct
@@ -86,7 +86,7 @@ def main():
                     file.close()
 
                     # List of possible transfer functions for station average files
-                    TF_list = {'ZP': True, 'Z1':True, 'Z2-1':False, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
+                    TF_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
                     eventstream.correct_data(tfaverage, TF_list)
 
                     correct = eventstream.correct

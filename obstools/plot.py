@@ -270,7 +270,7 @@ def fig_event_corrected(evstream, TF_list):
     plt.figure(figsize=(8,8))
     
     plt.subplot(611)
-    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
         plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
     plt.title(evstream.key+' '+evstream.tstamp+': Z1', fontdict={'fontsize': 8})
@@ -278,7 +278,7 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(612)
-    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['Z2-1']:
         plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': Z2-1', fontdict={'fontsize': 8})
@@ -286,7 +286,7 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(613)
-    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['ZP-21']:
         plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP-21', fontdict={'fontsize': 8})
@@ -294,7 +294,7 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(614)
-    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['ZH']:
         plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZH', fontdict={'fontsize': 8})
@@ -302,7 +302,7 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(615)
-    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['ZP-H']:
         plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP-H', fontdict={'fontsize': 8})
@@ -310,7 +310,7 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(616)
-    plt.plot(taxis, evstream.sth[2].data, 'gray', lw=0.5)
+    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['ZP']:
         plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP', fontdict={'fontsize': 8})

@@ -115,7 +115,8 @@ class Rotation(object):
     coh_value : float
         Maximum coherence 
     phase_value : float
-        Phase at maximu coherence
+        Phase at maximum coherence
+
     """
     def __init__(self, cHH, cHZ, cHP, coh=None, ph=None, tilt=None, coh_value=None, phase_value=None):
         self.cHH = cHH
@@ -129,6 +130,23 @@ class Rotation(object):
 
 
 class DayNoise(object):
+    """
+    A DayNoise object contains attributes that associate
+    three-component raw (or deconvolved) traces, metadata information
+    and window parameters. The available methods carry out the quality 
+    control steps and the average daily spectra for windows flagged as 
+    "good". 
+
+    Note
+    ----
+    The object is initialized with the ``sta`` field only, and
+    other attributes are added to the object as the analysis proceeds.
+
+    Attributes
+    ----------
+
+
+    """
 
     def __init__(self, tr1, tr2, trZ, trP, window, overlap, key):
         self.tr1 = tr1
@@ -147,6 +165,32 @@ class DayNoise(object):
 
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
+        """
+        Method to determine daily time windows for which the spectra are 
+        anomalous and should be discarded in the calculation of the
+        transfer functions.
+
+        Parameters
+        ----------
+        pd : list
+            Frequency corners of passband for calculating the spectra
+        tol : float
+            Tolerance threshold. If spectrum > std*tol, window is flagged as bad
+        alpha : float
+            Confidence interval for f-test
+        smooth : boolean
+            Determines if the smoothed (True) or raw (False) spectra are used
+        fig_QC : boolean
+            Whether or not to produce a figure showing the results of the quality control
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        goodwins : list 
+            List of booleans representing whether a window is good (True) or not (False)
+
+        """
 
         # Points in window
         ws = int(self.window/self.dt)
@@ -273,6 +317,36 @@ class DayNoise(object):
 
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False, fig_coh_ph=False, debug=False):
+        """
+        Method to average the daily spectra for good windows. By default, the method
+        will attempt to calculate the azimuth of maximum coherence between horizontal
+        components and the vertical component (for maximum tilt direction), and use 
+        the rotated horizontals in the transfer function calculations.
+
+        Parameters
+        ----------
+        calc_rotation : boolean
+            Whether or not to calculate the tilt direction
+        fig_average : boolean
+            Whether or not to produce a figure showing the average daily spectra
+        fig_coh_ph : boolean
+            Whether or not to produce a figure showing the maximum coherence between H and Z
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        f : :class:`~numpy.ndarray` 
+            Positive frequency axis for corresponding window parameters
+        power : :class:`~obstools.classes.Power`
+            Container for the Power spectra
+        cross : :class:`~obstools.classes.Cross`
+            Container for the Cross power spectra
+        rotation : :class:`~obstools.classes.Cross`, optional
+            Container for the Rotated power and cross spectra
+
+
+        """
 
         # Points in window
         ws = int(self.window/self.dt)
@@ -322,6 +396,15 @@ class DayNoise(object):
             plot.fig_coh_ph(coh, ph, direc)
 
     def save(self, filename):
+        """
+        Method to save the object to file using Pickle.
+
+        Parameters
+        ----------
+        filename : str
+            File name 
+
+        """
 
         # Remove original traces to save disk space
         del self.tr1 
@@ -334,11 +417,25 @@ class DayNoise(object):
 
 
 class StaNoise(object):
+    """
+    A StaNoise object contains attributes that associate
+    three-component raw (or deconvolved) traces, metadata information
+    and window parameters.
 
+    Note
+    ----
+    The object is initialized with the ``sta`` field only, and
+    other attributes are added to the object as the analysis proceeds.
+
+    Attributes
+    ----------
+
+    """
     def __init__(self, power, cross, rotation, f, nwins, key):
         self.f = f
         self.nwins = nwins
         self.key = key
+        # Unwrap the container attributes
         self.c11 = power.c11.T
         self.c22 = power.c22.T
         self.cZZ = power.cZZ.T
@@ -355,7 +452,31 @@ class StaNoise(object):
         self.tilt = rotation.tilt
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False):
-       
+        """
+        Method to determine the days for which the spectra are 
+        anomalous and should be discarded in the calculation of the
+        long-term transfer functions.
+
+        Parameters
+        ----------
+        pd : list
+            Frequency corners of passband for calculating the spectra
+        tol : float
+            Tolerance threshold. If spectrum > std*tol, window is flagged as bad
+        alpha : float
+            Confidence interval for f-test
+        fig_QC : boolean
+            Whether or not to produce a figure showing the results of the quality control
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        goodwins : list 
+            List of booleans representing whether a window is good (True) or not (False)
+
+        """
+
         # Select bandpass frequencies
         ff = (self.f>pd[0]) & (self.f<pd[1])
 
@@ -436,6 +557,28 @@ class StaNoise(object):
             plot.fig_QC(self.f, power, gooddays, key=self.key)
 
     def average_sta_spectra(self, fig_average=False, debug=False):
+        """
+        Method to average the daily station spectra for good windows.
+
+        Parameters
+        ----------
+        fig_average : boolean
+            Whether or not to produce a figure showing the average daily spectra
+        fig_coh_ph : boolean
+            Whether or not to produce a figure showing the maximum coherence between H and Z
+        debug : boolean
+            Whether or not to plot intermediate steps in the QC procedure for debugging
+
+        Attributes
+        -------
+        power : :class:`~obstools.classes.Power`
+            Container for the Power spectra
+        cross : :class:`~obstools.classes.Cross`
+            Container for the Cross power spectra
+        rotation : :class:`~obstools.classes.Cross`, optional
+            Container for the Rotated power and cross spectra
+
+        """
 
         # Power spectra
         c11 = np.sum(self.c11[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
@@ -474,6 +617,15 @@ class StaNoise(object):
             plot.fig_average(self.f, self.power, bad, self.gooddays, key=self.key)
 
     def save(self, filename):
+        """
+        Method to save the object to file using Pickle.
+
+        Parameters
+        ----------
+        filename : str
+            File name 
+
+        """
 
         # Remove traces to save disk space
         del self.c11 
@@ -677,10 +829,6 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP', corrtime)
 
-                    # plt.figure()
-                    # plt.plot(corrtime, lw=0.5)
-                    # plt.show()
-
             if key == 'Z1':
                 if value and TF_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
@@ -689,55 +837,67 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('Z1', corrtime)
 
-                    # plt.figure()
-                    # plt.plot(corrtime, lw=0.5)
-                    # plt.show()
-
             if key == 'Z2-1':
                 if value and TF_list[key]:
-                    print('nothing yet')
+                    TF_Z1 = transfunc['Z1']['TF_Z1']
+                    fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
+                    TF_21 = transfunc[key]['TF_21']
+                    fTF_21 = np.hstack((TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
+                    TF_Z2_1 = transfunc[key]['TF_Z2-1']
+                    fTF_Z2_1 = np.hstack((TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
+                    corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('Z2-1', corrtime)
 
             if key == 'ZP-21':
                 if value and TF_list[key]:
-                    print('nothing yet')
+                    TF_Z1 = transfunc[key]['TF_Z1']
+                    fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
+                    TF_21 = transfunc[key]['TF_21']
+                    fTF_21 = np.hstack((TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
+                    TF_Z2_1 = transfunc[key]['TF_Z2-1']
+                    fTF_Z2_1 = np.hstack((TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
+                    TF_P1 = transfunc[key]['TF_P1']
+                    fTF_P1 = np.hstack((TF_P1, np.conj(TF_P1[::-1][1:len(f)-1])))
+                    TF_P2_1 = transfunc[key]['TF_P2-1']
+                    fTF_P2_1 = np.hstack((TF_P2_1, np.conj(TF_P2_1[::-1][1:len(f)-1])))
+                    TF_ZP_21 = transfunc[key]['TF_ZP-21']
+                    fTF_ZP_21 = np.hstack((TF_ZP_21, np.conj(TF_ZP_21[::-1][1:len(f)-1])))
+                    corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
+                            (ftP - ft1*fTF_P1 - (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('ZP-21', corrtime)
 
             if key == 'ZH':
                 if value and TF_list[key]:
-                    TF_ZP = transfunc[key]['TF_ZH']
 
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
-                    fTF_ZP = np.hstack((TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZP*ftH
+                    TF_ZH = transfunc[key]['TF_ZH']
+                    fTF_ZH = np.hstack((TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
+                    corrspec = ftZ - fTF_ZH*ftH
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZH', corrtime)
 
-                    # plt.figure()
-                    # plt.plot(corrtime, lw=0.5)
-                    # plt.show()
-
             if key == 'ZP-H':
                 if value and TF_list[key]:
-                    TF_ZH = transfunc[key]['TF_ZH']
 
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
+                    TF_ZH = transfunc['ZH']['TF_ZH']
                     fTF_ZH = np.hstack((TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
-                    corrZH = ftZ - fTF_ZH*ftH
-
-                    TF_ZP_H = transfunc[key]['TF_ZP_H']
-
+                    TF_PH = transfunc[key]['TF_PH']
+                    fTF_PH = np.hstack((TF_PH, np.conj(TF_PH[::-1][1:len(f)-1])))
+                    TF_ZP_H = transfunc[key]['TF_ZP-H']
                     fTF_ZP_H = np.hstack((TF_ZP_H, np.conj(TF_ZP_H[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZP_H*corrZH
+                    corrspec = ftZ - fTF_ZH*ftH - (ftP - ftH*fTF_PH)*fTF_ZP_H
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('ZP-H', corrtime)
 
 
         self.correct = correct
-
-
-
 
 
     def save(self, filename):
