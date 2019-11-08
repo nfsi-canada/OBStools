@@ -8,10 +8,10 @@ scripts = ['Scripts/' + i for i in listdir('Scripts/')]
 setup(
 	name =             'obstools',
 	version =          '0.0.1',
-	description =      'Python Module for managing Station Databases',
-	author =           'Andrew Schaeffer, Pascal Audet',
-	maintainer =       'Andrew Schaeffer, Pascal Audet',
-	maintainer_email = 'andrew.schaeffer@canada.ca, pascal.audet@uottawa.ca',
+	description =      'Python tools for ocean bottom seismic instruments',
+	author =           'Pascal Audet, Helen Janiszewski',
+	maintainer =       'Pascal Audet, Helen Janiszewski',
+	maintainer_email = 'pascal.audet@uottawa.ca, hajanisz@hawaii.edu',
     classifiers      = [
                          'Development Status :: 3 - Alpha',
                          'License :: OSI Approved :: MIT License',
