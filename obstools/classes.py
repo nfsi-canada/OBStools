@@ -693,7 +693,7 @@ class TFNoise(object):
                     lc1c2 = np.conj(self.c12)/self.c11
                     coh_12 = utils.coherence(self.c12, self.c11, self.c22)
                     gc2c2_c1 = self.c22*(1. - coh_12)
-                    gc2cZ_c1 = np.conj(self.c2Z) - lc1c2*np.conj(self.c1Z)
+                    gc2cZ_c1 = np.conj(self.c2Z) - np.conj(lc1c2*self.c1Z)
                     lc2cZ_c1 = gc2cZ_c1/gc2c2_c1
                     tf_Z2_1 = {'TF_21': lc1c2, 'TF_Z2-1': lc2cZ_c1}
                     transfunc.add('Z2-1', tf_Z2_1)
@@ -829,10 +829,6 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP', corrtime)
 
-                    # plt.figure()
-                    # plt.plot(corrtime, lw=0.5)
-                    # plt.show()
-
             if key == 'Z1':
                 if value and TF_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
@@ -840,10 +836,6 @@ class EventStream(object):
                     corrspec = ftZ - fTF_Z1*ft1
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('Z1', corrtime)
-
-                    # plt.figure()
-                    # plt.plot(corrtime, lw=0.5)
-                    # plt.show()
 
             if key == 'Z2-1':
                 if value and TF_list[key]:
@@ -859,45 +851,53 @@ class EventStream(object):
 
             if key == 'ZP-21':
                 if value and TF_list[key]:
-                    print('nothing yet')
+                    TF_Z1 = transfunc[key]['TF_Z1']
+                    fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
+                    TF_21 = transfunc[key]['TF_21']
+                    fTF_21 = np.hstack((TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
+                    TF_Z2_1 = transfunc[key]['TF_Z2-1']
+                    fTF_Z2_1 = np.hstack((TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
+                    TF_P1 = transfunc[key]['TF_P1']
+                    fTF_P1 = np.hstack((TF_P1, np.conj(TF_P1[::-1][1:len(f)-1])))
+                    TF_P2_1 = transfunc[key]['TF_P2-1']
+                    fTF_P2_1 = np.hstack((TF_P2_1, np.conj(TF_P2_1[::-1][1:len(f)-1])))
+                    TF_ZP_21 = transfunc[key]['TF_ZP-21']
+                    fTF_ZP_21 = np.hstack((TF_ZP_21, np.conj(TF_ZP_21[::-1][1:len(f)-1])))
+                    corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
+                            (ftP - ft1*fTF_P1 - (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('ZP-21', corrtime)
 
             if key == 'ZH':
                 if value and TF_list[key]:
-                    TF_ZP = transfunc[key]['TF_ZH']
 
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
-                    fTF_ZP = np.hstack((TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZP*ftH
+                    TF_ZH = transfunc[key]['TF_ZH']
+                    fTF_ZH = np.hstack((TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
+                    corrspec = ftZ - fTF_ZH*ftH
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZH', corrtime)
 
-                    # plt.figure()
-                    # plt.plot(corrtime, lw=0.5)
-                    # plt.show()
-
             if key == 'ZP-H':
                 if value and TF_list[key]:
-                    TF_ZH = transfunc[key]['TF_ZH']
 
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
+                    TF_ZH = transfunc['ZH']['TF_ZH']
                     fTF_ZH = np.hstack((TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
-                    corrZH = ftZ - fTF_ZH*ftH
-
-                    TF_ZP_H = transfunc[key]['TF_ZP_H']
-
+                    TF_PH = transfunc[key]['TF_PH']
+                    fTF_PH = np.hstack((TF_PH, np.conj(TF_PH[::-1][1:len(f)-1])))
+                    TF_ZP_H = transfunc[key]['TF_ZP-H']
                     fTF_ZP_H = np.hstack((TF_ZP_H, np.conj(TF_ZP_H[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZP_H*corrZH
+                    corrspec = ftZ - fTF_ZH*ftH - (ftP - ftH*fTF_PH)*fTF_ZP_H
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    correct.add('ZP-H', corrtime)
 
 
         self.correct = correct
-
-
-
 
 
     def save(self, filename):
