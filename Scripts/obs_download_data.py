@@ -131,8 +131,6 @@ def main():
         print("| Searching day-long files:                     |")
         print("|   Start: {0:19s}                  |".format(tstart.strftime("%Y-%m-%d")))
         print("|   End:   {0:19s}                  |".format(tend.strftime("%Y-%m-%d")))
-        print("| ...                                           |")
-
 
         # Split into 24-hour long segments
         dt = 3600.*24.
@@ -144,7 +142,11 @@ def main():
 
             # Time stamp
             tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
-     
+
+            print(" ")
+            print("****************************************************")
+            print("* Downloading day-long data for key "+stkey+" and day "+year+"."+jday)
+
             # Define file names (to check if files already exist)
             file1 = datapath + tstamp + '.' + sta.channel + '1.SAC'
             file2 = datapath + tstamp + '.' + sta.channel + '2.SAC'
@@ -154,8 +156,8 @@ def main():
             # If data file exists, continue
             if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2) and glob.glob(fileP): 
                 if not opts.ovr:
-                    print("| "+tstamp+"*SAC                                 |")
-                    print("| -> Files already exist, continuing            |")
+                    print("*   "+tstamp+"*SAC                                 |")
+                    print("*   -> Files already exist, continuing            |")
                     t1 += dt
                     t2 += dt
                     continue
@@ -164,21 +166,21 @@ def main():
 
             # Get waveforms from client
             try:
-                print("| "+tstamp+"*SAC                                 |")
-                print("| -> Downloading Seismic data... ")
+                print("*   "+tstamp+"*SAC                                 |")
+                print("*   -> Downloading Seismic data... ")
                 sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                         channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                print("     ...done")
+                print("       ...done")
             except:
                 print(" Error: Unable to download ?H? components - continuing")
                 t1 += dt
                 t2 += dt
                 continue
             try:
-                print("| -> Downloading Pressure data...")
+                print("*   -> Downloading Pressure data...")
                 stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                         channel='??H', starttime=t1, endtime=t2, attach_response=True)
-                print("     ...done")
+                print("       ...done")
             except:
                 print(" Error: Unable to download ??H component - continuing")
                 t1 += dt
@@ -207,9 +209,9 @@ def main():
                 continue
 
             # Remove responses
-            print("| -> Removing responses - Seismic data")
+            print("*   -> Removing responses - Seismic data")
             sth.remove_response(pre_filt=opts.pre_filt, output='DISP')
-            print("| -> Removing responses - Pressure data")
+            print("*   -> Removing responses - Pressure data")
             stp.remove_response(pre_filt=opts.pre_filt)
 
             # Detrend, filter - seismic data

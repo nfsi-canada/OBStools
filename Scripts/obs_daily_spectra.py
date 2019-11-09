@@ -83,7 +83,7 @@ def main():
         # Path where spectra will be saved
         specpath = 'SPECTRA/' + stkey + '/'
         if not os.path.isdir(specpath): 
-            print('Path to '+specpath+' doesn`t exist - creating it')
+            print("Path to "+specpath+" doesn`t exist - creating it")
             os.makedirs(specpath)
 
         # Get catalogue search start time
@@ -153,7 +153,7 @@ def main():
 
             if os.path.exists(filename):
                 if not opts.ovr:
-                    print("   -> file '+filename+' exists - continuing")
+                    print("   -> file "+filename+" exists - continuing")
                     continue
 
             # Initialize instance of DayNoise
