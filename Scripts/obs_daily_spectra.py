@@ -54,7 +54,6 @@ def main():
 
     # Run Input Parser
     (opts, indb) = options.get_dailyspec_options()
-    print(opts)
 
     # Load Database
     db = stdb.io.load_db(fname=indb)
@@ -102,6 +101,28 @@ def main():
         if tstart > sta.enddate or tend < sta.startdate:
             continue
 
+        # Temporary print locations
+        tlocs = sta.location
+        if len(tlocs) == 0: tlocs = ['']
+        for il in range(0, len(tlocs)):
+            if len(tlocs[il]) == 0: tlocs[il] = "--"
+        sta.location = tlocs
+
+        # Update Display
+        print(" ")
+        print(" ")
+        print("|===============================================|")
+        print("|===============================================|")
+        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|===============================================|")
+        print("|===============================================|")
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|-----------------------------------------------|")
+
         # Get all components
         trN1, trN2, trNZ, trNP = utils.get_data(datapath, tstart, tend)
 
@@ -124,13 +145,16 @@ def main():
             year = str(tr1.stats.starttime.year).zfill(4)
             jday = str(tr1.stats.starttime.julday).zfill(3)
 
-            print('Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
+            print(" ")
+            print("***************************************************************")
+            print("* Calculating noise spectra for key "+stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'
             filename = specpath + tstamp + 'spectra.pkl'
 
             if os.path.exists(filename):
-                print('file '+filename+' exists - continuing')
-                # continue
+                if not opts.ovr:
+                    print("   -> file '+filename+' exists - continuing")
+                    continue
 
             # Initialize instance of DayNoise
             daynoise = DayNoise(tr1, tr2, trZ, trP, window, overlap, key=stkey)
@@ -141,10 +165,10 @@ def main():
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
             if nwin < minwin:
-                print('Too few good data segments to calculate day spectra')
+                print("* Too few good data segments to calculate average day spectra")
                 # continue
             else:
-                print('{0} good windows. Proceeding...'.format(nwin))
+                print("* {0} good windows. Proceeding...".format(nwin))
 
             # Average spectra for good windows
             daynoise.average_daily_spectra(fig_average=opts.fig_average, fig_coh_ph=opts.fig_coh_ph)

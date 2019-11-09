@@ -59,7 +59,6 @@ def main():
 
     # Run Input Parser
     (opts, indb) = options.get_event_options()
-    print(opts)
 
     # Load Database
     db = stdb.io.load_db(fname=indb)
