@@ -165,10 +165,10 @@ def main():
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
             if nwin < minwin:
-                print("* Too few good data segments to calculate average day spectra")
+                print("*   Too few good data segments to calculate average day spectra")
                 # continue
             else:
-                print("* {0} good windows. Proceeding...".format(nwin))
+                print("*   {0} good windows. Proceeding...".format(nwin))
 
             # Average spectra for good windows
             daynoise.average_daily_spectra(fig_average=opts.fig_average, fig_coh_ph=opts.fig_coh_ph)
