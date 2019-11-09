@@ -40,107 +40,6 @@ Usage
     $ obs_download_data.py -h
     Usage: obs_download_data.py [options] <station database>
 
-    Script used to download and pre-process four-component (H1, H2, Z and P), 
-    day-long seismograms to use in noise corrections of vertical component data. 
-    This version requests data on the fly for a given date
-    range. Data are requested from the internet using the client services framework.
-    The stations are processed one by one and the data are stored to disk. 
-
-    Options:
-      -h, --help            show this help message and exit
-      --keys=STKEYS         Specify a comma separated list of station keys for
-                            which to perform the analysis. These must be contained
-                            within the station database. Partial keys will be used
-                            to match against those in the dictionary. For
-                            instance, providing IU will match with all stations in
-                            the IU network [Default processes all stations in the
-                            database]
-      -v, -V, --verbose     Specify to increase verbosity.
-      -O, --overwrite       Force the overwriting of pre-existing data.
-                            Default behaviour prompts for those that already
-                            exist. Selecting overwrite and skip (ie, both flags)
-                            negate each other, and both are set to false (every
-                            repeat is prompted). [Default False]
-      -K, --skip-existing   Skip any event for which existing data
-                            exist on disk. Selecting skip and overwrite (ie, both flags)
-                            negate each other, and both are set to False (every
-                            repeat is prompted). [Default False]
-
-      Server Settings:
-        Settings associated with which datacenter to log into.
-
-        -S SERVER, --Server=SERVER
-                            Specify the server to connect to. Options include:
-                            BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
-                            NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
-                            USP. [Default IRIS]
-        -U USERAUTH, --User-Auth=USERAUTH
-                            Enter your IRIS Authentification Username and Password
-                            (--User-Auth='username:authpassword') to access and
-                            download restricted data. [Default no user and
-                            password]
-
-      Local Data Settings:
-        Settings associated with defining and using a local data base of pre-
-        downloaded day-long SAC files.
-
-        --local-data=LOCALDATA
-                            Specify a comma separated list of paths containing
-                            day-long sac files of data already downloaded. If data
-                            exists for a seismogram is already present on disk, it
-                            is selected preferentially over downloading the data
-                            using the Client interface
-        --no-data-zero      Specify to force missing data to be set as zero,
-                            rather than default behaviour which sets to nan.
-
-      Event Settings:
-        Settings associated with refining the events to include in matching
-        station pairs
-
-        --start-time=STARTT
-                            Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station start times. [Default more recent
-                            start date for each station pair]
-        --end-time=ENDT     Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default older end date
-                            for each the pair of stations]
-        -R, --reverse-order
-                            Reverse order of events. Default behaviour starts at
-                            oldest event and works towards most recent. Specify
-                            reverse order and instead the program will start with
-                            the most recent events and work towards older
-        --min-mag=MINMAG    Specify the minimum magnitude of event for which to
-                            search. [Default 6.0]
-        --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
-                            search. [Default None, i.e. no limit]
-
-      Geometry Settings:
-        Settings associatd with the event-station geometries
-
-        --min-dist=MINDIST  Specify the minimum great circle distance (degrees)
-                            between the station and event. [Default 85]
-        --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
-                            between the station and event. [Default 120]
-
-      Parameter Settings:
-        Miscellaneous default values and settings
-
-        --Vp=VP             Specify default P velocity value. [Default 6.0 km/s]
-        --SNR=MSNR          Specify the SNR threshold used to determine whether
-                            events are processedc. [Default 7.5]
-        --window=DTS        Specify time window length before and after the SKS
-                            arrival. The total window length is 2*dst. [Default
-                            120 s]
-        --max-delay=MAXDT   Specify the maximum delay time. [Default 4 s]
-        --time-increment=DDT
-                            Specify the time increment. [Default 0.1 s]
-        --angle-increment=DPHI
-                            Specify the angle increment. [Default 1 d]
-        --transverse-SNR=SNRTLIM
-                            Specify the minimum SNR Threshold for the Transverse
-                            component to be considered Non-Null. [Default 1.]
 """
 
 # Import modules and functions
@@ -150,7 +49,6 @@ import pickle
 import glob
 import stdb
 from obspy import UTCDateTime
-from obspy.core import AttribDict
 from obspy.clients.fdsn import Client
 from obstools import utils, options
 
@@ -239,7 +137,6 @@ def main():
 
         # Split into 24-hour long segments
         dt = 3600.*24.
-        new_sampling_rate = opts.new_sampling_rate
 
         t1 = tstart
         t2 = tstart + dt
@@ -319,14 +216,14 @@ def main():
             # Detrend, filter - seismic data
             sth.detrend('demean')
             sth.detrend('linear')
-            sth.filter('lowpass', freq=0.5*new_sampling_rate, corners=2, zerophase=True)
-            sth.resample(new_sampling_rate)
+            sth.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
+            sth.resample(opts.new_sampling_rate)
 
             # Detrend, filter - pressure data
             stp.detrend('demean')
             stp.detrend('linear')
-            stp.filter('lowpass', freq=0.5*new_sampling_rate, corners=2, zerophase=True)
-            stp.resample(new_sampling_rate)
+            stp.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
+            stp.resample(opts.new_sampling_rate)
 
             # Extract traces
             trZ = sth.select(component='Z')[0]
