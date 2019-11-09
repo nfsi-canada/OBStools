@@ -30,7 +30,6 @@ that accompany this package.
 from obspy import UTCDateTime
 from numpy import nan,isnan
 
-
 def get_daylong_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
@@ -169,11 +168,12 @@ def get_daylong_options():
 
     return (opts, indb)
 
-def get_options_prep():
+
+def get_event_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for preparation of SKS data for offline processing
+    This function is used for data processing on-the-fly (requires web connection)
 
     """
 
@@ -182,103 +182,96 @@ def get_options_prep():
     from obspy import UTCDateTime
     from numpy import nan
 
-    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script to " \
-        "download and prepare datasets for SKS splitting processing. This script downloads and prepares " \
-        "event and station data, so that splitting can then be calculated offline.")
+    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
+        "to download and pre-process four-component (H1, H2, Z and P), " \
+        "two-hour-long seismograms for individual events on which to apply the de-noising algorithms. " \
+        "This version requests data on the fly for a given date " \
+        "range. Data are requested from the internet using the client services framework. " \
+        "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
     parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
-        help="Specify a comma separated list of station keys for which to perform analysis. These must be " \
+        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
         "contained within the station database. Partial keys will be used to match against those in the " \
-        "dictionary. For instance, providing IU will match with all stations in the IU network [Default " \
-        "processes all stations in the database]")
-    parser.add_option("-v", "-V","--verbose", action="store_true", dest="verb", default=False, \
+        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "all stations in the database]")
+    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
         help="Specify to increase verbosity.")
-    parser.add_option("--local-data", action="store", type="string", dest="localdata", default=None, \
-        help="Specify a comma separated list of paths containing day-long sac files of data already " \
-        "downloaded. If data exists for a seismogram is already present on disk, it is selected " \
-        "preferentially over downloading the data using the Client interface")
-    parser.add_option("--no-data-zero", action="store_true", dest="ndval", default=False, \
-        help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
-    parser.add_option("--no-local-net", action="store_false", dest="useNet", default=True, \
-        help="Specify to prevent using the Network code in the search for local data (sometimes for CN " \
-        "stations the dictionary name for a station may disagree with that in the filename. [Default Network used]")
-    parser.add_option("-D", "--data-directory", action="store", type="string", dest="datadir", default="DATA", \
-        help="Specify the directory prefix in which the prepared data is stored. [Default 'DATA']. The start " \
-        "and end time and date as well as min and max magnitudes are included in the final folder name.")
+    parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
+        help="Force the overwriting of pre-existing data. [Default False]")
 
     # Server Settings
     ServerGroup = OptionGroup(parser, title="Server Settings", description="Settings associated with which " \
         "datacenter to log into.")
     ServerGroup.add_option("-S", "--Server", action="store", type=str, dest="Server", default="IRIS", \
-        help="Specify the server to connect to. Options include: BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, " \
-        "KOERI, LMU, NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. [Default IRIS]")
+        help="Specify the server to connect to. Options include: BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, " \
+        "LMU, NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. [Default IRIS]")
     ServerGroup.add_option("-U", "--User-Auth", action="store", type=str, dest="UserAuth", default="", \
-        help="Enter your IRIS Authentification Username and Password (--User-Auth='username:authpassword') " \
-        "to access and download restricted data. [Default no user and password]")
+        help="Enter your IRIS Authentification Username and Password (--User-Auth='username:authpassword') to " \
+        "access and download restricted data. [Default no user and password]")
+
+    # # Database Settings
+    # DataGroup = OptionGroup(parser, title="Local Data Settings", description="Settings associated with defining " \
+    #     "and using a local data base of pre-downloaded day-long SAC files.")
+    # DataGroup.add_option("--local-data", action="store", type="string", dest="localdata", default=None, \
+    #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
+    #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
+    #     "the data using the Client interface")
+    # DataGroup.add_option("--no-data-zero", action="store_true", dest="ndval", default=False, \
+    #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
 
     # Constants Settings
     ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
-    ConstGroup.add_option("--Vp", action="store", type="float", dest="vp", default=6., \
-        help="Specify default P velocity value. [Default 6.0 km/s]")
-    ConstGroup.add_option("--SNR", action="store", type="float", dest="msnr", default=7.5, \
-        help="Specify the SNR threshold used to determine whether events are processedc. [Default 7.5]")
-    ConstGroup.add_option("--window", action="store", type="float", dest="dts", default=120., \
-        help="Specify time window length before and after the SKS arrival. The total window length is " \
-        "2*dst. [Default 120 s]")
-    ConstGroup.add_option("--max-delay", action="store", type="float", dest="maxdt", default=4., \
-        help="Specify the maximum delay time. [Default 4 s]")
-    ConstGroup.add_option("--time-increment", action="store", type="float", dest="ddt", default=0.1, \
-        help="Specify the time increment. [Default 0.1 s]")
-    ConstGroup.add_option("--angle-increment", action="store", type="float", dest="dphi", default=1., \
-        help="Specify the angle increment. [Default 1 d]")
-    ConstGroup.add_option("--transverse-SNR", action="store", type="float", dest="snrTlim", default=1., \
-        help="Specify the minimum SNR Threshold for the Transverse component to be considered Non-Null. [Default 1.]")
+    ConstGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
+        help="Specify new sampling rate. [Default 5. Hz]")
+    ConstGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
+        help="Specify comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
+        "[Default [0.001, 0.005, 45., 50.]]")
 
     # Event Selection Criteria
-    EventGroup = OptionGroup(parser, title="Event Settings", description="Settings associated with " \
-        "refining the events to include in matching station pairs")
+    EventGroup = OptionGroup(parser, title="Event Settings", description="Settings associated with refining " \
+        "the events to include in matching station pairs")
     EventGroup.add_option("--start-time", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station start times. [Default more recent start date for each station pair]")
-    EventGroup.add_option("--reverse-order", "-R", action="store_true", dest="reverse", default=False, \
-        help="Reverse order of events. Default behaviour starts at oldest event and works towards most " \
-        "recent. Specify reverse order and instead the program will start with the most recent events and " \
-        "work towards older")
+        "This will override any station start times. [Default start date of station]")
     EventGroup.add_option("--end-time", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default older end date for each the pair of stations]")
+        "This will override any station end times [Default end date of station]")
+    EventGroup.add_option("--reverse-order", "-R", action="store_true", dest="reverse", default=False, \
+        help="Reverse order of events. Default behaviour starts at oldest event and works towards most recent. " \
+        "Specify reverse order and instead the program will start with the most recent events and work towards older")
     EventGroup.add_option("--min-mag", action="store", type="float", dest="minmag", default=6.0, \
         help="Specify the minimum magnitude of event for which to search. [Default 6.0]")
     EventGroup.add_option("--max-mag", action="store", type="float", dest="maxmag", default=None, \
-        help="Specify the maximum magnitude of event for which to search. [Default None, ie no limit]")
+        help="Specify the maximum magnitude of event for which to search. [Default None, i.e. no limit]")
 
     # Geometry Settings
-    GeomGroup=OptionGroup(parser, title="Geometry Settings", description="Settings associatd with the " \
+    GeomGroup = OptionGroup(parser, title="Geometry Settings", description="Settings associatd with the " \
         "event-station geometries")
-    GeomGroup.add_option("--min-dist", action="store", type="float", dest="mindist", default=85., \
-        help="Specify the minimum great circle distance (degrees) between the station and event. [Default 85]")
+    GeomGroup.add_option("--min-dist", action="store", type="float", dest="mindist", default=30., \
+        help="Specify the minimum great circle distance (degrees) between the station and event. [Default 30]")
     GeomGroup.add_option("--max-dist", action="store", type="float", dest="maxdist", default=120., \
         help="Specify the maximum great circle distance (degrees) between the station and event. [Default 120]")
 
     parser.add_option_group(ServerGroup)
+    # parser.add_option_group(DataGroup)
     parser.add_option_group(EventGroup)
     parser.add_option_group(GeomGroup)
     parser.add_option_group(ConstGroup)
-    (opts,args) = parser.parse_args()
+    (opts, args) = parser.parse_args()
 
     # Check inputs
     if len(args) != 1: parser.error("Need station database file")
-    indb=args[0]
+    indb = args[0]
     if not exist(indb):
         parser.error("Input file " + indb + " does not exist")
 
     # create station key list
-    if len(opts.stkeys) > 0:
+    if len(opts.stkeys)>0:
         opts.stkeys = opts.stkeys.split(',')
 
     # construct start time
-    if len(opts.startT) > 0:
+    if len(opts.startT)>0:
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
@@ -287,7 +280,7 @@ def get_options_prep():
         opts.startT = None
 
     # construct end time
-    if len(opts.endT) > 0:
+    if len(opts.endT)>0:
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
@@ -305,25 +298,37 @@ def get_options_prep():
     else:
         opts.UserAuth = []
 
-    # Parse Local Data directories
-    if opts.localdata is not None:
-        opts.localdata = opts.localdata.split(',')
-    else:
-        opts.localdata = []
+    # # Parse Local Data directories
+    # if opts.localdata is not None:
+    #     opts.localdata = opts.localdata.split(',')
+    # else:
+    #     opts.localdata = []
 
-    # Check NoData Value
-    if opts.ndval:
-        opts.ndval = 0.0
+    # # Check NoData Value
+    # if opts.ndval:
+    #     opts.ndval = 0.0
+    # else:
+    #     opts.ndval = nan
+
+    if not type(opts.new_sampling_rate) is float:
+        raise(Exception("Error: type of --sampling-rate is not a float"))
+
+    if opts.pre_filt is None:
+        opts.pre_filt = [0.001, 0.005, 45., 50.]
     else:
-        opts.ndval = nan
+        opts.pre_filt = [float(opts.pre_filt.split(','))]
+        opts.pre_filt = sorted(opts.pre_filt)
+        if (len(opts.pre_filt)) != 4:
+            raise(Exception("Error: --pre-filt should be a list containing 4 floats"))
 
     return (opts, indb)
 
-def get_options_offline():
+
+def get_dailyspec_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for processing SKS data offline 
+    This function is used for data processing on-the-fly (requires web connection)
 
     """
 
@@ -332,78 +337,67 @@ def get_options_offline():
     from obspy import UTCDateTime
     from numpy import nan
 
-    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script to process " \
-        "and calculate the spliting parmaters for a dataset that has already been downloaded by sks_prep.py. ")
+    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
+        "to extract two-hour-long windows from the day-long seismograms, calculate the power-spectral properties, " \
+        "flag windows for outlier PSDs and calculate daily averages of the corresponding Fourier transforms" \
+        "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
     parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
-        help="Specify a comma separated list of station keys for which to perform analysis. These must be " \
+        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
         "contained within the station database. Partial keys will be used to match against those in the " \
-        "dictionary. For instance, providing IU will match with all stations in the IU network [Default " \
-        "processes all stations in the database]")
+        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "all stations in the database]")
+    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
+        help="Specify to increase verbosity.")
+    parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
+        help="Force the overwriting of pre-existing data. [Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
+        "for day-long seismograms")
+    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
+        "This will override any station start times. [Default start date of station]")
+    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
+        "This will override any station end times [Default end date of station]")
 
     # Constants Settings
     ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
-    ConstGroup.add_option("--Vp", action="store", type="float", dest="vp", default=6., \
-        help="Specify default P velocity value. [Default 6.0 km/s]")
-    ConstGroup.add_option("--SNR", action="store", type="float", dest="msnr", default=7.5, \
-        help="Specify the SNR threshold used to determine whether events are processedc. [Default 7.5]")
-    ConstGroup.add_option("--window", action="store", type="float", dest="dts", default=120., \
-        help="Specify time window length before and after the SKS arrival. The total window length is 2*dst. " \
-        "[Default 120 s]")
-    ConstGroup.add_option("--max-delay", action="store", type="float", dest="maxdt", default=4., \
-        help="Specify the maximum delay time. [Default 4 s]")
-    ConstGroup.add_option("--time-increment", action="store", type="float", dest="ddt", default=0.1, \
-        help="Specify the time increment. [Default 0.1 s]")
-    ConstGroup.add_option("--angle-increment", action="store", type="float", dest="dphi", default=1., \
-        help="Specify the angle increment. [Default 1 d]")
-    ConstGroup.add_option("--transverse-SNR", action="store", type="float", dest="snrTlim", default=1., \
-        help="Specify the minimum SNR Threshold for the Transverse component to be considered Non-Null. [Default 1.]")
+    ConstGroup.add_option("--overlap", action="store", type="float", dest="overlap", default=0.3, \
+        help="Specify fraction of overlap between windows. [Default 0.3 (or 30%)]")
+    ConstGroup.add_option("--minwin", action="store", type="int", dest="minwin", default=10, \
+        help="Specify minimum number of 'good' windows in any given day to continue with analysis [Default 10]")
 
+    # Constants Settings
+    FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
+    FigureGroup.add_option("--figQC", action="store", dest="fig_QC", default=False, \
+        help="Whether or not to plot Quality-Control figure. [Default False]")
+    FigureGroup.add_option("--debug", action="store", dest="debug", default=False, \
+        help="Whether or not to plot intermediate steps for debugging [Default False]")
+    FigureGroup.add_option("--figAverage", action="store", dest="fig_average", default=False, \
+        help="Whether or not to plot daily average figure. [Default False]")
+    FigureGroup.add_option("--figCoh", action="store", dest="fig_coh_ph", default=False, \
+        help="Whether or not to plot Coherence and Phase figure [Default False]")
 
-    # Event Selection Criteria
-    EventGroup = OptionGroup(parser, title="Event Settings", description="Settings associated with " \
-        "refining the events to include in matching station pairs")
-    EventGroup.add_option("--start-time", action="store", type="string", dest="startT", default="", \
-        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station start times. [Default more recent start date for each station pair]")
-    EventGroup.add_option("--end-time", action="store", type="string", dest="endT", default="", \
-        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default older end date for each the pair of stations]")
-    EventGroup.add_option("--reverse-order", "-R", action="store_true", dest="reverse", default=False, \
-        help="Reverse order of events. Default behaviour starts at oldest event and works towards most " \
-        "recent. Specify reverse order and instead the program will start with the most recent events and " \
-        "work towards older")
-    EventGroup.add_option("--min-mag", action="store", type="float", dest="minmag", default=6.0, \
-        help="Specify the minimum magnitude of event for which to search. [Default 6.0]")
-    EventGroup.add_option("--max-mag", action="store", type="float", dest="maxmag", default=None, \
-        help="Specify the maximum magnitude of event for which to search. [Default None, ie no limit]")
-
-    # Geometry Settings
-    GeomGroup = OptionGroup(parser, title="Geometry Settings", description="Settings associatd with " \
-        "the event-station geometries")
-    GeomGroup.add_option("--min-dist", action="store", type="float", dest="mindist", default=85., \
-        help="Specify the minimum great circle distance (degrees) between the station and event. [Default 85]")
-    GeomGroup.add_option("--max-dist", action="store", type="float", dest="maxdist", default=120., \
-        help="Specify the maximum great circle distance (degrees) between the station and event. [Default 120]")
-
-    parser.add_option_group(EventGroup)
-    parser.add_option_group(GeomGroup)
     parser.add_option_group(ConstGroup)
+    parser.add_option_group(FigureGroup)
+    parser.add_option_group(DaysGroup)
     (opts, args) = parser.parse_args()
 
     # Check inputs
-    if len(args) != 1: parser.error("Need Data Folder")
-    indr = args[0]
-    if not exist(indr):
-        parser.error("Input Data Folder " + indr + " does not exist")
+    if len(args) != 1: parser.error("Need station database file")
+    indb = args[0]
+    if not exist(indb):
+        parser.error("Input file " + indb + " does not exist")
 
     # create station key list
-    if len(opts.stkeys) > 0:
-        opts.stkeys=opts.stkeys.split(',')
+    if len(opts.stkeys)>0:
+        opts.stkeys = opts.stkeys.split(',')
 
     # construct start time
-    if len(opts.startT) > 0:
+    if len(opts.startT)>0:
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
@@ -412,7 +406,7 @@ def get_options_offline():
         opts.startT = None
 
     # construct end time
-    if len(opts.endT) > 0:
+    if len(opts.endT)>0:
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
@@ -420,7 +414,8 @@ def get_options_offline():
     else:
         opts.endT = None
 
-    return (opts, indr)
+
+    return (opts, indb)
 
 def parse_localdata_for_comp(comp='Z', stdata=list, sta=None, start=UTCDateTime, end=UTCDateTime, ndval=nan):
     """
