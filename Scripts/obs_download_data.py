@@ -48,7 +48,6 @@ import os.path
 import pickle
 import glob
 import stdb
-from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 from obstools import utils, options
 

@@ -233,10 +233,10 @@ def get_event_options():
         "the events to include in matching station pairs")
     EventGroup.add_option("--start-time", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station start times. [Default more recent start date for each station pair]")
+        "This will override any station start times. [Default start date of station]")
     EventGroup.add_option("--end-time", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default older end date for each the pair of stations]")
+        "This will override any station end times [Default end date of station]")
     EventGroup.add_option("--reverse-order", "-R", action="store_true", dest="reverse", default=False, \
         help="Reverse order of events. Default behaviour starts at oldest event and works towards most recent. " \
         "Specify reverse order and instead the program will start with the most recent events and work towards older")
@@ -323,6 +323,99 @@ def get_event_options():
 
     return (opts, indb)
 
+
+def get_dailyspec_options():
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    This function is used for data processing on-the-fly (requires web connection)
+
+    """
+
+    from optparse import OptionParser, OptionGroup
+    from os.path import exists as exist
+    from obspy import UTCDateTime
+    from numpy import nan
+
+    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
+        "to extract two-hour-long windows from the day-long seismograms, calculate the power-spectral properties, " \
+        "flag windows for outlier PSDs and calculate daily averages of the corresponding Fourier transforms" \
+        "The stations are processed one by one and the data are stored to disk.")
+
+    # General Settings
+    parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
+        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
+        "contained within the station database. Partial keys will be used to match against those in the " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "all stations in the database]")
+    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
+        help="Specify to increase verbosity.")
+    parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
+        help="Force the overwriting of pre-existing data. [Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
+        "for day-long seismograms")
+    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
+        "This will override any station start times. [Default start date of station]")
+    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
+        "This will override any station end times [Default end date of station]")
+
+    # Constants Settings
+    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
+    ConstGroup.add_option("--overlap", action="store", type="float", dest="overlap", default=0.3, \
+        help="Specify fraction of overlap between windows. [Default 0.3 (or 30%)]")
+    ConstGroup.add_option("--minwin", action="store", type="int", dest="minwin", default=10, \
+        help="Specify minimum number of 'good' windows in any given day to continue with analysis [Default 10]")
+
+    # Constants Settings
+    FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
+    FigureGroup.add_option("--figQC", action="store", dest="fig_QC", default=False, \
+        help="Whether or not to plot Quality-Control figure. [Default False]")
+    FigureGroup.add_option("--debug", action="store", dest="debug", default=False, \
+        help="Whether or not to plot intermediate steps for debugging [Default False]")
+    FigureGroup.add_option("--figAverage", action="store", dest="fig_average", default=False, \
+        help="Whether or not to plot daily average figure. [Default False]")
+    FigureGroup.add_option("--figCoh", action="store", dest="fig_coh_ph", default=False, \
+        help="Whether or not to plot Coherence and Phase figure [Default False]")
+
+    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FigureGroup)
+    parser.add_option_group(DaysGroup)
+    (opts, args) = parser.parse_args()
+
+    # Check inputs
+    if len(args) != 1: parser.error("Need station database file")
+    indb = args[0]
+    if not exist(indb):
+        parser.error("Input file " + indb + " does not exist")
+
+    # create station key list
+    if len(opts.stkeys)>0:
+        opts.stkeys = opts.stkeys.split(',')
+
+    # construct start time
+    if len(opts.startT)>0:
+        try:
+            opts.startT = UTCDateTime(opts.startT)
+        except:
+            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+    else:
+        opts.startT = None
+
+    # construct end time
+    if len(opts.endT)>0:
+        try:
+            opts.endT = UTCDateTime(opts.endT)
+        except:
+            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+    else:
+        opts.endT = None
+
+
+    return (opts, indb)
 
 def parse_localdata_for_comp(comp='Z', stdata=list, sta=None, start=UTCDateTime, end=UTCDateTime, ndval=nan):
     """

@@ -48,9 +48,7 @@ import os.path
 import pickle
 import glob
 import stdb
-from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
-from obspy.taup import TauPyModel
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
 from obstools import utils, options
@@ -78,9 +76,6 @@ def main():
     else:
         stkeys = db.keys()
         sorted(stkeys)
-
-    # Initialize Taup Model
-    tpmodel = TauPyModel(model='iasp91')
 
     # Loop over station keys
     for stkey in list(stkeys):
@@ -197,23 +192,7 @@ def main():
                 print("*     {0:5s} -> Ev: {1:7.2f} km; {2:7.2f} deg; {3:6.2f}; {4:6.2f}".format(\
                     sta.station, epi_dist, gac, baz, az))
 
-                # Get Travel times (Careful: here dep is in meters)
-                tt = tpmodel.get_travel_times(distance_in_degree=gac, \
-                    source_depth_in_km=dep/1000.)
-
-                # Loop over all times in tt
-                for t in tt:
-
-                    # Extract SKS arrival
-                    if t.name == 'P':
-
-                        # Add SKS phase to Split object
-                        tarrival = t.time
-
-                        # Break out of loop 
-                        break
-
-                t1 = time # + tarrival - 800.
+                t1 = time 
                 t2 = t1 + window
 
                 # Time stamp
@@ -225,16 +204,17 @@ def main():
 
                 # If data file exists, continue
                 if glob.glob(filename): 
-                    print("| "+filename+"                              |")
-                    print("| -> Files already exist, continuing            |")
+                    print("*")
+                    print("*   "+filename)
+                    print("*   -> File already exists, continuing")
                     continue
 
                 channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
 
                 # Get waveforms from client
                 try:
-                    print("| "+tstamp+"                                     |")
-                    print("| -> Downloading Seismic data... ")
+                    print("*   "+tstamp+"                                     |")
+                    print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                             channel=channels, starttime=t1, endtime=t2, attach_response=True)
                     print("     ...done")
@@ -242,7 +222,7 @@ def main():
                     print(" Error: Unable to download ?H? components - continuing")
                     continue
                 try:
-                    print("| -> Downloading Pressure data...")
+                    print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                             channel='??H', starttime=t1, endtime=t2, attach_response=True)
                     print("     ...done")
@@ -268,9 +248,9 @@ def main():
                     continue
 
                 # Remove responses
-                print("| -> Removing responses - Seismic data")
+                print("*   -> Removing responses - Seismic data")
                 sth.remove_response(pre_filt=opts.pre_filt, output='DISP')
-                print("| -> Removing responses - Pressure data")
+                print("*   -> Removing responses - Pressure data")
                 stp.remove_response(pre_filt=opts.pre_filt)
 
                 # Detrend, filter - seismic data
