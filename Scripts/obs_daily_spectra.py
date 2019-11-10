@@ -29,7 +29,7 @@ Program obs_daily_spectra.py
 Extracts two-hour-long windows from the day-long seismograms, calculates 
 power-spectral densities and flags windows for outlier from the PSD properties. 
 Station selection is specified by a network and 
-station code. The data base is provided in stations_db.pkl as a 
+station code. The data base is provided as a 
 `StDb` dictionary.
 
 Usage
@@ -160,7 +160,8 @@ def main():
             daynoise = DayNoise(tr1, tr2, trZ, trP, window, overlap, key=stkey)
 
             # Quality control to identify outliers
-            daynoise.QC_daily_spectra(fig_QC=opts.fig_QC, debug=opts.debug)
+            daynoise.QC_daily_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha, smooth=opts.smooth, 
+                fig_QC=opts.fig_QC, debug=opts.debug)
 
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
@@ -171,7 +172,8 @@ def main():
                 print("*   {0} good windows. Proceeding...".format(nwin))
 
             # Average spectra for good windows
-            daynoise.average_daily_spectra(fig_average=opts.fig_average, fig_coh_ph=opts.fig_coh_ph)
+            daynoise.average_daily_spectra(calc_rotation=opts.calc_rotation, fig_average=opts.fig_average, 
+                fig_coh_ph=opts.fig_coh_ph)
 
             # Save to file
             daynoise.save(filename)

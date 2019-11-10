@@ -225,8 +225,8 @@ def get_event_options():
     ConstGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
         help="Specify new sampling rate. [Default 5. Hz]")
     ConstGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
-        help="Specify comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
-        "[Default [0.001, 0.005, 45., 50.]]")
+        help="Specify four comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
+        "[Default 0.001, 0.005, 45., 50.]")
 
     # Event Selection Criteria
     EventGroup = OptionGroup(parser, title="Event Settings", description="Settings associated with refining " \
@@ -319,7 +319,7 @@ def get_event_options():
         opts.pre_filt = [float(opts.pre_filt.split(','))]
         opts.pre_filt = sorted(opts.pre_filt)
         if (len(opts.pre_filt)) != 4:
-            raise(Exception("Error: --pre-filt should be a list containing 4 floats"))
+            raise(Exception("Error: --pre-filt should contain 4 comma-separated floats"))
 
     return (opts, indb)
 
@@ -339,7 +339,7 @@ def get_dailyspec_options():
 
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
         "to extract two-hour-long windows from the day-long seismograms, calculate the power-spectral properties, " \
-        "flag windows for outlier PSDs and calculate daily averages of the corresponding Fourier transforms" \
+        "flag windows for outlier PSDs and calculate daily averages of the corresponding Fourier transforms. " \
         "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
@@ -369,16 +369,29 @@ def get_dailyspec_options():
         help="Specify fraction of overlap between windows. [Default 0.3 (or 30%)]")
     ConstGroup.add_option("--minwin", action="store", type="int", dest="minwin", default=10, \
         help="Specify minimum number of 'good' windows in any given day to continue with analysis [Default 10]")
+    ConstGroup.add_option("--freq-band", action="store", type="string", dest="pd", default=None, \
+        help="Specify comma-separated frequency limits (float, in Hz) over which to calculate spectral features " \
+        "used in flagging the days/windows [Default 0.004, 2.0]")
+    ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=1.5, \
+        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad [Default 1.5]")
+    ConstGroup.add_option("--alpha", action="store", type="float", dest="alpha", default=0.05, \
+        help="Confidence interval for f-test, for iterative flagging of windows [Default 0.05]")
+    ConstGroup.add_option("--smooth", action="store_true", dest="smooth", default=True, \
+        help="Whether or not smoothed (True) or raw (False) spectra are used in calculating spectral " \
+        " features for flagging [Default True]")
+    ConstGroup.add_option("--calc_rotation", action="store_true", dest="calc_rotation", default=True, \
+        help="Whether or not to rotate horizontal components based on tilt direction measured from " \
+        "the maximum coherence between rotated horizontals and vertical [Default True]")
 
     # Constants Settings
     FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
-    FigureGroup.add_option("--figQC", action="store", dest="fig_QC", default=False, \
+    FigureGroup.add_option("--figQC", action="store_true", dest="fig_QC", default=False, \
         help="Whether or not to plot Quality-Control figure. [Default False]")
-    FigureGroup.add_option("--debug", action="store", dest="debug", default=False, \
+    FigureGroup.add_option("--debug", action="store_true", dest="debug", default=False, \
         help="Whether or not to plot intermediate steps for debugging [Default False]")
-    FigureGroup.add_option("--figAverage", action="store", dest="fig_average", default=False, \
+    FigureGroup.add_option("--figAverage", action="store_true", dest="fig_average", default=False, \
         help="Whether or not to plot daily average figure. [Default False]")
-    FigureGroup.add_option("--figCoh", action="store", dest="fig_coh_ph", default=False, \
+    FigureGroup.add_option("--figCoh", action="store_true", dest="fig_coh_ph", default=False, \
         help="Whether or not to plot Coherence and Phase figure [Default False]")
 
     parser.add_option_group(ConstGroup)
@@ -414,8 +427,124 @@ def get_dailyspec_options():
     else:
         opts.endT = None
 
+    if opts.pd is None:
+        opts.pd = [0.004, 2.0]
+    else:
+        opts.pd = [float(opts.pd.split(','))]
+        opts.pd = sorted(opts.pd)
+        if (len(opts.pd)) != 2:
+            raise(Exception("Error: --freq-band should contain 2 comma-separated floats"))
+
 
     return (opts, indb)
+
+def get_cleanspec_options():
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    This function is used for data processing on-the-fly (requires web connection)
+
+    """
+
+    from optparse import OptionParser, OptionGroup
+    from os.path import exists as exist
+    from obspy import UTCDateTime
+    from numpy import nan
+
+    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
+        "to extract daily spectra calculated from `obs_daily_spectra.py` and " \
+        "flag days for outlier PSDs and calculate spectral averages of the corresponding Fourier transforms " \
+        "over the entire time period specified. The stations are processed one by one and the data are stored to disk.")
+
+    # General Settings
+    parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
+        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
+        "contained within the station database. Partial keys will be used to match against those in the " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "all stations in the database]")
+    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
+        help="Specify to increase verbosity.")
+    parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
+        help="Force the overwriting of pre-existing data. [Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
+        "for day-long seismograms")
+    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
+        "This will override any station start times. [Default start date of station]")
+    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
+        "This will override any station end times [Default end date of station]")
+
+    # Constants Settings
+    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
+    ConstGroup.add_option("--freq-band", action="store", type="string", dest="pd", default=None, \
+        help="Specify comma-separated frequency limits (float, in Hz) over which to calculate spectral features " \
+        "used in flagging the days/windows [Default 0.004, 2.0]")
+    ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=1.5, \
+        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad [Default 1.5]")
+    ConstGroup.add_option("--alpha", action="store", type="float", dest="alpha", default=0.05, \
+        help="Confidence interval for f-test, for iterative flagging of windows [Default 0.05]")
+
+    # Constants Settings
+    FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
+    FigureGroup.add_option("--figQC", action="store_true", dest="fig_QC", default=False, \
+        help="Whether or not to plot Quality-Control figure. [Default False]")
+    FigureGroup.add_option("--debug", action="store_true", dest="debug", default=False, \
+        help="Whether or not to plot intermediate steps for debugging [Default False]")
+    FigureGroup.add_option("--figAverage", action="store_true", dest="fig_average", default=False, \
+        help="Whether or not to plot daily average figure. [Default False]")
+    FigureGroup.add_option("--figCoh", action="store_true", dest="fig_coh_ph", default=False, \
+        help="Whether or not to plot Coherence and Phase figure [Default False]")
+    FigureGroup.add_option("--figCross", action="store_true", dest="fig_av_cross", default=False, \
+        help="Whether or not to plot cross-spectra figure [Default False - unused if called " \
+        "from obs_daily_spectra.py]")
+
+    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FigureGroup)
+    parser.add_option_group(DaysGroup)
+    (opts, args) = parser.parse_args()
+
+    # Check inputs
+    if len(args) != 1: parser.error("Need station database file")
+    indb = args[0]
+    if not exist(indb):
+        parser.error("Input file " + indb + " does not exist")
+
+    # create station key list
+    if len(opts.stkeys)>0:
+        opts.stkeys = opts.stkeys.split(',')
+
+    # construct start time
+    if len(opts.startT)>0:
+        try:
+            opts.startT = UTCDateTime(opts.startT)
+        except:
+            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+    else:
+        opts.startT = None
+
+    # construct end time
+    if len(opts.endT)>0:
+        try:
+            opts.endT = UTCDateTime(opts.endT)
+        except:
+            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+    else:
+        opts.endT = None
+
+    if opts.pd is None:
+        opts.pd = [0.004, 2.0]
+    else:
+        opts.pd = [float(opts.pd.split(','))]
+        opts.pd = sorted(opts.pd)
+        if (len(opts.pd)) != 2:
+            raise(Exception("Error: --freq-band should contain 2 comma-separated floats"))
+
+
+    return (opts, indb)
+
 
 def parse_localdata_for_comp(comp='Z', stdata=list, sta=None, start=UTCDateTime, end=UTCDateTime, ndval=nan):
     """

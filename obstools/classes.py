@@ -384,16 +384,16 @@ class DayNoise(object):
         self.cross = Cross(c12, c1Z, c1P, c2Z, c2P, cZP)
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
-        if calc_rotation:
+        if fig_average:
+            plot.fig_average(f, self.power, bad, self.goodwins, key=self.key)
+
+        if opts.calc_rotation:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = utils.calculate_tilt( \
                 ft1, ft2, ftZ, ftP, f, self.goodwins)
             self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value)
 
-        if fig_average:
-            plot.fig_average(f, self.power, bad, self.goodwins, key=self.key)
-
-        if fig_coh_ph:
-            plot.fig_coh_ph(coh, ph, direc)
+            if opts.fig_coh_ph:
+                plot.fig_coh_ph(coh, ph, direc)
 
     def save(self, filename):
         """

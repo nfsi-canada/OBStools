@@ -1,166 +1,262 @@
 #!/usr/bin/env python
 
+# Copyright 2019 Pascal Audet & Helen Janiszewski
+#
+# This file is part of OBStools.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+Program obs_clean_spectra.py
+----------------------------
+
+Extracts daily spectra calculated from `obs_daily_spectra.py` and 
+flags days for which the daily averages are outliers from the PSD properties. 
+Further averages the spectra over the whole period specified by `--start-day`
+and `--end-day`.
+
+Station selection is specified by a network and 
+station code. The data base is provided as a 
+`StDb` dictionary.
+
+Usage
+-----
+
+.. code-block::
+
+    $ obs_clean_spectra.py -h
+    Usage: obs_clean_spectra.py [options] <station database>
+
+"""
+
 # Import modules and functions
 import os
 import numpy as np
-from obspy import UTCDateTime
 import pickle
+import stdb
 from obstools import StaNoise, Power, Cross, Rotation
-from obstools import utils, plot
+from obstools import utils, options, plot
 
 def main():
 
-    dbfile = 'M08A.pkl'
+    # Run Input Parser
+    (opts, indb) = options.get_dailyspec_options()
 
-    stationdb = pickle.load(open(dbfile,'rb'))
+    # Load Database
+    db = stdb.io.load_db(fname=indb)
 
-    sta_key = ['7D.M08A']
+    # Construct station key loop
+    allkeys = db.keys()
+    sorted(allkeys)
 
-    tstart = UTCDateTime('2012-03-01')
-    tend = UTCDateTime('2012-03-30')
+    # Extract key subset
+    if len(opts.stkeys) > 0:
+        stkeys = []
+        for skey in opts.stkeys:
+            stkeys.extend([s for s in allkeys if skey in s])
+    else:
+        stkeys = db.keys()
+        sorted(stkeys)
 
-    # Extract station information from dictionary
-    sta = stationdb[sta_key[0]] 
+    # Loop over station keys
+    for stkey in list(stkeys):
 
-    # Path where spectra are located
-    specpath = 'SPECTRA/' + sta_key[0] + '/'
+        # Extract station information from dictionary
+        sta = db[stkey]
 
-    # Path where average spectra will be saved
-    avstpath = 'AVG_STA/' + sta_key[0] + '/'
-    if not os.path.isdir(avstpath): 
-        print('Path to '+avstpath+' doesn`t exist - creating it')
-        os.makedirs(avstpath)
+        # Path where spectra are located
+        specpath = 'SPECTRA/' + stkey + '/'
 
-    # Filename for output average spectra
-    dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
-    dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-    fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
+        # Path where average spectra will be saved
+        avstpath = 'AVG_STA/' + stkey + '/'
+        if not os.path.isdir(avstpath): 
+            print("Path to '+avstpath+' doesn`t exist - creating it")
+            os.makedirs(avstpath)
 
-    # Containers for power and cross spectra
-    c11_all = []; c22_all = []; cZZ_all = []; cPP_all = []
-    c12_all = []; c1Z_all = []; c1P_all = []; c2Z_all = []; c2P_all = []; cZP_all = []
-    cHH_all = []; cHZ_all = []; cHP_all = []
-    coh_all = []; ph_all = []
-    coh_12_all = []; coh_1Z_all = []; coh_1P_all = []; coh_2Z_all = []; coh_2P_all = []; coh_ZP_all = []
-    ph_12_all = []; ph_1Z_all = []; ph_1P_all = []; ph_2Z_all = []; ph_2P_all = []; ph_ZP_all = []
-    ad_12_all = []; ad_1Z_all = []; ad_1P_all = []; ad_2Z_all = []; ad_2P_all = []; ad_ZP_all = []
-    nwins = []
-
-    t1 = tstart
-    # Lopp through each day withing time range
-    while t1 < tend:
-
-        year = str(t1.year).zfill(4)
-        jday = str(t1.julday).zfill(3)
-
-        print('Calculating noise spectra for key '+sta_key[0]+' and day '+year+'.'+jday)
-        tstamp = year+'.'+jday+'.'
-        filespec = specpath + tstamp + 'spectra.pkl'
-
-        # Load file if it exists
-        if os.path.exists(filespec):
-            print('file '+filespec+' exists - loading')
-            file = open(filespec, 'rb')
-            daynoise = pickle.load(file)
-            file.close()
+        # Get catalogue search start time
+        if opts.startT is None:
+            tstart = sta.startdate
         else:
-            t1 += 3600.*24.
+            tstart = opts.startT
+
+        # Get catalogue search end time
+        if opts.endT is None:
+            tend = sta.startdate
+        else:
+            tend = opts.endT
+
+        if tstart > sta.enddate or tend < sta.startdate:
             continue
 
-        # Frequency axis
-        f = daynoise.f
-        nwins.append(np.sum(daynoise.goodwins))
+        # Temporary print locations
+        tlocs = sta.location
+        if len(tlocs) == 0: tlocs = ['']
+        for il in range(0, len(tlocs)):
+            if len(tlocs[il]) == 0: tlocs[il] = "--"
+        sta.location = tlocs
 
-        # Power spectra
-        c11_all.append(daynoise.power.c11)
-        c22_all.append(daynoise.power.c22)
-        cZZ_all.append(daynoise.power.cZZ)
-        cPP_all.append(daynoise.power.cPP)
+        # Update Display
+        print(" ")
+        print(" ")
+        print("|===============================================|")
+        print("|===============================================|")
+        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|===============================================|")
+        print("|===============================================|")
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|-----------------------------------------------|")
 
-        # Cross spectra
-        c12_all.append(daynoise.cross.c12)
-        c1Z_all.append(daynoise.cross.c1Z)
-        c1P_all.append(daynoise.cross.c1P)
-        c2Z_all.append(daynoise.cross.c2Z)
-        c2P_all.append(daynoise.cross.c2P)
-        cZP_all.append(daynoise.cross.cZP)
 
-        # Rotated spectra
-        cHH_all.append(daynoise.rotation.cHH)
-        cHZ_all.append(daynoise.rotation.cHZ)
-        cHP_all.append(daynoise.rotation.cHP)
-        coh_all.append(daynoise.rotation.coh)
-        ph_all.append(daynoise.rotation.ph)
+        # Filename for output average spectra
+        dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
+        dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
+        fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
 
-        # Coherence
-        coh_12_all.append(utils.smooth(utils.coherence(daynoise.cross.c12, daynoise.power.c11, daynoise.power.c22), 50))
-        coh_1Z_all.append(utils.smooth(utils.coherence(daynoise.cross.c1Z, daynoise.power.c11, daynoise.power.cZZ), 50))
-        coh_1P_all.append(utils.smooth(utils.coherence(daynoise.cross.c1P, daynoise.power.c11, daynoise.power.cPP), 50))
-        coh_2Z_all.append(utils.smooth(utils.coherence(daynoise.cross.c2Z, daynoise.power.c22, daynoise.power.cZZ), 50))
-        coh_2P_all.append(utils.smooth(utils.coherence(daynoise.cross.c2P, daynoise.power.c22, daynoise.power.cPP), 50))
-        coh_ZP_all.append(utils.smooth(utils.coherence(daynoise.cross.cZP, daynoise.power.cZZ, daynoise.power.cPP), 50))
+        # Containers for power and cross spectra
+        c11_all = []; c22_all = []; cZZ_all = []; cPP_all = []
+        c12_all = []; c1Z_all = []; c1P_all = []; c2Z_all = []; c2P_all = []; cZP_all = []
+        cHH_all = []; cHZ_all = []; cHP_all = []
+        coh_all = []; ph_all = []
+        coh_12_all = []; coh_1Z_all = []; coh_1P_all = []; coh_2Z_all = []; coh_2P_all = []; coh_ZP_all = []
+        ph_12_all = []; ph_1Z_all = []; ph_1P_all = []; ph_2Z_all = []; ph_2P_all = []; ph_ZP_all = []
+        ad_12_all = []; ad_1Z_all = []; ad_1P_all = []; ad_2Z_all = []; ad_2P_all = []; ad_ZP_all = []
+        nwins = []
 
-        # Phase
-        ph_12_all.append(180./np.pi*utils.phase(daynoise.cross.c12))
-        ph_1Z_all.append(180./np.pi*utils.phase(daynoise.cross.c1Z))
-        ph_1P_all.append(180./np.pi*utils.phase(daynoise.cross.c1P))
-        ph_2Z_all.append(180./np.pi*utils.phase(daynoise.cross.c2Z))
-        ph_2P_all.append(180./np.pi*utils.phase(daynoise.cross.c2P))
-        ph_ZP_all.append(180./np.pi*utils.phase(daynoise.cross.cZP))
+        t1 = tstart
 
-        # Admittance
-        ad_12_all.append(utils.smooth(utils.admittance(daynoise.cross.c12, daynoise.power.c11), 50))
-        ad_1Z_all.append(utils.smooth(utils.admittance(daynoise.cross.c1Z, daynoise.power.c11), 50))
-        ad_1P_all.append(utils.smooth(utils.admittance(daynoise.cross.c1P, daynoise.power.c11), 50))
-        ad_2Z_all.append(utils.smooth(utils.admittance(daynoise.cross.c2Z, daynoise.power.c22), 50))
-        ad_2P_all.append(utils.smooth(utils.admittance(daynoise.cross.c2P, daynoise.power.c22), 50))
-        ad_ZP_all.append(utils.smooth(utils.admittance(daynoise.cross.cZP, daynoise.power.cZZ), 50))
+        # Loop through each day withing time range
+        while t1 < tend:
 
-        t1 += 3600.*24.
+            year = str(t1.year).zfill(4)
+            jday = str(t1.julday).zfill(3)
 
-    # Convert to numpy arrays
-    c11_all = np.array(c11_all); c22_all = np.array(c22_all); cZZ_all = np.array(cZZ_all); cPP_all = np.array(cPP_all)
-    c12_all = np.array(c12_all); c1Z_all = np.array(c1Z_all); c1P_all = np.array(c1P_all); c2Z_all = np.array(c2Z_all)
-    c2P_all = np.array(c2P_all); cZP_all = np.array(cZP_all)
-    cHH_all = np.array(cHH_all); cHZ_all = np.array(cHZ_all); cHP_all = np.array(cHP_all)
-    coh_all = np.array(coh_all); ph_all = np.array(ph_all)
-    coh_12_all = np.array(coh_12_all); coh_1Z_all = np.array(coh_1Z_all); coh_1P_all = np.array(coh_1P_all); coh_2Z_all = np.array(coh_2Z_all)
-    coh_2P_all = np.array(coh_2P_all); coh_ZP_all = np.array(coh_ZP_all)
-    ph_12_all = np.array(ph_12_all); ph_1Z_all = np.array(ph_1Z_all); ph_1P_all = np.array(ph_1P_all); ph_2Z_all = np.array(ph_2Z_all)
-    ph_2P_all = np.array(ph_2P_all); ph_ZP_all = np.array(ph_ZP_all)
-    ad_12_all = np.array(ad_12_all); ad_1Z_all = np.array(ad_1Z_all); ad_1P_all = np.array(ad_1P_all); ad_2Z_all = np.array(ad_2Z_all)
-    ad_2P_all = np.array(ad_2P_all); ad_ZP_all = np.array(ad_ZP_all)
+            print('Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
+            tstamp = year+'.'+jday+'.'
+            filespec = specpath + tstamp + 'spectra.pkl'
 
-    nwins = np.array(nwins)
+            # Load file if it exists
+            if os.path.exists(filespec):
+                print('file '+filespec+' exists - loading')
+                file = open(filespec, 'rb')
+                daynoise = pickle.load(file)
+                file.close()
+            else:
+                t1 += 3600.*24.
+                continue
 
-    # Store spectra as objects
-    power = Power(c11_all, c22_all, cZZ_all, cPP_all)
-    cross = Cross(c12_all, c1Z_all, c1P_all, c2Z_all, c2P_all, cZP_all)
-    rotation = Rotation(cHH_all, cHZ_all, cHP_all)
+            # Frequency axis
+            f = daynoise.f
+            nwins.append(np.sum(daynoise.goodwins))
 
-    # Initialize StaNoise object
-    stanoise = StaNoise(power, cross, rotation, f, nwins, key=sta_key[0])
+            # Power spectra
+            c11_all.append(daynoise.power.c11)
+            c22_all.append(daynoise.power.c22)
+            cZZ_all.append(daynoise.power.cZZ)
+            cPP_all.append(daynoise.power.cPP)
 
-    # Store transfer functions as objects for plotting
-    coh = Cross(coh_12_all, coh_1Z_all, coh_1P_all, coh_2Z_all, coh_2P_all, coh_ZP_all)
-    ph = Cross(ph_12_all, ph_1Z_all, ph_1P_all, ph_2Z_all, ph_2P_all, ph_ZP_all)
-    ad = Cross(ad_12_all, ad_1Z_all, ad_1P_all, ad_2Z_all, ad_2P_all, ad_ZP_all)
+            # Cross spectra
+            c12_all.append(daynoise.cross.c12)
+            c1Z_all.append(daynoise.cross.c1Z)
+            c1P_all.append(daynoise.cross.c1P)
+            c2Z_all.append(daynoise.cross.c2Z)
+            c2P_all.append(daynoise.cross.c2P)
+            cZP_all.append(daynoise.cross.cZP)
 
-    # Quality control to identify outliers
-    stanoise.QC_sta_spectra(pd=[0.004, 2.0], fig_QC=False, debug=False)
+            # Rotated spectra
+            cHH_all.append(daynoise.rotation.cHH)
+            cHZ_all.append(daynoise.rotation.cHZ)
+            cHP_all.append(daynoise.rotation.cHP)
+            coh_all.append(daynoise.rotation.coh)
+            ph_all.append(daynoise.rotation.ph)
 
-    # Average spectra for good days
-    stanoise.average_sta_spectra(fig_average=False, debug=False)
+            # Coherence
+            coh_12_all.append(utils.smooth(utils.coherence(daynoise.cross.c12, daynoise.power.c11, daynoise.power.c22), 50))
+            coh_1Z_all.append(utils.smooth(utils.coherence(daynoise.cross.c1Z, daynoise.power.c11, daynoise.power.cZZ), 50))
+            coh_1P_all.append(utils.smooth(utils.coherence(daynoise.cross.c1P, daynoise.power.c11, daynoise.power.cPP), 50))
+            coh_2Z_all.append(utils.smooth(utils.coherence(daynoise.cross.c2Z, daynoise.power.c22, daynoise.power.cZZ), 50))
+            coh_2P_all.append(utils.smooth(utils.coherence(daynoise.cross.c2P, daynoise.power.c22, daynoise.power.cPP), 50))
+            coh_ZP_all.append(utils.smooth(utils.coherence(daynoise.cross.cZP, daynoise.power.cZZ, daynoise.power.cPP), 50))
 
-    # plot.fig_coh_ph(coh_all, ph_all, np.arange(0., 360., 10.))
+            # Phase
+            ph_12_all.append(180./np.pi*utils.phase(daynoise.cross.c12))
+            ph_1Z_all.append(180./np.pi*utils.phase(daynoise.cross.c1Z))
+            ph_1P_all.append(180./np.pi*utils.phase(daynoise.cross.c1P))
+            ph_2Z_all.append(180./np.pi*utils.phase(daynoise.cross.c2Z))
+            ph_2P_all.append(180./np.pi*utils.phase(daynoise.cross.c2P))
+            ph_ZP_all.append(180./np.pi*utils.phase(daynoise.cross.cZP))
 
-    # if fig_av_cross:
-    plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays, 'Coherence', key=sta_key[0], lw=0.5)
-    plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', key=sta_key[0], lw=0.5)
-    plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', key=sta_key[0], marker=',', lw=0)
+            # Admittance
+            ad_12_all.append(utils.smooth(utils.admittance(daynoise.cross.c12, daynoise.power.c11), 50))
+            ad_1Z_all.append(utils.smooth(utils.admittance(daynoise.cross.c1Z, daynoise.power.c11), 50))
+            ad_1P_all.append(utils.smooth(utils.admittance(daynoise.cross.c1P, daynoise.power.c11), 50))
+            ad_2Z_all.append(utils.smooth(utils.admittance(daynoise.cross.c2Z, daynoise.power.c22), 50))
+            ad_2P_all.append(utils.smooth(utils.admittance(daynoise.cross.c2P, daynoise.power.c22), 50))
+            ad_ZP_all.append(utils.smooth(utils.admittance(daynoise.cross.cZP, daynoise.power.cZZ), 50))
 
-    # Save to file
-    stanoise.save(fileavst)
+            t1 += 3600.*24.
+
+        # Convert to numpy arrays
+        c11_all = np.array(c11_all); c22_all = np.array(c22_all); cZZ_all = np.array(cZZ_all); cPP_all = np.array(cPP_all)
+        c12_all = np.array(c12_all); c1Z_all = np.array(c1Z_all); c1P_all = np.array(c1P_all); c2Z_all = np.array(c2Z_all)
+        c2P_all = np.array(c2P_all); cZP_all = np.array(cZP_all)
+        cHH_all = np.array(cHH_all); cHZ_all = np.array(cHZ_all); cHP_all = np.array(cHP_all)
+        coh_all = np.array(coh_all); ph_all = np.array(ph_all)
+        coh_12_all = np.array(coh_12_all); coh_1Z_all = np.array(coh_1Z_all); coh_1P_all = np.array(coh_1P_all); coh_2Z_all = np.array(coh_2Z_all)
+        coh_2P_all = np.array(coh_2P_all); coh_ZP_all = np.array(coh_ZP_all)
+        ph_12_all = np.array(ph_12_all); ph_1Z_all = np.array(ph_1Z_all); ph_1P_all = np.array(ph_1P_all); ph_2Z_all = np.array(ph_2Z_all)
+        ph_2P_all = np.array(ph_2P_all); ph_ZP_all = np.array(ph_ZP_all)
+        ad_12_all = np.array(ad_12_all); ad_1Z_all = np.array(ad_1Z_all); ad_1P_all = np.array(ad_1P_all); ad_2Z_all = np.array(ad_2Z_all)
+        ad_2P_all = np.array(ad_2P_all); ad_ZP_all = np.array(ad_ZP_all)
+
+        nwins = np.array(nwins)
+
+        # Store spectra as objects
+        power = Power(c11_all, c22_all, cZZ_all, cPP_all)
+        cross = Cross(c12_all, c1Z_all, c1P_all, c2Z_all, c2P_all, cZP_all)
+        rotation = Rotation(cHH_all, cHZ_all, cHP_all)
+
+        # Initialize StaNoise object
+        stanoise = StaNoise(power, cross, rotation, f, nwins, key=stkey)
+
+        # Store transfer functions as objects for plotting
+        coh = Cross(coh_12_all, coh_1Z_all, coh_1P_all, coh_2Z_all, coh_2P_all, coh_ZP_all)
+        ph = Cross(ph_12_all, ph_1Z_all, ph_1P_all, ph_2Z_all, ph_2P_all, ph_ZP_all)
+        ad = Cross(ad_12_all, ad_1Z_all, ad_1P_all, ad_2Z_all, ad_2P_all, ad_ZP_all)
+
+        # Quality control to identify outliers
+        stanoise.QC_sta_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha, 
+            fig_QC=opts.fig_QC, debug=opts.debug)
+
+        # Average spectra for good days
+        stanoise.average_sta_spectra(fig_average=opte.fig_average, debug=opts.debug)
+
+        if opts.fig_av_cross:
+            plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays, 'Coherence', key=stkey, lw=0.5)
+            plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', key=stkey, lw=0.5)
+            plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', key=stkey, marker=',', lw=0)
+
+        # Save to file
+        stanoise.save(fileavst)
 
 
 if __name__ == "__main__":
