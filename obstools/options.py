@@ -493,16 +493,15 @@ def get_cleanspec_options():
     # Constants Settings
     FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
     FigureGroup.add_option("--figQC", action="store_true", dest="fig_QC", default=False, \
-        help="Whether or not to plot Quality-Control figure. [Default False]")
+        help="Plot Quality-Control figure. [Default does not plot figure]")
     FigureGroup.add_option("--debug", action="store_true", dest="debug", default=False, \
-        help="Whether or not to plot intermediate steps for debugging [Default False]")
+        help="Plot intermediate steps for debugging [Default does not plot figure]")
     FigureGroup.add_option("--figAverage", action="store_true", dest="fig_average", default=False, \
-        help="Whether or not to plot daily average figure. [Default False]")
+        help="Plot daily average figure. [Default does not plot figure]")
     FigureGroup.add_option("--figCoh", action="store_true", dest="fig_coh_ph", default=False, \
-        help="Whether or not to plot Coherence and Phase figure [Default False]")
+        help="Plot Coherence and Phase figure [Default does not plot figure]")
     FigureGroup.add_option("--figCross", action="store_true", dest="fig_av_cross", default=False, \
-        help="Whether or not to plot cross-spectra figure [Default False - unused if called " \
-        "from obs_daily_spectra.py]")
+        help="Plot cross-spectra figure [Default does not plot figure]")
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)

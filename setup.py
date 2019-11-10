@@ -21,5 +21,4 @@ setup(
     install_requires = ['obspy', 'stdb'],
     python_requires =  '>=3.6',
 	packages =         ['obstools'],
-	scripts =          scripts,
-	url =              '')
+	scripts =          scripts)

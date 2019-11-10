@@ -56,7 +56,7 @@ from obstools import utils, options, plot
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_dailyspec_options()
+    (opts, indb) = options.get_cleanspec_options()
 
     # Load Database
     db = stdb.io.load_db(fname=indb)
