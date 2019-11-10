@@ -40,6 +40,61 @@ Usage
     $ obs_download_data.py -h
     Usage: obs_download_data.py [options] <station database>
 
+    Script used to download and pre-process four-component (H1, H2, Z and P), day-
+    long seismograms to use in noise corrections of vertical component data. This
+    version requests data on the fly for a given date range. Data are requested
+    from the internet using the client services framework. The stations are
+    processed one by one and the data are stored to disk.
+
+    Options:
+      -h, --help            show this help message and exit
+      --keys=STKEYS         Specify a comma separated list of station keys for
+                            which to perform the analysis. These must be contained
+                            within the station database. Partial keys will be used
+                            to match against those in the dictionary. For
+                            instance, providing IU will match with all stations in
+                            the IU network [Default processes all stations in the
+                            database]
+      -v, -V, --verbose     Specify to increase verbosity.
+      -O, --overwrite       Force the overwriting of pre-existing data. [Default
+                            False]
+
+      Server Settings:
+        Settings associated with which datacenter to log into.
+
+        -S SERVER, --Server=SERVER
+                            Specify the server to connect to. Options include:
+                            BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
+                            NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
+                            USP. [Default IRIS]
+        -U USERAUTH, --User-Auth=USERAUTH
+                            Enter your IRIS Authentification Username and Password
+                            (--User-Auth='username:authpassword') to access and
+                            download restricted data. [Default no user and
+                            password]
+
+      Time Search Settings:
+        Time settings associated with searching for day-long seismograms
+
+        --start-day=STARTT  Specify a UTCDateTime compatible string representing
+                            the start day for the data search. This will override
+                            any station start times. [Default start date for each
+                            station from database]
+        --end-day=ENDT      Specify a UTCDateTime compatible string representing
+                            the start time for the event search. This will
+                            override any station end times [Default older end date
+                            for each the pair of stations]
+
+      Parameter Settings:
+        Miscellaneous default values and settings
+
+        --sampling-rate=NEW_SAMPLING_RATE
+                            Specify new sampling rate. [Default 5. Hz]
+        --pre-filt=PRE_FILT
+                            Specify comma-separated corner frequencies (float, in
+                            Hz) for deconvolution pre-filter. [Default [0.001,
+                            0.005, 45., 50.]]
+
 """
 
 # Import modules and functions
@@ -131,8 +186,6 @@ def main():
         print("| Searching day-long files:                     |")
         print("|   Start: {0:19s}                  |".format(tstart.strftime("%Y-%m-%d")))
         print("|   End:   {0:19s}                  |".format(tend.strftime("%Y-%m-%d")))
-        print("| ...                                           |")
-
 
         # Split into 24-hour long segments
         dt = 3600.*24.
@@ -144,7 +197,11 @@ def main():
 
             # Time stamp
             tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
-     
+
+            print(" ")
+            print("****************************************************")
+            print("* Downloading day-long data for key "+stkey+" and day "+year+"."+jday)
+
             # Define file names (to check if files already exist)
             file1 = datapath + tstamp + '.' + sta.channel + '1.SAC'
             file2 = datapath + tstamp + '.' + sta.channel + '2.SAC'
@@ -154,8 +211,8 @@ def main():
             # If data file exists, continue
             if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2) and glob.glob(fileP): 
                 if not opts.ovr:
-                    print("| "+tstamp+"*SAC                                 |")
-                    print("| -> Files already exist, continuing            |")
+                    print("*   "+tstamp+"*SAC                                 |")
+                    print("*   -> Files already exist, continuing            |")
                     t1 += dt
                     t2 += dt
                     continue
@@ -164,21 +221,21 @@ def main():
 
             # Get waveforms from client
             try:
-                print("| "+tstamp+"*SAC                                 |")
-                print("| -> Downloading Seismic data... ")
+                print("*   "+tstamp+"*SAC                                 |")
+                print("*   -> Downloading Seismic data... ")
                 sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                         channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                print("     ...done")
+                print("       ...done")
             except:
                 print(" Error: Unable to download ?H? components - continuing")
                 t1 += dt
                 t2 += dt
                 continue
             try:
-                print("| -> Downloading Pressure data...")
+                print("*   -> Downloading Pressure data...")
                 stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                         channel='??H', starttime=t1, endtime=t2, attach_response=True)
-                print("     ...done")
+                print("       ...done")
             except:
                 print(" Error: Unable to download ??H component - continuing")
                 t1 += dt
@@ -207,9 +264,9 @@ def main():
                 continue
 
             # Remove responses
-            print("| -> Removing responses - Seismic data")
+            print("*   -> Removing responses - Seismic data")
             sth.remove_response(pre_filt=opts.pre_filt, output='DISP')
-            print("| -> Removing responses - Pressure data")
+            print("*   -> Removing responses - Pressure data")
             stp.remove_response(pre_filt=opts.pre_filt)
 
             # Detrend, filter - seismic data
