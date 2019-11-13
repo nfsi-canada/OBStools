@@ -1,5 +1,3 @@
-.. figure:: ../stdb/examples/figures/StDb_logo.png
-   :align: center
 
 OBStools - documentation
 ========================
@@ -13,16 +11,11 @@ is used through command-line scripts.
 The software is a Python translation of the Matlab software 
 `ATaCR <https://github.com/helenjanisz/ATaCR>`_.
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Quick Links
 
-Quick links
-"""""""""""
-
-* `OBStools Git repository <https://github.com/paudetseis/OBStools>`_
-* `StDb Git repository <https://github.com/schaefferaj/StDb>`_
-* `ATaCR Git repository <https://github.com/helenjanisz/ATaCR>`_
-
-.. Getting Started
-.. """""""""""""""
+   links
 
 .. toctree::
    :maxdepth: 1
@@ -30,25 +23,13 @@ Quick links
 
    api
 
-.. Content
-.. """""""
-
 .. toctree::
    :maxdepth: 1
    :caption: Content
 
    classes
 
-.. Programs & Tutorials
-.. """"""""""""""""""""
-
 .. toctree::
    :maxdepth: 1
    :caption: Programs & Tutorials
 
-   obs_download_data
-   obs_download_event
-   obs_daily_spectra
-   obs_clean_spectra
-   obs_transfer_functions
-   obs_correct_event

@@ -6,11 +6,12 @@ ATaCR
 *.pdf
 *.pyc
 *.cpython*
+*~
 .ipynb_checkpoints
+.coverage
 
 *.egg-info
-paper.*
 build
 dist
 
-data
+_build

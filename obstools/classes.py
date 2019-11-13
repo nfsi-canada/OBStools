@@ -51,13 +51,13 @@ class Power(object):
     Attributes
     ----------
     c11 : :class:`~numpy.ndarray`
-        Power specrtal density for component 1 (any shape)
+        Power spectral density for component 1 (any shape)
     c22 : :class:`~numpy.ndarray`
-        Power specrtal density for component 2 (any shape)
+        Power spectral density for component 2 (any shape)
     cZZ : :class:`~numpy.ndarray`
-        Power specrtal density for component Z (any shape)
+        Power spectral density for component Z (any shape)
     cPP : :class:`~numpy.ndarray`
-        Power specrtal density for component P (any shape)
+        Power spectral density for component P (any shape)
     """
     def __init__(self, c11, c22, cZZ, cPP):
         self.c11 = c11
@@ -73,17 +73,17 @@ class Cross(object):
     Attributes
     ----------
     c12 : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components 1 and 2 (any shape)
+        Cross-power spectral density for components 1 and 2 (any shape)
     c1Z : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components 1 and Z (any shape)
+        Cross-power spectral density for components 1 and Z (any shape)
     c1P : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components 1 and P (any shape)
+        Cross-power spectral density for components 1 and P (any shape)
     c2Z : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components 2 and Z (any shape)
+        Cross-power spectral density for components 2 and Z (any shape)
     c2P : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components 2 and P (any shape)
+        Cross-power spectral density for components 2 and P (any shape)
     cZP : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components Z and P (any shape)
+        Cross-power spectral density for components Z and P (any shape)
     """
     def __init__(self, c12, c1Z, c1P, c2Z, c2P, cZP):
         self.c12 = c12
@@ -101,11 +101,11 @@ class Rotation(object):
     Attributes
     ----------
     cHH : :class:`~numpy.ndarray`
-        Power specrtal density for rotated horizontal component H (any shape)
+        Power spectral density for rotated horizontal component H (any shape)
     cHZ : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components H and Z (any shape)
+        Cross-power spectral density for components H and Z (any shape)
     cHP : :class:`~numpy.ndarray`
-        Cross-power specrtal density for components H and P (any shape)
+        Cross-power spectral density for components H and P (any shape)
     coh : :class:`~numpy.ndarray`
         Coherence between horizontal components
     ph : :class:`~numpy.ndarray`
