@@ -29,7 +29,6 @@ Quick links
    :caption: Getting Started
 
    api
-   database
 
 .. Content
 .. """""""
@@ -39,10 +38,6 @@ Quick links
    :caption: Content
 
    classes
-   io
-   convert
-   gui
-   kml
 
 .. Programs & Tutorials
 .. """"""""""""""""""""
@@ -51,11 +46,9 @@ Quick links
    :maxdepth: 1
    :caption: Programs & Tutorials
 
-   query
-   ls
-   merge
-   gen
-   append
-   edit
-   dump
-   stdb2kml
+   obs_download_data
+   obs_download_event
+   obs_daily_spectra
+   obs_clean_spectra
+   obs_transfer_functions
+   obs_correct_event
