@@ -18,7 +18,6 @@ import fnmatch
 from matplotlib import pyplot as plt
 from obspy.core import read, Stream, AttribDict
 from scipy.signal import savgol_filter
-from obs import obs_plot as obspl
 
 
 def update_stats(tr, stla, stlo, stel):

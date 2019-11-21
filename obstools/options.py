@@ -45,9 +45,8 @@ def get_daylong_options():
 
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
         "to download and pre-process four-component (H1, H2, Z and P), " \
-        "day-long seismograms to use in noise corrections of vertical component data. " \
-        "This version requests data on the fly for a given date " \
-        "range. Data are requested from the internet using the client services framework. " \
+        "day-long seismograms to use in noise corrections of vertical component of OBS data. " \
+        "Data are requested from the internet using the client services framework for a given date range. " \
         "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
@@ -56,8 +55,6 @@ def get_daylong_options():
         "contained within the station database. Partial keys will be used to match against those in the " \
         "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
         "all stations in the database]")
-    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
-        help="Specify to increase verbosity.")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
@@ -82,34 +79,34 @@ def get_daylong_options():
     #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
 
     # Constants Settings
-    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
-    ConstGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
-        help="Specify new sampling rate. [Default 5. Hz]")
-    ConstGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
-        help="Specify comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
-        "[Default [0.001, 0.005, 45., 50.]]")
+    FreqGroup = OptionGroup(parser, title='Frequency Settings', description="Miscellaneous frequency settings")
+    FreqGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
+        help="Specify new sampling rate (float, in Hz). [Default 5.]")
+    FreqGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
+        help="Specify four comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
+        "[Default 0.001,0.005,45.,50.]")
 
     # Event Selection Criteria
     DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
         "for day-long seismograms")
-    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+    DaysGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
-        "This will override any station start times. [Default start date for each station from database]")
-    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        "This will override any station start times. [Default start date for each station in database]")
+    DaysGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default older end date for each the pair of stations]")
+        "This will override any station end times [Default end date for each station in database]")
 
     parser.add_option_group(ServerGroup)
     # parser.add_option_group(DataGroup)
     parser.add_option_group(DaysGroup)
-    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FreqGroup)
     (opts, args) = parser.parse_args()
 
     # Check inputs
-    if len(args) != 1: parser.error("Need station database file")
+    if len(args) != 1: parser.error("Error: Need station database file")
     indb = args[0]
     if not exist(indb):
-        parser.error("Input file " + indb + " does not exist")
+        parser.error("Error: Input file " + indb + " does not exist")
 
     # create station key list
     if len(opts.stkeys)>0:
@@ -120,7 +117,7 @@ def get_daylong_options():
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
-            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
     else:
         opts.startT = None
 
@@ -129,7 +126,7 @@ def get_daylong_options():
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
-            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
     else:
         opts.endT = None
 
@@ -156,7 +153,7 @@ def get_daylong_options():
     #     opts.ndval = nan
 
     if not type(opts.new_sampling_rate) is float:
-        raise(Exception("Error: type of --sampling-rate is not a float"))
+        raise(Exception("Error: Type of --sampling-rate is not a float"))
 
     if opts.pre_filt is None:
         opts.pre_filt = [0.001, 0.005, 45., 50.]
@@ -164,7 +161,7 @@ def get_daylong_options():
         opts.pre_filt = [float(opts.pre_filt.split(','))]
         opts.pre_filt = sorted(opts.pre_filt)
         if (len(opts.pre_filt)) != 4:
-            raise(Exception("Error: --pre-filt should be a list containing 4 floats"))
+            raise(Exception("Error: --pre-filt should contain 4 comma-separated floats"))
 
     return (opts, indb)
 
@@ -185,8 +182,7 @@ def get_event_options():
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
         "to download and pre-process four-component (H1, H2, Z and P), " \
         "two-hour-long seismograms for individual events on which to apply the de-noising algorithms. " \
-        "This version requests data on the fly for a given date " \
-        "range. Data are requested from the internet using the client services framework. " \
+        "Data are requested from the internet using the client services framework for a given date range. " \
         "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
@@ -195,8 +191,6 @@ def get_event_options():
         "contained within the station database. Partial keys will be used to match against those in the " \
         "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
         "all stations in the database]")
-    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
-        help="Specify to increase verbosity.")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
@@ -221,27 +215,27 @@ def get_event_options():
     #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
 
     # Constants Settings
-    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
-    ConstGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
-        help="Specify new sampling rate. [Default 5. Hz]")
-    ConstGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
+    FreqGroup = OptionGroup(parser, title='Frequency Settings', description="Miscellaneous frequency settings")
+    FreqGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
+        help="Specify new sampling rate (float, in Hz). [Default 5.]")
+    FreqGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
         help="Specify four comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
-        "[Default 0.001, 0.005, 45., 50.]")
+        "[Default 0.001,0.005,45.,50.]")
 
     # Event Selection Criteria
     EventGroup = OptionGroup(parser, title="Event Settings", description="Settings associated with refining " \
         "the events to include in matching station pairs")
-    EventGroup.add_option("--start-time", action="store", type="string", dest="startT", default="", \
+    EventGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station start times. [Default start date of station]")
-    EventGroup.add_option("--end-time", action="store", type="string", dest="endT", default="", \
+        "This will override any station start times. [Default start date of each station in database]")
+    EventGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default end date of station]")
+        "This will override any station end times [Default end date of each station in database]")
     EventGroup.add_option("--reverse-order", "-R", action="store_true", dest="reverse", default=False, \
         help="Reverse order of events. Default behaviour starts at oldest event and works towards most recent. " \
         "Specify reverse order and instead the program will start with the most recent events and work towards older")
-    EventGroup.add_option("--min-mag", action="store", type="float", dest="minmag", default=6.0, \
-        help="Specify the minimum magnitude of event for which to search. [Default 6.0]")
+    EventGroup.add_option("--min-mag", action="store", type="float", dest="minmag", default=5.5, \
+        help="Specify the minimum magnitude of event for which to search. [Default 5.5]")
     EventGroup.add_option("--max-mag", action="store", type="float", dest="maxmag", default=None, \
         help="Specify the maximum magnitude of event for which to search. [Default None, i.e. no limit]")
 
@@ -257,14 +251,14 @@ def get_event_options():
     # parser.add_option_group(DataGroup)
     parser.add_option_group(EventGroup)
     parser.add_option_group(GeomGroup)
-    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FreqGroup)
     (opts, args) = parser.parse_args()
 
     # Check inputs
-    if len(args) != 1: parser.error("Need station database file")
+    if len(args) != 1: parser.error("Error: Need station database file")
     indb = args[0]
     if not exist(indb):
-        parser.error("Input file " + indb + " does not exist")
+        parser.error("Error: Input file " + indb + " does not exist")
 
     # create station key list
     if len(opts.stkeys)>0:
@@ -275,7 +269,7 @@ def get_event_options():
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
-            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
     else:
         opts.startT = None
 
@@ -284,7 +278,7 @@ def get_event_options():
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
-            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
     else:
         opts.endT = None
 
@@ -311,7 +305,7 @@ def get_event_options():
     #     opts.ndval = nan
 
     if not type(opts.new_sampling_rate) is float:
-        raise(Exception("Error: type of --sampling-rate is not a float"))
+        raise(Exception("Error: Type of --sampling-rate is not a float"))
 
     if opts.pre_filt is None:
         opts.pre_filt = [0.001, 0.005, 45., 50.]
@@ -346,51 +340,49 @@ def get_dailyspec_options():
     parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
         help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
         "contained within the station database. Partial keys will be used to match against those in the " \
-        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network. [Default processes " \
         "all stations in the database]")
-    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
-        help="Specify to increase verbosity.")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
     # Event Selection Criteria
     DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
         "for day-long seismograms")
-    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+    DaysGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
-        "This will override any station start times. [Default start date of station]")
-    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        "This will override any station start times. [Default start date of each station in database]")
+    DaysGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default end date of station]")
+        "This will override any station end times. [Default end date of each station n database]")
 
     # Constants Settings
     ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
     ConstGroup.add_option("--overlap", action="store", type="float", dest="overlap", default=0.3, \
-        help="Specify fraction of overlap between windows. [Default 0.3 (or 30%)]")
+        help="Specify fraction of overlap between two-hour-long windows. [Default 0.3 (or 30%)]")
     ConstGroup.add_option("--minwin", action="store", type="int", dest="minwin", default=10, \
-        help="Specify minimum number of 'good' windows in any given day to continue with analysis [Default 10]")
+        help="Specify minimum number of 'good' windows in any given day to continue with analysis. [Default 10]")
     ConstGroup.add_option("--freq-band", action="store", type="string", dest="pd", default=None, \
         help="Specify comma-separated frequency limits (float, in Hz) over which to calculate spectral features " \
-        "used in flagging the days/windows [Default 0.004, 2.0]")
+        "used in flagging the days/windows. [Default 0.004,2.0]")
     ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=1.5, \
-        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad [Default 1.5]")
+        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad. [Default 1.5]")
     ConstGroup.add_option("--alpha", action="store", type="float", dest="alpha", default=0.05, \
-        help="Specify confidence interval for f-test, for iterative flagging of windows [Default 0.05]")
+        help="Specify confidence level for f-test, for iterative flagging of windows. [Default 0.05, or 95% confidence]")
     ConstGroup.add_option("--raw", action="store_false", dest="smooth", default=True, \
-        help="Raw spectra will be used in calculating spectral features for flagging [Default uses smoothed spectra]")
+        help="Raw spectra will be used in calculating spectral features for flagging. [Default uses smoothed spectra]")
     ConstGroup.add_option("--no-rotation", action="store_false", dest="calc_rotation", default=True, \
-        help="Do not rotate horizontal components to tilt direction [Default calculates rotation]")
+        help="Do not rotate horizontal components to tilt direction. [Default calculates rotation]")
 
     # Constants Settings
     FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
     FigureGroup.add_option("--figQC", action="store_true", dest="fig_QC", default=False, \
         help="Plot Quality-Control figure. [Default does not plot figure]")
     FigureGroup.add_option("--debug", action="store_true", dest="debug", default=False, \
-        help="Plot intermediate steps for debugging [Default does not plot figure]")
+        help="Plot intermediate steps for debugging. [Default does not plot figure]")
     FigureGroup.add_option("--figAverage", action="store_true", dest="fig_average", default=False, \
         help="Plot daily average figure. [Default does not plot figure]")
     FigureGroup.add_option("--figCoh", action="store_true", dest="fig_coh_ph", default=False, \
-        help="Plot Coherence and Phase figure [Default does not plot figure]")
+        help="Plot Coherence and Phase figure. [Default does not plot figure]")
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)
@@ -398,10 +390,10 @@ def get_dailyspec_options():
     (opts, args) = parser.parse_args()
 
     # Check inputs
-    if len(args) != 1: parser.error("Need station database file")
+    if len(args) != 1: parser.error("Error: Need station database file")
     indb = args[0]
     if not exist(indb):
-        parser.error("Input file " + indb + " does not exist")
+        parser.error("Error: Input file " + indb + " does not exist")
 
     # create station key list
     if len(opts.stkeys)>0:
@@ -412,7 +404,7 @@ def get_dailyspec_options():
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
-            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
     else:
         opts.startT = None
 
@@ -421,7 +413,7 @@ def get_dailyspec_options():
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
-            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
     else:
         opts.endT = None
 
@@ -463,45 +455,43 @@ def get_cleanspec_options():
     parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
         help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
         "contained within the station database. Partial keys will be used to match against those in the " \
-        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network. [Default processes " \
         "all stations in the database]")
-    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
-        help="Specify to increase verbosity.")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
     # Event Selection Criteria
     DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
         "for day-long seismograms")
-    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+    DaysGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
-        "This will override any station start times. [Default start date of station]")
-    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        "This will override any station start times. [Default start date of each station in database]")
+    DaysGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default end date of station]")
+        "This will override any station end times. [Default end date of each station in database]")
 
     # Constants Settings
     ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
     ConstGroup.add_option("--freq-band", action="store", type="string", dest="pd", default=None, \
         help="Specify comma-separated frequency limits (float, in Hz) over which to calculate spectral features " \
-        "used in flagging the days/windows [Default 0.004, 2.0]")
+        "used in flagging the days/windows. [Default 0.004,2.0]")
     ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=1.5, \
-        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad [Default 1.5]")
+        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad. [Default 1.5]")
     ConstGroup.add_option("--alpha", action="store", type="float", dest="alpha", default=0.05, \
-        help="Confidence interval for f-test, for iterative flagging of windows [Default 0.05]")
+        help="Confidence level for f-test, for iterative flagging of windows. [Default 0.05, or 95% confidence]")
 
     # Constants Settings
     FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
     FigureGroup.add_option("--figQC", action="store_true", dest="fig_QC", default=False, \
         help="Plot Quality-Control figure. [Default does not plot figure]")
     FigureGroup.add_option("--debug", action="store_true", dest="debug", default=False, \
-        help="Plot intermediate steps for debugging [Default does not plot figure]")
+        help="Plot intermediate steps for debugging. [Default does not plot figure]")
     FigureGroup.add_option("--figAverage", action="store_true", dest="fig_average", default=False, \
         help="Plot daily average figure. [Default does not plot figure]")
     FigureGroup.add_option("--figCoh", action="store_true", dest="fig_coh_ph", default=False, \
-        help="Plot Coherence and Phase figure [Default does not plot figure]")
+        help="Plot Coherence and Phase figure. [Default does not plot figure]")
     FigureGroup.add_option("--figCross", action="store_true", dest="fig_av_cross", default=False, \
-        help="Plot cross-spectra figure [Default does not plot figure]")
+        help="Plot cross-spectra figure. [Default does not plot figure]")
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)
@@ -509,10 +499,10 @@ def get_cleanspec_options():
     (opts, args) = parser.parse_args()
 
     # Check inputs
-    if len(args) != 1: parser.error("Need station database file")
+    if len(args) != 1: parser.error("Error: Need station database file")
     indb = args[0]
     if not exist(indb):
-        parser.error("Input file " + indb + " does not exist")
+        parser.error("Error: Input file " + indb + " does not exist")
 
     # create station key list
     if len(opts.stkeys)>0:
@@ -523,7 +513,7 @@ def get_cleanspec_options():
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
-            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
     else:
         opts.startT = None
 
@@ -532,7 +522,7 @@ def get_cleanspec_options():
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
-            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
     else:
         opts.endT = None
 
@@ -547,6 +537,94 @@ def get_cleanspec_options():
 
     return (opts, indb)
 
+
+def get_transfer_options():
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    This function is used for data processing on-the-fly (requires web connection)
+
+    """
+
+    from optparse import OptionParser, OptionGroup
+    from os.path import exists as exist
+    from obspy import UTCDateTime
+    from numpy import nan
+
+    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
+        "to calculate transfer functions between various components, to be used in cleaning vertical component " \
+        "of OBS data. The noise data can be those obtained from the daily spectra (i.e., from `obs_daily_spectra.py`) " \
+        "or those obtained from the averaged noise spectra (i.e., from `obs_clean_spectra.py`). Flags are available " \
+        "to specify the source of data to use as well as the time range over which to calculate the transfer functions. " \
+        "The stations are processed one by one and the data are stored to disk.")
+
+    # General Settings
+    parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
+        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
+        "contained within the station database. Partial keys will be used to match against those in the " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network. [Default processes " \
+        "all stations in the database]")
+    parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
+        help="Force the overwriting of pre-existing data. [Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
+        "for day-long seismograms")
+    DaysGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
+        "This will override any station start times. [Default start date of each station in database]")
+    DaysGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
+        "This will override any station end times. [Default end date of each station in database]")
+
+    # Constants Settings
+    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
+    ConstGroup.add_option("--skip-daily", action="store_true", dest="skip_daily", default=False, \
+        help="Skip daily spectral averages in construction of transfer functions. [Default False]")
+    ConstGroup.add_option("--skip-clean", action="store_true", dest="skip_clean", default=False, \
+        help="Skip cleaned spectral averages in construction of transfer functions. Defaults to True if data cannot "\
+        "be found in default directory. [Default False]")
+
+    # Constants Settings
+    FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
+    FigureGroup.add_option("--figTF", action="store_true", dest="fig_TF", default=False, \
+        help="Plot transfer function figure. [Default does not plot figure]")
+
+    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FigureGroup)
+    parser.add_option_group(DaysGroup)
+    (opts, args) = parser.parse_args()
+
+    # Check inputs
+    if len(args) != 1: parser.error("Error: Need station database file")
+    indb = args[0]
+    if not exist(indb):
+        parser.error("Error: Input file " + indb + " does not exist")
+
+    # create station key list
+    if len(opts.stkeys)>0:
+        opts.stkeys = opts.stkeys.split(',')
+
+    # construct start time
+    if len(opts.startT)>0:
+        try:
+            opts.startT = UTCDateTime(opts.startT)
+        except:
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
+    else:
+        opts.startT = None
+
+    # construct end time
+    if len(opts.endT)>0:
+        try:
+            opts.endT = UTCDateTime(opts.endT)
+        except:
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
+    else:
+        opts.endT = None
+
+
+    return (opts, indb)
 
 def parse_localdata_for_comp(comp='Z', stdata=list, sta=None, start=UTCDateTime, end=UTCDateTime, ndval=nan):
     """

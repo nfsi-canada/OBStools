@@ -42,9 +42,9 @@ Usage
 
     Script used to download and pre-process four-component (H1, H2, Z and P), two-
     hour-long seismograms for individual events on which to apply the de-noising
-    algorithms. This version requests data on the fly for a given date range. Data
-    are requested from the internet using the client services framework. The
-    stations are processed one by one and the data are stored to disk.
+    algorithms. Data are requested from the internet using the client services
+    framework for a given date range. The stations are processed one by one and
+    the data are stored to disk.
 
     Options:
       -h, --help            show this help message and exit
@@ -55,7 +55,6 @@ Usage
                             instance, providing IU will match with all stations in
                             the IU network [Default processes all stations in the
                             database]
-      -v, -V, --verbose     Specify to increase verbosity.
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
@@ -77,22 +76,21 @@ Usage
         Settings associated with refining the events to include in matching
         station pairs
 
-        --start-time=STARTT
-                            Specify a UTCDateTime compatible string representing
+        --start=STARTT      Specify a UTCDateTime compatible string representing
                             the start time for the event search. This will
                             override any station start times. [Default start date
-                            of station]
-        --end-time=ENDT     Specify a UTCDateTime compatible string representing
+                            of each station in database]
+        --end=ENDT          Specify a UTCDateTime compatible string representing
                             the start time for the event search. This will
                             override any station end times [Default end date of
-                            station]
+                            each station in database]
         -R, --reverse-order
                             Reverse order of events. Default behaviour starts at
                             oldest event and works towards most recent. Specify
                             reverse order and instead the program will start with
                             the most recent events and work towards older
         --min-mag=MINMAG    Specify the minimum magnitude of event for which to
-                            search. [Default 6.0]
+                            search. [Default 5.5]
         --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
                             search. [Default None, i.e. no limit]
 
@@ -104,15 +102,15 @@ Usage
         --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
                             between the station and event. [Default 120]
 
-      Parameter Settings:
-        Miscellaneous default values and settings
+      Frequency Settings:
+        Miscellaneous frequency settings
 
         --sampling-rate=NEW_SAMPLING_RATE
-                            Specify new sampling rate. [Default 5. Hz]
+                            Specify new sampling rate (float, in Hz). [Default 5.]
         --pre-filt=PRE_FILT
                             Specify four comma-separated corner frequencies
                             (float, in Hz) for deconvolution pre-filter. [Default
-                            0.001, 0.005, 45., 50.]
+                            0.001,0.005,45.,50.]
 
 """
 

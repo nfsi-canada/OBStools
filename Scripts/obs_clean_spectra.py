@@ -28,8 +28,8 @@ Program obs_clean_spectra.py
 
 Extracts daily spectra calculated from `obs_daily_spectra.py` and 
 flags days for which the daily averages are outliers from the PSD properties. 
-Further averages the spectra over the whole period specified by `--start-day`
-and `--end-day`.
+Further averages the spectra over the whole period specified by `--start`
+and `--end`.
 
 Station selection is specified by a network and 
 station code. The data base is provided as a 
@@ -49,59 +49,56 @@ Usage
     stations are processed one by one and the data are stored to disk.
 
     Options:
-      -h, --help            show this help message and exit
-      --keys=STKEYS         Specify a comma separated list of station keys for
-                            which to perform the analysis. These must be contained
-                            within the station database. Partial keys will be used
-                            to match against those in the dictionary. For
-                            instance, providing IU will match with all stations in
-                            the IU network [Default processes all stations in the
-                            database]
-      -v, -V, --verbose     Specify to increase verbosity.
-      -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                            False]
+      -h, --help         show this help message and exit
+      --keys=STKEYS      Specify a comma separated list of station keys for which
+                         to perform the analysis. These must be contained within
+                         the station database. Partial keys will be used to match
+                         against those in the dictionary. For instance, providing
+                         IU will match with all stations in the IU network.
+                         [Default processes all stations in the database]
+      -O, --overwrite    Force the overwriting of pre-existing data. [Default
+                         False]
 
       Parameter Settings:
         Miscellaneous default values and settings
 
-        --freq-band=PD      Specify comma-separated frequency limits (float, in
-                            Hz) over which to calculate spectral features used in
-                            flagging the days/windows [Default 0.004, 2.0]
-        --tolerance=TOL     Specify parameter for tolerance threshold. If spectrum
-                            > std*tol, window is flagged as bad [Default 1.5]
-        --alpha=ALPHA       Confidence interval for f-test, for iterative flagging
-                            of windows [Default 0.05]
+        --freq-band=PD   Specify comma-separated frequency limits (float, in Hz)
+                         over which to calculate spectral features used in
+                         flagging the days/windows. [Default 0.004,2.0]
+        --tolerance=TOL  Specify parameter for tolerance threshold. If spectrum >
+                         std*tol, window is flagged as bad. [Default 1.5]
+        --alpha=ALPHA    Confidence level for f-test, for iterative flagging of
+                         windows. [Default 0.05, or 95% confidence]
 
       Figure Settings:
         Flags for plotting figures
 
-        --figQC             Plot Quality-Control figure. [Default does not plot
-                            figure]
-        --debug             Plot intermediate steps for debugging [Default does
-                            not plot figure]
-        --figAverage        Plot daily average figure. [Default does not plot
-                            figure]
-        --figCoh            Plot Coherence and Phase figure [Default does not plot
-                            figure]
-        --figCross          Plot cross-spectra figure [Default does not plot
-                            figure]
+        --figQC          Plot Quality-Control figure. [Default does not plot
+                         figure]
+        --debug          Plot intermediate steps for debugging. [Default does not
+                         plot figure]
+        --figAverage     Plot daily average figure. [Default does not plot figure]
+        --figCoh         Plot Coherence and Phase figure. [Default does not plot
+                         figure]
+        --figCross       Plot cross-spectra figure. [Default does not plot figure]
 
       Time Search Settings:
         Time settings associated with searching for day-long seismograms
 
-        --start-day=STARTT  Specify a UTCDateTime compatible string representing
-                            the start day for the data search. This will override
-                            any station start times. [Default start date of
-                            station]
-        --end-day=ENDT      Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default end date of
-                            station]
+        --start=STARTT   Specify a UTCDateTime compatible string representing the
+                         start day for the data search. This will override any
+                         station start times. [Default start date of each station
+                         in database]
+        --end=ENDT       Specify a UTCDateTime compatible string representing the
+                         start time for the event search. This will override any
+                         station end times. [Default end date of each station in
+                         database]
 
 """
 
 # Import modules and functions
 import os
+import sys
 import numpy as np
 import pickle
 import stdb
@@ -137,6 +134,9 @@ def main():
 
         # Path where spectra are located
         specpath = 'SPECTRA/' + stkey + '/'
+        if not os.path.isdir(avstpath): 
+            print("Path to '+specpath+' doesn`t exist - aborting")
+            sys.exit()
 
         # Path where average spectra will be saved
         avstpath = 'AVG_STA/' + stkey + '/'
