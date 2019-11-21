@@ -538,6 +538,94 @@ def get_cleanspec_options():
     return (opts, indb)
 
 
+def get_transfer_options():
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    This function is used for data processing on-the-fly (requires web connection)
+
+    """
+
+    from optparse import OptionParser, OptionGroup
+    from os.path import exists as exist
+    from obspy import UTCDateTime
+    from numpy import nan
+
+    parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
+        "to calculate transfer functions between various components, to be used in cleaning vertical component " \
+        "of OBS data. The noise data can be those obtained from the daily spectra (i.e., from `obs_daily_spectra.py`) " \
+        "or those obtained from the averaged noise spectra (i.e., from `obs_clean_spectra.py`). Flags are available " \
+        "to specify the source of data to use as well as the time range over which to calculate the transfer functions. " \
+        "The stations are processed one by one and the data are stored to disk.")
+
+    # General Settings
+    parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
+        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
+        "contained within the station database. Partial keys will be used to match against those in the " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network. [Default processes " \
+        "all stations in the database]")
+    parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
+        help="Force the overwriting of pre-existing data. [Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
+        "for day-long seismograms")
+    DaysGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
+        "This will override any station start times. [Default start date of each station in database]")
+    DaysGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
+        help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
+        "This will override any station end times. [Default end date of each station in database]")
+
+    # Constants Settings
+    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
+    ConstGroup.add_option("--skip-daily", action="store_true", dest="skip_daily", default=False, \
+        help="Skip daily spectral averages in construction of transfer functions. [Default False]")
+    ConstGroup.add_option("--skip-clean", action="store_true", dest="skip_clean", default=False, \
+        help="Skip cleaned spectral averages in construction of transfer functions. Defaults to True if data cannot "\
+        "be found in default directory. [Default False]")
+
+    # Constants Settings
+    FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")
+    FigureGroup.add_option("--figTF", action="store_true", dest="fig_TF", default=False, \
+        help="Plot transfer function figure. [Default does not plot figure]")
+
+    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FigureGroup)
+    parser.add_option_group(DaysGroup)
+    (opts, args) = parser.parse_args()
+
+    # Check inputs
+    if len(args) != 1: parser.error("Error: Need station database file")
+    indb = args[0]
+    if not exist(indb):
+        parser.error("Error: Input file " + indb + " does not exist")
+
+    # create station key list
+    if len(opts.stkeys)>0:
+        opts.stkeys = opts.stkeys.split(',')
+
+    # construct start time
+    if len(opts.startT)>0:
+        try:
+            opts.startT = UTCDateTime(opts.startT)
+        except:
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
+    else:
+        opts.startT = None
+
+    # construct end time
+    if len(opts.endT)>0:
+        try:
+            opts.endT = UTCDateTime(opts.endT)
+        except:
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
+    else:
+        opts.endT = None
+
+
+    return (opts, indb)
+
 def parse_localdata_for_comp(comp='Z', stdata=list, sta=None, start=UTCDateTime, end=UTCDateTime, ndval=nan):
     """
     Function to determine the path to data for a given component and alternate network

@@ -98,6 +98,7 @@ Usage
 
 # Import modules and functions
 import os
+import sys
 import numpy as np
 import pickle
 import stdb
@@ -133,6 +134,9 @@ def main():
 
         # Path where spectra are located
         specpath = 'SPECTRA/' + stkey + '/'
+        if not os.path.isdir(avstpath): 
+            print("Path to '+specpath+' doesn`t exist - aborting")
+            sys.exit()
 
         # Path where average spectra will be saved
         avstpath = 'AVG_STA/' + stkey + '/'
