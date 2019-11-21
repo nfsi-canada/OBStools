@@ -126,18 +126,18 @@ def main():
         # Extract station information from dictionary
         sta = db[stkey]
 
-        if not skip_daily:
+        if not opts.skip_daily:
             # Path where spectra are located
             specpath = 'SPECTRA/' + stkey + '/'
             if not os.path.isdir(avstpath): 
                 raise(Exception("Path to '+specpath+' doesn`t exist - aborting"))
 
-        if not skip_clean:
+        if not opts.skip_clean:
             # Path where average spectra will be saved
             avstpath = 'AVG_STA/' + stkey + '/'
             if not os.path.isdir(avstpath): 
                 print("Path to '+avstpath+' doesn`t exist - skipping averaged spectra over multiple days")
-                skip_clean = True
+                opts.skip_clean = True
 
         # Path where transfer functions will be located
         tfpath = 'TF_STA/' + stkey + '/'
@@ -191,10 +191,10 @@ def main():
 
         # Find all files in directories
         spectra_files = os.listdir(specpath)
-        if not skip_clean:
+        if not opts.skip_clean:
             average_files = os.listdir(avstpath)
 
-        if not skip_daily:
+        if not opts.skip_daily:
 
             # List of possible transfer functions for Daily files
             TF_list_day = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
@@ -234,7 +234,7 @@ def main():
             if opts.fig_TF:
                 plot.fig_TF(f, day_transfer_functions, TF_list_day, sta_transfer_functions, TF_list_sta, key=stkey)
 
-        if not skip_clean:
+        if not opts.skip_clean:
 
             # List of possible transfer functions for station average files
             TF_list_sta = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
