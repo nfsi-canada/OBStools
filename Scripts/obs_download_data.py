@@ -41,10 +41,10 @@ Usage
     Usage: obs_download_data.py [options] <station database>
 
     Script used to download and pre-process four-component (H1, H2, Z and P), day-
-    long seismograms to use in noise corrections of vertical component data. This
-    version requests data on the fly for a given date range. Data are requested
-    from the internet using the client services framework. The stations are
-    processed one by one and the data are stored to disk.
+    long seismograms to use in noise corrections of vertical component of OBS
+    data. Data are requested from the internet using the client services framework
+    for a given date range. The stations are processed one by one and the data are
+    stored to disk.
 
     Options:
       -h, --help            show this help message and exit
@@ -55,7 +55,6 @@ Usage
                             instance, providing IU will match with all stations in
                             the IU network [Default processes all stations in the
                             database]
-      -v, -V, --verbose     Specify to increase verbosity.
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
@@ -76,25 +75,24 @@ Usage
       Time Search Settings:
         Time settings associated with searching for day-long seismograms
 
-        --start-day=STARTT  Specify a UTCDateTime compatible string representing
+        --start=STARTT      Specify a UTCDateTime compatible string representing
                             the start day for the data search. This will override
                             any station start times. [Default start date for each
-                            station from database]
-        --end-day=ENDT      Specify a UTCDateTime compatible string representing
+                            station in database]
+        --end=ENDT          Specify a UTCDateTime compatible string representing
                             the start time for the event search. This will
-                            override any station end times [Default older end date
-                            for each the pair of stations]
+                            override any station end times [Default end date for
+                            each station in database]
 
-      Parameter Settings:
-        Miscellaneous default values and settings
+      Frequency Settings:
+        Miscellaneous frequency settings
 
         --sampling-rate=NEW_SAMPLING_RATE
-                            Specify new sampling rate. [Default 5. Hz]
+                            Specify new sampling rate (float, in Hz). [Default 5.]
         --pre-filt=PRE_FILT
-                            Specify comma-separated corner frequencies (float, in
-                            Hz) for deconvolution pre-filter. [Default [0.001,
-                            0.005, 45., 50.]]
-
+                            Specify four comma-separated corner frequencies
+                            (float, in Hz) for deconvolution pre-filter. [Default
+                            0.001,0.005,45.,50.]
 """
 
 # Import modules and functions

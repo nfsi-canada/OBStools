@@ -45,9 +45,8 @@ def get_daylong_options():
 
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
         "to download and pre-process four-component (H1, H2, Z and P), " \
-        "day-long seismograms to use in noise corrections of vertical component data. " \
-        "This version requests data on the fly for a given date " \
-        "range. Data are requested from the internet using the client services framework. " \
+        "day-long seismograms to use in noise corrections of vertical component of OBS data. " \
+        "Data are requested from the internet using the client services framework for a given date range. " \
         "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
@@ -56,8 +55,6 @@ def get_daylong_options():
         "contained within the station database. Partial keys will be used to match against those in the " \
         "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
         "all stations in the database]")
-    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
-        help="Specify to increase verbosity.")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
@@ -71,45 +68,34 @@ def get_daylong_options():
         help="Enter your IRIS Authentification Username and Password (--User-Auth='username:authpassword') to " \
         "access and download restricted data. [Default no user and password]")
 
-    # # Database Settings
-    # DataGroup = OptionGroup(parser, title="Local Data Settings", description="Settings associated with defining " \
-    #     "and using a local data base of pre-downloaded day-long SAC files.")
-    # DataGroup.add_option("--local-data", action="store", type="string", dest="localdata", default=None, \
-    #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
-    #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
-    #     "the data using the Client interface")
-    # DataGroup.add_option("--no-data-zero", action="store_true", dest="ndval", default=False, \
-    #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
-
     # Constants Settings
-    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
-    ConstGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
-        help="Specify new sampling rate. [Default 5. Hz]")
-    ConstGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
-        help="Specify comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
-        "[Default [0.001, 0.005, 45., 50.]]")
+    FreqGroup = OptionGroup(parser, title='Frequency Settings', description="Miscellaneous frequency settings")
+    FreqGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
+        help="Specify new sampling rate (float, in Hz). [Default 5.]")
+    FreqGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
+        help="Specify four comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
+        "[Default 0.001,0.005,45.,50.]")
 
     # Event Selection Criteria
     DaysGroup = OptionGroup(parser, title="Time Search Settings", description="Time settings associated with searching " \
         "for day-long seismograms")
-    DaysGroup.add_option("--start-day", action="store", type="string", dest="startT", default="", \
+    DaysGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start day for the data search. " \
-        "This will override any station start times. [Default start date for each station from database]")
-    DaysGroup.add_option("--end-day", action="store", type="string", dest="endT", default="", \
+        "This will override any station start times. [Default start date for each station in database]")
+    DaysGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default older end date for each the pair of stations]")
+        "This will override any station end times [Default end date for each station in database]")
 
     parser.add_option_group(ServerGroup)
-    # parser.add_option_group(DataGroup)
     parser.add_option_group(DaysGroup)
-    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FreqGroup)
     (opts, args) = parser.parse_args()
 
     # Check inputs
-    if len(args) != 1: parser.error("Need station database file")
+    if len(args) != 1: parser.error("Error: Need station database file")
     indb = args[0]
     if not exist(indb):
-        parser.error("Input file " + indb + " does not exist")
+        parser.error("Error: Input file " + indb + " does not exist")
 
     # create station key list
     if len(opts.stkeys)>0:
@@ -120,7 +106,7 @@ def get_daylong_options():
         try:
             opts.startT = UTCDateTime(opts.startT)
         except:
-            parser.error("Cannot construct UTCDateTime from start time: " + opts.startT)
+            parser.error("Error: Cannot construct UTCDateTime from start time: " + opts.startT)
     else:
         opts.startT = None
 
@@ -129,7 +115,7 @@ def get_daylong_options():
         try:
             opts.endT = UTCDateTime(opts.endT)
         except:
-            parser.error("Cannot construct UTCDateTime from end time: " + opts.endT)
+            parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
     else:
         opts.endT = None
 
@@ -143,20 +129,8 @@ def get_daylong_options():
     else:
         opts.UserAuth = []
 
-    # # Parse Local Data directories
-    # if opts.localdata is not None:
-    #     opts.localdata = opts.localdata.split(',')
-    # else:
-    #     opts.localdata = []
-
-    # # Check NoData Value
-    # if opts.ndval:
-    #     opts.ndval = 0.0
-    # else:
-    #     opts.ndval = nan
-
     if not type(opts.new_sampling_rate) is float:
-        raise(Exception("Error: type of --sampling-rate is not a float"))
+        raise(Exception("Error: Type of --sampling-rate is not a float"))
 
     if opts.pre_filt is None:
         opts.pre_filt = [0.001, 0.005, 45., 50.]
@@ -164,7 +138,7 @@ def get_daylong_options():
         opts.pre_filt = [float(opts.pre_filt.split(','))]
         opts.pre_filt = sorted(opts.pre_filt)
         if (len(opts.pre_filt)) != 4:
-            raise(Exception("Error: --pre-filt should be a list containing 4 floats"))
+            raise(Exception("Error: --pre-filt should contain 4 comma-separated floats"))
 
     return (opts, indb)
 

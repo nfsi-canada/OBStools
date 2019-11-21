@@ -112,7 +112,7 @@ Installing from source
 
 """
 
-__version__=0.0.1
+__version__= "0.0.1"
 __author__ = "Pascal Audet & Helen Janiszewski"
 
 from .classes import DayNoise, StaNoise, Power, Cross, Rotation, TFNoise, EventStream
