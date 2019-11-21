@@ -68,6 +68,16 @@ def get_daylong_options():
         help="Enter your IRIS Authentification Username and Password (--User-Auth='username:authpassword') to " \
         "access and download restricted data. [Default no user and password]")
 
+    # # Database Settings
+    # DataGroup = OptionGroup(parser, title="Local Data Settings", description="Settings associated with defining " \
+    #     "and using a local data base of pre-downloaded day-long SAC files.")
+    # DataGroup.add_option("--local-data", action="store", type="string", dest="localdata", default=None, \
+    #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
+    #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
+    #     "the data using the Client interface")
+    # DataGroup.add_option("--no-data-zero", action="store_true", dest="ndval", default=False, \
+    #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
+
     # Constants Settings
     FreqGroup = OptionGroup(parser, title='Frequency Settings', description="Miscellaneous frequency settings")
     FreqGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
@@ -87,6 +97,7 @@ def get_daylong_options():
         "This will override any station end times [Default end date for each station in database]")
 
     parser.add_option_group(ServerGroup)
+    # parser.add_option_group(DataGroup)
     parser.add_option_group(DaysGroup)
     parser.add_option_group(FreqGroup)
     (opts, args) = parser.parse_args()
@@ -129,6 +140,18 @@ def get_daylong_options():
     else:
         opts.UserAuth = []
 
+    # # Parse Local Data directories
+    # if opts.localdata is not None:
+    #     opts.localdata = opts.localdata.split(',')
+    # else:
+    #     opts.localdata = []
+
+    # # Check NoData Value
+    # if opts.ndval:
+    #     opts.ndval = 0.0
+    # else:
+    #     opts.ndval = nan
+
     if not type(opts.new_sampling_rate) is float:
         raise(Exception("Error: Type of --sampling-rate is not a float"))
 
@@ -159,8 +182,7 @@ def get_event_options():
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
         "to download and pre-process four-component (H1, H2, Z and P), " \
         "two-hour-long seismograms for individual events on which to apply the de-noising algorithms. " \
-        "This version requests data on the fly for a given date " \
-        "range. Data are requested from the internet using the client services framework. " \
+        "Data are requested from the internet using the client services framework for a given date range. " \
         "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
@@ -169,8 +191,6 @@ def get_event_options():
         "contained within the station database. Partial keys will be used to match against those in the " \
         "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
         "all stations in the database]")
-    parser.add_option("-v", "-V", "--verbose", action="store_true", dest="verb", default=False, \
-        help="Specify to increase verbosity.")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
@@ -195,27 +215,27 @@ def get_event_options():
     #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
 
     # Constants Settings
-    ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
-    ConstGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
-        help="Specify new sampling rate. [Default 5. Hz]")
-    ConstGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
+    FreqGroup = OptionGroup(parser, title='Frequency Settings', description="Miscellaneous frequency settings")
+    FreqGroup.add_option("--sampling-rate", action="store", type="float", dest="new_sampling_rate", default=5., \
+        help="Specify new sampling rate (float, in Hz). [Default 5.]")
+    FreqGroup.add_option("--pre-filt", action="store", type="string", dest="pre_filt", default=None, \
         help="Specify four comma-separated corner frequencies (float, in Hz) for deconvolution pre-filter. " \
-        "[Default 0.001, 0.005, 45., 50.]")
+        "[Default 0.001,0.005,45.,50.]")
 
     # Event Selection Criteria
     EventGroup = OptionGroup(parser, title="Event Settings", description="Settings associated with refining " \
         "the events to include in matching station pairs")
-    EventGroup.add_option("--start-time", action="store", type="string", dest="startT", default="", \
+    EventGroup.add_option("--start", action="store", type="string", dest="startT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station start times. [Default start date of station]")
-    EventGroup.add_option("--end-time", action="store", type="string", dest="endT", default="", \
+        "This will override any station start times. [Default start date of each station in database]")
+    EventGroup.add_option("--end", action="store", type="string", dest="endT", default="", \
         help="Specify a UTCDateTime compatible string representing the start time for the event search. " \
-        "This will override any station end times [Default end date of station]")
+        "This will override any station end times [Default end date of each station in database]")
     EventGroup.add_option("--reverse-order", "-R", action="store_true", dest="reverse", default=False, \
         help="Reverse order of events. Default behaviour starts at oldest event and works towards most recent. " \
         "Specify reverse order and instead the program will start with the most recent events and work towards older")
-    EventGroup.add_option("--min-mag", action="store", type="float", dest="minmag", default=6.0, \
-        help="Specify the minimum magnitude of event for which to search. [Default 6.0]")
+    EventGroup.add_option("--min-mag", action="store", type="float", dest="minmag", default=5.5, \
+        help="Specify the minimum magnitude of event for which to search. [Default 5.5]")
     EventGroup.add_option("--max-mag", action="store", type="float", dest="maxmag", default=None, \
         help="Specify the maximum magnitude of event for which to search. [Default None, i.e. no limit]")
 
@@ -231,7 +251,7 @@ def get_event_options():
     # parser.add_option_group(DataGroup)
     parser.add_option_group(EventGroup)
     parser.add_option_group(GeomGroup)
-    parser.add_option_group(ConstGroup)
+    parser.add_option_group(FreqGroup)
     (opts, args) = parser.parse_args()
 
     # Check inputs
