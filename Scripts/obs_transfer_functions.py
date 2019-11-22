@@ -39,7 +39,7 @@ Usage
 
 .. code-block::
 
-    $ obs_clean_spectra.py -h
+    $ obs_transfer_functions.py -h
     Usage: obs_transfer_functions.py [options] <station database>
 
     Script used to calculate transfer functions between various components, to be
@@ -130,19 +130,19 @@ def main():
             # Path where spectra are located
             specpath = 'SPECTRA/' + stkey + '/'
             if not os.path.isdir(avstpath): 
-                raise(Exception("Path to '+specpath+' doesn`t exist - aborting"))
+                raise(Exception("Path to "+specpath+" doesn`t exist - aborting"))
 
         if not opts.skip_clean:
             # Path where average spectra will be saved
             avstpath = 'AVG_STA/' + stkey + '/'
             if not os.path.isdir(avstpath): 
-                print("Path to '+avstpath+' doesn`t exist - skipping averaged spectra over multiple days")
+                print("Path to "+avstpath+" doesn`t exist - skipping averaged spectra over multiple days")
                 opts.skip_clean = True
 
         # Path where transfer functions will be located
         tfpath = 'TF_STA/' + stkey + '/'
         if not os.path.isdir(tfpath): 
-            print('Path to '+tfpath+' doesn`t exist - creating it')
+            print("Path to "+tfpath+" doesn`t exist - creating it")
             os.makedirs(tfpath)
 
         # Get catalogue search start time
@@ -231,9 +231,6 @@ def main():
                 # Save daily transfer functions to file
                 daytransfer.save(filename)
 
-            if opts.fig_TF:
-                plot.fig_TF(f, day_transfer_functions, TF_list_day, sta_transfer_functions, TF_list_sta, key=stkey)
-
         if not opts.skip_clean:
 
             # List of possible transfer functions for station average files
@@ -268,6 +265,8 @@ def main():
                 # Save average transfer functions to file
                 statransfer.save(filename)
 
+        if opts.fig_TF:
+            plot.fig_TF(f, day_transfer_functions, TF_list_day, sta_transfer_functions, TF_list_sta, key=stkey)
 
 if __name__ == "__main__":
 
