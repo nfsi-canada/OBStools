@@ -34,7 +34,7 @@ def get_daylong_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for data processing on-the-fly (requires web connection)
+    Calling options for the script `obs_download_data.py` that accompany this package.
 
     """
 
@@ -170,7 +170,7 @@ def get_event_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for data processing on-the-fly (requires web connection)
+    Calling options for the script `obs_download_event.py` that accompany this package.
 
     """
 
@@ -322,7 +322,7 @@ def get_dailyspec_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for data processing on-the-fly (requires web connection)
+    Calling options for the script `obs_daily_spectra.py` that accompany this package.
 
     """
 
@@ -437,7 +437,7 @@ def get_cleanspec_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for data processing on-the-fly (requires web connection)
+    Calling options for the script `obs_clean_spectra.py` that accompany this package.
 
     """
 
@@ -541,7 +541,7 @@ def get_transfer_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for data processing on-the-fly (requires web connection)
+    Calling options for the script `obs_transfer functions.py` that accompany this package.
 
     """
 
@@ -631,7 +631,7 @@ def get_correct_options():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    This function is used for data processing on-the-fly (requires web connection)
+    Calling options for the script `obs_correct_event.py` that accompany this package.
 
     """
 
