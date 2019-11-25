@@ -25,6 +25,8 @@
 
 - :class:`~obstools.classes.DayNoise`
 - :class:`~obstools.classes.StaNoise`
+- :class:`~obstools.classes.TFNoise`
+- :class:`~obstools.classes.EventStream`
 
 The class :class:`~obstools.classes.DayNoise` contains attributes
 and methods for the analysis of four-component day-long time-series
@@ -33,6 +35,24 @@ and methods for the analysis of four-component day-long time-series
 The class :class:`~obstools.classes.StaNoise` contains attributes
 and methods for the aggregation of day-long time series into station
 average. 
+
+The class :class:`~obstools.classes.TFNoise` contains attributes
+and methods for the calculation of transfer functions from noise
+traces used to correct the vertical component. 
+
+The class :class:`~obstools.classes.EventStream` contains attributes
+and methods for the application of the transfer functions to the
+event traces for the correction (cleaning) of vertical component
+seismograms. 
+
+:mod:`~obstools` further defines the following container classes:
+
+- :class:`~obstools.classes.Power`
+- :class:`~obstools.classes.Cross`
+- :class:`~obstools.classes.Rotation`
+
+These classes are used as containers for individual traces/objects
+that are used as attributes of the base classes. 
 
 """
 
@@ -137,11 +157,6 @@ class DayNoise(object):
     control steps and the average daily spectra for windows flagged as 
     "good". 
 
-    Note
-    ----
-    The object is initialized with the ``sta`` field only, and
-    other attributes are added to the object as the analysis proceeds.
-
     Attributes
     ----------
 
@@ -168,7 +183,7 @@ class DayNoise(object):
         """
         Method to determine daily time windows for which the spectra are 
         anomalous and should be discarded in the calculation of the
-        transfer functions.
+        transfer functions. 
 
         Parameters
         ----------
@@ -186,7 +201,7 @@ class DayNoise(object):
             Whether or not to plot intermediate steps in the QC procedure for debugging
 
         Attributes
-        -------
+        ----------
         goodwins : list 
             List of booleans representing whether a window is good (True) or not (False)
 
@@ -335,7 +350,7 @@ class DayNoise(object):
             Whether or not to plot intermediate steps in the QC procedure for debugging
 
         Attributes
-        -------
+        ----------
         f : :class:`~numpy.ndarray` 
             Positive frequency axis for corresponding window parameters
         power : :class:`~obstools.classes.Power`
@@ -397,7 +412,7 @@ class DayNoise(object):
 
     def save(self, filename):
         """
-        Method to save the object to file using Pickle.
+        Method to save the object to file using `~Pickle`.
 
         Parameters
         ----------
@@ -421,11 +436,6 @@ class StaNoise(object):
     A StaNoise object contains attributes that associate
     three-component raw (or deconvolved) traces, metadata information
     and window parameters.
-
-    Note
-    ----
-    The object is initialized with the ``sta`` field only, and
-    other attributes are added to the object as the analysis proceeds.
 
     Attributes
     ----------
@@ -453,9 +463,9 @@ class StaNoise(object):
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False):
         """
-        Method to determine the days for which the spectra are 
+        Method to determine the days (for given time window) for which the spectra are 
         anomalous and should be discarded in the calculation of the
-        long-term transfer functions.
+        long-term transfer functions. 
 
         Parameters
         ----------
@@ -471,7 +481,7 @@ class StaNoise(object):
             Whether or not to plot intermediate steps in the QC procedure for debugging
 
         Attributes
-        -------
+        ----------
         goodwins : list 
             List of booleans representing whether a window is good (True) or not (False)
 
@@ -564,13 +574,11 @@ class StaNoise(object):
         ----------
         fig_average : boolean
             Whether or not to produce a figure showing the average daily spectra
-        fig_coh_ph : boolean
-            Whether or not to produce a figure showing the maximum coherence between H and Z
         debug : boolean
             Whether or not to plot intermediate steps in the QC procedure for debugging
 
         Attributes
-        -------
+        ----------
         power : :class:`~obstools.classes.Power`
             Container for the Power spectra
         cross : :class:`~obstools.classes.Cross`
@@ -618,7 +626,7 @@ class StaNoise(object):
 
     def save(self, filename):
         """
-        Method to save the object to file using Pickle.
+        Method to save the object to file using `~Pickle`.
 
         Parameters
         ----------
@@ -644,6 +652,14 @@ class StaNoise(object):
 
 
 class TFNoise(object):
+    """
+    A TFNoise object contains attributes that store the transfer function information
+    from multiple components (and component combinations). 
+
+    Attributes
+    ----------
+
+    """
 
     def __init__(self, f, power, cross, rotation, tf_list):
 
@@ -673,6 +689,16 @@ class TFNoise(object):
             self[key] = value
 
     def transfer_func(self):
+        """
+        Method to calculate transfer functions between multiple components (and 
+        component combinations) from the averaged (daily or station-averaged) noise spectra.
+
+        Attributes
+        ----------
+        transfunc : :class:`~obstools.classes.TFNoise.TfDict`
+            Container Dictionary for all possible transfer functions
+
+        """
 
         transfunc = self.TfDict()
 
@@ -750,6 +776,15 @@ class TFNoise(object):
             self.transfunc = transfunc
 
     def save(self, filename):
+        """
+        Method to save the object to file using `~Pickle`.
+
+        Parameters
+        ----------
+        filename : str
+            File name 
+
+        """
 
         # Remove traces to save disk space
         del self.c11 
@@ -771,6 +806,15 @@ class TFNoise(object):
 
 
 class EventStream(object):
+    """
+    An EventStream object contains attributes that store station-event metadata and 
+    methods for applying the transfer functions to the various components and produce
+    corrected/cleaned vertical components.
+
+    Attributes
+    ----------
+
+    """
 
     def __init__(self, sta, sth, stp, tstamp, lat, lon, time, window, sampling_rate):
         self.sta = sta
@@ -794,6 +838,16 @@ class EventStream(object):
             self[key] = value
 
     def correct_data(self, tfnoise, TF_list):
+        """
+        Method to apply transfer functions between multiple components (and 
+        component combinations) to produce corrected/cleaned vertical components.
+
+        Attributes
+        ----------
+        correct : :class:`~obstools.classes.EventStream.CorrectDict`
+            Container Dictionary for all possible corrections from the transfer functions
+
+        """
 
         correct = self.CorrectDict()
 
@@ -896,18 +950,21 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP-H', corrtime)
 
-
         self.correct = correct
 
 
     def save(self, filename):
+        """
+        Method to save the object to file using `~Pickle`.
+
+        Parameters
+        ----------
+        filename : str
+            File name 
+
+        """
 
         file = open(filename, 'wb')
         pickle.dump(self, file)
         file.close()
-
-
-
-
-
 
