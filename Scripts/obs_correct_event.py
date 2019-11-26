@@ -68,6 +68,12 @@ Usage
                         functions. [Default False]
         --skip-clean    Skip cleaned spectral averages in application of transfer
                         functions. [Default False]
+        --fmin=FMIN     Low frequency corner (in Hz) for plotting the raw (un-
+                        corrected) seismograms. Filter is a 2nd order, zero phase
+                        butterworth filter. [Default 1./150.]
+        --fmax=FMAX     High frequency corner (in Hz) for plotting the raw (un-
+                        corrected) seismograms. Filter is a 2nd order, zero phase
+                        butterworth filter. [Default 1./10.]
 
       Figure Settings:
         Flags for plotting figures
@@ -211,7 +217,7 @@ def main():
                 continue
 
             if opts.fig_event_raw:
-                plot.fig_event_raw(eventstream)
+                plot.fig_event_raw(eventstream, fmin=opts.fmin, fmax=opts.fmax)
 
             # Cycle through corresponding TF files
             for transfile in trans_files:

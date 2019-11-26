@@ -673,6 +673,12 @@ def get_correct_options():
         help="Skip daily spectral averages in application of transfer functions. [Default False]")
     ConstGroup.add_option("--skip-clean", action="store_true", dest="skip_clean", default=False, \
         help="Skip cleaned spectral averages in application of transfer functions. [Default False]")
+    ConstGroup.add_option("--fmin", action="store", type="float", dest="fmin", default="0.006666666666666667" ,\
+        help="Low frequency corner (in Hz) for plotting the raw (un-corrected) seismograms. " \
+        "Filter is a 2nd order, zero phase butterworth filter. [Default 1./150.]")
+    ConstGroup.add_option("--fmax", action="store", type="float", dest="fmax", default="0.1" ,\
+        help="High frequency corner (in Hz) for plotting the raw (un-corrected) seismograms. " \
+        "Filter is a 2nd order, zero phase butterworth filter. [Default 1./10.]")
 
     # Constants Settings
     FigureGroup = OptionGroup(parser, title='Figure Settings', description="Flags for plotting figures")

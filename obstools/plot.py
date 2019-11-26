@@ -1,16 +1,29 @@
-'''
-MODULE obs_plot.py
+# Copyright 2019 Pascal Audet & Helen Janiszewski
+#
+# This file is part of OBStools.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+"""
+:mod:`~obstools.plot` contains several functions for plotting the results
+of the analysis at various final and intermediate steps.
 
-Set of plotting functions to be used with the obs package for
-tilt and compliance correction of vertical component OBS data.
-
----
-Pascal Audet
-pascal.audet@uottawa.ca
-
-Last updated: 17 November 2015
-
-'''
+"""
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -18,6 +31,22 @@ from obstools import utils, plot
 
 
 def fig_QC(f, power, gooddays, key=''):
+    """
+    Function to plot the Quality-Control step of the analysis. This function is used
+    in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+
+    Parameters
+    ----------
+    f : :mod:`~numpy.ndarray`
+        Frequency axis (in Hz)
+    power : :class:`~obstools.classes.Power`
+        Container for the Power spectra
+    gooddays : List
+        List of booleans representing whether a window is good (True) or not (False)
+    key : str
+        String corresponding to the station key under analysis
+
+    """
 
     sl_c11 = power.c11
     sl_c22 = power.c22
@@ -50,6 +79,25 @@ def fig_QC(f, power, gooddays, key=''):
 
 
 def fig_average(f, power, bad, gooddays, key=''):
+    """
+    Function to plot the averaged spectra (those qualified as 'good' in the 
+    QC step). This function is used
+    in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+
+    Parameters
+    ----------
+    f : :mod:`~numpy.ndarray`
+        Frequency axis (in Hz)
+    power : :class:`~obstools.classes.Power`
+        Container for the Power spectra
+    bad : :class:`~obstools.classes.Power`
+        Container for the *bad* Power spectra
+    gooddays : List
+        List of booleans representing whether a window is good (True) or not (False)
+    key : str
+        String corresponding to the station key under analysis
+
+    """
 
     c11 = power.c11
     c22 = power.c22
@@ -86,6 +134,26 @@ def fig_average(f, power, bad, gooddays, key=''):
 
 
 def fig_av_cross(f, field, gooddays, ftype, key='', **kwargs):
+    """
+    Function to plot the averaged cross-spectra (those qualified as 'good' in the 
+    QC step). This function is used in the `obs_daily_spectra.py` script.
+
+    Parameters
+    ----------
+    f : :mod:`~numpy.ndarray`
+        Frequency axis (in Hz)
+    field : :class:`~obstools.classes.Rotation`
+        Container for the Power spectra
+    gooddays : List
+        List of booleans representing whether a window is good (True) or not (False)
+    ftype : str
+        Type of plot to be displayed. If ftype is Admittance, plot is loglog. Otherwise semilogx
+    key : str
+        String corresponding to the station key under analysis
+    **kwargs : None
+        Keyword arguments to modify plot
+
+    """
 
     # Extact field
     if ftype == 'Admittance':
@@ -143,6 +211,20 @@ def fig_av_cross(f, field, gooddays, ftype, key='', **kwargs):
 
 
 def fig_coh_ph(coh, ph, direc):
+    """
+    Function to plot the coherence and phase between the rotated H and Z components, 
+    used to characterize the tilt direction.
+
+    Parameters
+    ----------
+    coh : :mod:`~numpy.ndarray`
+        Coherence between rotated H and Z components
+    ph : :mod:`~numpy.ndarray`
+        Phase between rotated H and Z components
+    direc : :mod:`~numpy.ndarray`
+        Directions considered in maximizing coherence between H and Z
+
+    """
 
     colors = plt.cm.cividis(np.linspace(0,1,coh.shape[1]))
 
@@ -170,7 +252,22 @@ def fig_coh_ph(coh, ph, direc):
         plt.show()
 
 
-def fig_TF(f, day_trfs, list_day, sta_trfs, list_sta, key=''):
+def fig_TF(f, day_trfs, sta_trfs, key=''):
+    """
+    Function to plot the transfer functions available.
+
+    Parameters
+    ----------
+    f : :mod:`~numpy.ndarray`
+        Frequency axis (in Hz)
+    day_trfs : Dict
+        Dictionary containing the transfer functions for the daily averages
+    sta_trfs : Dict
+        Dictionary containing the transfer functions for the station averages
+    key : str
+        String corresponding to the station key under analysis
+
+    """
 
     import matplotlib.ticker as mtick
     plt.figure(figsize=(6,8))
@@ -219,12 +316,24 @@ def fig_TF(f, day_trfs, list_day, sta_trfs, list_sta, key=''):
     plt.show()
 
 
+def fig_event_raw(evstream, fmin, fmax):
+    """
+    Function to plot the raw (although bandpassed) seismograms.
 
-def fig_event_raw(evstream):
+    Parameters
+    ----------
+    evstream : :class:`~obtsools.classes.EventStream`
+        Container for the event stream data
+    fmin : float
+        Low frequency corner (in Hz)
+    fmax : float
+        High frequency corner (in Hz)
+
+    """
 
     import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
+    evstream.sth.filter('bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+    evstream.stp.filter('bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
     sr = evstream.sth[0].stats.sampling_rate
     taxis = np.arange(0., 7200., 1./sr)
     
@@ -260,6 +369,18 @@ def fig_event_raw(evstream):
 
 
 def fig_event_corrected(evstream, TF_list):
+    """
+    Function to plot the corrected vertical component seismograms.
+
+    Parameters
+    ----------
+    evstream : :class:`~obtsools.classes.EventStream`
+        Container for the event stream data
+    Tf_list : List
+        List of Dictionary elements of transfer functions used 
+        for plotting the corrected vertical component.
+
+    """
 
     import matplotlib as mpl
     evstream.sth.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
@@ -321,159 +442,4 @@ def fig_event_corrected(evstream, TF_list):
     plt.tight_layout()
     plt.show()
 
-
-
-def obs_plot_2traces(tr1, tr2, f1=0.01, f2=0.05, title=None):
-
-    # Get parameters from traces
-    nt = tr1.stats.npts
-    dt = tr1.stats.delta
-
-    # Time axis
-    time = np.arange(nt)*dt
-
-    tt = tr1.copy()
-    tt.filter('bandpass', freqmin=f1, freqmax=f2, zerophase=True)
-    plt.subplot(211)
-    plt.plot(time, tt.data, c='k')
-
-    tt = tr2.copy()
-    tt.filter('bandpass', freqmin=f1, freqmax=f2, zerophase=True)
-    plt.subplot(212)
-    plt.plot(time, tt.data, c='k')
-
-    #if title:
-    plt.suptitle(title+tr1.stats.station)
-
-    plt.tight_layout()
-    plt.show()
-    
-
-def obs_plot_3traces(tr1, tr2, tr3, f1=0.01, f2=0.05, title=None):
-
-    # Get parameters from traces
-    nt = tr1.stats.npts
-    dt = tr1.stats.delta
-    vmax = max(tr1.data.max(),tr2.data.max(),tr3.data.max())
-
-    # Time axis
-    time = np.arange(nt)*dt
-
-    tt = tr1.copy()
-    tt.filter('bandpass', freqmin=f1, freqmax=f2, zerophase=True)
-    plt.subplot(311)
-    plt.plot(time, tt.data, c='k')
-    plt.ylim(-vmax,vmax)
-
-    tt = tr2.copy()
-    tt.filter('bandpass', freqmin=f1, freqmax=f2, zerophase=True)
-    plt.subplot(312)
-    plt.plot(time, tt.data, c='k')
-    plt.ylim(-vmax,vmax)
-
-    tt = tr3.copy()
-    tt.filter('bandpass', freqmin=f1, freqmax=f2, zerophase=True)
-    plt.subplot(313)
-    plt.plot(time, tt.data, c='k')
-    plt.ylim(-vmax,vmax)
-
-    #if title:
-    plt.suptitle(title+' '+tr1.stats.station)
-
-    plt.tight_layout()
-    plt.show()
-
-def obs_plot_trf_tilt(Ad, Co, Ph, eAd, eCo, ePh, freq):
-
-    plt.subplot(231)
-    plt.scatter(freq,Co,s=2)
-    plt.xlim((0.005,0.1))
-    plt.ylim((0., 1.))
-    plt.ylabel('Raw coherence')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.subplot(232)
-    plt.scatter(freq,np.log10(Ad),s=2)
-    #plt.errorbar(freq, Ad, yerr=eAd, fmt='.')
-    #plt.yscale('log', nonposx='clip')
-    plt.xlim((0.005,0.1))
-    plt.ylim((-2.5, -1.4))
-    plt.ylabel('log10(Admittance)')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.subplot(233)
-    #plt.scatter(freq,Ph,s=2)
-    plt.errorbar(freq, Ph, yerr=ePh, fmt='.', c='k')
-    plt.xlim((0.005,0.1))
-    plt.ylim((-np.pi,np.pi))
-    plt.ylabel('Phase shift (radians)')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.suptitle('Transfer functions for tilt')
-
-    plt.tight_layout()
-    plt.show()
-
-def obs_plot_trf_compliance(Ad, Co, Ph, eAd, eCo, ePh, freq):
-
-    plt.subplot(231)
-    plt.scatter(freq,Co,s=2)
-    plt.xlim((0.005,0.1))
-    plt.ylim((0., 1.))
-    plt.ylabel('Raw coherence')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.subplot(232)
-    plt.scatter(freq,np.log10(Ad),s=2)
-    #plt.errorbar(freq, Ad, yerr=eAd, fmt='.')
-    #plt.yscale('log', nonposx='clip')
-    plt.xlim((0.005,0.1))
-    plt.ylim((-9., -6.))
-    plt.ylabel('log10(Admittance)')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.subplot(233)
-    #plt.scatter(freq,Ph,s=2)
-    plt.errorbar(freq, Ph, yerr=ePh, fmt='.', c='k')
-    plt.xlim((0.005,0.1))
-    plt.ylim((-np.pi,np.pi))
-    plt.ylabel('Phase shift (radians)')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.suptitle('Transfer functions for compliance')
-
-    plt.tight_layout()
-    plt.show()
-
-
-def obs_plot_coh_dir(dir, coh, tilt):
-
-    if tilt > 180.:
-        dir += 180.
-
-    plt.plot(dir,coh, c='k')
-    plt.axvline(x=tilt, ls='--', c='k')
-    plt.ylabel('Coherence')
-    plt.xlabel('Orientation ($^{\circ}$)')
-    plt.show()
-
-
-def obs_plot_trf_analytic(Ad, Ph, eAd, ePh, aAd, aPh, freq, ind):
-    
-    plt.subplot(221)
-    plt.errorbar(freq[ind], Ad[ind], yerr=eAd[ind], fmt='k.')
-    plt.plot(freq[ind],aAd[ind],'r')
-    #plt.ylim((0.0044,0.0086))
-    plt.ylabel('Admittance')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.subplot(222)
-    plt.errorbar(freq[ind], Ph[ind], yerr=ePh[ind], fmt='k.')
-    plt.plot(freq[ind],aPh[ind],'r')
-    plt.ylim((-np.pi/10.,np.pi/10.))
-    plt.ylabel('Phase shift (radians)')
-    plt.xlabel('Frequency (Hz)')
-
-    plt.tight_layout()
-    plt.show()
 
