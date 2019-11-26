@@ -102,7 +102,7 @@ import pickle
 import glob
 import stdb
 from obspy.clients.fdsn import Client
-from obstools import utils, options
+from obstools.atacr import utils, options
 
 # Main function
 def main():

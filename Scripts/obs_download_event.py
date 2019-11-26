@@ -123,7 +123,7 @@ import stdb
 from obspy.clients.fdsn import Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
-from obstools import utils, options
+from obstools.atacr import utils, options
 from obstools import EventStream
 
 # Main function

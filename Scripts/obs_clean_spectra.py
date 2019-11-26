@@ -103,7 +103,7 @@ import numpy as np
 import pickle
 import stdb
 from obstools import StaNoise, Power, Cross, Rotation
-from obstools import utils, options, plot
+from obstools.atacr import utils, options, plot
 
 def main():
 
