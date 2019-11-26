@@ -26,7 +26,7 @@ to remove seafloor noise from the vertical component of earthquake data.
 It is based on calculating transfer functions across
 multiple channels from culled noise spectra and applying those
 transfer functions to the vertical component of earthquake data. This software
-is a translation of the Matlab code `ATaCR  <https://github.com/helenjanisz/ATaCR>`_
+contains a translation of the Matlab code `ATaCR  <https://github.com/helenjanisz/ATaCR>`_
 
 Licence
 -------
@@ -81,7 +81,7 @@ Activate the newly created environment:
 
    conda activate obs
 
-Install remaining dependencies using ``pip`` inside the ``split`` environment:
+Install remaining dependencies using ``pip`` inside the ``obs`` environment:
 
 .. sourcecode:: bash
 
@@ -108,6 +108,7 @@ Installing from source
 
 .. sourcecode:: bash
 
+   pip install stdb
    pip install .
 
 """

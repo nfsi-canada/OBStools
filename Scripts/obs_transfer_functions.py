@@ -266,7 +266,7 @@ def main():
                 statransfer.save(filename)
 
         if opts.fig_TF:
-            plot.fig_TF(f, day_transfer_functions, TF_list_day, sta_transfer_functions, TF_list_sta, key=stkey)
+            plot.fig_TF(f, day_transfer_functions, sta_transfer_functions, key=stkey)
 
 if __name__ == "__main__":
 
