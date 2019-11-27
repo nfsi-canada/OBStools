@@ -193,7 +193,10 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     # Get transfer functions
     cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
     cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
-    cHP = np.mean(ftH[goodwins,:]*np.conj(ftP[goodwins,:]), axis=0)[0:len(f)]
+    if np.any(ftP):
+        cHP = np.mean(ftH[goodwins,:]*np.conj(ftP[goodwins,:]), axis=0)[0:len(f)]
+    else:
+        cHP = None
 
     return cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value
 

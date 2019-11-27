@@ -480,7 +480,7 @@ class DayNoise(object):
         if fig_average:
             plot.fig_average(f, self.power, bad, self.goodwins, self.ncomp, key=self.key)
 
-        if opts.calc_rotation and (self.ncomp==3 or self.ncomp==4):
+        if opts.calc_rotation and self.ncomp>=3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = utils.calculate_tilt( \
                 ft1, ft2, ftZ, ftP, f, self.goodwins)
             self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value)
