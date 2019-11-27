@@ -338,6 +338,7 @@ class DayNoise(object):
         while moveon == False:
 
             # Below only valid if there are 4 components... 
+            ################################################
             ubernorm = np.empty((4, np.sum(goodwins)))
             for ind_u, dsl in enumerate([dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]):
                 normvar = np.zeros(np.sum(goodwins))

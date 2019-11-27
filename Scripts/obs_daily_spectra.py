@@ -186,7 +186,7 @@ def main():
         trN1, trN2, trNZ, trNP = utils.get_data(datapath, tstart, tend)
 
         # Window size 
-        window = 7200.
+        window = opts.window
         overlap = opts.overlap #0.3
 
         # minimum numer of windows
@@ -196,7 +196,7 @@ def main():
         stats = trN1[0].stats
 
         # Time axis
-        taxis = np.arange(0., window, trN1[0].stats.delta)
+        taxis = np.arange(0., window, trNZ[0].stats.delta)
 
         # Cycle through available data
         for tr1, tr2, trZ, trP in zip(trN1, trN2, trNZ, trNP):

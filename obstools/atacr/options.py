@@ -360,9 +360,10 @@ def get_dailyspec_options():
     from numpy import nan
 
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
-        "to extract two-hour-long windows from the day-long seismograms, calculate the power-spectral properties, " \
+        "to extract shorter windows from the day-long seismograms, calculate the power-spectral properties, " \
         "flag windows for outlier PSDs and calculate daily averages of the corresponding Fourier transforms. " \
-        "The stations are processed one by one and the data are stored to disk.")
+        "The stations are processed one by one and the data are stored to disk. The program will look " \
+        "for data saved in the previous steps and use all available components.")
 
     # General Settings
     parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
@@ -385,13 +386,16 @@ def get_dailyspec_options():
 
     # Constants Settings
     ConstGroup = OptionGroup(parser, title='Parameter Settings', description="Miscellaneous default values and settings")
+    ConstGroup.add_option("--window", action="store", type="float", dest="window", default=7200., \
+        help="Specify window length in seconds. Default value is highly recommended. "\
+        "Program may not be stable for large deviations from default value. [Default 7200. (or 2 hours)]")
     ConstGroup.add_option("--overlap", action="store", type="float", dest="overlap", default=0.3, \
-        help="Specify fraction of overlap between two-hour-long windows. [Default 0.3 (or 30%)]")
+        help="Specify fraction of overlap between windows. [Default 0.3 (or 30%)]")
     ConstGroup.add_option("--minwin", action="store", type="int", dest="minwin", default=10, \
         help="Specify minimum number of 'good' windows in any given day to continue with analysis. [Default 10]")
     ConstGroup.add_option("--freq-band", action="store", type="string", dest="pd", default=None, \
         help="Specify comma-separated frequency limits (float, in Hz) over which to calculate spectral features " \
-        "used in flagging the days/windows. [Default 0.004,2.0]")
+        "used in flagging the bad windows. [Default 0.004,2.0]")
     ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=1.5, \
         help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad. [Default 1.5]")
     ConstGroup.add_option("--alpha", action="store", type="float", dest="alpha", default=0.05, \

@@ -33,10 +33,10 @@ def update_stats(tr, stla, stlo, stel, cha):
 def get_data(datapath, tstart, tend):
 
     # Define empty streams
-        trN1 = Stream()
-        trN2 = Stream()
-        trNZ = Stream()
-        trNP = Stream()
+    trN1 = Stream()
+    trN2 = Stream()
+    trNZ = Stream()
+    trNP = Stream()
 
     # Time iterator
     t1 = tstart
