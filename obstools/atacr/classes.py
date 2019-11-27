@@ -223,14 +223,18 @@ class DayNoise(object):
 
         # Get spectrograms for single day-long keys
         f, t, psdZ = spectrogram(self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        if np.any(tr1.data) and np.any(tr2.data):
+        if self.ncomp==2:
+            f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+        elif self.ncomp==3:
             f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
             f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        if np.any(trP.data):
+        else:
+            f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+            f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
             f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
 
         if debug:
-            if not np.any(tr1.data) and not np.any(tr2.data):
+            if self.ncomp==2:
                 plt.figure(1)
                 plt.subplot(2,1,1)
                 plt.pcolormesh(t, f, np.log(psdZ))
@@ -241,7 +245,7 @@ class DayNoise(object):
                 plt.tight_layout()
                 plt.show()
 
-            elif not np.any(trP.data):
+            elif ncomp==3:
                 plt.figure(1)
                 plt.subplot(3,1,1)
                 plt.pcolormesh(t, f, np.log(psd1))
@@ -278,36 +282,52 @@ class DayNoise(object):
         if smooth:
             # Smooth out the log of the PSDs
             sl_psdZ = utils.smooth(np.log(psdZ), 50, axis=0)
-            if np.any(tr1.data) and np.any(tr2.data):
-                sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
-                sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
-                sl_psdP = None
-            if np.any(trP.data):
+            if self.ncomp==2:
                 sl_psd1 = None
                 sl_psd2 = None
                 sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
+            elif self.ncomp==3:
+                sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
+                sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
+                sl_psdP = None
+            else:
+                sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
+                sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
+                sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
+
         else:
             # Take the log of the PSDs
             sl_psdZ = np.log(psdZ)
-            if np.any(tr1.data) and np.any(tr2.data):
+            if self.ncomp==2:
+                sl_psd1 = None
+                sl_psd2 = None
+                sl_psdP = np.log(psdP)
+            elif self.ncomp==3:
                 sl_psd1 = np.log(psd1)
                 sl_psd2 = np.log(psd2)
                 sl_psdP = None
-            if np.any(trP.data):
-                sl_psd1 = None
-                sl_psd2 = None
+            else:
+                sl_psd1 = np.log(psd1)
+                sl_psd2 = np.log(psd2)
                 sl_psdP = np.log(psdP)
 
         # Remove mean of the log PSDs
         dsl_psdZ = sl_psdZ[ff,:] - np.mean(sl_psdZ[ff,:], axis=0)
-        if np.any(tr1.data) and np.any(tr2.data):
+        if self.ncomp==2:
+            dsl_psdP = sl_psdP[ff,:] - np.mean(sl_psdP[ff,:], axis=0)
+            dsls = [dsl_psdZ, dsl_psdP]
+        elif self.ncomp==3:
             dsl_psd1 = sl_psd1[ff,:] - np.mean(sl_psd1[ff,:], axis=0)
             dsl_psd2 = sl_psd2[ff,:] - np.mean(sl_psd2[ff,:], axis=0)
-        if np.any(trP.data):
+            dsls = [dsl_psd1, dsl_psd2, dsl_psdZ]
+        else:
+            dsl_psd1 = sl_psd1[ff,:] - np.mean(sl_psd1[ff,:], axis=0)
+            dsl_psd2 = sl_psd2[ff,:] - np.mean(sl_psd2[ff,:], axis=0)
             dsl_psdP = sl_psdP[ff,:] - np.mean(sl_psdP[ff,:], axis=0)
+            dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
 
         if debug:
-            if not np.any(tr1.data) and not np.any(tr2.data):
+            if self.ncomp==2:
                 plt.figure(2)
                 plt.subplot(2,1,1)
                 plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
@@ -315,7 +335,7 @@ class DayNoise(object):
                 plt.semilogx(f, sl_psdP, 'k', lw=0.5)
                 plt.tight_layout()
                 plt.show()
-            elif not np.any(trP.data):
+            elif self.ncomp==3:
                 plt.figure(2)
                 plt.subplot(3,1,1)
                 plt.semilogx(f, sl_psd1, 'r', lw=0.5)
@@ -338,13 +358,6 @@ class DayNoise(object):
                 plt.tight_layout()
                 plt.show()
 
-        if self.ncomp==2:
-            dsls = [dsl_psdZ, dsl_psdP]
-        elif self.ncomp==3:
-            dsls = [dsl_psd1, dsl_psd2, dsl_psdZ]
-        else:
-            dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
-
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
@@ -364,7 +377,7 @@ class DayNoise(object):
 
             if debug:
                 plt.figure(4)
-                for i in range(ncomp):
+                for i in range(self.ncomp):
                     plt.plot(range(0,np.sum(goodwins)), detrend(ubernorm, type='constant')[i], 'o-')
                 plt.show()
                 plt.figure(5)
@@ -444,15 +457,19 @@ class DayNoise(object):
 
         # Below only works for 4 components
         ################################### 
-        c11 = np.abs(np.mean(ft1[self.goodwins,:]*np.conj(ft1[self.goodwins,:]), axis=0))[0:len(f)]
-        c22 = np.abs(np.mean(ft2[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0))[0:len(f)]
         cZZ = np.abs(np.mean(ftZ[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0))[0:len(f)]
-        cPP = np.abs(np.mean(ftP[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0))[0:len(f)]
+        if np.any(c11) and np.any(c22):
+            c11 = np.abs(np.mean(ft1[self.goodwins,:]*np.conj(ft1[self.goodwins,:]), axis=0))[0:len(f)]
+            c22 = np.abs(np.mean(ft2[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0))[0:len(f)]
+        if np.any(cPP):
+            cPP = np.abs(np.mean(ftP[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0))[0:len(f)]
         if np.sum(~self.goodwins) > 0:
-            bc11 = np.abs(np.mean(ft1[~self.goodwins,:]*np.conj(ft1[~self.goodwins,:]), axis=0))[0:len(f)]
-            bc22 = np.abs(np.mean(ft2[~self.goodwins,:]*np.conj(ft2[~self.goodwins,:]), axis=0))[0:len(f)]
             bcZZ = np.abs(np.mean(ftZ[~self.goodwins,:]*np.conj(ftZ[~self.goodwins,:]), axis=0))[0:len(f)]
-            bcPP = np.abs(np.mean(ftP[~self.goodwins,:]*np.conj(ftP[~self.goodwins,:]), axis=0))[0:len(f)]
+            if np.any(c11) and np.any(c22):
+                bc11 = np.abs(np.mean(ft1[~self.goodwins,:]*np.conj(ft1[~self.goodwins,:]), axis=0))[0:len(f)]
+                bc22 = np.abs(np.mean(ft2[~self.goodwins,:]*np.conj(ft2[~self.goodwins,:]), axis=0))[0:len(f)]
+            if np.any(cPP):
+                bcPP = np.abs(np.mean(ftP[~self.goodwins,:]*np.conj(ftP[~self.goodwins,:]), axis=0))[0:len(f)]
         else:
             bc11 = None; bc22 = None; bcZZ = None; bcPP = None
 
@@ -513,7 +530,7 @@ class StaNoise(object):
         self.f = f
         self.nwins = nwins
         self.key = key
-        # Unwrap the container attributes
+        # Unbox the container attributes
         self.c11 = power.c11.T
         self.c22 = power.c22.T
         self.cZZ = power.cZZ.T
