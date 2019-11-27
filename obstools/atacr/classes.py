@@ -222,16 +222,13 @@ class DayNoise(object):
         wind[-ss:ws] = hanning[ss:ws]
 
         # Get spectrograms for single day-long keys
+        psd1 = None; psd2 = None; psdZ = None; psdP = None
         f, t, psdZ = spectrogram(self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        if self.ncomp==2:
+        if self.ncomp==2 or self.ncomp==4:
             f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        elif self.ncomp==3:
+        elif self.ncomp==3 or self.ncomp==4:
             f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
             f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        else:
-            f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-            f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-            f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
 
         if debug:
             if self.ncomp==2:
@@ -281,35 +278,23 @@ class DayNoise(object):
 
         if smooth:
             # Smooth out the log of the PSDs
+            sl_psd1 = None; sl_psd2 = None; sl_psdZ = None; sl_psdP = None
             sl_psdZ = utils.smooth(np.log(psdZ), 50, axis=0)
-            if self.ncomp==2:
-                sl_psd1 = None
-                sl_psd2 = None
+            if self.ncomp==2 or self.ncomp==4:
                 sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
-            elif self.ncomp==3:
+            elif self.ncomp==3 or self.ncomp==4:
                 sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
                 sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
-                sl_psdP = None
-            else:
-                sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
-                sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
-                sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
 
         else:
             # Take the log of the PSDs
+            sl_psd1 = None; sl_psd2 = None; sl_psdZ = None; sl_psdP = None
             sl_psdZ = np.log(psdZ)
-            if self.ncomp==2:
-                sl_psd1 = None
-                sl_psd2 = None
+            if self.ncomp==2 or self.ncomp==4:
                 sl_psdP = np.log(psdP)
-            elif self.ncomp==3:
+            elif self.ncomp==3 or self.ncomp==4:
                 sl_psd1 = np.log(psd1)
                 sl_psd2 = np.log(psd2)
-                sl_psdP = None
-            else:
-                sl_psd1 = np.log(psd1)
-                sl_psd2 = np.log(psd2)
-                sl_psdP = np.log(psdP)
 
         # Remove mean of the log PSDs
         dsl_psdZ = sl_psdZ[ff,:] - np.mean(sl_psdZ[ff,:], axis=0)
