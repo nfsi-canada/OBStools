@@ -39,10 +39,11 @@ Usage
     $ obs_daily_spectra.py -h
     Usage: obs_daily_spectra.py [options] <station database>
 
-    Script used to extract two-hour-long windows from the day-long seismograms,
+    Script used to extract shorter windows from the day-long seismograms,
     calculate the power-spectral properties, flag windows for outlier PSDs and
     calculate daily averages of the corresponding Fourier transforms. The stations
-    are processed one by one and the data are stored to disk.
+    are processed one by one and the data are stored to disk. The program will
+    look for data saved in the previous steps and use all available components.
 
     Options:
       -h, --help           show this help message and exit
@@ -59,8 +60,12 @@ Usage
       Parameter Settings:
         Miscellaneous default values and settings
 
-        --overlap=OVERLAP  Specify fraction of overlap between two-hour-long
-                           windows. [Default 0.3 (or 30%)]
+        --window=WINDOW    Specify window length in seconds. Default value is
+                           highly recommended. Program may not be stable for large
+                           deviations from default value. [Default 7200. (or 2
+                           hours)]
+        --overlap=OVERLAP  Specify fraction of overlap between windows. [Default
+                           0.3 (or 30%)]
         --minwin=MINWIN    Specify minimum number of 'good' windows in any given
                            day to continue with analysis. [Default 10]
         --freq-band=PD     Specify comma-separated frequency limits (float, in Hz)
@@ -95,10 +100,10 @@ Usage
                            any station start times. [Default start date of each
                            station in database]
         --end=ENDT         Specify a UTCDateTime compatible string representing
-                           the start time for the event search. This will override
+                           the start time for the data search. This will override
                            any station end times. [Default end date of each
                            station n database]
-
+                       
 """
 
 # Import modules and functions
