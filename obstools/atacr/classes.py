@@ -279,7 +279,10 @@ class DayNoise(object):
             if tr1.data and tr2.data:
                 sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
                 sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
+                sl_psdP = None
             if trP.data:
+                sl_psd1 = None
+                sl_psd2 = None
                 sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
         else:
             # Take the log of the PSDs
@@ -287,7 +290,10 @@ class DayNoise(object):
             if tr1.data and tr2.data:
                 sl_psd1 = np.log(psd1)
                 sl_psd2 = np.log(psd2)
+                sl_psdP = None
             if trP.data:
+                sl_psd1 = None
+                sl_psd2 = None
                 sl_psdP = np.log(psdP)
 
         # Remove mean of the log PSDs
@@ -330,6 +336,15 @@ class DayNoise(object):
                 plt.tight_layout()
                 plt.show()
 
+        # Check how many components are available
+        ncomp = np.sum(np.from_iter(1 for tr in Stream(traces=[tr1,tr2,trZ,trP]) if np.any(x.data)))
+        if ncomp==2:
+            dsls = [dsl_psdZ, dsl_psdP]
+        elif ncomp==3:
+            dsls = [dsl_psd1, dsl_psd2, dsl_psdZ]
+        else:
+            dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
+
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
@@ -337,10 +352,8 @@ class DayNoise(object):
 
         while moveon == False:
 
-            # Below only valid if there are 4 components... 
-            ################################################
-            ubernorm = np.empty((4, np.sum(goodwins)))
-            for ind_u, dsl in enumerate([dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]):
+            ubernorm = np.empty((ncomp, np.sum(goodwins)))
+            for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(goodwins))
                 for ii,tmp in enumerate(indwin):
                     ind = np.copy(indwin); ind = np.delete(ind, ii)
@@ -351,10 +364,8 @@ class DayNoise(object):
 
             if debug:
                 plt.figure(4)
-                plt.plot(range(0,np.sum(goodwins)), detrend(ubernorm, type='constant')[0], 'o-')
-                plt.plot(range(0,np.sum(goodwins)), detrend(ubernorm, type='constant')[1], 'o-')
-                plt.plot(range(0,np.sum(goodwins)), detrend(ubernorm, type='constant')[2], 'o-')
-                plt.plot(range(0,np.sum(goodwins)), detrend(ubernorm, type='constant')[3], 'o-')
+                for i in range(ncomp):
+                    plt.plot(range(0,np.sum(goodwins)), detrend(ubernorm, type='constant')[i], 'o-')
                 plt.show()
                 plt.figure(5)
                 plt.plot(range(0,np.sum(goodwins)), np.sum(ubernorm, axis=0), 'o-')

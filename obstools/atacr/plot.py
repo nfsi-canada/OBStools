@@ -53,27 +53,47 @@ def fig_QC(f, power, gooddays, key=''):
     sl_cZZ = power.cZZ
     sl_cPP = power.cPP
 
+    # Check how many components are available
+    ncomp = np.sum(np.from_iter(1 for cc in [sl_c11, sl_c22, sl_cZZ, sl_cPP] if np.any(cc)))
+
+    if ncomp==2:
+        sls = [sl_cZZ, sl_cPP]
+        title = ['HZ component, Station: '+key, \
+                 'HP component, Station: '+key]
+    elif ncomp==3:
+        sls = [sl_c11, sl_c22, sl_cZZ]
+        title = ['H1 component, Station: '+key, \
+                 'H2 component, Station: '+key, \
+                 'HZ component, Station: '+key]
+    else:
+        sls = [sl_c11, sl_c22, sl_cZZ, sl_cPP]
+        title = ['H1 component, Station: '+key, \
+                 'H2 component, Station: '+key, \
+                 'HZ component, Station: '+key, \
+                 'HP component, Station: '+key]
+
     plt.figure(6)
-    plt.subplot(4,1,1)
-    plt.semilogx(f, sl_c11[:,gooddays], 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, sl_c11[:,~gooddays], 'r', lw=0.5)
-    plt.title('H1 component, Station: '+key, fontdict={'fontsize': 8})
-    plt.subplot(4,1,2)
-    plt.semilogx(f, sl_c22[:,gooddays], 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, sl_c22[:,~gooddays], 'r', lw=0.5)
-    plt.title('H2 component, Station: '+key, fontdict={'fontsize': 8})
-    plt.subplot(4,1,3)
-    plt.semilogx(f, sl_cZZ[:,gooddays], 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, sl_cZZ[:,~gooddays], 'r', lw=0.5)
-    plt.title('HZ component, Station: '+key, fontdict={'fontsize': 8})
-    plt.subplot(4,1,4)
-    plt.semilogx(f, sl_cPP[:,gooddays], 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, sl_cPP[:,~gooddays], 'r', lw=0.5)
-    plt.title('HP component, Station: '+key, fontdict={'fontsize': 8})
+    for i, sl in enumerate(sls):
+        ax = plt.subplot(ncomp,1,i)
+        ax.semilogx(f, sl[:,gooddays], 'k', lw=0.5)
+        if np.sum(~gooddays)>0:
+            plt.semilogx(f, sl[:,~gooddays], 'r', lw=0.5)
+        ax.set_title(title[i], fontdict={'fontsize': 8})
+    # plt.subplot(4,1,2)
+    # plt.semilogx(f, sl_c22[:,gooddays], 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, sl_c22[:,~gooddays], 'r', lw=0.5)
+    # plt.title('H2 component, Station: '+key, fontdict={'fontsize': 8})
+    # plt.subplot(4,1,3)
+    # plt.semilogx(f, sl_cZZ[:,gooddays], 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, sl_cZZ[:,~gooddays], 'r', lw=0.5)
+    # plt.title('HZ component, Station: '+key, fontdict={'fontsize': 8})
+    # plt.subplot(4,1,4)
+    # plt.semilogx(f, sl_cPP[:,gooddays], 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, sl_cPP[:,~gooddays], 'r', lw=0.5)
+    # plt.title('HP component, Station: '+key, fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
 
