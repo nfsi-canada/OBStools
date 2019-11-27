@@ -30,7 +30,7 @@ from matplotlib import pyplot as plt
 from obstools.atacr import utils, plot
 
 
-def fig_QC(f, power, gooddays, key=''):
+def fig_QC(f, power, gooddays, ncomp, key=''):
     """
     Function to plot the Quality-Control step of the analysis. This function is used
     in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.

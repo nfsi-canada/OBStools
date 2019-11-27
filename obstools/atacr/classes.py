@@ -177,6 +177,8 @@ class DayNoise(object):
         self.year = self.tr1.stats.starttime.year
         self.julday = self.tr1.stats.starttime.julday
         self.key = key
+        self.ncomp = np.sum(np.from_iter(1 for tr in 
+            Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data)))
 
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
@@ -221,14 +223,14 @@ class DayNoise(object):
 
         # Get spectrograms for single day-long keys
         f, t, psdZ = spectrogram(self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        if tr1.data and tr2.data:
+        if np.any(tr1.data) and np.any(tr2.data):
             f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
             f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        if trP.data:
+        if np.any(trP.data):
             f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
 
         if debug:
-            if not tr1.data and not tr2.data:
+            if not np.any(tr1.data) and not np.any(tr2.data):
                 plt.figure(1)
                 plt.subplot(2,1,1)
                 plt.pcolormesh(t, f, np.log(psdZ))
@@ -239,7 +241,7 @@ class DayNoise(object):
                 plt.tight_layout()
                 plt.show()
 
-            elif not trP.data:
+            elif not np.any(trP.data):
                 plt.figure(1)
                 plt.subplot(3,1,1)
                 plt.pcolormesh(t, f, np.log(psd1))
@@ -276,36 +278,36 @@ class DayNoise(object):
         if smooth:
             # Smooth out the log of the PSDs
             sl_psdZ = utils.smooth(np.log(psdZ), 50, axis=0)
-            if tr1.data and tr2.data:
+            if np.any(tr1.data) and np.any(tr2.data):
                 sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
                 sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
                 sl_psdP = None
-            if trP.data:
+            if np.any(trP.data):
                 sl_psd1 = None
                 sl_psd2 = None
                 sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
         else:
             # Take the log of the PSDs
             sl_psdZ = np.log(psdZ)
-            if tr1.data and tr2.data:
+            if np.any(tr1.data) and np.any(tr2.data):
                 sl_psd1 = np.log(psd1)
                 sl_psd2 = np.log(psd2)
                 sl_psdP = None
-            if trP.data:
+            if np.any(trP.data):
                 sl_psd1 = None
                 sl_psd2 = None
                 sl_psdP = np.log(psdP)
 
         # Remove mean of the log PSDs
         dsl_psdZ = sl_psdZ[ff,:] - np.mean(sl_psdZ[ff,:], axis=0)
-        if tr1.data and tr2.data:
+        if np.any(tr1.data) and np.any(tr2.data):
             dsl_psd1 = sl_psd1[ff,:] - np.mean(sl_psd1[ff,:], axis=0)
             dsl_psd2 = sl_psd2[ff,:] - np.mean(sl_psd2[ff,:], axis=0)
-        if trP.data:
+        if np.any(trP.data):
             dsl_psdP = sl_psdP[ff,:] - np.mean(sl_psdP[ff,:], axis=0)
 
         if debug:
-            if not tr1.data and not tr2.data:
+            if not np.any(tr1.data) and not np.any(tr2.data):
                 plt.figure(2)
                 plt.subplot(2,1,1)
                 plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
@@ -313,7 +315,7 @@ class DayNoise(object):
                 plt.semilogx(f, sl_psdP, 'k', lw=0.5)
                 plt.tight_layout()
                 plt.show()
-            elif not trP.data:
+            elif not np.any(trP.data):
                 plt.figure(2)
                 plt.subplot(3,1,1)
                 plt.semilogx(f, sl_psd1, 'r', lw=0.5)
@@ -336,11 +338,9 @@ class DayNoise(object):
                 plt.tight_layout()
                 plt.show()
 
-        # Check how many components are available
-        ncomp = np.sum(np.from_iter(1 for tr in Stream(traces=[tr1,tr2,trZ,trP]) if np.any(x.data)))
-        if ncomp==2:
+        if self.ncomp==2:
             dsls = [dsl_psdZ, dsl_psdP]
-        elif ncomp==3:
+        elif self.ncomp==3:
             dsls = [dsl_psd1, dsl_psd2, dsl_psdZ]
         else:
             dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
@@ -352,7 +352,7 @@ class DayNoise(object):
 
         while moveon == False:
 
-            ubernorm = np.empty((ncomp, np.sum(goodwins)))
+            ubernorm = np.empty((self.ncomp, np.sum(goodwins)))
             for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(goodwins))
                 for ii,tmp in enumerate(indwin):
@@ -377,7 +377,7 @@ class DayNoise(object):
                 moveon = True
                 if fig_QC:
                     power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-                    plot.fig_QC(f, power, goodwins, key=self.key)
+                    plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
                 return
  
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
@@ -393,7 +393,7 @@ class DayNoise(object):
 
         if fig_QC:
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-            plot.fig_QC(f, power, goodwins, key=self.key)
+            plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
 
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False, fig_coh_ph=False, debug=False):
@@ -425,7 +425,6 @@ class DayNoise(object):
         rotation : :class:`~obstools.atacr.classes.Cross`, optional
             Container for the Rotated power and cross spectra
 
-
         """
 
         # Points in window
@@ -434,13 +433,17 @@ class DayNoise(object):
         # Number of points in step
         ss = int(self.window*(1.-self.overlap)/self.dt)
 
-        ft1, f = utils.calculate_windowed_fft(self.tr1, ws, ss)
-        ft2, f = utils.calculate_windowed_fft(self.tr2, ws, ss)
         ftZ, f = utils.calculate_windowed_fft(self.trZ, ws, ss)
-        ftP, f = utils.calculate_windowed_fft(self.trP, ws, ss)
+        if np.any(tr1.data) and np.any(tr2.data):
+            ft1, f = utils.calculate_windowed_fft(self.tr1, ws, ss)
+            ft2, f = utils.calculate_windowed_fft(self.tr2, ws, ss)
+        if np.any(trP.data):
+            ftP, f = utils.calculate_windowed_fft(self.trP, ws, ss)
 
         self.f = f
 
+        # Below only works for 4 components
+        ################################### 
         c11 = np.abs(np.mean(ft1[self.goodwins,:]*np.conj(ft1[self.goodwins,:]), axis=0))[0:len(f)]
         c22 = np.abs(np.mean(ft2[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0))[0:len(f)]
         cZZ = np.abs(np.mean(ftZ[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0))[0:len(f)]
