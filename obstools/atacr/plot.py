@@ -43,6 +43,8 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
         Container for the Power spectra
     gooddays : List
         List of booleans representing whether a window is good (True) or not (False)
+    ncomp : int
+        Number of components used in analysis (can be 2, 3 or 4)
     key : str
         String corresponding to the station key under analysis
 
@@ -52,9 +54,6 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
     sl_c22 = power.c22
     sl_cZZ = power.cZZ
     sl_cPP = power.cPP
-
-    # Check how many components are available
-    ncomp = np.sum(np.from_iter(1 for cc in [sl_c11, sl_c22, sl_cZZ, sl_cPP] if np.any(cc)))
 
     if ncomp==2:
         sls = [sl_cZZ, sl_cPP]
@@ -79,6 +78,9 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
         if np.sum(~gooddays)>0:
             plt.semilogx(f, sl[:,~gooddays], 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
+    plt.tight_layout()
+    plt.show()
+
     # plt.subplot(4,1,2)
     # plt.semilogx(f, sl_c22[:,gooddays], 'k', lw=0.5)
     # if np.sum(~gooddays)>0:
@@ -94,11 +96,9 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
     # if np.sum(~gooddays)>0:
     #     plt.semilogx(f, sl_cPP[:,~gooddays], 'r', lw=0.5)
     # plt.title('HP component, Station: '+key, fontdict={'fontsize': 8})
-    plt.tight_layout()
-    plt.show()
 
 
-def fig_average(f, power, bad, gooddays, key=''):
+def fig_average(f, power, bad, gooddays, ncomp, key=''):
     """
     Function to plot the averaged spectra (those qualified as 'good' in the 
     QC step). This function is used
@@ -114,6 +114,8 @@ def fig_average(f, power, bad, gooddays, key=''):
         Container for the *bad* Power spectra
     gooddays : List
         List of booleans representing whether a window is good (True) or not (False)
+    ncomp : int
+        Number of components used in analysis (can be 2, 3 or 4)
     key : str
         String corresponding to the station key under analysis
 
@@ -128,29 +130,55 @@ def fig_average(f, power, bad, gooddays, key=''):
     bcZZ = bad.cZZ
     bcPP = bad.cPP
 
+    if ncomp==2:
+        ccs = [cZZ, cPP]
+        bcs = [bcZZ, bcPP]
+        title = ['Average HZ, Station: '+key, \
+                 'Average HP, Station: '+key]
+    elif ncomp==3:
+        ccs = [c11, c22, cZZ]
+        bcs = [bc11, bc22, bcZZ]
+        title = ['Average H1, Station: '+key, \
+                 'Average H2, Station: '+key, \
+                 'Average HZ, Station: '+key]
+    else:
+        ccs = [c11, c22, cZZ, cPP]
+        bcs = [bc11, bc22, bcZZ, bcPP]
+        title = ['Average H1, Station: '+key, \
+                 'Average H2, Station: '+key, \
+                 'Average HZ, Station: '+key, \
+                 'Average HP, Station: '+key]
+
     plt.figure()
-    plt.subplot(411)
-    plt.semilogx(f, utils.smooth(np.log(c11), 50), 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, utils.smooth(np.log(bc11), 50), 'r', lw=0.5)
-    plt.title('Average H1, Station: '+key, fontdict={'fontsize': 8})
-    plt.subplot(412)
-    plt.semilogx(f, utils.smooth(np.log(c22), 50), 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, utils.smooth(np.log(bc22), 50), 'r', lw=0.5)
-    plt.title('Average H2, Station: '+key, fontdict={'fontsize': 8})
-    plt.subplot(413)
-    plt.semilogx(f, utils.smooth(np.log(cZZ), 50), 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, utils.smooth(np.log(bcZZ), 50), 'r', lw=0.5)
-    plt.title('Average HZ, Station: '+key, fontdict={'fontsize': 8})
-    plt.subplot(414)
-    plt.semilogx(f, utils.smooth(np.log(cPP), 50), 'k', lw=0.5)
-    if np.sum(~gooddays)>0:
-        plt.semilogx(f, utils.smooth(np.log(bcPP), 50), 'r', lw=0.5)
-    plt.title('Average HP, Station: '+key, fontdict={'fontsize': 8})
+    for i, cc, bc in enumerate(zip(ccs, bcs)):
+        ax = plt.subplot(ncomp,1,i)
+        ax.semilogx(f, utils.smooth(np.log(cc), 50), 'k', lw=0.5)
+        if np.sum(~gooddays)>0:
+            ax.semilogx(f, utils.smooth(np.log(bc), 50), 'r', lw=0.5)
+        ax.set_title(title[i], fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
+
+    # plt.subplot(411)
+    # plt.semilogx(f, utils.smooth(np.log(c11), 50), 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, utils.smooth(np.log(bc11), 50), 'r', lw=0.5)
+    # plt.title('Average H1, Station: '+key, fontdict={'fontsize': 8})
+    # plt.subplot(412)
+    # plt.semilogx(f, utils.smooth(np.log(c22), 50), 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, utils.smooth(np.log(bc22), 50), 'r', lw=0.5)
+    # plt.title('Average H2, Station: '+key, fontdict={'fontsize': 8})
+    # plt.subplot(413)
+    # plt.semilogx(f, utils.smooth(np.log(cZZ), 50), 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, utils.smooth(np.log(bcZZ), 50), 'r', lw=0.5)
+    # plt.title('Average HZ, Station: '+key, fontdict={'fontsize': 8})
+    # plt.subplot(414)
+    # plt.semilogx(f, utils.smooth(np.log(cPP), 50), 'k', lw=0.5)
+    # if np.sum(~gooddays)>0:
+    #     plt.semilogx(f, utils.smooth(np.log(bcPP), 50), 'r', lw=0.5)
+    # plt.title('Average HP, Station: '+key, fontdict={'fontsize': 8})
 
 
 def fig_av_cross(f, field, gooddays, ftype, key='', **kwargs):

@@ -446,48 +446,56 @@ class DayNoise(object):
         # Number of points in step
         ss = int(self.window*(1.-self.overlap)/self.dt)
 
+        ft1 = None; ft2 = None; ftZ = None; ftP = None
         ftZ, f = utils.calculate_windowed_fft(self.trZ, ws, ss)
-        if np.any(tr1.data) and np.any(tr2.data):
+        if self.ncomp==2 or self.ncomp==4:
+            ftP, f = utils.calculate_windowed_fft(self.trP, ws, ss)
+        elif self.ncomp==3 or self.ncomp==4:
             ft1, f = utils.calculate_windowed_fft(self.tr1, ws, ss)
             ft2, f = utils.calculate_windowed_fft(self.tr2, ws, ss)
-        if np.any(trP.data):
-            ftP, f = utils.calculate_windowed_fft(self.trP, ws, ss)
 
         self.f = f
 
-        # Below only works for 4 components
-        ################################### 
+        # Extract good windows
+        c11 = None; c22 = None; cZZ = None; cPP = None
         cZZ = np.abs(np.mean(ftZ[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0))[0:len(f)]
-        if np.any(c11) and np.any(c22):
+        if self.ncomp==2 or self.ncomp==4:
+            cPP = np.abs(np.mean(ftP[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0))[0:len(f)]
+        elif self.ncomp==3 or self.ncomp==4:
             c11 = np.abs(np.mean(ft1[self.goodwins,:]*np.conj(ft1[self.goodwins,:]), axis=0))[0:len(f)]
             c22 = np.abs(np.mean(ft2[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0))[0:len(f)]
-        if np.any(cPP):
-            cPP = np.abs(np.mean(ftP[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0))[0:len(f)]
+
+        # Extract bad windows
+        bc11 = None; bc22 = None; bcZZ = None; bcPP = None
         if np.sum(~self.goodwins) > 0:
             bcZZ = np.abs(np.mean(ftZ[~self.goodwins,:]*np.conj(ftZ[~self.goodwins,:]), axis=0))[0:len(f)]
-            if np.any(c11) and np.any(c22):
+            if self.ncomp==2:
+                bcPP = np.abs(np.mean(ftP[~self.goodwins,:]*np.conj(ftP[~self.goodwins,:]), axis=0))[0:len(f)]
+            elif self.ncomp==3:
                 bc11 = np.abs(np.mean(ft1[~self.goodwins,:]*np.conj(ft1[~self.goodwins,:]), axis=0))[0:len(f)]
                 bc22 = np.abs(np.mean(ft2[~self.goodwins,:]*np.conj(ft2[~self.goodwins,:]), axis=0))[0:len(f)]
-            if np.any(cPP):
-                bcPP = np.abs(np.mean(ftP[~self.goodwins,:]*np.conj(ftP[~self.goodwins,:]), axis=0))[0:len(f)]
-        else:
-            bc11 = None; bc22 = None; bcZZ = None; bcPP = None
 
-        c12 = np.mean(ft1[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0)[0:len(f)]
-        c1Z = np.mean(ft1[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0)[0:len(f)]
-        c1P = np.mean(ft1[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0)[0:len(f)]
-        c2Z = np.mean(ft2[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0)[0:len(f)]
-        c2P = np.mean(ft2[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0)[0:len(f)]
-        cZP = np.mean(ftZ[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0)[0:len(f)]
+        # Calculate mean of all good windows if component combinations exist
+        c12 = None; c1Z = None; c2Z = None; c1P = None; c2P = None; cZP = None
+        if self.ncomp==3 or self.ncomp==4:
+            c12 = np.mean(ft1[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0)[0:len(f)]
+            c1Z = np.mean(ft1[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0)[0:len(f)]
+            c2Z = np.mean(ft2[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0)[0:len(f)]
+        if self.ncomp==4:
+            c1P = np.mean(ft1[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0)[0:len(f)]
+            c2P = np.mean(ft2[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0)[0:len(f)]
+        if self.ncomp==2 or self.ncomp==4:
+            cZP = np.mean(ftZ[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0)[0:len(f)]
 
+        # Store as attributes
         self.power = Power(c11, c22, cZZ, cPP)
         self.cross = Cross(c12, c1Z, c1P, c2Z, c2P, cZP)
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
-            plot.fig_average(f, self.power, bad, self.goodwins, key=self.key)
+            plot.fig_average(f, self.power, bad, self.goodwins, self.ncomp, key=self.key)
 
-        if opts.calc_rotation:
+        if opts.calc_rotation and (self.ncomp==3 or self.ncomp==4):
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = utils.calculate_tilt( \
                 ft1, ft2, ftZ, ftP, f, self.goodwins)
             self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value)
