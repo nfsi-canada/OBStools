@@ -21,35 +21,35 @@
 # SOFTWARE.
 """
 
-:mod:`~obstools` defines the following base classes:
+:mod:`~obstools.atacr` defines the following base classes:
 
-- :class:`~obstools.classes.DayNoise`
-- :class:`~obstools.classes.StaNoise`
-- :class:`~obstools.classes.TFNoise`
-- :class:`~obstools.classes.EventStream`
+- :class:`~obstools.atacr.classes.DayNoise`
+- :class:`~obstools.atacr.classes.StaNoise`
+- :class:`~obstools.atacr.classes.TFNoise`
+- :class:`~obstools.atacr.classes.EventStream`
 
-The class :class:`~obstools.classes.DayNoise` contains attributes
+The class :class:`~obstools.atacr.classes.DayNoise` contains attributes
 and methods for the analysis of four-component day-long time-series
 (3-component seismograms and pressure data). 
 
-The class :class:`~obstools.classes.StaNoise` contains attributes
+The class :class:`~obstools.atacr.classes.StaNoise` contains attributes
 and methods for the aggregation of day-long time series into station
 average. 
 
-The class :class:`~obstools.classes.TFNoise` contains attributes
+The class :class:`~obstools.atacr.classes.TFNoise` contains attributes
 and methods for the calculation of transfer functions from noise
 traces used to correct the vertical component. 
 
-The class :class:`~obstools.classes.EventStream` contains attributes
+The class :class:`~obstools.atacr.classes.EventStream` contains attributes
 and methods for the application of the transfer functions to the
 event traces for the correction (cleaning) of vertical component
 seismograms. 
 
-:mod:`~obstools` further defines the following container classes:
+:mod:`~obstoolsatacr.` further defines the following container classes:
 
-- :class:`~obstools.classes.Power`
-- :class:`~obstools.classes.Cross`
-- :class:`~obstools.classes.Rotation`
+- :class:`~obstools.atacr.classes.Power`
+- :class:`~obstools.atacr.classes.Cross`
+- :class:`~obstools.atacr.classes.Rotation`
 
 These classes are used as containers for individual traces/objects
 that are used as attributes of the base classes. 
@@ -353,11 +353,11 @@ class DayNoise(object):
         ----------
         f : :class:`~numpy.ndarray` 
             Positive frequency axis for corresponding window parameters
-        power : :class:`~obstools.classes.Power`
+        power : :class:`~obstools.atacr.classes.Power`
             Container for the Power spectra
-        cross : :class:`~obstools.classes.Cross`
+        cross : :class:`~obstools.atacr.classes.Cross`
             Container for the Cross power spectra
-        rotation : :class:`~obstools.classes.Cross`, optional
+        rotation : :class:`~obstools.atacr.classes.Cross`, optional
             Container for the Rotated power and cross spectra
 
 
@@ -579,11 +579,11 @@ class StaNoise(object):
 
         Attributes
         ----------
-        power : :class:`~obstools.classes.Power`
+        power : :class:`~obstools.atacr.classes.Power`
             Container for the Power spectra
-        cross : :class:`~obstools.classes.Cross`
+        cross : :class:`~obstools.atacr.classes.Cross`
             Container for the Cross power spectra
-        rotation : :class:`~obstools.classes.Cross`, optional
+        rotation : :class:`~obstools.atacr.classes.Cross`, optional
             Container for the Rotated power and cross spectra
 
         """
@@ -695,7 +695,7 @@ class TFNoise(object):
 
         Attributes
         ----------
-        transfunc : :class:`~obstools.classes.TFNoise.TfDict`
+        transfunc : :class:`~obstools.atacr.classes.TFNoise.TfDict`
             Container Dictionary for all possible transfer functions
 
         """
@@ -844,7 +844,7 @@ class EventStream(object):
 
         Attributes
         ----------
-        correct : :class:`~obstools.classes.EventStream.CorrectDict`
+        correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
             Container Dictionary for all possible corrections from the transfer functions
 
         """
