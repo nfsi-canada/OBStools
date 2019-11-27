@@ -396,22 +396,22 @@ def main():
 
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
-            trZ = utils.update_stats(trZ, sta.latitude, sta.longitude, sta.elevation)
+            trZ = utils.update_stats(trZ, sta.latitude, sta.longitude, sta.elevation, 'Z')
             trZ.write(fileZ, format='sac')
 
             # Extract traces - H
             if "H" in opts.channels:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
-                tr1 = utils.update_stats(tr1, sta.latitude, sta.longitude, sta.elevation)
-                tr2 = utils.update_stats(tr2, sta.latitude, sta.longitude, sta.elevation)
+                tr1 = utils.update_stats(tr1, sta.latitude, sta.longitude, sta.elevation, '1')
+                tr2 = utils.update_stats(tr2, sta.latitude, sta.longitude, sta.elevation, '2')
                 tr1.write(file1, format='sac')
                 tr2.write(file2, format='sac')
 
             # Extract traces - P
             elif "P" in opts.channels:
                 trP = stp[0]
-                trP = utils.update_stats(trP, sta.latitude, sta.longitude, sta.elevation)
+                trP = utils.update_stats(trP, sta.latitude, sta.longitude, sta.elevation, 'P')
                 trP.write(fileP, format='sac')
 
             t1 += dt

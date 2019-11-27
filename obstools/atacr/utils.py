@@ -26,16 +26,14 @@ def update_stats(tr, stla, stlo, stel, cha):
     tr.stats.sac.stla = stla
     tr.stats.sac.stlo = stlo
     tr.stats.sac.stel = stel
-    
+    tr.stats.channel = cha
+
     return tr
 
 def get_data(datapath, tstart, tend):
 
     # Define empty streams
-    trN1 = Stream()
-    trN2 = Stream()
-    trNZ = Stream()
-    trNP = Stream()
+    data = Stream()
 
     # Time iterator
     t1 = tstart
@@ -50,21 +48,21 @@ def get_data(datapath, tstart, tend):
         for file in os.listdir(datapath):
             if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
                 tr = read(datapath + file)
-                trN1.append(tr[0])
+                data.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
                 tr = read(datapath + file)
-                trN2.append(tr[0])
+                data.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
                 tr = read(datapath + file)
-                trNZ.append(tr[0])
+                data.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
                 tr = read(datapath + file)
-                trNP.append(tr[0])
+                data.append(tr[0])
 
         # Increase increment
         t1 += 3600.*24.
 
-    return trN1, trN2, trNZ, trNP
+    return data
 
 
 def get_event(eventpath, tstart, tend):
