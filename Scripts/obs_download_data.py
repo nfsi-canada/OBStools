@@ -40,21 +40,30 @@ Usage
     $ obs_download_data.py -h
     Usage: obs_download_data.py [options] <station database>
 
-    Script used to download and pre-process four-component (H1, H2, Z and P), day-
-    long seismograms to use in noise corrections of vertical component of OBS
-    data. Data are requested from the internet using the client services framework
-    for a given date range. The stations are processed one by one and the data are
-    stored to disk.
+    Script used to download and pre-process up to four-component (H1, H2, Z and
+    P), day-long seismograms to use in noise corrections of vertical component of
+    OBS data. Data are requested from the internet using the client services
+    framework for a given date range. The stations are processed one by one and
+    the data are stored to disk.
 
     Options:
       -h, --help            show this help message and exit
-      --keys=STKEYS         Specify a comma separated list of station keys for
+      --keys=STKEYS         Specify a comma-separated list of station keys for
                             which to perform the analysis. These must be contained
                             within the station database. Partial keys will be used
                             to match against those in the dictionary. For
                             instance, providing IU will match with all stations in
-                            the IU network [Default processes all stations in the
+                            the IU network. [Default processes all stations in the
                             database]
+      -C CHANNELS, --channels=CHANNELS
+                            Specify a comma-separated list of channels for which
+                            to perform the transfer function analysis. Possible
+                            options are H (for horizontal channels) or P (for
+                            pressure channel). Specifying H allows for tilt
+                            correction. Specifying P allows for compliance
+                            correction. [Default looks for both horizontal and
+                            pressure and allows for both tilt AND compliance
+                            corrections]
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
@@ -93,6 +102,7 @@ Usage
                             Specify four comma-separated corner frequencies
                             (float, in Hz) for deconvolution pre-filter. [Default
                             0.001,0.005,45.,50.]
+
 """
 
 # Import modules and functions
@@ -199,67 +209,172 @@ def main():
             print(" ")
             print("****************************************************")
             print("* Downloading day-long data for key "+stkey+" and day "+year+"."+jday)
+            print("*")
+            print("* Channels selected: "+opts.channels)
 
             # Define file names (to check if files already exist)
-            file1 = datapath + tstamp + '.' + sta.channel + '1.SAC'
-            file2 = datapath + tstamp + '.' + sta.channel + '2.SAC'
-            fileZ = datapath + tstamp + '.' + sta.channel + 'Z.SAC'
-            fileP = datapath + tstamp + '.' + sta.channel + 'H.SAC'
+            file1 = datapath + tstamp + '.' + sta.channel + '1.SAC' # Horizontal 1 channel
+            file2 = datapath + tstamp + '.' + sta.channel + '2.SAC' # Horizontal 2 channel
+            fileZ = datapath + tstamp + '.' + sta.channel + 'Z.SAC' # Vertical channel
+            fileP = datapath + tstamp + '.' + sta.channel + 'H.SAC' # Pressure channel
 
-            # If data file exists, continue
-            if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2) and glob.glob(fileP): 
-                if not opts.ovr:
+            if "P" not in opts.channels:
+
+                # If data files exist, continue
+                if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2): 
+                    if not opts.ovr:
+                        print("*   "+tstamp+"*SAC                                 |")
+                        print("*   -> Files already exist, continuing            |")
+                        t1 += dt
+                        t2 += dt
+                        continue
+
+                channels = sta.channel.upper()+'1,'+sta.channel.upper()+'2,'+sta.channel.upper()+'Z'
+
+                # Get waveforms from client
+                try:
                     print("*   "+tstamp+"*SAC                                 |")
-                    print("*   -> Files already exist, continuing            |")
+                    print("*   -> Downloading Seismic data... ")
+                    sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                            channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                    print("       ...done")
+                except:
+                    print(" Error: Unable to download ?H? components - continuing")
                     t1 += dt
                     t2 += dt
                     continue
 
-            channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
+                # Make sure length is ok
+                llZ = len(sth.select(component='Z')[0].data)
+                ll1 = len(sth.select(component='1')[0].data)
+                ll2 = len(sth.select(component='2')[0].data)
 
-            # Get waveforms from client
-            try:
-                print("*   "+tstamp+"*SAC                                 |")
-                print("*   -> Downloading Seismic data... ")
-                sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                        channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                print("       ...done")
-            except:
-                print(" Error: Unable to download ?H? components - continuing")
-                t1 += dt
-                t2 += dt
-                continue
-            try:
-                print("*   -> Downloading Pressure data...")
-                stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                        channel='??H', starttime=t1, endtime=t2, attach_response=True)
-                print("       ...done")
-            except:
-                print(" Error: Unable to download ??H component - continuing")
-                t1 += dt
-                t2 += dt
-                continue
+                if (llZ != ll1) or (llZ != ll2):
+                    print(" Error: lengths not all the same - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
 
-            # Make sure length is ok
-            llZ = len(sth.select(component='Z')[0].data)
-            ll1 = len(sth.select(component='1')[0].data)
-            ll2 = len(sth.select(component='2')[0].data)
-            llP = len(stp[0].data)
+                ll = int(dt*sth[0].stats.sampling_rate)
 
-            if (llZ != ll1) or (llZ != ll2) or (llZ != llP):
-                print(" Error: lengths not all the same - continuing")
-                t1 += dt
-                t2 += dt
-                continue
+                if np.abs(llZ - ll) > 1:
+                    print(" Error: Time series too short - continuing")
+                    print(np.abs(llZ - ll))
+                    t1 += dt
+                    t2 += dt
+                    continue
 
-            ll = int(dt*sth[0].stats.sampling_rate)
+            elif "H" not in opts.channels:
 
-            if np.abs(llZ - ll) > 1:
-                print(" Error: Time series too short - continuing")
-                print(np.abs(llZ - ll))
-                t1 += dt
-                t2 += dt
-                continue
+                # If data files exist, continue
+                if glob.glob(fileZ) and glob.glob(fileP): 
+                    if not opts.ovr:
+                        print("*   "+tstamp+"*SAC                                 |")
+                        print("*   -> Files already exist, continuing            |")
+                        t1 += dt
+                        t2 += dt
+                        continue
+
+                channels = sta.channel.upper() + 'Z'
+
+                # Get waveforms from client
+                try:
+                    print("*   "+tstamp+"*SAC                                 |")
+                    print("*   -> Downloading Seismic data... ")
+                    sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                            channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                    print("       ...done")
+                except:
+                    print(" Error: Unable to download ?H? components - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+                try:
+                    print("*   -> Downloading Pressure data...")
+                    stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                            channel='??H', starttime=t1, endtime=t2, attach_response=True)
+                    print("       ...done")
+                except:
+                    print(" Error: Unable to download ??H component - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+                # Make sure length is ok
+                llZ = len(sth.select(component='Z')[0].data)
+                llP = len(stp[0].data)
+
+                if (llZ != llP):
+                    print(" Error: lengths not all the same - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+                ll = int(dt*stp[0].stats.sampling_rate)
+
+                if np.abs(llZ - ll) > 1:
+                    print(" Error: Time series too short - continuing")
+                    print(np.abs(llZ - ll))
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+            else:
+
+                # If data files exist, continue
+                if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2) and glob.glob(fileP): 
+                    if not opts.ovr:
+                        print("*   "+tstamp+"*SAC                                 |")
+                        print("*   -> Files already exist, continuing            |")
+                        t1 += dt
+                        t2 += dt
+                        continue
+
+                channels = sta.channel.upper()+'1,'+sta.channel.upper()+'2,'+sta.channel.upper()+'Z'
+
+                # Get waveforms from client
+                try:
+                    print("*   "+tstamp+"*SAC                                 |")
+                    print("*   -> Downloading Seismic data... ")
+                    sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                            channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                    print("       ...done")
+                except:
+                    print(" Error: Unable to download ?H? components - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+                try:
+                    print("*   -> Downloading Pressure data...")
+                    stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                            channel='??H', starttime=t1, endtime=t2, attach_response=True)
+                    print("       ...done")
+                except:
+                    print(" Error: Unable to download ??H component - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+                # Make sure length is ok
+                llZ = len(sth.select(component='Z')[0].data)
+                ll1 = len(sth.select(component='1')[0].data)
+                ll2 = len(sth.select(component='2')[0].data)
+                llP = len(stp[0].data)
+
+                if (llZ != ll1) or (llZ != ll2) or (llZ != llP):
+                    print(" Error: lengths not all the same - continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+                ll = int(dt*sth[0].stats.sampling_rate)
+
+                if np.abs(llZ - ll) > 1:
+                    print(" Error: Time series too short - continuing")
+                    print(np.abs(llZ - ll))
+                    t1 += dt
+                    t2 += dt
+                    continue
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
@@ -279,23 +394,25 @@ def main():
             stp.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
             stp.resample(opts.new_sampling_rate)
 
-            # Extract traces
+            # Extract traces - Z
             trZ = sth.select(component='Z')[0]
-            tr1 = sth.select(component='1')[0]
-            tr2 = sth.select(component='2')[0]
-            trP = stp[0]
-
-            # Update stats
-            tr1 = utils.update_stats(tr1, sta.latitude, sta.longitude, sta.elevation)
-            tr2 = utils.update_stats(tr2, sta.latitude, sta.longitude, sta.elevation)
             trZ = utils.update_stats(trZ, sta.latitude, sta.longitude, sta.elevation)
-            trP = utils.update_stats(trP, sta.latitude, sta.longitude, sta.elevation)
-
-            # Save traces
-            tr1.write(file1, format='sac')
-            tr2.write(file2, format='sac')
             trZ.write(fileZ, format='sac')
-            trP.write(fileP, format='sac')
+
+            # Extract traces - H
+            if "H" in opts.channels:
+                tr1 = sth.select(component='1')[0]
+                tr2 = sth.select(component='2')[0]
+                tr1 = utils.update_stats(tr1, sta.latitude, sta.longitude, sta.elevation)
+                tr2 = utils.update_stats(tr2, sta.latitude, sta.longitude, sta.elevation)
+                tr1.write(file1, format='sac')
+                tr2.write(file2, format='sac')
+
+            # Extract traces - P
+            elif "P" in opts.channels:
+                trP = stp[0]
+                trP = utils.update_stats(trP, sta.latitude, sta.longitude, sta.elevation)
+                trP.write(fileP, format='sac')
 
             t1 += dt
             t2 += dt

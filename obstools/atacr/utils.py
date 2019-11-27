@@ -20,7 +20,7 @@ from obspy.core import read, Stream, AttribDict
 from scipy.signal import savgol_filter
 
 
-def update_stats(tr, stla, stlo, stel):
+def update_stats(tr, stla, stlo, stel, cha):
 
     tr.stats.sac = AttribDict()
     tr.stats.sac.stla = stla

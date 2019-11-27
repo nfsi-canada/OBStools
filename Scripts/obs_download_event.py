@@ -38,80 +38,89 @@ Usage
 .. code-block::
 
     $ obs_download_event.py -h
-    Usage: obs_download_event.py [options] <station database>
+Usage: obs_download_event.py [options] <station database>
 
-    Script used to download and pre-process four-component (H1, H2, Z and P), two-
-    hour-long seismograms for individual events on which to apply the de-noising
-    algorithms. Data are requested from the internet using the client services
-    framework for a given date range. The stations are processed one by one and
-    the data are stored to disk.
+Script used to download and pre-process four-component (H1, H2, Z and P), two-
+hour-long seismograms for individual events on which to apply the de-noising
+algorithms. Data are requested from the internet using the client services
+framework for a given date range. The stations are processed one by one and
+the data are stored to disk.
 
-    Options:
-      -h, --help            show this help message and exit
-      --keys=STKEYS         Specify a comma separated list of station keys for
-                            which to perform the analysis. These must be contained
-                            within the station database. Partial keys will be used
-                            to match against those in the dictionary. For
-                            instance, providing IU will match with all stations in
-                            the IU network [Default processes all stations in the
-                            database]
-      -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                            False]
+Options:
+  -h, --help            show this help message and exit
+  --keys=STKEYS         Specify a comma separated list of station keys for
+                        which to perform the analysis. These must be contained
+                        within the station database. Partial keys will be used
+                        to match against those in the dictionary. For
+                        instance, providing IU will match with all stations in
+                        the IU network [Default processes all stations in the
+                        database]
+  -C CHANNELS, --channels=CHANNELS
+                        Specify a comma-separated list of channels for which
+                        to perform the transfer function analysis. Possible
+                        options are H (for horizontal channels) or P (for
+                        pressure channel). Specifying H allows for tilt
+                        correction. Specifying P allows for compliance
+                        correction. [Default looks for both horizontal and
+                        pressure and allows for both tilt AND compliance
+                        corrections]
+  -O, --overwrite       Force the overwriting of pre-existing data. [Default
+                        False]
 
-      Server Settings:
-        Settings associated with which datacenter to log into.
+  Server Settings:
+    Settings associated with which datacenter to log into.
 
-        -S SERVER, --Server=SERVER
-                            Specify the server to connect to. Options include:
-                            BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
-                            NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
-                            USP. [Default IRIS]
-        -U USERAUTH, --User-Auth=USERAUTH
-                            Enter your IRIS Authentification Username and Password
-                            (--User-Auth='username:authpassword') to access and
-                            download restricted data. [Default no user and
-                            password]
+    -S SERVER, --Server=SERVER
+                        Specify the server to connect to. Options include:
+                        BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
+                        NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
+                        USP. [Default IRIS]
+    -U USERAUTH, --User-Auth=USERAUTH
+                        Enter your IRIS Authentification Username and Password
+                        (--User-Auth='username:authpassword') to access and
+                        download restricted data. [Default no user and
+                        password]
 
-      Event Settings:
-        Settings associated with refining the events to include in matching
-        station pairs
+  Event Settings:
+    Settings associated with refining the events to include in matching
+    station pairs
 
-        --start=STARTT      Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station start times. [Default start date
-                            of each station in database]
-        --end=ENDT          Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default end date of
-                            each station in database]
-        -R, --reverse-order
-                            Reverse order of events. Default behaviour starts at
-                            oldest event and works towards most recent. Specify
-                            reverse order and instead the program will start with
-                            the most recent events and work towards older
-        --min-mag=MINMAG    Specify the minimum magnitude of event for which to
-                            search. [Default 5.5]
-        --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
-                            search. [Default None, i.e. no limit]
+    --start=STARTT      Specify a UTCDateTime compatible string representing
+                        the start time for the event search. This will
+                        override any station start times. [Default start date
+                        of each station in database]
+    --end=ENDT          Specify a UTCDateTime compatible string representing
+                        the start time for the event search. This will
+                        override any station end times [Default end date of
+                        each station in database]
+    -R, --reverse-order
+                        Reverse order of events. Default behaviour starts at
+                        oldest event and works towards most recent. Specify
+                        reverse order and instead the program will start with
+                        the most recent events and work towards older
+    --min-mag=MINMAG    Specify the minimum magnitude of event for which to
+                        search. [Default 5.5]
+    --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
+                        search. [Default None, i.e. no limit]
 
-      Geometry Settings:
-        Settings associatd with the event-station geometries
+  Geometry Settings:
+    Settings associatd with the event-station geometries
 
-        --min-dist=MINDIST  Specify the minimum great circle distance (degrees)
-                            between the station and event. [Default 30]
-        --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
-                            between the station and event. [Default 120]
+    --min-dist=MINDIST  Specify the minimum great circle distance (degrees)
+                        between the station and event. [Default 30]
+    --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
+                        between the station and event. [Default 120]
 
-      Frequency Settings:
-        Miscellaneous frequency settings
+  Frequency Settings:
+    Miscellaneous frequency settings
 
-        --sampling-rate=NEW_SAMPLING_RATE
-                            Specify new sampling rate (float, in Hz). [Default 5.]
-        --pre-filt=PRE_FILT
-                            Specify four comma-separated corner frequencies
-                            (float, in Hz) for deconvolution pre-filter. [Default
-                            0.001,0.005,45.,50.]
-
+    --sampling-rate=NEW_SAMPLING_RATE
+                        Specify new sampling rate (float, in Hz). [Default 5.]
+    --pre-filt=PRE_FILT
+                        Specify four comma-separated corner frequencies
+                        (float, in Hz) for deconvolution pre-filter. [Default
+                        0.001,0.005,45.,50.]
+                        
 """
 
 # Import modules and functions
@@ -275,48 +284,120 @@ def main():
 
                 # If data file exists, continue
                 if glob.glob(filename): 
-                    print("*")
-                    print("*   "+filename)
-                    print("*   -> File already exists, continuing")
-                    continue
+                    if not opts.ovr:
+                        print("*")
+                        print("*   "+filename)
+                        print("*   -> File already exists, continuing")
+                        continue
 
-                channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
+                if "P" not in opts.channels:
 
-                # Get waveforms from client
-                try:
-                    print("*   "+tstamp+"                                     |")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                            channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                    print("     ...done")
-                except:
-                    print(" Error: Unable to download ?H? components - continuing")
-                    continue
-                try:
-                    print("*   -> Downloading Pressure data...")
-                    stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                            channel='??H', starttime=t1, endtime=t2, attach_response=True)
-                    print("     ...done")
-                except:
-                    print(" Error: Unable to download ??H component - continuing")
-                    continue
+                    channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
 
-                # Make sure length is ok
-                llZ = len(sth.select(component='Z')[0].data)
-                ll1 = len(sth.select(component='1')[0].data)
-                ll2 = len(sth.select(component='2')[0].data)
-                llP = len(stp[0].data)
+                    # Get waveforms from client
+                    try:
+                        print("*   "+tstamp+"                                     |")
+                        print("*   -> Downloading Seismic data... ")
+                        sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                                channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                        print("     ...done")
+                    except:
+                        print(" Error: Unable to download ?H? components - continuing")
+                        continue
 
-                if (llZ != ll1) or (llZ != ll2) or (llZ != llP):
-                    print(" Error: lengths not all the same - continuing")
-                    continue
+                    # Make sure length is ok
+                    llZ = len(sth.select(component='Z')[0].data)
+                    ll1 = len(sth.select(component='1')[0].data)
+                    ll2 = len(sth.select(component='2')[0].data)
 
-                ll = int(window*sth[0].stats.sampling_rate)
+                    if (llZ != ll1) or (llZ != ll2):
+                        print(" Error: lengths not all the same - continuing")
+                        continue
 
-                if np.abs(llZ - ll) > 1:
-                    print(" Error: Time series too short - continuing")
-                    print(np.abs(llZ - ll))
-                    continue
+                    ll = int(window*sth[0].stats.sampling_rate)
+
+                    if np.abs(llZ - ll) > 1:
+                        print(" Error: Time series too short - continuing")
+                        print(np.abs(llZ - ll))
+                        continue
+
+                elif "H" not in opts.channels:
+
+                    channels = sta.channel.upper() + 'Z'
+
+                    # Get waveforms from client
+                    try:
+                        print("*   "+tstamp+"                                     |")
+                        print("*   -> Downloading Seismic data... ")
+                        sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                                channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                        print("     ...done")
+                    except:
+                        print(" Error: Unable to download ?H? components - continuing")
+                        continue
+                    try:
+                        print("*   -> Downloading Pressure data...")
+                        stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                                channel='??H', starttime=t1, endtime=t2, attach_response=True)
+                        print("     ...done")
+                    except:
+                        print(" Error: Unable to download ??H component - continuing")
+                        continue
+
+                    # Make sure length is ok
+                    llZ = len(sth.select(component='Z')[0].data)
+                    llP = len(stp[0].data)
+
+                    if (llZ != llP):
+                        print(" Error: lengths not all the same - continuing")
+                        continue
+
+                    ll = int(window*stp[0].stats.sampling_rate)
+
+                    if np.abs(llZ - ll) > 1:
+                        print(" Error: Time series too short - continuing")
+                        print(np.abs(llZ - ll))
+                        continue
+                
+                else:
+
+                    channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
+
+                    # Get waveforms from client
+                    try:
+                        print("*   "+tstamp+"                                     |")
+                        print("*   -> Downloading Seismic data... ")
+                        sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                                channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                        print("     ...done")
+                    except:
+                        print(" Error: Unable to download ?H? components - continuing")
+                        continue
+                    try:
+                        print("*   -> Downloading Pressure data...")
+                        stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
+                                channel='??H', starttime=t1, endtime=t2, attach_response=True)
+                        print("     ...done")
+                    except:
+                        print(" Error: Unable to download ??H component - continuing")
+                        continue
+
+                    # Make sure length is ok
+                    llZ = len(sth.select(component='Z')[0].data)
+                    ll1 = len(sth.select(component='1')[0].data)
+                    ll2 = len(sth.select(component='2')[0].data)
+                    llP = len(stp[0].data)
+
+                    if (llZ != ll1) or (llZ != ll2) or (llZ != llP):
+                        print(" Error: lengths not all the same - continuing")
+                        continue
+
+                    ll = int(window*sth[0].stats.sampling_rate)
+
+                    if np.abs(llZ - ll) > 1:
+                        print(" Error: Time series too short - continuing")
+                        print(np.abs(llZ - ll))
+                        continue
 
                 # Remove responses
                 print("*   -> Removing responses - Seismic data")

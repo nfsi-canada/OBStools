@@ -44,17 +44,22 @@ def get_daylong_options():
     from numpy import nan
 
     parser = OptionParser(usage="Usage: %prog [options] <station database>", description="Script used " \
-        "to download and pre-process four-component (H1, H2, Z and P), " \
+        "to download and pre-process up to four-component (H1, H2, Z and P), " \
         "day-long seismograms to use in noise corrections of vertical component of OBS data. " \
         "Data are requested from the internet using the client services framework for a given date range. " \
         "The stations are processed one by one and the data are stored to disk.")
 
     # General Settings
     parser.add_option("--keys", action="store", type="string", dest="stkeys", default="", \
-        help="Specify a comma separated list of station keys for which to perform the analysis. These must be " \
+        help="Specify a comma-separated list of station keys for which to perform the analysis. These must be " \
         "contained within the station database. Partial keys will be used to match against those in the " \
-        "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
+        "dictionary. For instance, providing IU will match with all stations in the IU network. [Default processes " \
         "all stations in the database]")
+    parser.add_option("-C", "--channels", action="store", type="string", dest="channels", default="", \
+        help="Specify a comma-separated list of channels for which to perform the transfer function analysis. " \
+        "Possible options are H (for horizontal channels) or P (for pressure channel). Specifying H allows " \
+        "for tilt correction. Specifying P allows for compliance correction. [Default looks " \
+        "for both horizontal and pressure and allows for both tilt AND compliance corrections]")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
@@ -111,6 +116,15 @@ def get_daylong_options():
     # create station key list
     if len(opts.stkeys)>0:
         opts.stkeys = opts.stkeys.split(',')
+
+    # create channel list
+    if len(opts.channels)==1:
+        opts.channels = opts.stkeys.split(',')
+    else:
+        opts.channels = ["H", "P"]
+    for cha in opts.channels:
+        if cha not in ["H", "P"]:
+            parser.error("Error: Channel not recognized ",cha)
 
     # construct start time
     if len(opts.startT)>0:
@@ -191,6 +205,11 @@ def get_event_options():
         "contained within the station database. Partial keys will be used to match against those in the " \
         "dictionary. For instance, providing IU will match with all stations in the IU network [Default processes " \
         "all stations in the database]")
+    parser.add_option("-C", "--channels", action="store", type="string", dest="channels", default="", \
+        help="Specify a comma-separated list of channels for which to perform the transfer function analysis. " \
+        "Possible options are H (for horizontal channels) or P (for pressure channel). Specifying H allows " \
+        "for tilt correction. Specifying P allows for compliance correction. [Default looks " \
+        "for both horizontal and pressure and allows for both tilt AND compliance corrections]")
     parser.add_option("-O", "--overwrite", action="store_true", dest="ovr", default=False, \
         help="Force the overwriting of pre-existing data. [Default False]")
 
@@ -263,6 +282,15 @@ def get_event_options():
     # create station key list
     if len(opts.stkeys)>0:
         opts.stkeys = opts.stkeys.split(',')
+
+    # create channel list
+    if len(opts.channels)==1:
+        opts.channels = opts.stkeys.split(',')
+    else:
+        opts.channels = ["H", "P"]
+    for cha in opts.channels:
+        if cha not in ["H", "P"]:
+            parser.error("Error: Channel not recognized ",cha)
 
     # construct start time
     if len(opts.startT)>0:
