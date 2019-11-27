@@ -183,7 +183,7 @@ def main():
         print("|-----------------------------------------------|")
 
         # Get all components
-        data = utils.get_data(datapath, tstart, tend)
+        trN1, trN2, trNZ, trNP = utils.get_data(datapath, tstart, tend)
 
         # Window size 
         window = 7200.
@@ -199,12 +199,10 @@ def main():
         taxis = np.arange(0., window, trN1[0].stats.delta)
 
         # Cycle through available data
-        if len(data)==4:
-            
-            tr1 = data[0]; tr2 = data[1]; trZ = data[2]; trP = data[3]
+        for tr1, tr2, trZ, trP in zip(trN1, trN2, trNZ, trNP):
 
-            year = str(tr1.stats.starttime.year).zfill(4)
-            jday = str(tr1.stats.starttime.julday).zfill(3)
+            year = str(trZ.stats.starttime.year).zfill(4)
+            jday = str(trZ.stats.starttime.julday).zfill(3)
 
             print(" ")
             print("***************************************************************")

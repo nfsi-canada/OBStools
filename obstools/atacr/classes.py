@@ -220,62 +220,115 @@ class DayNoise(object):
         wind[-ss:ws] = hanning[ss:ws]
 
         # Get spectrograms for single day-long keys
-        f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
         f, t, psdZ = spectrogram(self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+        if tr1.data and tr2.data:
+            f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+            f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+        if trP.data:
+            f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
 
         if debug:
-            plt.figure(1)
-            plt.subplot(4,1,1)
-            plt.pcolormesh(t, f, np.log(psd1))
-            plt.title('H1', fontdict={'fontsize': 8})
-            plt.subplot(4,1,2)
-            plt.pcolormesh(t, f, np.log(psd2))
-            plt.title('H2', fontdict={'fontsize': 8})
-            plt.subplot(4,1,3)
-            plt.pcolormesh(t, f, np.log(psdZ))
-            plt.title('Z', fontdict={'fontsize': 8})
-            plt.subplot(4,1,4)
-            plt.pcolormesh(t, f, np.log(psdP))
-            plt.title('P', fontdict={'fontsize': 8})
-            plt.tight_layout()
-            plt.show()
+            if not tr1.data and not tr2.data:
+                plt.figure(1)
+                plt.subplot(2,1,1)
+                plt.pcolormesh(t, f, np.log(psdZ))
+                plt.title('Z', fontdict={'fontsize': 8})
+                plt.subplot(2,1,2)
+                plt.pcolormesh(t, f, np.log(psdP))
+                plt.title('P', fontdict={'fontsize': 8})
+                plt.tight_layout()
+                plt.show()
+
+            elif not trP.data:
+                plt.figure(1)
+                plt.subplot(3,1,1)
+                plt.pcolormesh(t, f, np.log(psd1))
+                plt.title('H1', fontdict={'fontsize': 8})
+                plt.subplot(3,1,2)
+                plt.pcolormesh(t, f, np.log(psd2))
+                plt.title('H2', fontdict={'fontsize': 8})
+                plt.subplot(3,1,3)
+                plt.pcolormesh(t, f, np.log(psdZ))
+                plt.title('Z', fontdict={'fontsize': 8})
+                plt.tight_layout()
+                plt.show()
+
+            else:
+                plt.figure(1)
+                plt.subplot(4,1,1)
+                plt.pcolormesh(t, f, np.log(psd1))
+                plt.title('H1', fontdict={'fontsize': 8})
+                plt.subplot(4,1,2)
+                plt.pcolormesh(t, f, np.log(psd2))
+                plt.title('H2', fontdict={'fontsize': 8})
+                plt.subplot(4,1,3)
+                plt.pcolormesh(t, f, np.log(psdZ))
+                plt.title('Z', fontdict={'fontsize': 8})
+                plt.subplot(4,1,4)
+                plt.pcolormesh(t, f, np.log(psdP))
+                plt.title('P', fontdict={'fontsize': 8})
+                plt.tight_layout()
+                plt.show()
 
         # Select bandpass frequencies
         ff = (f>pd[0]) & (f<pd[1])
 
         if smooth:
             # Smooth out the log of the PSDs
-            sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
-            sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
             sl_psdZ = utils.smooth(np.log(psdZ), 50, axis=0)
-            sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
+            if tr1.data and tr2.data:
+                sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
+                sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
+            if trP.data:
+                sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
         else:
             # Take the log of the PSDs
-            sl_psd1 = np.log(psd1)
-            sl_psd2 = np.log(psd2)
             sl_psdZ = np.log(psdZ)
-            sl_psdP = np.log(psdP)
+            if tr1.data and tr2.data:
+                sl_psd1 = np.log(psd1)
+                sl_psd2 = np.log(psd2)
+            if trP.data:
+                sl_psdP = np.log(psdP)
 
         # Remove mean of the log PSDs
-        dsl_psd1 = sl_psd1[ff,:] - np.mean(sl_psd1[ff,:], axis=0)
-        dsl_psd2 = sl_psd2[ff,:] - np.mean(sl_psd2[ff,:], axis=0)
         dsl_psdZ = sl_psdZ[ff,:] - np.mean(sl_psdZ[ff,:], axis=0)
-        dsl_psdP = sl_psdP[ff,:] - np.mean(sl_psdP[ff,:], axis=0)
+        if tr1.data and tr2.data:
+            dsl_psd1 = sl_psd1[ff,:] - np.mean(sl_psd1[ff,:], axis=0)
+            dsl_psd2 = sl_psd2[ff,:] - np.mean(sl_psd2[ff,:], axis=0)
+        if trP.data:
+            dsl_psdP = sl_psdP[ff,:] - np.mean(sl_psdP[ff,:], axis=0)
 
         if debug:
-            plt.figure(2)
-            plt.subplot(4,1,1)
-            plt.semilogx(f, sl_psd1, 'r', lw=0.5)
-            plt.subplot(4,1,2)
-            plt.semilogx(f, sl_psd2, 'b', lw=0.5)
-            plt.subplot(4,1,3)
-            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-            plt.subplot(4,1,4)
-            plt.semilogx(f, sl_psdP, 'k', lw=0.5)
-            plt.tight_layout()
-            plt.show()
+            if not tr1.data and not tr2.data:
+                plt.figure(2)
+                plt.subplot(2,1,1)
+                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+                plt.subplot(2,1,2)
+                plt.semilogx(f, sl_psdP, 'k', lw=0.5)
+                plt.tight_layout()
+                plt.show()
+            elif not trP.data:
+                plt.figure(2)
+                plt.subplot(3,1,1)
+                plt.semilogx(f, sl_psd1, 'r', lw=0.5)
+                plt.subplot(3,1,2)
+                plt.semilogx(f, sl_psd2, 'b', lw=0.5)
+                plt.subplot(3,1,3)
+                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+                plt.tight_layout()
+                plt.show()
+            else:
+                plt.figure(2)
+                plt.subplot(4,1,1)
+                plt.semilogx(f, sl_psd1, 'r', lw=0.5)
+                plt.subplot(4,1,2)
+                plt.semilogx(f, sl_psd2, 'b', lw=0.5)
+                plt.subplot(4,1,3)
+                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+                plt.subplot(4,1,4)
+                plt.semilogx(f, sl_psdP, 'k', lw=0.5)
+                plt.tight_layout()
+                plt.show()
 
         # Cycle through to kill high-std-norm windows
         moveon = False
@@ -283,10 +336,10 @@ class DayNoise(object):
         indwin = np.argwhere(goodwins==True)
 
         while moveon == False:
-            # ubernorm = np.empty((4, len(goodwins)))
+
+            # Below only valid if there are 4 components... 
             ubernorm = np.empty((4, np.sum(goodwins)))
             for ind_u, dsl in enumerate([dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]):
-                # normvar = np.empty(len(goodwins))
                 normvar = np.zeros(np.sum(goodwins))
                 for ii,tmp in enumerate(indwin):
                     ind = np.copy(indwin); ind = np.delete(ind, ii)

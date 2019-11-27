@@ -16,7 +16,7 @@ import os
 import numpy as np
 import fnmatch
 from matplotlib import pyplot as plt
-from obspy.core import read, Stream, AttribDict
+from obspy.core import read, Stream, Trace, AttribDict
 from scipy.signal import savgol_filter
 
 
@@ -33,12 +33,15 @@ def update_stats(tr, stla, stlo, stel, cha):
 def get_data(datapath, tstart, tend):
 
     # Define empty streams
-    data = Stream()
+        trN1 = Stream()
+        trN2 = Stream()
+        trNZ = Stream()
+        trNP = Stream()
 
     # Time iterator
     t1 = tstart
 
-    # Cycle through each day withing time range
+    # Cycle through each day within time range
     while t1 < tend:
 
         # Time stamp used in file name
@@ -48,21 +51,30 @@ def get_data(datapath, tstart, tend):
         for file in os.listdir(datapath):
             if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
                 tr = read(datapath + file)
-                data.append(tr[0])
+                trN1.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
                 tr = read(datapath + file)
-                data.append(tr[0])
+                trN2.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
                 tr = read(datapath + file)
-                data.append(tr[0])
+                trNZ.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
                 tr = read(datapath + file)
-                data.append(tr[0])
+                trNP.append(tr[0])
 
         # Increase increment
         t1 += 3600.*24.
 
-    return data
+    ntr = len(trNZ)
+    if not trN1 and not trN2:
+        for i in range(ntr):
+            trN1.append(Trace())
+            trN2.append(Trace())
+    elif not trNP:
+        for i in range(ntr):
+            trNP.append(Trace())
+
+    return trN1, trN2, trNZ, trNP
 
 
 def get_event(eventpath, tstart, tend):
