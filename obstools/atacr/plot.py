@@ -239,7 +239,6 @@ def fig_coh_ph(coh, ph, direc):
 
     colors = plt.cm.cividis(np.linspace(0,1,coh.shape[0]))
 
-    print(coh.shape)
     if coh.ndim > 1:
         f, (ax1, ax2) = plt.subplots(1,2)
         for i, (co, p) in enumerate(zip(coh, ph)):

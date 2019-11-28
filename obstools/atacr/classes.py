@@ -169,14 +169,13 @@ class DayNoise(object):
         self.tr2 = tr2
         self.trZ = trZ
         self.trP = trP
-        self.comps = {'H1': True, 'H2': True, 'HZ':True, 'HP': True}
         self.window = window
         self.overlap = overlap
-        self.dt = self.tr1.stats.delta
-        self.npts = self.tr1.stats.npts
-        self.fs = self.tr1.stats.sampling_rate
-        self.year = self.tr1.stats.starttime.year
-        self.julday = self.tr1.stats.starttime.julday
+        self.dt = self.trZ.stats.delta
+        self.npts = self.trZ.stats.npts
+        self.fs = self.trZ.stats.sampling_rate
+        self.year = self.trZ.stats.starttime.year
+        self.julday = self.trZ.stats.starttime.julday
         self.key = key
         # self.ncomp = np.sum(np.from_iter(1 for tr in 
         #     Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data)))
@@ -229,7 +228,7 @@ class DayNoise(object):
         f, t, psdZ = spectrogram(self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
         if self.ncomp==2 or self.ncomp==4:
             f, t, psdP = spectrogram(self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        elif self.ncomp==3 or self.ncomp==4:
+        if self.ncomp==3 or self.ncomp==4:
             f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
             f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
 
@@ -285,7 +284,7 @@ class DayNoise(object):
             sl_psdZ = utils.smooth(np.log(psdZ), 50, axis=0)
             if self.ncomp==2 or self.ncomp==4:
                 sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
-            elif self.ncomp==3 or self.ncomp==4:
+            if self.ncomp==3 or self.ncomp==4:
                 sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
                 sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
 
@@ -295,7 +294,7 @@ class DayNoise(object):
             sl_psdZ = np.log(psdZ)
             if self.ncomp==2 or self.ncomp==4:
                 sl_psdP = np.log(psdP)
-            elif self.ncomp==3 or self.ncomp==4:
+            if self.ncomp==3 or self.ncomp==4:
                 sl_psd1 = np.log(psd1)
                 sl_psd2 = np.log(psd2)
 
@@ -438,7 +437,7 @@ class DayNoise(object):
         ftZ, f = utils.calculate_windowed_fft(self.trZ, ws, ss)
         if self.ncomp==2 or self.ncomp==4:
             ftP, f = utils.calculate_windowed_fft(self.trP, ws, ss)
-        elif self.ncomp==3 or self.ncomp==4:
+        if self.ncomp==3 or self.ncomp==4:
             ft1, f = utils.calculate_windowed_fft(self.tr1, ws, ss)
             ft2, f = utils.calculate_windowed_fft(self.tr2, ws, ss)
 
@@ -449,7 +448,7 @@ class DayNoise(object):
         cZZ = np.abs(np.mean(ftZ[self.goodwins,:]*np.conj(ftZ[self.goodwins,:]), axis=0))[0:len(f)]
         if self.ncomp==2 or self.ncomp==4:
             cPP = np.abs(np.mean(ftP[self.goodwins,:]*np.conj(ftP[self.goodwins,:]), axis=0))[0:len(f)]
-        elif self.ncomp==3 or self.ncomp==4:
+        if self.ncomp==3 or self.ncomp==4:
             c11 = np.abs(np.mean(ft1[self.goodwins,:]*np.conj(ft1[self.goodwins,:]), axis=0))[0:len(f)]
             c22 = np.abs(np.mean(ft2[self.goodwins,:]*np.conj(ft2[self.goodwins,:]), axis=0))[0:len(f)]
 
@@ -457,9 +456,9 @@ class DayNoise(object):
         bc11 = None; bc22 = None; bcZZ = None; bcPP = None
         if np.sum(~self.goodwins) > 0:
             bcZZ = np.abs(np.mean(ftZ[~self.goodwins,:]*np.conj(ftZ[~self.goodwins,:]), axis=0))[0:len(f)]
-            if self.ncomp==2:
+            if self.ncomp==2 or self.ncomp==4:
                 bcPP = np.abs(np.mean(ftP[~self.goodwins,:]*np.conj(ftP[~self.goodwins,:]), axis=0))[0:len(f)]
-            elif self.ncomp==3:
+            if self.ncomp==3 or self.ncomp==4:
                 bc11 = np.abs(np.mean(ft1[~self.goodwins,:]*np.conj(ft1[~self.goodwins,:]), axis=0))[0:len(f)]
                 bc22 = np.abs(np.mean(ft2[~self.goodwins,:]*np.conj(ft2[~self.goodwins,:]), axis=0))[0:len(f)]
 

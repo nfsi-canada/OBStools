@@ -209,7 +209,7 @@ def main():
             print("***********************************************************")
             print("* Downloading day-long data for key "+stkey+" and day "+str(t1.year)+"."+str(t1.julday))
             print("*")
-            print("* Channels selected: "+str(opts.channels))
+            print("* Channels selected: "+str(opts.channels)+' and vertical')
 
             # Define file names (to check if files already exist)
             file1 = datapath + tstamp + '.' + sta.channel + '1.SAC' # Horizontal 1 channel
