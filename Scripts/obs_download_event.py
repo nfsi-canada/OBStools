@@ -132,6 +132,7 @@ import stdb
 from obspy.clients.fdsn import Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
+from obspy.core import Stream
 from obstools.atacr import utils, options
 from obstools import EventStream
 
@@ -292,6 +293,10 @@ def main():
 
                 if "P" not in opts.channels:
 
+                    # Number of channels
+                    ncomp = 3
+
+                    # Comma-separated list of channels for Client
                     channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
 
                     # Get waveforms from client
@@ -323,6 +328,10 @@ def main():
 
                 elif "H" not in opts.channels:
 
+                    # Number of channels
+                    ncomp = 2
+
+                    # Comma-separated list of channels for Client
                     channels = sta.channel.upper() + 'Z'
 
                     # Get waveforms from client
@@ -361,6 +370,10 @@ def main():
                 
                 else:
 
+                    # Comma-separated list of channels for Client
+                    ncomp = 4
+
+                    # Comma-separated list of channels for Client
                     channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
 
                     # Get waveforms from client
@@ -402,8 +415,9 @@ def main():
                 # Remove responses
                 print("*   -> Removing responses - Seismic data")
                 sth.remove_response(pre_filt=opts.pre_filt, output='DISP')
-                print("*   -> Removing responses - Pressure data")
-                stp.remove_response(pre_filt=opts.pre_filt)
+                if "P" in opts.channels:
+                    print("*   -> Removing responses - Pressure data")
+                    stp.remove_response(pre_filt=opts.pre_filt)
 
                 # Detrend, filter - seismic data
                 sth.detrend('demean')
@@ -411,13 +425,16 @@ def main():
                 sth.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
                 sth.resample(opts.new_sampling_rate)
 
-                # Detrend, filter - pressure data
-                stp.detrend('demean')
-                stp.detrend('linear')
-                stp.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
-                stp.resample(opts.new_sampling_rate)
+                if "P" in opts.channels:
+                    # Detrend, filter - pressure data
+                    stp.detrend('demean')
+                    stp.detrend('linear')
+                    stp.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
+                    stp.resample(opts.new_sampling_rate)
+                else:
+                    stp = Stream()
 
-                eventstream = EventStream(sta, sth, stp, tstamp, lat, lon, time, window, opts.new_sampling_rate)
+                eventstream = EventStream(sta, sth, stp, tstamp, lat, lon, time, window, opts.new_sampling_rate, ncomp)
 
                 eventstream.save(filename)
 

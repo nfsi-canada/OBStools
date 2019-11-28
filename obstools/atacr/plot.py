@@ -255,7 +255,7 @@ def fig_coh_ph(coh, ph, direc):
         plt.show()
 
 
-def fig_TF(f, day_trfs, sta_trfs, key=''):
+def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     """
     Function to plot the transfer functions available.
 
@@ -273,50 +273,95 @@ def fig_TF(f, day_trfs, sta_trfs, key=''):
     """
 
     import matplotlib.ticker as mtick
-    plt.figure(figsize=(6,8))
-    plt.subplot(611)
-    for i in range(len(day_trfs)):
-        plt.loglog(f, np.abs(day_trfs[i]['ZP']['TF_ZP']), 'gray', lw=0.5)
-    plt.loglog(f, np.abs(sta_trfs['ZP']['TF_ZP']), 'k', lw=0.5)
-    plt.ylim(1.e-20, 1.e0)
-    plt.xlim(1.e-4, 2.5)
-    plt.title(key+' Transfer Function: ZP', fontdict={'fontsize': 8})
-    plt.subplot(612)
-    for i in range(len(day_trfs)):
-        plt.loglog(f, np.abs(day_trfs[i]['Z1']['TF_Z1']), 'gray', lw=0.5)
-    plt.loglog(f, np.abs(sta_trfs['Z1']['TF_Z1']), 'k', lw=0.5)
-    plt.ylim(1.e-5, 1.e5)
-    plt.xlim(1.e-4, 2.5)
-    plt.title(key+' Transfer Function: Z1', fontdict={'fontsize': 8})
-    plt.subplot(613)
-    for i in range(len(day_trfs)):
-        plt.loglog(f, np.abs(day_trfs[i]['Z2-1']['TF_Z2-1']), 'gray', lw=0.5)
-    plt.loglog(f, np.abs(sta_trfs['Z2-1']['TF_Z2-1']), 'k', lw=0.5)
-    plt.ylim(1.e-5, 1.e5)
-    plt.xlim(1.e-4, 2.5)
-    plt.title(key+' Transfer Function: Z2-1', fontdict={'fontsize': 8})
-    plt.subplot(614)
-    for i in range(len(day_trfs)):
-        plt.loglog(f, np.abs(day_trfs[i]['ZP-21']['TF_ZP-21']), 'gray', lw=0.5)
-    plt.loglog(f, np.abs(sta_trfs['ZP-21']['TF_ZP-21']), 'k', lw=0.5)
-    plt.ylim(1.e-20, 1.e0)
-    plt.xlim(1.e-4, 2.5)
-    plt.title(key+' Transfer Function: ZP-21', fontdict={'fontsize': 8})
-    plt.subplot(615)
-    for i in range(len(day_trfs)):
-        plt.loglog(f, np.abs(day_trfs[i]['ZH']['TF_ZH']), 'gray', lw=0.5)
-    plt.ylim(1.e-10, 1.e10)
-    plt.xlim(1.e-4, 2.5)
-    plt.title(key+' Transfer Function: ZH', fontdict={'fontsize': 8})
-    plt.subplot(616)
-    for i in range(len(day_trfs)):
-        plt.loglog(f, np.abs(day_trfs[i]['ZP-H']['TF_ZP-H']), 'gray', lw=0.5)
-    plt.ylim(1.e-20, 1.e0)
-    plt.xlim(1.e-4, 2.5)
-    plt.title(key+' Transfer Function: ZP-H', fontdict={'fontsize': 8})
-    plt.xlabel('Frequency (Hz)')
+
+    # Get max number of TFs to plot
+    ntf = max(sum(day_list.values()), sum(sta_list.values()))
+
+    # Define all possible compbinations
+    tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
+
+    if ntf==1:
+        fig = plt.figure(figsize=(6,1.75))
+    else:
+        fig = plt.figure(figsize=(6,1.33333333*ntf))
+
+    j = 1
+    for key in tf_list:
+
+        if not day_list[key] and not sta_list[key]:
+            continue
+
+        ax = fig.add_subplot(ntf,1,j)
+
+        if day_list[key]:
+            for i in range(len(day_trfs)):
+                ax.loglog(f, np.abs(day_trfs[i][key]['TF_'+key]), 'gray', lw=0.5)
+        if sta_list[key]:
+            ax.loglog(f, np.abs(sta_trfs[key]['TF_'+key]), 'k', lw=0.5)
+        if key=='ZP':
+            ax.set_ylim(1.e-20, 1.e0)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Transfer Function: ZP', fontdict={'fontsize': 8})
+        elif key=='Z1':
+            ax.set_ylim(1.e-5, 1.e5)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Transfer Function: Z1', fontdict={'fontsize': 8})
+        elif key=='Z2-1':
+            ax.set_ylim(1.e-5, 1.e5)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Transfer Function: Z2-1', fontdict={'fontsize': 8})
+        elif key=='ZP-21':
+            ax.set_ylim(1.e-20, 1.e0)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Transfer Function: ZP-21', fontdict={'fontsize': 8})
+        elif key=='ZH':
+            ax.set_ylim(1.e-10, 1.e10)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Transfer Function: ZH', fontdict={'fontsize': 8})
+        elif key=='ZP-H':
+            ax.set_ylim(1.e-20, 1.e0)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Transfer Function: ZP-H', fontdict={'fontsize': 8})
+
+        j += 1
+
+    ax.set_xlabel('Frequency (Hz)')
     plt.tight_layout()
     plt.show()
+
+    # plt.subplot(612)
+    # for i in range(len(day_trfs)):
+    #     plt.loglog(f, np.abs(day_trfs[i]['Z1']['TF_Z1']), 'gray', lw=0.5)
+    # plt.loglog(f, np.abs(sta_trfs['Z1']['TF_Z1']), 'k', lw=0.5)
+    # plt.ylim(1.e-5, 1.e5)
+    # plt.xlim(1.e-4, 2.5)
+    # plt.title(key+' Transfer Function: Z1', fontdict={'fontsize': 8})
+    # plt.subplot(613)
+    # for i in range(len(day_trfs)):
+    #     plt.loglog(f, np.abs(day_trfs[i]['Z2-1']['TF_Z2-1']), 'gray', lw=0.5)
+    # plt.loglog(f, np.abs(sta_trfs['Z2-1']['TF_Z2-1']), 'k', lw=0.5)
+    # plt.ylim(1.e-5, 1.e5)
+    # plt.xlim(1.e-4, 2.5)
+    # plt.title(key+' Transfer Function: Z2-1', fontdict={'fontsize': 8})
+    # plt.subplot(614)
+    # for i in range(len(day_trfs)):
+    #     plt.loglog(f, np.abs(day_trfs[i]['ZP-21']['TF_ZP-21']), 'gray', lw=0.5)
+    # plt.loglog(f, np.abs(sta_trfs['ZP-21']['TF_ZP-21']), 'k', lw=0.5)
+    # plt.ylim(1.e-20, 1.e0)
+    # plt.xlim(1.e-4, 2.5)
+    # plt.title(key+' Transfer Function: ZP-21', fontdict={'fontsize': 8})
+    # plt.subplot(615)
+    # for i in range(len(day_trfs)):
+    #     plt.loglog(f, np.abs(day_trfs[i]['ZH']['TF_ZH']), 'gray', lw=0.5)
+    # plt.ylim(1.e-10, 1.e10)
+    # plt.xlim(1.e-4, 2.5)
+    # plt.title(key+' Transfer Function: ZH', fontdict={'fontsize': 8})
+    # plt.subplot(616)
+    # for i in range(len(day_trfs)):
+    #     plt.loglog(f, np.abs(day_trfs[i]['ZP-H']['TF_ZP-H']), 'gray', lw=0.5)
+    # plt.ylim(1.e-20, 1.e0)
+    # plt.xlim(1.e-4, 2.5)
+    # plt.title(key+' Transfer Function: ZP-H', fontdict={'fontsize': 8})
 
 
 def fig_event_raw(evstream, fmin, fmax):

@@ -65,6 +65,7 @@ def get_data(datapath, tstart, tend):
         # Increase increment
         t1 += 3600.*24.
 
+    # Fill with empty traces if components are not found
     ntr = len(trNZ)
     if not trN1 and not trN2:
         for i in range(ntr):
@@ -111,6 +112,16 @@ def get_event(eventpath, tstart, tend):
 
         # Increase increment
         t1 += 3600.*24.
+
+    # Fill with empty traces if components are not found
+    ntr = len(trNZ)
+    if not trN1 and not trN2:
+        for i in range(ntr):
+            trN1.append(Trace())
+            trN2.append(Trace())
+    elif not trNP:
+        for i in range(ntr):
+            trNP.append(Trace())
 
     return trN1, trN2, trNZ, trNP
 

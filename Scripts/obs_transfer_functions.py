@@ -96,6 +96,7 @@ import sys
 import numpy as np
 from obspy import UTCDateTime
 import pickle
+import stdb
 from obstools import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, options
 
@@ -129,20 +130,24 @@ def main():
         if not opts.skip_daily:
             # Path where spectra are located
             specpath = 'SPECTRA/' + stkey + '/'
-            if not os.path.isdir(avstpath): 
-                raise(Exception("Path to "+specpath+" doesn`t exist - aborting"))
+            if not os.path.isdir(specpath): 
+                raise(Exception("Path to "+specpath+" doesn't exist - aborting"))
 
         if not opts.skip_clean:
             # Path where average spectra will be saved
             avstpath = 'AVG_STA/' + stkey + '/'
             if not os.path.isdir(avstpath): 
-                print("Path to "+avstpath+" doesn`t exist - skipping averaged spectra over multiple days")
+                print("Path to "+avstpath+" doesn't exist - skipping cleaned station spectra")
                 opts.skip_clean = True
+
+        if opts.skip_daily and opts.skip_clean:
+            print("skipping both daily and clean spectra")
+            continue
 
         # Path where transfer functions will be located
         tfpath = 'TF_STA/' + stkey + '/'
         if not os.path.isdir(tfpath): 
-            print("Path to "+tfpath+" doesn`t exist - creating it")
+            print("Path to "+tfpath+" doesn't exist - creating it")
             os.makedirs(tfpath)
 
         # Get catalogue search start time
@@ -153,7 +158,7 @@ def main():
 
         # Get catalogue search end time
         if opts.endT is None:
-            tend = sta.startdate
+            tend = sta.enddate
         else:
             tend = opts.endT
 
@@ -196,9 +201,6 @@ def main():
 
         if not opts.skip_daily:
 
-            # List of possible transfer functions for Daily files
-            TF_list_day = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
-
             day_transfer_functions = []
 
             # Cycle through available files
@@ -207,7 +209,9 @@ def main():
                 year = filespec.split('.')[0]
                 jday = filespec.split('.')[1]
 
-                print('Calculating transfer functions for key '+stkey+' and day '+year+'.'+jday)
+                print()
+                print("**********************************************************************")
+                print("* Calculating transfer functions for key "+stkey+" and day "+year+"."+jday)
                 tstamp = year+'.'+jday+'.'
                 filename = tfpath + tstamp + 'transfunc.pkl'
 
@@ -217,7 +221,7 @@ def main():
                 file.close()
 
                 # Load spectra into TFNoise object
-                daytransfer = TFNoise(daynoise.f, daynoise.power, daynoise.cross, daynoise.rotation, TF_list_day)
+                daytransfer = TFNoise(daynoise.f, daynoise.power, daynoise.cross, daynoise.rotation, daynoise.tf_list)
 
                 # Calculate the transfer functions
                 daytransfer.transfer_func()
@@ -233,15 +237,14 @@ def main():
 
         if not opts.skip_clean:
 
-            # List of possible transfer functions for station average files
-            TF_list_sta = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
-
             # Cycle through available files
             for fileavst in average_files:
 
                 name = fileavst.split('avg_sta')
 
-                print('Calculating transfer functions for key '+stkey+' and range '+name[0])
+                print()
+                print("**********************************************************************")
+                print("* Calculating transfer functions for key "+stkey+" and range "+name[0])
                 filename = tfpath + name[0] + 'transfunc.pkl'
 
                 # Load file
@@ -251,7 +254,7 @@ def main():
 
                 # Load spectra into TFNoise object - no Rotation object for station averages
                 rotation = Rotation(None, None, None)
-                statransfer = TFNoise(stanoise.f, stanoise.power, stanoise.cross, rotation, TF_list_sta)
+                statransfer = TFNoise(stanoise.f, stanoise.power, stanoise.cross, rotation, stanoise.tf_list)
 
                 # Calculate the transfer functions
                 statransfer.transfer_func()
@@ -266,7 +269,8 @@ def main():
                 statransfer.save(filename)
 
         if opts.fig_TF:
-            plot.fig_TF(f, day_transfer_functions, sta_transfer_functions, key=stkey)
+            plot.fig_TF(f, day_transfer_functions, daynoise.tf_list, 
+                sta_transfer_functions, stanoise.tf_list, skey=stkey)
 
 if __name__ == "__main__":
 

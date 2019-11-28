@@ -152,7 +152,7 @@ def main():
 
         # Get catalogue search end time
         if opts.endT is None:
-            tend = sta.startdate
+            tend = sta.enddate
         else:
             tend = opts.endT
 
@@ -209,15 +209,15 @@ def main():
             year = str(t1.year).zfill(4)
             jday = str(t1.julday).zfill(3)
 
-            print()
-            print("**********************************************************************")
-            print('* Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
             tstamp = year+'.'+jday+'.'
             filespec = specpath + tstamp + 'spectra.pkl'
 
             # Load file if it exists
             if os.path.exists(filespec):
-                print("*   -> file "+filespec+" exists - loading")
+                print()
+                print("**********************************************************************")
+                print('* Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
+                print("*   -> file "+filespec+" found - loading")
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()

@@ -248,12 +248,11 @@ def main():
                                     continue
 
                                 # List of possible transfer functions for station average files
-                                TF_list = tfaverage.tf_list
-                                eventstream.correct_data(tfaverage, TF_list)
+                                eventstream.correct_data(tfaverage)
 
                                 correct = eventstream.correct
                                 if opts.plot_corrected:
-                                    plot.fig_event_corrected(eventstream, TF_list)
+                                    plot.fig_event_corrected(eventstream)
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -270,12 +269,11 @@ def main():
                                 continue
 
                             # List of possible transfer functions for station average files
-                            TF_list = tfaverage.tf_list
-                            eventstream.correct_data(tfaverage, TF_list)
+                            eventstream.correct_data(tfaverage)
 
                             correct = eventstream.correct
                             if opts.plot_corrected:
-                                plot.fig_event_corrected(eventstream, TF_list)
+                                plot.fig_event_corrected(eventstream)
 
 
 if __name__ == "__main__":

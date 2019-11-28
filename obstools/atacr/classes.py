@@ -506,6 +506,15 @@ class DayNoise(object):
         del self.tr2 
         del self.trZ
         del self.trP
+
+        # Build list of available transfer functions for future use
+        if self.ncomp==2:
+            self.tf_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        elif self.ncomp==3:
+            self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
+        else:
+            self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
+
         file = open(filename, 'wb')
         pickle.dump(self, file)
         file.close()
@@ -767,6 +776,15 @@ class StaNoise(object):
         del self.c2Z
         del self.c2P
         del self.cZP
+
+        # Build list of available transfer functions for future use
+        if self.ncomp==2:
+            self.tf_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        elif self.ncomp==3:
+            self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        else:
+            self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
+
         file = open(filename, 'wb')
         pickle.dump(self, file)
         file.close()
@@ -937,7 +955,7 @@ class EventStream(object):
 
     """
 
-    def __init__(self, sta, sth, stp, tstamp, lat, lon, time, window, sampling_rate):
+    def __init__(self, sta, sth, stp, tstamp, lat, lon, time, window, sampling_rate, ncomp):
         self.sta = sta
         self.key = sta.network+'.'+sta.station
         self.sth = sth
@@ -949,6 +967,14 @@ class EventStream(object):
         self.window = window
         self.fs = sampling_rate
         self.dt = 1./sampling_rate
+        self.ncomp = ncomp
+        # Build list of available transfer functions for future use
+        if self.ncomp==2:
+            self.ev_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        elif self.ncomp==3:
+            self.ev_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
+        else:
+            self.ev_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
 
     class CorrectDict(dict):
 
@@ -958,7 +984,7 @@ class EventStream(object):
         def add(self, key, value):
             self[key] = value
 
-    def correct_data(self, tfnoise, TF_list):
+    def correct_data(self, tfnoise):
         """
         Method to apply transfer functions between multiple components (and 
         component combinations) to produce corrected/cleaned vertical components.
@@ -972,6 +998,7 @@ class EventStream(object):
 
         correct = self.CorrectDict()
 
+        # Extract list and transfer functions available
         tf_list = tfnoise.tf_list
         transfunc = tfnoise.transfunc
 
@@ -979,41 +1006,46 @@ class EventStream(object):
         ws = int(self.window/self.dt)
 
         # Extract traces
+        trZ = Trace(); tr1 = Trace(); tr2 = Trace(); trP = Trace()
         trZ = self.sth.select(component='Z')[0]
-        tr1 = self.sth.select(component='1')[0]
-        tr2 = self.sth.select(component='2')[0]
-        trP = self.stp[0]
-
+        if self.ncomp==2 or self.ncomp==4:
+            trP = self.stp[0]
+        if self.ncomp==3 or self.ncomp==4:
+            tr1 = self.sth.select(component='1')[0]
+            tr2 = self.sth.select(component='2')[0]
 
         # Get Fourier spectra
-        ft1, f = utils.calculate_windowed_fft(tr1, ws, hann=False)
-        ft2, f = utils.calculate_windowed_fft(tr2, ws, hann=False)
+        ft1 = None; ft2 = None; ftZ = None; ftP = None
         ftZ, f = utils.calculate_windowed_fft(trZ, ws, hann=False)
-        ftP, f = utils.calculate_windowed_fft(trP, ws, hann=False)
+        if self.ncomp==2 or self.ncomp==4:
+            ftP, f = utils.calculate_windowed_fft(trP, ws, hann=False)
+        if self.ncomp==3 or self.ncomp==4:
+            ft1, f = utils.calculate_windowed_fft(tr1, ws, hann=False)
+            ft2, f = utils.calculate_windowed_fft(tr2, ws, hann=False)
 
         if not np.allclose(f, tfnoise.f):
             raise(Exception('Frequency axes are different: ',f, tfnoise.f))
 
-        for key, value in tfnoise.tf_list.items():
+        for key, value in tf_list.items():
 
-            if key == 'ZP':
-                if value and TF_list[key]:
+            if key == 'ZP' and ev_list[key]:
+                if value and tf_list[key]:
                     TF_ZP = transfunc[key]['TF_ZP']
                     fTF_ZP = np.hstack((TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZP*ftP
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP', corrtime)
 
-            if key == 'Z1':
-                if value and TF_list[key]:
+            if key == 'Z1' and ev_list[key]:
+                if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_Z1*ft1
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('Z1', corrtime)
 
-            if key == 'Z2-1':
-                if value and TF_list[key]:
+            if key == 'Z2-1' and ev_list[key]:
+                if value and tf_list[key]:
                     TF_Z1 = transfunc['Z1']['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     TF_21 = transfunc[key]['TF_21']
@@ -1024,8 +1056,8 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('Z2-1', corrtime)
 
-            if key == 'ZP-21':
-                if value and TF_list[key]:
+            if key == 'ZP-21' and ev_list[key]:
+                if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     TF_21 = transfunc[key]['TF_21']
@@ -1043,8 +1075,8 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP-21', corrtime)
 
-            if key == 'ZH':
-                if value and TF_list[key]:
+            if key == 'ZH' and ev_list[key]:
+                if value and tf_list[key]:
 
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
@@ -1055,8 +1087,8 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZH', corrtime)
 
-            if key == 'ZP-H':
-                if value and TF_list[key]:
+            if key == 'ZP-H' and ev_list[key]:
+                if value and tf_list[key]:
 
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
