@@ -283,6 +283,9 @@ def main():
                 # Define file names (to check if files already exist)
                 filename = eventpath + tstamp + '.event.pkl'
 
+                print()
+                print("* Channels selected: "+str(opts.channels)+' and vertical')
+
                 # If data file exists, continue
                 if glob.glob(filename): 
                     if not opts.ovr:
