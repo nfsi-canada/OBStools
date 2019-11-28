@@ -629,7 +629,7 @@ class StaNoise(object):
 
         # Cycle through to kill high-std-norm windows
         moveon = False
-        gooddays = np.repeat([True], self.c11.shape[1])
+        gooddays = np.repeat([True], self.cZZ.shape[1])
         indwin = np.argwhere(gooddays==True)
 
         while moveon == False:
