@@ -118,8 +118,8 @@ def get_daylong_options():
         opts.stkeys = opts.stkeys.split(',')
 
     # create channel list
-    if len(opts.channels)==1:
-        opts.channels = opts.stkeys.split(',')
+    if len(opts.channels)>0:
+        opts.channels = opts.channels.split(',')
     else:
         opts.channels = ["H", "P"]
     for cha in opts.channels:
@@ -396,11 +396,11 @@ def get_dailyspec_options():
     ConstGroup.add_option("--freq-band", action="store", type="string", dest="pd", default=None, \
         help="Specify comma-separated frequency limits (float, in Hz) over which to calculate spectral features " \
         "used in flagging the bad windows. [Default 0.004,2.0]")
-    ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=1.5, \
-        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad. [Default 1.5]")
+    ConstGroup.add_option("--tolerance", action="store", type="float", dest="tol", default=2.0, \
+        help="Specify parameter for tolerance threshold. If spectrum > std*tol, window is flagged as bad. [Default 2.0]")
     ConstGroup.add_option("--alpha", action="store", type="float", dest="alpha", default=0.05, \
         help="Specify confidence level for f-test, for iterative flagging of windows. [Default 0.05, or 95% confidence]")
-    ConstGroup.add_option("--raw", action="store_false", dest="smooth", default=True, \
+    ConstGroup.add_option("--raw", action="store_true", dest="raw", default=False, \
         help="Raw spectra will be used in calculating spectral features for flagging. [Default uses smoothed spectra]")
     ConstGroup.add_option("--no-rotation", action="store_false", dest="calc_rotation", default=True, \
         help="Do not rotate horizontal components to tilt direction. [Default calculates rotation]")
@@ -431,6 +431,11 @@ def get_dailyspec_options():
     if len(opts.stkeys)>0:
         opts.stkeys = opts.stkeys.split(',')
 
+    if opts.raw:
+        opts.smooth = False
+    else:
+        opts.smooth = True
+
     # construct start time
     if len(opts.startT)>0:
         try:
@@ -448,10 +453,6 @@ def get_dailyspec_options():
             parser.error("Error: Cannot construct UTCDateTime from end time: " + opts.endT)
     else:
         opts.endT = None
-
-    # Check whether raw or smooth spectra should be used
-    if opts.smooth and opts.raw:
-        print("Warning: options --smooth and --raw should not be specified simultaneously. Set to --smooth=True")
 
     # Check input frequency band
     if opts.pd is None:

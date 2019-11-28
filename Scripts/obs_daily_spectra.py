@@ -103,7 +103,7 @@ Usage
                            the start time for the data search. This will override
                            any station end times. [Default end date of each
                            station n database]
-                       
+
 """
 
 # Import modules and functions
@@ -118,6 +118,7 @@ def main():
 
     # Run Input Parser
     (opts, indb) = options.get_dailyspec_options()
+    print(opts)
 
     # Load Database
     db = stdb.io.load_db(fname=indb)
@@ -147,6 +148,7 @@ def main():
         # Path where spectra will be saved
         specpath = 'SPECTRA/' + stkey + '/'
         if not os.path.isdir(specpath): 
+            print()
             print("Path to "+specpath+" doesn`t exist - creating it")
             os.makedirs(specpath)
 
@@ -173,8 +175,7 @@ def main():
         sta.location = tlocs
 
         # Update Display
-        print(" ")
-        print(" ")
+        print()
         print("|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(sta.station))
@@ -192,13 +193,10 @@ def main():
 
         # Window size 
         window = opts.window
-        overlap = opts.overlap #0.3
+        overlap = opts.overlap 
 
         # minimum numer of windows
-        minwin = opts.minwin #10
-
-        # NFFT
-        stats = trN1[0].stats
+        minwin = opts.minwin 
 
         # Time axis
         taxis = np.arange(0., window, trNZ[0].stats.delta)
@@ -209,15 +207,15 @@ def main():
             year = str(trZ.stats.starttime.year).zfill(4)
             jday = str(trZ.stats.starttime.julday).zfill(3)
 
-            print(" ")
-            print("***************************************************************")
+            print()
+            print("**********************************************************************")
             print("* Calculating noise spectra for key "+stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'
             filename = specpath + tstamp + 'spectra.pkl'
 
             if os.path.exists(filename):
                 if not opts.ovr:
-                    print("   -> file "+filename+" exists - continuing")
+                    print("*   -> file "+filename+" exists - continuing")
                     continue
 
             # Initialize instance of DayNoise

@@ -61,6 +61,7 @@ from scipy.linalg import norm
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+from obspy.core import Stream, Trace
 from obstools.atacr import utils, plot
 
 
@@ -177,8 +178,10 @@ class DayNoise(object):
         self.year = self.tr1.stats.starttime.year
         self.julday = self.tr1.stats.starttime.julday
         self.key = key
-        self.ncomp = np.sum(np.from_iter(1 for tr in 
-            Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data)))
+        # self.ncomp = np.sum(np.from_iter(1 for tr in 
+        #     Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data)))
+        self.ncomp = np.sum(1 for tr in 
+            Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data))
 
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
@@ -242,7 +245,7 @@ class DayNoise(object):
                 plt.tight_layout()
                 plt.show()
 
-            elif ncomp==3:
+            elif self.ncomp==3:
                 plt.figure(1)
                 plt.subplot(3,1,1)
                 plt.pcolormesh(t, f, np.log(psd1))
@@ -480,12 +483,12 @@ class DayNoise(object):
         if fig_average:
             plot.fig_average(f, self.power, bad, self.goodwins, self.ncomp, key=self.key)
 
-        if opts.calc_rotation and self.ncomp>=3:
+        if calc_rotation and self.ncomp>=3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = utils.calculate_tilt( \
                 ft1, ft2, ftZ, ftP, f, self.goodwins)
             self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value)
 
-            if opts.fig_coh_ph:
+            if fig_coh_ph:
                 plot.fig_coh_ph(coh, ph, direc)
 
     def save(self, filename):

@@ -71,31 +71,15 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
                  'HZ component, Station: '+key, \
                  'HP component, Station: '+key]
 
-    plt.figure(6)
+    fig = plt.figure(6)
     for i, sl in enumerate(sls):
-        ax = plt.subplot(ncomp,1,i)
+        ax = fig.add_subplot(ncomp,1,i+1)
         ax.semilogx(f, sl[:,gooddays], 'k', lw=0.5)
         if np.sum(~gooddays)>0:
             plt.semilogx(f, sl[:,~gooddays], 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
-
-    # plt.subplot(4,1,2)
-    # plt.semilogx(f, sl_c22[:,gooddays], 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, sl_c22[:,~gooddays], 'r', lw=0.5)
-    # plt.title('H2 component, Station: '+key, fontdict={'fontsize': 8})
-    # plt.subplot(4,1,3)
-    # plt.semilogx(f, sl_cZZ[:,gooddays], 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, sl_cZZ[:,~gooddays], 'r', lw=0.5)
-    # plt.title('HZ component, Station: '+key, fontdict={'fontsize': 8})
-    # plt.subplot(4,1,4)
-    # plt.semilogx(f, sl_cPP[:,gooddays], 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, sl_cPP[:,~gooddays], 'r', lw=0.5)
-    # plt.title('HP component, Station: '+key, fontdict={'fontsize': 8})
 
 
 def fig_average(f, power, bad, gooddays, ncomp, key=''):
@@ -150,35 +134,14 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
                  'Average HP, Station: '+key]
 
     plt.figure()
-    for i, cc, bc in enumerate(zip(ccs, bcs)):
-        ax = plt.subplot(ncomp,1,i)
+    for i, (cc, bc) in enumerate(zip(ccs, bcs)):
+        ax = plt.subplot(ncomp,1,i+1)
         ax.semilogx(f, utils.smooth(np.log(cc), 50), 'k', lw=0.5)
         if np.sum(~gooddays)>0:
             ax.semilogx(f, utils.smooth(np.log(bc), 50), 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
-
-    # plt.subplot(411)
-    # plt.semilogx(f, utils.smooth(np.log(c11), 50), 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, utils.smooth(np.log(bc11), 50), 'r', lw=0.5)
-    # plt.title('Average H1, Station: '+key, fontdict={'fontsize': 8})
-    # plt.subplot(412)
-    # plt.semilogx(f, utils.smooth(np.log(c22), 50), 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, utils.smooth(np.log(bc22), 50), 'r', lw=0.5)
-    # plt.title('Average H2, Station: '+key, fontdict={'fontsize': 8})
-    # plt.subplot(413)
-    # plt.semilogx(f, utils.smooth(np.log(cZZ), 50), 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, utils.smooth(np.log(bcZZ), 50), 'r', lw=0.5)
-    # plt.title('Average HZ, Station: '+key, fontdict={'fontsize': 8})
-    # plt.subplot(414)
-    # plt.semilogx(f, utils.smooth(np.log(cPP), 50), 'k', lw=0.5)
-    # if np.sum(~gooddays)>0:
-    #     plt.semilogx(f, utils.smooth(np.log(bcPP), 50), 'r', lw=0.5)
-    # plt.title('Average HP, Station: '+key, fontdict={'fontsize': 8})
 
 
 def fig_av_cross(f, field, gooddays, ftype, key='', **kwargs):
@@ -274,7 +237,7 @@ def fig_coh_ph(coh, ph, direc):
 
     """
 
-    colors = plt.cm.cividis(np.linspace(0,1,coh.shape[1]))
+    colors = plt.cm.cividis(np.linspace(0,1,coh.shape[0]))
 
     print(coh.shape)
     if coh.ndim > 1:
