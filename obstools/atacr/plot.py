@@ -195,16 +195,16 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='', **kwargs):
         fig = plt.figure(figsize=(6,8))
 
     for i, field in enumerate(fields):
-        ax = fig.add_subplot(ncomp,1,i+1)
+        ax = fig.add_subplot(len(fields),1,i+1)
         # Extact field
         if ftype == 'Admittance':
             ax.loglog(f, field[:,gooddays], color='gray', **kwargs)
             if np.sum(~gooddays)>0:
-                ax.loglog(f, field12[:,~gooddays], color='r', **kwargs)
+                ax.loglog(f, field[:,~gooddays], color='r', **kwargs)
         else:
             ax.semilogx(f, field[:,gooddays], color='gray', **kwargs)
             if np.sum(~gooddays)>0:
-                ax.semilogx(f, field12[:,~gooddays], color='r', **kwargs)
+                ax.semilogx(f, field[:,~gooddays], color='r', **kwargs)
         plt.ylabel(ftype, fontdict={'fontsize': 8})
         plt.title(key+' '+ftype+title[i], fontdict={'fontsize': 8})
         if i==len(fields)-1:
