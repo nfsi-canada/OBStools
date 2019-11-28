@@ -604,7 +604,7 @@ class StaNoise(object):
                 plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
                 plt.tight_layout()
                 plt.show()
-            elif self.ncom==3:
+            elif self.ncomp==3:
                 plt.figure(2)
                 plt.subplot(3,1,1)
                 plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
@@ -699,32 +699,43 @@ class StaNoise(object):
         """
 
         # Power spectra
-        c11 = np.sum(self.c11[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        c22 = np.sum(self.c22[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        c11 = None; c22 = None; cZZ = None; cPP = None
         cZZ = np.sum(self.cZZ[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        cPP = np.sum(self.cPP[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        if self.ncomp==2 or self.ncomp==4:
+            cPP = np.sum(self.cPP[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        if self.ncomp==3 or self.ncomp==4:
+            c11 = np.sum(self.c11[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+            c22 = np.sum(self.c22[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
 
         # Bad days - for plotting
+        bc11 = None; bc22 = None; bcZZ = None; bcPP = None
         if np.sum(~self.gooddays) > 0:
-            bc11 = np.sum(self.c11[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
-            bc22 = np.sum(self.c22[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
             bcZZ = np.sum(self.cZZ[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
-            bcPP = np.sum(self.cPP[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
-        else:
-            bc11 = None; bc22 = None; bcZZ = None; bcPP = None
+            if self.ncomp==2 or self.ncomp==4:            
+                bcPP = np.sum(self.cPP[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
+            if self.ncomp==3 or self.ncomp==4:
+                bc11 = np.sum(self.c11[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
+                bc22 = np.sum(self.c22[:, ~self.gooddays]*self.nwins[~self.gooddays], axis=1)/np.sum(self.nwins[~self.gooddays])
 
         # Cross spectra
-        c12 = np.sum(self.c12[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        c1Z = np.sum(self.c1Z[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        c1P = np.sum(self.c1P[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        c2Z = np.sum(self.c2Z[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        c2P = np.sum(self.c2P[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        cZP = np.sum(self.cZP[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        c12 = None; c1Z = None; c2Z = None; c1P = None; c2P = None; cZP = None
+        if self.ncomp==3 or self.ncomp==4:
+            c12 = np.sum(self.c12[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+            c1Z = np.sum(self.c1Z[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+            c2Z = np.sum(self.c2Z[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        if self.ncomp==4:
+            c1P = np.sum(self.c1P[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+            c2P = np.sum(self.c2P[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        if self.ncomp==2 or self.ncomp==4:
+            cZP = np.sum(self.cZP[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
 
         # Rotated component
-        cHH = np.sum(self.cHH[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        cHZ = np.sum(self.cHZ[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
-        cHP = np.sum(self.cHP[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        cHH = None; cHZ = None; cHP = None
+        if self.ncomp==3 or self.ncomp==4:
+            cHH = np.sum(self.cHH[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+            cHZ = np.sum(self.cHZ[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
+        if self.ncomp==4:
+            cHP = np.sum(self.cHP[:, self.gooddays]*self.nwins[self.gooddays], axis=1)/np.sum(self.nwins[self.gooddays])
 
         self.power = Power(c11, c22, cZZ, cPP)
         self.cross = Cross(c12, c1Z, c1P, c2Z, c2P, cZP)
@@ -732,7 +743,7 @@ class StaNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
-            plot.fig_average(self.f, self.power, bad, self.gooddays, key=self.key)
+            plot.fig_average(self.f, self.power, bad, self.gooddays, self.ncomp, key=self.key)
 
     def save(self, filename):
         """

@@ -78,6 +78,8 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
         if np.sum(~gooddays)>0:
             plt.semilogx(f, sl[:,~gooddays], 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
+        if i==len(sls)-1:
+            plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
 
@@ -140,11 +142,13 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
         if np.sum(~gooddays)>0:
             ax.semilogx(f, utils.smooth(np.log(bc), 50), 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
+        if i==len(ccs)-1:
+            plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
 
 
-def fig_av_cross(f, field, gooddays, ftype, key='', **kwargs):
+def fig_av_cross(f, field, gooddays, ftype, ncomp, key='', **kwargs):
     """
     Function to plot the averaged cross-spectra (those qualified as 'good' in the 
     QC step). This function is used in the `obs_daily_spectra.py` script.
@@ -166,57 +170,46 @@ def fig_av_cross(f, field, gooddays, ftype, key='', **kwargs):
 
     """
 
-    # Extact field
-    if ftype == 'Admittance':
-        pp = plt.loglog
+
+    if ncomp==2 :
+        fieldZP = field.cZP.T
+        fields = [fieldZP]
+        title = [': ZP']
+        fig = plt.figure(figsize=(6,2.667))
+    elif ncomp==3:
+        field12 = field.c12.T
+        field1Z = field.c1Z.T
+        field2Z = field.c2Z.T
+        fields = [field12, field1Z, field2Z]
+        title = [': 12', ': 1Z', ': 2Z']
+        fig = plt.figure(figsize=(6,4))
     else:
-        pp = plt.semilogx
+        fieldZP = field.cZP.T
+        field12 = field.c12.T
+        field1Z = field.c1Z.T
+        field2Z = field.c2Z.T
+        field1P = field.c1P.T
+        field2P = field.c2P.T
+        fields = [field12, field1Z, field1P, field2Z, field2P, fieldZP]
+        title = [': 12', ': 1Z', ': 1P', ': 2Z', ': 2P', ': ZP']
+        fig = plt.figure(figsize=(6,8))
 
-    field12 = field.c12.T
-    field1Z = field.c1Z.T
-    field1P = field.c1P.T
-    field2Z = field.c2Z.T
-    field2P = field.c2P.T
-    fieldZP = field.cZP.T
+    for i, field in enumerate(fields):
+        ax = fig.add_subplot(ncomp,1,i+1)
+        # Extact field
+        if ftype == 'Admittance':
+            ax.loglog(f, field[:,gooddays], color='gray', **kwargs)
+            if np.sum(~gooddays)>0:
+                ax.loglog(f, field12[:,~gooddays], color='r', **kwargs)
+        else:
+            ax.semilogx(f, field[:,gooddays], color='gray', **kwargs)
+            if np.sum(~gooddays)>0:
+                ax.semilogx(f, field12[:,~gooddays], color='r', **kwargs)
+        plt.ylabel(ftype, fontdict={'fontsize': 8})
+        plt.title(key+' '+ftype+title[i], fontdict={'fontsize': 8})
+        if i==len(fields)-1:
+            plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
 
-    plt.figure(figsize=(6,8))
-    plt.subplot(6,1,1)
-    pp(f, field12[:,gooddays], color='gray', **kwargs)
-    if np.sum(~gooddays)>0:
-        pp(f, field12[:,~gooddays], color='r', **kwargs)
-    plt.ylabel(ftype, fontdict={'fontsize': 8})
-    plt.title(key+' '+ftype+': 12', fontdict={'fontsize': 8})
-    plt.subplot(6,1,2)
-    pp(f, field1Z[:,gooddays], color='gray', **kwargs)
-    if np.sum(~gooddays)>0:
-        pp(f, field1Z[:,~gooddays], color='r', **kwargs)
-    plt.ylabel(ftype, fontdict={'fontsize': 8})
-    plt.title(key+' '+ftype+': 1Z', fontdict={'fontsize': 8})
-    plt.subplot(6,1,3)
-    pp(f, field1P[:,gooddays], color='gray', **kwargs)
-    if np.sum(~gooddays)>0:
-        pp(f, field1P[:,~gooddays], color='r', **kwargs)
-    plt.ylabel(ftype, fontdict={'fontsize': 8})
-    plt.title(key+' '+ftype+': 1P', fontdict={'fontsize': 8})
-    plt.subplot(6,1,4)
-    pp(f, field2Z[:,gooddays], color='gray', **kwargs)
-    if np.sum(~gooddays)>0:
-        pp(f, field2Z[:,~gooddays], color='r', **kwargs)
-    plt.ylabel(ftype, fontdict={'fontsize': 8})
-    plt.title(key+' '+ftype+': 2Z', fontdict={'fontsize': 8})
-    plt.subplot(6,1,5)
-    pp(f, field2P[:,gooddays], color='gray', **kwargs)
-    if np.sum(~gooddays)>0:
-        pp(f, field2P[:,~gooddays], color='r', **kwargs)
-    plt.ylabel(ftype, fontdict={'fontsize': 8})
-    plt.title(key+' '+ftype+': 2P', fontdict={'fontsize': 8})
-    plt.subplot(6,1,6)
-    pp(f, fieldZP[:,gooddays], color='gray', **kwargs)
-    if np.sum(~gooddays)>0:
-        pp(f, fieldZP[:,~gooddays], color='r', **kwargs)
-    plt.ylabel(ftype, fontdict={'fontsize': 8})
-    plt.title(key+' '+ftype+': ZP', fontdict={'fontsize': 8})
-    plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
 

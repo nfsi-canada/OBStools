@@ -134,14 +134,14 @@ def main():
 
         # Path where spectra are located
         specpath = 'SPECTRA/' + stkey + '/'
-        if not os.path.isdir(avstpath): 
-            print("Path to '+specpath+' doesn`t exist - aborting")
+        if not os.path.isdir(specpath): 
+            print("Path to "+specpath+" doesn`t exist - aborting")
             sys.exit()
 
         # Path where average spectra will be saved
         avstpath = 'AVG_STA/' + stkey + '/'
         if not os.path.isdir(avstpath): 
-            print("Path to '+avstpath+' doesn`t exist - creating it")
+            print("Path to "+avstpath+" doesn`t exist - creating it")
             os.makedirs(avstpath)
 
         # Get catalogue search start time
@@ -167,8 +167,7 @@ def main():
         sta.location = tlocs
 
         # Update Display
-        print(" ")
-        print(" ")
+        print()
         print("|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(sta.station))
@@ -186,6 +185,11 @@ def main():
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
         fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
+
+        if os.path.exists(fileavst):
+            if not opts.ovr:
+                print("*   -> file "+fileavst+" exists - continuing")
+                continue
 
         # Containers for power and cross spectra
         c11_all = []; c22_all = []; cZZ_all = []; cPP_all = []
@@ -205,13 +209,15 @@ def main():
             year = str(t1.year).zfill(4)
             jday = str(t1.julday).zfill(3)
 
-            print('Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
+            print()
+            print("**********************************************************************")
+            print('* Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
             tstamp = year+'.'+jday+'.'
             filespec = specpath + tstamp + 'spectra.pkl'
 
             # Load file if it exists
             if os.path.exists(filespec):
-                print('file '+filespec+' exists - loading')
+                print("*   -> file "+filespec+" exists - loading")
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()
@@ -256,12 +262,30 @@ def main():
             coh_ZP_all.append(utils.smooth(utils.coherence(daynoise.cross.cZP, daynoise.power.cZZ, daynoise.power.cPP), 50))
 
             # Phase
-            ph_12_all.append(180./np.pi*utils.phase(daynoise.cross.c12))
-            ph_1Z_all.append(180./np.pi*utils.phase(daynoise.cross.c1Z))
-            ph_1P_all.append(180./np.pi*utils.phase(daynoise.cross.c1P))
-            ph_2Z_all.append(180./np.pi*utils.phase(daynoise.cross.c2Z))
-            ph_2P_all.append(180./np.pi*utils.phase(daynoise.cross.c2P))
-            ph_ZP_all.append(180./np.pi*utils.phase(daynoise.cross.cZP))
+            try:
+                ph_12_all.append(180./np.pi*utils.phase(daynoise.cross.c12))
+            except:
+                ph_12_all.append(None)
+            try:
+                ph_1Z_all.append(180./np.pi*utils.phase(daynoise.cross.c1Z))
+            except:
+                ph_1Z_all.append(None)
+            try:
+                ph_1P_all.append(180./np.pi*utils.phase(daynoise.cross.c1P))
+            except:
+                ph_1P_all.append(None)
+            try:
+                ph_2Z_all.append(180./np.pi*utils.phase(daynoise.cross.c2Z))
+            except:
+                ph_2Z_all.append(None)
+            try:
+                ph_2P_all.append(180./np.pi*utils.phase(daynoise.cross.c2P))
+            except:
+                ph_2P_all.append(None)
+            try:
+                ph_ZP_all.append(180./np.pi*utils.phase(daynoise.cross.cZP))
+            except:
+                ph_ZP_all.append(None)
 
             # Admittance
             ad_12_all.append(utils.smooth(utils.admittance(daynoise.cross.c12, daynoise.power.c11), 50))
@@ -306,12 +330,12 @@ def main():
             fig_QC=opts.fig_QC, debug=opts.debug)
 
         # Average spectra for good days
-        stanoise.average_sta_spectra(fig_average=opte.fig_average, debug=opts.debug)
+        stanoise.average_sta_spectra(fig_average=opts.fig_average, debug=opts.debug)
 
         if opts.fig_av_cross:
-            plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays, 'Coherence', key=stkey, lw=0.5)
-            plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', key=stkey, lw=0.5)
-            plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', key=stkey, marker=',', lw=0)
+            plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays, 'Coherence', ncomp, key=stkey, lw=0.5)
+            plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', ncomp, key=stkey, lw=0.5)
+            plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', ncomp, key=stkey, marker=',', lw=0)
 
         # Save to file
         stanoise.save(fileavst)
