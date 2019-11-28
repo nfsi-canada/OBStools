@@ -225,31 +225,44 @@ def calculate_windowed_fft(trace, ws, ss=None, hann=True):
 #     return savgol_filter(data, np, poly, axis=axis, mode='wrap')
 
 def smooth(data, nd, axis=0):
-    if data.ndim > 1:
-        filt = np.zeros(data.shape)
-        for i in range(data.shape[::-1][axis]):
-            if axis==0:
-                filt[:,i] = np.convolve(data[:,i], np.ones((nd,))/nd, mode='same')
-            elif axis==1:
-                filt[i,:] = np.convolve(data[i,:], np.ones((nd,))/nd, mode='same')
+
+    if np.any(data):
+        if data.ndim > 1:
+            filt = np.zeros(data.shape)
+            for i in range(data.shape[::-1][axis]):
+                if axis==0:
+                    filt[:,i] = np.convolve(data[:,i], np.ones((nd,))/nd, mode='same')
+                elif axis==1:
+                    filt[i,:] = np.convolve(data[i,:], np.ones((nd,))/nd, mode='same')
+        else:
+            filt = np.convolve(data, np.ones((nd,))/nd, mode='same')
+        return filt
     else:
-        filt = np.convolve(data, np.ones((nd,))/nd, mode='same')
-    return filt
+        return None
 
 
 def admittance(Gxy, Gxx):
 
-    return np.abs(Gxy)/Gxx
+    if np.any(Gxy) and np.any(Gxx):
+        return np.abs(Gxy)/Gxx
+    else:
+        return None
 
 
 def coherence(Gxy, Gxx, Gyy):
 
-    return np.abs(Gxy)**2/(Gxx*Gyy)
+    if np.any(Gxy) and np.any(Gxx) and np.any(Gxx):
+        return np.abs(Gxy)**2/(Gxx*Gyy)
+    else:
+        return None
 
 
 def phase(Gxy):
     
-    return np.angle(Gxy)
+    if np.any(Gxy):
+        return np.angle(Gxy)
+    else:
+        return None
 
 
 def sliding_window(a, ws, ss=None, hann=True):

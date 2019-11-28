@@ -223,10 +223,13 @@ def main():
             f = daynoise.f
             nwins.append(np.sum(daynoise.goodwins))
 
+            # Number of components
+            ncomp = daynoise.ncomp
+
             # Power spectra
+            cZZ_all.append(daynoise.power.cZZ)
             c11_all.append(daynoise.power.c11)
             c22_all.append(daynoise.power.c22)
-            cZZ_all.append(daynoise.power.cZZ)
             cPP_all.append(daynoise.power.cPP)
 
             # Cross spectra
@@ -291,7 +294,7 @@ def main():
         rotation = Rotation(cHH_all, cHZ_all, cHP_all)
 
         # Initialize StaNoise object
-        stanoise = StaNoise(power, cross, rotation, f, nwins, key=stkey)
+        stanoise = StaNoise(power, cross, rotation, f, nwins, ncomp, key=stkey)
 
         # Store transfer functions as objects for plotting
         coh = Cross(coh_12_all, coh_1Z_all, coh_1P_all, coh_2Z_all, coh_2P_all, coh_ZP_all)

@@ -177,8 +177,6 @@ class DayNoise(object):
         self.year = self.trZ.stats.starttime.year
         self.julday = self.trZ.stats.starttime.julday
         self.key = key
-        # self.ncomp = np.sum(np.from_iter(1 for tr in 
-        #     Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data)))
         self.ncomp = np.sum(1 for tr in 
             Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data))
 
@@ -489,6 +487,8 @@ class DayNoise(object):
 
             if fig_coh_ph:
                 plot.fig_coh_ph(coh, ph, direc)
+        else:
+            self.rotation = Rotation(None, None, None)
 
     def save(self, filename):
         """
@@ -521,10 +521,11 @@ class StaNoise(object):
     ----------
 
     """
-    def __init__(self, power, cross, rotation, f, nwins, key):
+    def __init__(self, power, cross, rotation, f, nwins, ncomp, key):
         self.f = f
         self.nwins = nwins
         self.key = key
+        self.ncomp = ncomp
         # Unbox the container attributes
         self.c11 = power.c11.T
         self.c22 = power.c22.T
@@ -571,29 +572,60 @@ class StaNoise(object):
         ff = (self.f>pd[0]) & (self.f<pd[1])
 
         # Smooth out the log of the PSDs
-        sl_c11 = utils.smooth(np.log(self.c11), 50, axis=0)
-        sl_c22 = utils.smooth(np.log(self.c22), 50, axis=0)
+        sl_cZZ = None; sl_c11 = None; sl_c22 = None; sl_cPP = None
         sl_cZZ = utils.smooth(np.log(self.cZZ), 50, axis=0)
-        sl_cPP = utils.smooth(np.log(self.cPP), 50, axis=0)
+        if self.ncomp==2 or self.ncomp==4:
+            sl_cPP = utils.smooth(np.log(self.cPP), 50, axis=0)
+        if self.ncomp==3 or self.ncomp==4:
+            sl_c11 = utils.smooth(np.log(self.c11), 50, axis=0)
+            sl_c22 = utils.smooth(np.log(self.c22), 50, axis=0)
 
         # Remove mean of the log PSDs
-        dsl_c11 = sl_c11[ff,:] - np.mean(sl_c11[ff,:], axis=0)
-        dsl_c22 = sl_c22[ff,:] - np.mean(sl_c22[ff,:], axis=0)
         dsl_cZZ = sl_cZZ[ff,:] - np.mean(sl_cZZ[ff,:], axis=0)
-        dsl_cPP = sl_cPP[ff,:] - np.mean(sl_cPP[ff,:], axis=0)
+        if self.ncomp==2:
+            dsl_cPP = sl_cPP[ff,:] - np.mean(sl_cPP[ff,:], axis=0)
+            dsls = [dsl_cZZ, dsl_cPP]
+        elif self.ncomp==3:
+            dsl_c11 = sl_c11[ff,:] - np.mean(sl_c11[ff,:], axis=0)
+            dsl_c22 = sl_c22[ff,:] - np.mean(sl_c22[ff,:], axis=0)
+            dsls = [dsl_c11, dsl_c22, dsl_cZZ]
+        else:
+            dsl_c11 = sl_c11[ff,:] - np.mean(sl_c11[ff,:], axis=0)
+            dsl_c22 = sl_c22[ff,:] - np.mean(sl_c22[ff,:], axis=0)
+            dsl_cPP = sl_cPP[ff,:] - np.mean(sl_cPP[ff,:], axis=0)
+            dsls = [dsl_c11, dsl_c22, dsl_cZZ, dsl_cPP]
 
         if debug:
-            plt.figure(2)
-            plt.subplot(4,1,1)
-            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
-            plt.subplot(4,1,2)
-            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
-            plt.subplot(4,1,3)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
-            plt.subplot(4,1,4)
-            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
-            plt.tight_layout()
-            plt.show()
+            if self.ncomp==2:
+                plt.figure(2)
+                plt.subplot(2,1,1)
+                plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+                plt.subplot(2,1,2)
+                plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+                plt.tight_layout()
+                plt.show()
+            elif self.ncom==3:
+                plt.figure(2)
+                plt.subplot(3,1,1)
+                plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+                plt.subplot(3,1,2)
+                plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+                plt.subplot(3,1,3)
+                plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+                plt.tight_layout()
+                plt.show()
+            else:
+                plt.figure(2)
+                plt.subplot(4,1,1)
+                plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+                plt.subplot(4,1,2)
+                plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+                plt.subplot(4,1,3)
+                plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+                plt.subplot(4,1,4)
+                plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+                plt.tight_layout()
+                plt.show()
 
         # Cycle through to kill high-std-norm windows
         moveon = False
@@ -601,8 +633,8 @@ class StaNoise(object):
         indwin = np.argwhere(gooddays==True)
 
         while moveon == False:
-            ubernorm = np.empty((4, np.sum(gooddays)))
-            for ind_u, dsl in enumerate([dsl_c11, dsl_c22, dsl_cZZ, dsl_cPP]):
+            ubernorm = np.empty((self.ncomp, np.sum(gooddays)))
+            for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(gooddays))
                 for ii,tmp in enumerate(indwin):
                     ind = np.copy(indwin); ind = np.delete(ind, ii)
@@ -613,10 +645,8 @@ class StaNoise(object):
 
             if debug:
                 plt.figure(4)
-                plt.plot(range(0,np.sum(gooddays)), detrend(ubernorm, type='constant')[0], 'o-')
-                plt.plot(range(0,np.sum(gooddays)), detrend(ubernorm, type='constant')[1], 'o-')
-                plt.plot(range(0,np.sum(gooddays)), detrend(ubernorm, type='constant')[2], 'o-')
-                plt.plot(range(0,np.sum(gooddays)), detrend(ubernorm, type='constant')[3], 'o-')
+                for i in range(self.ncomp):
+                    plt.plot(range(0,np.sum(gooddays)), detrend(ubernorm, type='constant')[i], 'o-')
                 plt.show()
                 plt.figure(5)
                 plt.plot(range(0,np.sum(gooddays)), np.sum(ubernorm, axis=0), 'o-')
@@ -628,7 +658,7 @@ class StaNoise(object):
                 moveon = True
                 if fig_QC:
                     power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-                    plot.fig_QC(self.f, power, gooddays, key=self.key)
+                    plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key)
                 return
 
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
@@ -644,7 +674,7 @@ class StaNoise(object):
 
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-            plot.fig_QC(self.f, power, gooddays, key=self.key)
+            plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key)
 
     def average_sta_spectra(self, fig_average=False, debug=False):
         """
