@@ -8,9 +8,6 @@ vertical component noise from tilt and compliant effects. The code uses
 the ``StDb`` package for querying and building a station database and
 is used through command-line scripts.
 
-The software is a Python translation of the Matlab software 
-`ATaCR <https://github.com/helenjanisz/ATaCR>`_.
-
 .. toctree::
    :maxdepth: 1
    :caption: Quick Links
@@ -21,13 +18,13 @@ The software is a Python translation of the Matlab software
    :maxdepth: 1
    :caption: Getting Started
 
-   api
+   obstools
 
 .. toctree::
    :maxdepth: 1
-   :caption: Content
+   :caption: Modules
 
-   classes
+   atacr
 
 .. toctree::
    :maxdepth: 1

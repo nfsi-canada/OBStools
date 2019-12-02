@@ -167,7 +167,7 @@ to remove seafloor noise from the vertical component of earthquake data.
 It is based on calculating transfer functions across
 multiple channels from culled noise spectra and applying those
 transfer functions to the vertical component of earthquake data. This software
-is a translation of the Matlab code <a class="reference external" href="https://github.com/helenjanisz/ATaCR">ATaCR</a></p>
+contains a translation of the Matlab code <a class="reference external" href="https://github.com/helenjanisz/ATaCR">ATaCR</a></p>
 <div class="section" id="licence">
 <h1>Licence<a class="headerlink" href="#licence" title="Permalink to this headline">¶</a></h1>
 <p>Copyright 2019 Pascal Audet &amp; Helen Janiszewski</p>
@@ -209,7 +209,7 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate obs
 </pre></div>
 </div>
-<p>Install remaining dependencies using <code class="docutils literal notranslate"><span class="pre">pip</span></code> inside the <code class="docutils literal notranslate"><span class="pre">split</span></code> environment:</p>
+<p>Install remaining dependencies using <code class="docutils literal notranslate"><span class="pre">pip</span></code> inside the <code class="docutils literal notranslate"><span class="pre">obs</span></code> environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install stdb
 </pre></div>
 </div>
@@ -232,7 +232,8 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <ul class="simple">
 <li><p>Install using pip:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install stdb
+pip install .
 </pre></div>
 </div>
 </div>

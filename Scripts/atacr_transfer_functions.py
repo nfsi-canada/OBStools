@@ -23,8 +23,8 @@
 # SOFTWARE.
 
 """
-Program obs_transfer_functions.py
----------------------------------
+Program atacr_transfer_functions.py
+-----------------------------------
 
 Calculates transfer functions using the noise windows flagged as "good", for either
 a single day (from `obs_daily_spectra.py`) or for those averaged over several days
@@ -39,8 +39,8 @@ Usage
 
 .. code-block::
 
-    $ obs_transfer_functions.py -h
-    Usage: obs_transfer_functions.py [options] <station database>
+    $ atacr_transfer_functions.py -h
+    Usage: atacr_transfer_functions.py [options] <station database>
 
     Script used to calculate transfer functions between various components, to be
     used in cleaning vertical component of OBS data. The noise data can be those

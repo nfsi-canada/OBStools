@@ -21,12 +21,11 @@
 # SOFTWARE.
 """
 
-OBStools is a software for processing broadband ocean-bottom seismic data
-to remove seafloor noise from the vertical component of earthquake data. 
-It is based on calculating transfer functions across
+OBStools is a software for processing broadband ocean-bottom seismic data.
+It currently contains a single module to remove seafloor noise from the vertical component of 
+earthquake data (module ATaCR), based on calculating transfer functions across
 multiple channels from culled noise spectra and applying those
-transfer functions to the vertical component of earthquake data. This software
-contains a translation of the Matlab code `ATaCR  <https://github.com/helenjanisz/ATaCR>`_
+transfer functions to the vertical component of earthquake data. 
 
 Licence
 -------

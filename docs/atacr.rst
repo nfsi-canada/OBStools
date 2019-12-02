@@ -1,6 +1,11 @@
 ATaCR
 =====
 
+.. automodule:: obstools.atacr
+
+Classes
++++++++
+
 .. automodule:: obstools.atacr.classes
 
 Power

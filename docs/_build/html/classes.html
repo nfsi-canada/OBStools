@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Classes &mdash; OBStools 0.0.1 documentation</title>
+  <title>ATaCR &mdash; OBStools 0.0.1 documentation</title>
   
 
   
@@ -90,7 +90,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Content</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Classes</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ATaCR</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#power">Power</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cross">Cross</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rotation">Rotation</a></li>
@@ -145,7 +145,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Classes</li>
+      <li>ATaCR</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -164,28 +164,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-obstools.classes">
-<span id="classes"></span><h1>Classes<a class="headerlink" href="#module-obstools.classes" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="api.html#module-obstools" title="obstools"><code class="xref py py-mod docutils literal notranslate"><span class="pre">obstools</span></code></a> defines the following base classes:</p>
+  <div class="section" id="module-obstools.atacr.classes">
+<span id="atacr"></span><h1>ATaCR<a class="headerlink" href="#module-obstools.atacr.classes" title="Permalink to this headline">¶</a></h1>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">atacr</span></code> defines the following base classes:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#obstools.classes.DayNoise" title="obstools.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a></p></li>
-<li><p><a class="reference internal" href="#obstools.classes.StaNoise" title="obstools.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.EventStream" title="obstools.atacr.classes.EventStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code></a></p></li>
 </ul>
-<p>The class <a class="reference internal" href="#obstools.classes.DayNoise" title="obstools.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> contains attributes
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> contains attributes
 and methods for the analysis of four-component day-long time-series
 (3-component seismograms and pressure data).</p>
-<p>The class <a class="reference internal" href="#obstools.classes.StaNoise" title="obstools.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> contains attributes
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> contains attributes
 and methods for the aggregation of day-long time series into station
 average.</p>
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a> contains attributes
+and methods for the calculation of transfer functions from noise
+traces used to correct the vertical component.</p>
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.EventStream" title="obstools.atacr.classes.EventStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code></a> contains attributes
+and methods for the application of the transfer functions to the
+event traces for the correction (cleaning) of vertical component
+seismograms.</p>
+<p><code class="xref py py-mod docutils literal notranslate"></code> further defines the following container classes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a></p></li>
+</ul>
+<p>These classes are used as containers for individual traces/objects
+that are used as attributes of the base classes.</p>
 <div class="section" id="power">
 <h2>Power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.Power">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">Power</code><span class="sig-paren">(</span><em class="sig-param">c11</em>, <em class="sig-param">c22</em>, <em class="sig-param">cZZ</em>, <em class="sig-param">cPP</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.Power" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Power">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Power</code><span class="sig-paren">(</span><em class="sig-param">c11</em>, <em class="sig-param">c22</em>, <em class="sig-param">cZZ</em>, <em class="sig-param">cPP</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for power spectra for each component, with any shape</p>
 <dl class="attribute">
-<dt id="obstools.classes.Power.c11">
-<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.classes.Power.c11" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Power.c11">
+<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.atacr.classes.Power.c11" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectral density for component 1 (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -195,8 +212,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Power.c22">
-<code class="sig-name descname">c22</code><a class="headerlink" href="#obstools.classes.Power.c22" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Power.c22">
+<code class="sig-name descname">c22</code><a class="headerlink" href="#obstools.atacr.classes.Power.c22" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectral density for component 2 (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -206,8 +223,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Power.cZZ">
-<code class="sig-name descname">cZZ</code><a class="headerlink" href="#obstools.classes.Power.cZZ" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Power.cZZ">
+<code class="sig-name descname">cZZ</code><a class="headerlink" href="#obstools.atacr.classes.Power.cZZ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectral density for component Z (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -217,8 +234,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Power.cPP">
-<code class="sig-name descname">cPP</code><a class="headerlink" href="#obstools.classes.Power.cPP" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Power.cPP">
+<code class="sig-name descname">cPP</code><a class="headerlink" href="#obstools.atacr.classes.Power.cPP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectral density for component P (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -233,12 +250,12 @@ average.</p>
 <div class="section" id="cross">
 <h2>Cross<a class="headerlink" href="#cross" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.Cross">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">Cross</code><span class="sig-paren">(</span><em class="sig-param">c12</em>, <em class="sig-param">c1Z</em>, <em class="sig-param">c1P</em>, <em class="sig-param">c2Z</em>, <em class="sig-param">c2P</em>, <em class="sig-param">cZP</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.Cross" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Cross</code><span class="sig-paren">(</span><em class="sig-param">c12</em>, <em class="sig-param">c1Z</em>, <em class="sig-param">c1P</em>, <em class="sig-param">c2Z</em>, <em class="sig-param">c2P</em>, <em class="sig-param">cZP</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Cross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for cross-power spectra for each component pairs, with any shape</p>
 <dl class="attribute">
-<dt id="obstools.classes.Cross.c12">
-<code class="sig-name descname">c12</code><a class="headerlink" href="#obstools.classes.Cross.c12" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross.c12">
+<code class="sig-name descname">c12</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c12" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components 1 and 2 (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -248,8 +265,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Cross.c1Z">
-<code class="sig-name descname">c1Z</code><a class="headerlink" href="#obstools.classes.Cross.c1Z" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross.c1Z">
+<code class="sig-name descname">c1Z</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c1Z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components 1 and Z (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -259,8 +276,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Cross.c1P">
-<code class="sig-name descname">c1P</code><a class="headerlink" href="#obstools.classes.Cross.c1P" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross.c1P">
+<code class="sig-name descname">c1P</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c1P" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components 1 and P (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -270,8 +287,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Cross.c2Z">
-<code class="sig-name descname">c2Z</code><a class="headerlink" href="#obstools.classes.Cross.c2Z" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross.c2Z">
+<code class="sig-name descname">c2Z</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c2Z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components 2 and Z (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -281,8 +298,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Cross.c2P">
-<code class="sig-name descname">c2P</code><a class="headerlink" href="#obstools.classes.Cross.c2P" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross.c2P">
+<code class="sig-name descname">c2P</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c2P" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components 2 and P (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -292,8 +309,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Cross.cZP">
-<code class="sig-name descname">cZP</code><a class="headerlink" href="#obstools.classes.Cross.cZP" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Cross.cZP">
+<code class="sig-name descname">cZP</code><a class="headerlink" href="#obstools.atacr.classes.Cross.cZP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components Z and P (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -308,12 +325,12 @@ average.</p>
 <div class="section" id="rotation">
 <h2>Rotation<a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.Rotation">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">Rotation</code><span class="sig-paren">(</span><em class="sig-param">cHH</em>, <em class="sig-param">cHZ</em>, <em class="sig-param">cHP</em>, <em class="sig-param">coh=None</em>, <em class="sig-param">ph=None</em>, <em class="sig-param">tilt=None</em>, <em class="sig-param">coh_value=None</em>, <em class="sig-param">phase_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.Rotation" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Rotation</code><span class="sig-paren">(</span><em class="sig-param">cHH</em>, <em class="sig-param">cHZ</em>, <em class="sig-param">cHP</em>, <em class="sig-param">coh=None</em>, <em class="sig-param">ph=None</em>, <em class="sig-param">tilt=None</em>, <em class="sig-param">coh_value=None</em>, <em class="sig-param">phase_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for rotated spectra, with any shape</p>
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.cHH">
-<code class="sig-name descname">cHH</code><a class="headerlink" href="#obstools.classes.Rotation.cHH" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.cHH">
+<code class="sig-name descname">cHH</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectral density for rotated horizontal component H (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -323,8 +340,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.cHZ">
-<code class="sig-name descname">cHZ</code><a class="headerlink" href="#obstools.classes.Rotation.cHZ" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.cHZ">
+<code class="sig-name descname">cHZ</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHZ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components H and Z (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -334,8 +351,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.cHP">
-<code class="sig-name descname">cHP</code><a class="headerlink" href="#obstools.classes.Rotation.cHP" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.cHP">
+<code class="sig-name descname">cHP</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cross-power spectral density for components H and P (any shape)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -345,8 +362,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.coh">
-<code class="sig-name descname">coh</code><a class="headerlink" href="#obstools.classes.Rotation.coh" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.coh">
+<code class="sig-name descname">coh</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coherence between horizontal components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -356,8 +373,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.ph">
-<code class="sig-name descname">ph</code><a class="headerlink" href="#obstools.classes.Rotation.ph" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.ph">
+<code class="sig-name descname">ph</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.ph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Phase of cross-power spectrum between horizontal components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -367,8 +384,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.tilt">
-<code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.classes.Rotation.tilt" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.tilt">
+<code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Angle (azimuth) of tilt axis</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -378,8 +395,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.coh_value">
-<code class="sig-name descname">coh_value</code><a class="headerlink" href="#obstools.classes.Rotation.coh_value" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.coh_value">
+<code class="sig-name descname">coh_value</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum coherence</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -389,8 +406,8 @@ average.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.Rotation.phase_value">
-<code class="sig-name descname">phase_value</code><a class="headerlink" href="#obstools.classes.Rotation.phase_value" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.Rotation.phase_value">
+<code class="sig-name descname">phase_value</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.phase_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Phase at maximum coherence</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -405,21 +422,16 @@ average.</p>
 <div class="section" id="daynoise">
 <h2>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.DayNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">DayNoise</code><span class="sig-paren">(</span><em class="sig-param">tr1</em>, <em class="sig-param">tr2</em>, <em class="sig-param">trZ</em>, <em class="sig-param">trP</em>, <em class="sig-param">window</em>, <em class="sig-param">overlap</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.DayNoise" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">DayNoise</code><span class="sig-paren">(</span><em class="sig-param">tr1</em>, <em class="sig-param">tr2</em>, <em class="sig-param">trZ</em>, <em class="sig-param">trP</em>, <em class="sig-param">window</em>, <em class="sig-param">overlap</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>A DayNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters. The available methods carry out the quality
 control steps and the average daily spectra for windows flagged as
 “good”.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The object is initialized with the <code class="docutils literal notranslate"><span class="pre">sta</span></code> field only, and
-other attributes are added to the object as the analysis proceeds.</p>
-</div>
 <dl class="method">
-<dt id="obstools.classes.DayNoise.QC_daily_spectra">
-<code class="sig-name descname">QC_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.QC_daily_spectra">
+<code class="sig-name descname">QC_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to determine daily time windows for which the spectra are
 anomalous and should be discarded in the calculation of the
 transfer functions.</p>
@@ -436,8 +448,8 @@ transfer functions.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.classes.DayNoise.goodwins">
-<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.classes.DayNoise.goodwins" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.goodwins">
+<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.goodwins" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of booleans representing whether a window is good (True) or not (False)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -449,8 +461,8 @@ transfer functions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="obstools.classes.DayNoise.average_daily_spectra">
-<code class="sig-name descname">average_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">calc_rotation=True</em>, <em class="sig-param">fig_average=False</em>, <em class="sig-param">fig_coh_ph=False</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.DayNoise.average_daily_spectra" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.average_daily_spectra">
+<code class="sig-name descname">average_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">calc_rotation=True</em>, <em class="sig-param">fig_average=False</em>, <em class="sig-param">fig_coh_ph=False</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to average the daily spectra for good windows. By default, the method
 will attempt to calculate the azimuth of maximum coherence between horizontal
 components and the vertical component (for maximum tilt direction), and use
@@ -466,8 +478,8 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.classes.DayNoise.f">
-<code class="sig-name descname">f</code><a class="headerlink" href="#obstools.classes.DayNoise.f" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.f">
+<code class="sig-name descname">f</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.f" title="Permalink to this definition">¶</a></dt>
 <dd><p>Positive frequency axis for corresponding window parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -477,34 +489,34 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.DayNoise.power">
-<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.classes.DayNoise.power" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.power">
+<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.classes.Power" title="obstools.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.DayNoise.cross">
-<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.classes.DayNoise.cross" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.cross">
+<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.cross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Cross power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.classes.Cross" title="obstools.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.DayNoise.rotation">
-<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.classes.DayNoise.rotation" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.DayNoise.rotation">
+<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Rotated power and cross spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.classes.Cross" title="obstools.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a>, optional</p>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a>, optional</p>
 </dd>
 </dl>
 </dd></dl>
@@ -512,9 +524,9 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="obstools.classes.DayNoise.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.DayNoise.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to save the object to file using Pickle.</p>
+<dt id="obstools.atacr.classes.DayNoise.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
@@ -528,20 +540,15 @@ the rotated horizontals in the transfer function calculations.</p>
 <div class="section" id="stanoise">
 <h2>StaNoise<a class="headerlink" href="#stanoise" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.StaNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">StaNoise</code><span class="sig-paren">(</span><em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">f</em>, <em class="sig-param">nwins</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.StaNoise" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.StaNoise">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">StaNoise</code><span class="sig-paren">(</span><em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">f</em>, <em class="sig-param">nwins</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>A StaNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The object is initialized with the <code class="docutils literal notranslate"><span class="pre">sta</span></code> field only, and
-other attributes are added to the object as the analysis proceeds.</p>
-</div>
 <dl class="method">
-<dt id="obstools.classes.StaNoise.QC_sta_spectra">
-<code class="sig-name descname">QC_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.StaNoise.QC_sta_spectra" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to determine the days for which the spectra are
+<dt id="obstools.atacr.classes.StaNoise.QC_sta_spectra">
+<code class="sig-name descname">QC_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to determine the days (for given time window) for which the spectra are
 anomalous and should be discarded in the calculation of the
 long-term transfer functions.</p>
 <dl class="field-list simple">
@@ -556,8 +563,8 @@ long-term transfer functions.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.classes.StaNoise.goodwins">
-<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.classes.StaNoise.goodwins" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.StaNoise.goodwins">
+<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.goodwins" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of booleans representing whether a window is good (True) or not (False)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -569,47 +576,46 @@ long-term transfer functions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="obstools.classes.StaNoise.average_sta_spectra">
-<code class="sig-name descname">average_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">fig_average=False</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.StaNoise.average_sta_spectra" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.StaNoise.average_sta_spectra">
+<code class="sig-name descname">average_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">fig_average=False</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to average the daily station spectra for good windows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily spectra</p></li>
-<li><p><strong>fig_coh_ph</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the maximum coherence between H and Z</p></li>
 <li><p><strong>debug</strong> (<em>boolean</em>) – Whether or not to plot intermediate steps in the QC procedure for debugging</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.classes.StaNoise.power">
-<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.classes.StaNoise.power" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.StaNoise.power">
+<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.classes.Power" title="obstools.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.StaNoise.cross">
-<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.classes.StaNoise.cross" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.StaNoise.cross">
+<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.cross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Cross power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.classes.Cross" title="obstools.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.classes.StaNoise.rotation">
-<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.classes.StaNoise.rotation" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.StaNoise.rotation">
+<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Rotated power and cross spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.classes.Cross" title="obstools.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a>, optional</p>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a>, optional</p>
 </dd>
 </dl>
 </dd></dl>
@@ -617,9 +623,9 @@ long-term transfer functions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="obstools.classes.StaNoise.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.StaNoise.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to save the object to file using Pickle.</p>
+<dt id="obstools.atacr.classes.StaNoise.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
@@ -633,12 +639,43 @@ long-term transfer functions.</p>
 <div class="section" id="tfnoise">
 <h2>TFNoise<a class="headerlink" href="#tfnoise" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.TFNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">TFNoise</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">tf_list</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.TFNoise" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="class">
-<dt id="obstools.classes.TFNoise.TfDict">
-<em class="property">class </em><code class="sig-name descname">TfDict</code><a class="headerlink" href="#obstools.classes.TFNoise.TfDict" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.TFNoise">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">TFNoise</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">tf_list</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>A TFNoise object contains attributes that store the transfer function information
+from multiple components (and component combinations).</p>
+<dl class="class">
+<dt id="obstools.atacr.classes.TFNoise.TfDict">
+<em class="property">class </em><code class="sig-name descname">TfDict</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.TfDict" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="obstools.atacr.classes.TFNoise.transfer_func">
+<code class="sig-name descname">transfer_func</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfer_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate transfer functions between multiple components (and
+component combinations) from the averaged (daily or station-averaged) noise spectra.</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.TFNoise.transfunc">
+<code class="sig-name descname">transfunc</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container Dictionary for all possible transfer functions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.TFNoise.TfDict" title="obstools.atacr.classes.TFNoise.TfDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">TfDict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="obstools.atacr.classes.TFNoise.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -646,12 +683,44 @@ long-term transfer functions.</p>
 <div class="section" id="eventstream">
 <h2>EventStream<a class="headerlink" href="#eventstream" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="obstools.classes.EventStream">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.classes.</code><code class="sig-name descname">EventStream</code><span class="sig-paren">(</span><em class="sig-param">sta</em>, <em class="sig-param">sth</em>, <em class="sig-param">stp</em>, <em class="sig-param">tstamp</em>, <em class="sig-param">lat</em>, <em class="sig-param">lon</em>, <em class="sig-param">time</em>, <em class="sig-param">window</em>, <em class="sig-param">sampling_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.classes.EventStream" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="class">
-<dt id="obstools.classes.EventStream.CorrectDict">
-<em class="property">class </em><code class="sig-name descname">CorrectDict</code><a class="headerlink" href="#obstools.classes.EventStream.CorrectDict" title="Permalink to this definition">¶</a></dt>
+<dt id="obstools.atacr.classes.EventStream">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">EventStream</code><span class="sig-paren">(</span><em class="sig-param">sta</em>, <em class="sig-param">sth</em>, <em class="sig-param">stp</em>, <em class="sig-param">tstamp</em>, <em class="sig-param">lat</em>, <em class="sig-param">lon</em>, <em class="sig-param">time</em>, <em class="sig-param">window</em>, <em class="sig-param">sampling_rate</em>, <em class="sig-param">ncomp</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>An EventStream object contains attributes that store station-event metadata and
+methods for applying the transfer functions to the various components and produce
+corrected/cleaned vertical components.</p>
+<dl class="class">
+<dt id="obstools.atacr.classes.EventStream.CorrectDict">
+<em class="property">class </em><code class="sig-name descname">CorrectDict</code><a class="headerlink" href="#obstools.atacr.classes.EventStream.CorrectDict" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="obstools.atacr.classes.EventStream.correct_data">
+<code class="sig-name descname">correct_data</code><span class="sig-paren">(</span><em class="sig-param">tfnoise</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream.correct_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to apply transfer functions between multiple components (and
+component combinations) to produce corrected/cleaned vertical components.</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.EventStream.correct">
+<code class="sig-name descname">correct</code><a class="headerlink" href="#obstools.atacr.classes.EventStream.correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container Dictionary for all possible corrections from the transfer functions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.EventStream.CorrectDict" title="obstools.atacr.classes.EventStream.CorrectDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">CorrectDict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="obstools.atacr.classes.EventStream.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

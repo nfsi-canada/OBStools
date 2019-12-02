@@ -23,8 +23,8 @@
 # SOFTWARE.
 
 """
-Program obs_daily_spectra.py
-----------------------------
+Program atacr_daily_spectra.py
+------------------------------
 
 Extracts two-hour-long windows from the day-long seismograms, calculates 
 power-spectral densities and flags windows for outlier from the PSD properties. 
@@ -36,8 +36,8 @@ Usage
 
 .. code-block::
 
-    $ obs_daily_spectra.py -h
-    Usage: obs_daily_spectra.py [options] <station database>
+    $ atacr_daily_spectra.py -h
+    Usage: atacr_daily_spectra.py [options] <station database>
 
     Script used to extract shorter windows from the day-long seismograms,
     calculate the power-spectral properties, flag windows for outlier PSDs and

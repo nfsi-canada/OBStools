@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 """
-Program obs_clean_spectra.py
+Program atacr_clean_spectra.py
 ----------------------------
 
 Extracts daily spectra calculated from `obs_daily_spectra.py` and 
@@ -40,8 +40,8 @@ Usage
 
 .. code-block::
 
-    $ obs_clean_spectra.py -h
-    Usage: obs_clean_spectra.py [options] <station database>
+    $ atacr_clean_spectra.py -h
+    Usage: atacr_clean_spectra.py [options] <station database>
 
     Script used to extract daily spectra calculated from `obs_daily_spectra.py`
     and flag days for outlier PSDs and calculate spectral averages of the

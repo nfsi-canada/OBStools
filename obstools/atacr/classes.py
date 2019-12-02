@@ -29,21 +29,36 @@
 - :class:`~obstools.atacr.classes.EventStream`
 
 The class :class:`~obstools.atacr.classes.DayNoise` contains attributes
-and methods for the analysis of four-component day-long time-series
-(3-component seismograms and pressure data). 
+and methods for the analysis of two- to four-component day-long time-series
+(3-component seismograms and pressure data). Objects created with this class
+are required in any subsequent analysis. The available methods calculate the
+power-spectral density (psd) function of sub-windows and identifies windows
+with anomalous psd properties. These windows are flagged as 'bad' and are excluded
+from the final averages of all possible Fourier power spectra and cross spectra
+across all available components.
 
 The class :class:`~obstools.atacr.classes.StaNoise` contains attributes
 and methods for the aggregation of day-long time series into station
-average. 
+average. An object created with this class requires that objects created with
+`DayNoise` are available in memory. Methods available for this calss are
+similar to those defined in the `DayNoise` class, but are applied to daily 
+spectral averages, as opposed to sub-daily averages. The result is a spectral
+average that represents all available data for the specific stations.  
 
 The class :class:`~obstools.atacr.classes.TFNoise` contains attributes
 and methods for the calculation of transfer functions from noise
-traces used to correct the vertical component. 
+traces used to correct the vertical component. A `TFNoise` object works with 
+either one (or both) `DayNoise` and `StaNoise` objects to calculate all possible
+transfer functions across all available components. These transfer functions
+are saved as attributes of the object in a Dictionary. 
 
 The class :class:`~obstools.atacr.classes.EventStream` contains attributes
 and methods for the application of the transfer functions to the
 event traces for the correction (cleaning) of vertical component
-seismograms. 
+seismograms. An `EventStream` object is initialized with raw (or pre-processed)
+seismic and/or pressure data and needs to be processed using the same (sub) window 
+properties as the `DayNoise` objects. This ensures that the component corrections
+are safely applied to produce corrected (cleaned) vertical components. 
 
 :mod:`~obstoolsatacr.` further defines the following container classes:
 

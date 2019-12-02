@@ -23,8 +23,8 @@
 # SOFTWARE.
 
 """
-Program obs_download_data.py
-----------------------------
+Program atacr_download_data.py
+------------------------------
 
 Downloads four-component (H1, H2, Z and P), day-long seismograms 
 to use in noise corrections of vertical
@@ -37,8 +37,8 @@ Usage
 
 .. code-block::
 
-    $ obs_download_data.py -h
-    Usage: obs_download_data.py [options] <station database>
+    $ atacr_download_data.py -h
+    Usage: atacr_download_data.py [options] <station database>
 
     Script used to download and pre-process up to four-component (H1, H2, Z and
     P), day-long seismograms to use in noise corrections of vertical component of

@@ -23,8 +23,8 @@
 # SOFTWARE.
 
 """
-Program obs_correct_event.py
-----------------------------
+Program atacr_correct_event.py
+------------------------------
 
 Calculates transfer functions using the noise windows flagged as "good", for either
 a single day (from `obs_daily_spectra.py`) or for those averaged over several days
@@ -39,8 +39,8 @@ Usage
 
 .. code-block::
 
-    $ obs_correct_event.py -h
-    Usage: obs_correct_event.py [options] <station database>
+    $ atacr_correct_event.py -h
+    Usage: atacr_correct_event.py [options] <station database>
 
     Script used to extract transfer functions between various components, and use
     them to clean vertical component of OBS data for selected events. The noise
