@@ -28,8 +28,9 @@ script:
   - if [[ $DOCS == 1 ]]; then
       cd docs; make html; touch _build/html/.nojekyll; cd ..;
     else
-      python -c "import obstools"
-      python -c "from obstools import DayNoise"
+      python -c "import obstools";
+      python -c "import obstools.atacr"
+      python -c "from obstools.atacr.classes import DayNoise";
     fi
 after_success:
   - if [[ $DOCS != 1 ]]; then
