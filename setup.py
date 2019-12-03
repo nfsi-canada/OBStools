@@ -29,6 +29,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7'],
     install_requires=['obspy', 'stdb'],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
 	packages=['obstools'],
 	scripts=scripts)

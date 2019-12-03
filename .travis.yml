@@ -3,7 +3,6 @@ os:
   - linux
   - osx
 env:
-  - PYTHON_VERSION=3.5
   - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
 jobs:
