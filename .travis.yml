@@ -29,6 +29,7 @@ script:
       cd docs; make html; touch _build/html/.nojekyll; cd ..;
     fi
 after_success:
+  - python -c "import obstools; from obstools import atacr; from obstools import DayNoise"
   - if [[ $DOCS != 1 ]]; then
       bash <(curl -s https://codecov.io/bash);
     else
