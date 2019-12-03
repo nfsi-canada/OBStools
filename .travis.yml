@@ -10,6 +10,9 @@ jobs:
   include:
     - env: PYTHON_VERSION=3.7 DOCS=1
 before_install:
+  - wget https://raw.githubusercontent.com/trichter/conda4travis/latest/conda4travis.sh -O conda4travis.sh
+  - source conda4travis.sh
+  - conda config --add channels conda-forge
   - if [[ $DOCS == 1 ]]; then
       DEP="stdb";
     else
