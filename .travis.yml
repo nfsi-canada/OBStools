@@ -32,7 +32,7 @@ after_success:
   - if [[ $DOCS != 1 ]]; then
       bash <(curl -s https://codecov.io/bash);
     else
-      openssl xxx-xxx-xxx -K $encrypted_xxxxxxxxxxxx_key -iv $encrypted_xxxxxxxxxxxx_iv -in ".travis/github_deploy_key.enc" -out ".travis/github_deploy_key" -d;
+      openssl aes-256-cbc -K $encrypted_374f461c18ac_key -iv $encrypted_374f461c18ac_iv -in ".travis/github_deploy_key.enc" -out ".travis/github_deploy_key" -d;
     fi
 notifications:
     email: false
