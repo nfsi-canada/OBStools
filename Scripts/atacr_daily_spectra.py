@@ -111,7 +111,7 @@ import os
 import numpy as np
 import pickle
 import stdb
-from obstools import DayNoise
+from obstools.atacr.classes import DayNoise
 from obstools.atacr import utils, options
 
 def main():

@@ -103,7 +103,7 @@ import numpy as np
 from obspy import UTCDateTime
 import pickle
 import stdb
-from obstools import StaNoise, Power, Cross, Rotation, TFNoise
+from obstools.atacr.classes import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, options
 
 def main():

@@ -108,4 +108,3 @@ __version__ = '0.0.1'
 
 __author__ = 'Pascal Audet & Helen Janiszewski'
 
-# from .atacr.classes import DayNoise, StaNoise, Power, Cross, Rotation, TFNoise, EventStream
