@@ -14,15 +14,16 @@ before_install:
   - source conda4travis.sh
   - conda config --add channels conda-forge
   - if [[ $DOCS == 1 ]]; then
-      DEP="stdb";
-    else
       DEP="sphinx sphinx_rtd_theme";
+    else
+      DEP="";
     fi
   - conda create -q -n testenv
       python=$PYTHON_VERSION obspy $DEP
   - conda activate testenv
   - conda list
 install:
+  - pip install stdb
   - pip install -v --no-deps .
 script:
   - if [[ $DOCS == 1 ]]; then
