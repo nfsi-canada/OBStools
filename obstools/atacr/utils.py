@@ -1,16 +1,30 @@
-'''
-MODULE obs_util.py
+# Copyright 2019 Pascal Audet & Helen Janiszewski
+#
+# This file is part of OBStools.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+"""
+:mod:`~obstools.atacr.utils` contains several functions that are used in the
+class methods of `~obstools.atacr.classes`.
 
-Set of utility functions to calculate the transfer functions and perform
-related operations
+"""
 
----
-Pascal Audet
-pascal.audet@uottawa.ca
-
-Last updated: 17 November 2015
-
-'''
 
 import os
 import numpy as np
@@ -277,16 +291,16 @@ def phase(Gxy):
 
 
 def sliding_window(a, ws, ss=None, hann=True):
-    '''
+    """
     Parameters
+    ----------
+    
         a  - a 1D array
         ws - the window size, in samples
         ss - the step size, in samples. If not provided, window and step size
              are equal.
 
-    """ PA: This is not my function """
-
-    '''
+    """
      
     if ss is None:
         # no step size was provided. Return non-overlapping windows

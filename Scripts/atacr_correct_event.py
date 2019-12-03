@@ -102,6 +102,7 @@ import os
 import numpy as np
 from obspy import UTCDateTime
 import pickle
+import stdb
 from obstools import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, options
 
@@ -133,14 +134,14 @@ def main():
         sta = db[stkey]
 
         # Path where transfer functions will be located
-        tfpath = 'TF_STA/' + stkey + '/'
-        if not os.path.isdir(tfpath): 
-            raise(Exception("Path to "+tfpath+" doesn`t exist - aborting"))
+        transpath = 'TF_STA/' + stkey + '/'
+        if not os.path.isdir(transpath): 
+            raise(Exception("Path to "+transpath+" doesn`t exist - aborting"))
 
         # Path where event data are located
         eventpath = 'EVENTS/' + stkey + '/'
         if not os.path.isdir(eventpath): 
-            raise(Exception("Path to "+tfpath+" doesn`t exist - aborting"))
+            raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
 
         # Get catalogue search start time
         if opts.startT is None:
@@ -150,7 +151,7 @@ def main():
 
         # Get catalogue search end time
         if opts.endT is None:
-            tend = sta.startdate
+            tend = sta.enddate
         else:
             tend = opts.endT
 
@@ -235,24 +236,26 @@ def main():
                         jd1 = tfprefix.split('-')[0].split('.')[1]
                         yr2 = tfprefix.split('-')[1].split('.')[0]
                         jd2 = tfprefix.split('-')[1].split('.')[1]
-                        if evprefix[0]>=yr1 and evprefix[0] <=yr2:
-                            if evprefix[1]>=jd1 and evprefix[1] <=jd2:
-                                print(transpath+transfile+" file found - applying transfer functions")
+                        date1 = UTCDateTime(yr1+'-'+jd1)
+                        date2 = UTCDateTime(yr2+'-'+jd2)
+                        dateev = UTCDateTime(evprefix[0]+'-'+evprefix[1])
+                        if dateev>=date1 and dateev<=date2:
+                            print(transpath+transfile+" file found - applying transfer functions")
 
-                                try:
-                                    file = open(transpath+transfile, 'rb')
-                                    tfaverage = pickle.load(file)
-                                    file.close()
-                                except:
-                                    print("File "+transpath+transfile+" exists but cannot be loaded")
-                                    continue
+                            try:
+                                file = open(transpath+transfile, 'rb')
+                                tfaverage = pickle.load(file)
+                                file.close()
+                            except:
+                                print("File "+transpath+transfile+" exists but cannot be loaded")
+                                continue
 
-                                # List of possible transfer functions for station average files
-                                eventstream.correct_data(tfaverage)
+                            # List of possible transfer functions for station average files
+                            eventstream.correct_data(tfaverage)
 
-                                correct = eventstream.correct
-                                if opts.plot_corrected:
-                                    plot.fig_event_corrected(eventstream)
+                            correct = eventstream.correct
+                            if opts.fig_plot_corrected:
+                                plot.fig_event_corrected(eventstream, tfaverage.tf_list)
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -272,8 +275,8 @@ def main():
                             eventstream.correct_data(tfaverage)
 
                             correct = eventstream.correct
-                            if opts.plot_corrected:
-                                plot.fig_event_corrected(eventstream)
+                            if opts.fig_plot_corrected:
+                                plot.fig_event_corrected(eventstream, tfaverage.tf_list)
 
 
 if __name__ == "__main__":

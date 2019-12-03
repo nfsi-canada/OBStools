@@ -21,7 +21,7 @@ is used through command-line scripts.
    obstools
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Modules
 
    atacr

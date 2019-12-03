@@ -232,6 +232,13 @@ def main():
             # Number of components
             ncomp = daynoise.ncomp
 
+            if opts.fig_coh_ph:
+                try:
+                    # Directions array
+                    direc = daynoise.direc
+                except:
+                    pass
+
             # Power spectra
             cZZ_all.append(daynoise.power.cZZ)
             c11_all.append(daynoise.power.c11)
@@ -336,6 +343,9 @@ def main():
             plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays, 'Coherence', ncomp, key=stkey, lw=0.5)
             plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', ncomp, key=stkey, lw=0.5)
             plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', ncomp, key=stkey, marker=',', lw=0)
+
+        if opts.fig_coh_ph:
+            plot.fig_coh_ph(coh_all, ph_all, direc)
 
         # Save to file
         stanoise.save(fileavst)

@@ -329,40 +329,6 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     plt.tight_layout()
     plt.show()
 
-    # plt.subplot(612)
-    # for i in range(len(day_trfs)):
-    #     plt.loglog(f, np.abs(day_trfs[i]['Z1']['TF_Z1']), 'gray', lw=0.5)
-    # plt.loglog(f, np.abs(sta_trfs['Z1']['TF_Z1']), 'k', lw=0.5)
-    # plt.ylim(1.e-5, 1.e5)
-    # plt.xlim(1.e-4, 2.5)
-    # plt.title(key+' Transfer Function: Z1', fontdict={'fontsize': 8})
-    # plt.subplot(613)
-    # for i in range(len(day_trfs)):
-    #     plt.loglog(f, np.abs(day_trfs[i]['Z2-1']['TF_Z2-1']), 'gray', lw=0.5)
-    # plt.loglog(f, np.abs(sta_trfs['Z2-1']['TF_Z2-1']), 'k', lw=0.5)
-    # plt.ylim(1.e-5, 1.e5)
-    # plt.xlim(1.e-4, 2.5)
-    # plt.title(key+' Transfer Function: Z2-1', fontdict={'fontsize': 8})
-    # plt.subplot(614)
-    # for i in range(len(day_trfs)):
-    #     plt.loglog(f, np.abs(day_trfs[i]['ZP-21']['TF_ZP-21']), 'gray', lw=0.5)
-    # plt.loglog(f, np.abs(sta_trfs['ZP-21']['TF_ZP-21']), 'k', lw=0.5)
-    # plt.ylim(1.e-20, 1.e0)
-    # plt.xlim(1.e-4, 2.5)
-    # plt.title(key+' Transfer Function: ZP-21', fontdict={'fontsize': 8})
-    # plt.subplot(615)
-    # for i in range(len(day_trfs)):
-    #     plt.loglog(f, np.abs(day_trfs[i]['ZH']['TF_ZH']), 'gray', lw=0.5)
-    # plt.ylim(1.e-10, 1.e10)
-    # plt.xlim(1.e-4, 2.5)
-    # plt.title(key+' Transfer Function: ZH', fontdict={'fontsize': 8})
-    # plt.subplot(616)
-    # for i in range(len(day_trfs)):
-    #     plt.loglog(f, np.abs(day_trfs[i]['ZP-H']['TF_ZP-H']), 'gray', lw=0.5)
-    # plt.ylim(1.e-20, 1.e0)
-    # plt.xlim(1.e-4, 2.5)
-    # plt.title(key+' Transfer Function: ZP-H', fontdict={'fontsize': 8})
-
 
 def fig_event_raw(evstream, fmin, fmax):
     """

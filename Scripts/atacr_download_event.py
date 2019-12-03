@@ -26,7 +26,7 @@
 Program atacr_download_event.py
 -------------------------------
 
-Downloads four-component (H1, H2, Z and P), two-hour-long seismograms 
+Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms 
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and 
 station code. The data base is provided in stations_db.pkl as a 
@@ -304,11 +304,11 @@ def main():
 
                     # Get waveforms from client
                     try:
-                        print("*   "+tstamp+"                                     |")
+                        print("*   "+tstamp+"                                     ")
                         print("*   -> Downloading Seismic data... ")
                         sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                                 channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                        print("     ...done")
+                        print("*      ...done")
                     except:
                         print(" Error: Unable to download ?H? components - continuing")
                         continue
@@ -339,11 +339,11 @@ def main():
 
                     # Get waveforms from client
                     try:
-                        print("*   "+tstamp+"                                     |")
+                        print("*   "+tstamp+"                                     ")
                         print("*   -> Downloading Seismic data... ")
                         sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                                 channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                        print("     ...done")
+                        print("*      ...done")
                     except:
                         print(" Error: Unable to download ?H? components - continuing")
                         continue
@@ -351,7 +351,7 @@ def main():
                         print("*   -> Downloading Pressure data...")
                         stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                                 channel='??H', starttime=t1, endtime=t2, attach_response=True)
-                        print("     ...done")
+                        print("*      ...done")
                     except:
                         print(" Error: Unable to download ??H component - continuing")
                         continue
@@ -381,11 +381,11 @@ def main():
 
                     # Get waveforms from client
                     try:
-                        print("*   "+tstamp+"                                     |")
+                        print("*   "+tstamp+"                                     ")
                         print("*   -> Downloading Seismic data... ")
                         sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
                                 channel=channels, starttime=t1, endtime=t2, attach_response=True)
-                        print("     ...done")
+                        print("*      ...done")
                     except:
                         print(" Error: Unable to download ?H? components - continuing")
                         continue

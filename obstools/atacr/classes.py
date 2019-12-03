@@ -254,6 +254,7 @@ class DayNoise(object):
                 plt.subplot(2,1,2)
                 plt.pcolormesh(t, f, np.log(psdP))
                 plt.title('P', fontdict={'fontsize': 8})
+                plt.xlabel('Seconds')
                 plt.tight_layout()
                 plt.show()
 
@@ -268,6 +269,7 @@ class DayNoise(object):
                 plt.subplot(3,1,3)
                 plt.pcolormesh(t, f, np.log(psdZ))
                 plt.title('Z', fontdict={'fontsize': 8})
+                plt.xlabel('Seconds')
                 plt.tight_layout()
                 plt.show()
 
@@ -285,6 +287,7 @@ class DayNoise(object):
                 plt.subplot(4,1,4)
                 plt.pcolormesh(t, f, np.log(psdP))
                 plt.title('P', fontdict={'fontsize': 8})
+                plt.xlabel('Seconds')
                 plt.tight_layout()
                 plt.show()
 
@@ -499,6 +502,7 @@ class DayNoise(object):
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = utils.calculate_tilt( \
                 ft1, ft2, ftZ, ftP, f, self.goodwins)
             self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value)
+            self.direc = direc
 
             if fig_coh_ph:
                 plot.fig_coh_ph(coh, ph, direc)
@@ -768,6 +772,7 @@ class StaNoise(object):
 
         if fig_average:
             plot.fig_average(self.f, self.power, bad, self.gooddays, self.ncomp, key=self.key)
+
 
     def save(self, filename):
         """
@@ -1043,7 +1048,7 @@ class EventStream(object):
 
         for key, value in tf_list.items():
 
-            if key == 'ZP' and ev_list[key]:
+            if key == 'ZP' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_ZP = transfunc[key]['TF_ZP']
                     fTF_ZP = np.hstack((TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
@@ -1051,7 +1056,7 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP', corrtime)
 
-            if key == 'Z1' and ev_list[key]:
+            if key == 'Z1' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
@@ -1059,7 +1064,7 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('Z1', corrtime)
 
-            if key == 'Z2-1' and ev_list[key]:
+            if key == 'Z2-1' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc['Z1']['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
@@ -1071,7 +1076,7 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('Z2-1', corrtime)
 
-            if key == 'ZP-21' and ev_list[key]:
+            if key == 'ZP-21' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
                     fTF_Z1 = np.hstack((TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
@@ -1090,7 +1095,7 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP-21', corrtime)
 
-            if key == 'ZH' and ev_list[key]:
+            if key == 'ZH' and self.ev_list[key]:
                 if value and tf_list[key]:
 
                     # Rotate horizontals
@@ -1102,7 +1107,7 @@ class EventStream(object):
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZH', corrtime)
 
-            if key == 'ZP-H' and ev_list[key]:
+            if key == 'ZP-H' and self.ev_list[key]:
                 if value and tf_list[key]:
 
                     # Rotate horizontals
