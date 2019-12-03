@@ -83,9 +83,7 @@ Install remaining dependencies using ``pip`` inside the ``obs`` environment:
 Installing from Pypi
 ++++++++++++++++++++
 
-.. sourcecode:: bash
-
-   pip install obstools
+*This option is not available at this time*
 
 Installing from source
 ++++++++++++++++++++++
@@ -106,8 +104,8 @@ Installing from source
 
 """
 
-__version__ = "0.0.1"
+__version__ = '0.0.1'
 
-__author__ = "Pascal Audet & Helen Janiszewski"
+__author__ = 'Pascal Audet & Helen Janiszewski'
 
 from .atacr.classes import DayNoise, StaNoise, Power, Cross, Rotation, TFNoise, EventStream

@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'OBStools'
+project = 'Home'
 copyright = '2019, Pascal Audet, Helen Janiszewski'
 author = 'Pascal Audet, Helen Janiszewski'
 
@@ -33,7 +33,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 
 autodoc_member_order = 'bysource'
 
-#html_logo = '../obstools/examples/picture/logo_tws.png'
+html_logo = '../obstools/examples/picture/obstools_logo.png'
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']

@@ -1,6 +1,9 @@
 
-OBStools - documentation
-========================
+.. figure:: ../obstools/examples/picture/obstools_logo.png
+   :align: center
+
+OBStools documentation
+======================
 
 OBStools is a package containing Python tools for processing broadband
 ocean-bottom seismic (OBS) data. Current functionalities include removing
@@ -25,8 +28,4 @@ is used through command-line scripts.
    :caption: Modules
 
    atacr
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Programs & Tutorials
 
