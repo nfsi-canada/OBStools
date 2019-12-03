@@ -26,9 +26,10 @@ install:
   - pip install -v --no-deps .
 script:
   - if [[ $DOCS == 1 ]]; then
-      cd docs; python -c "import obstools; from obstools import atacr; from obstools import DayNoise"; make html; touch _build/html/.nojekyll; cd ..;
+      cd docs; make html; touch _build/html/.nojekyll; cd ..;
     else
-      python -c "import obstools; from obstools import atacr; from obstools import DayNoise"
+      python -c "import obstools"
+      python -c "from obstools import DayNoise"
     fi
 after_success:
   - if [[ $DOCS != 1 ]]; then
