@@ -59,6 +59,67 @@ sequentially. In this case the tilt noise is removed first, then compliance.
 This analysis requires all four components: three-component
 seismic (``?HZ,1,2``) and pressure (``?XH``) data.
 
+API documentation
+*****************
+
+Main Classes
+++++++++++++
+
+DayNoise
+--------
+
+.. autoclass:: obstools.atacr.classes.DayNoise
+   :members:
+
+StaNoise
+--------
+
+.. autoclass:: obstools.atacr.classes.StaNoise
+   :members:
+
+TFNoise
+-------
+
+.. autoclass:: obstools.atacr.classes.TFNoise
+   :members:
+
+EventStream
+-----------
+
+.. autoclass:: obstools.atacr.classes.EventStream
+   :members:
+
+Utility Classes
++++++++++++++++
+
+Power
+-----
+
+.. autoclass:: obstools.atacr.classes.Power
+   :members:
+
+Cross
+-----
+
+.. autoclass:: obstools.atacr.classes.Cross
+   :members:
+
+Rotation
+--------
+
+.. autoclass:: obstools.atacr.classes.Rotation
+   :members:
+
+Utility functions
++++++++++++++++++
+
+.. automodule:: obstools.atacr.utils
+
+Plotting functions
+++++++++++++++++++
+
+.. automodule:: obstools.atacr.plot
+
 Scripts
 *******
 
@@ -565,64 +626,6 @@ Usage
                         station end times. [Default end date of each station in
                         database]
 
-
-API documentation
-*****************
-
-Classes
-+++++++
-
-Power
------
-
-.. autoclass:: obstools.atacr.classes.Power
-   :members:
-
-Cross
------
-
-.. autoclass:: obstools.atacr.classes.Cross
-   :members:
-
-Rotation
---------
-
-.. autoclass:: obstools.atacr.classes.Rotation
-   :members:
-
-DayNoise
---------
-
-.. autoclass:: obstools.atacr.classes.DayNoise
-   :members:
-
-StaNoise
---------
-
-.. autoclass:: obstools.atacr.classes.StaNoise
-   :members:
-
-TFNoise
--------
-
-.. autoclass:: obstools.atacr.classes.TFNoise
-   :members:
-
-EventStream
------------
-
-.. autoclass:: obstools.atacr.classes.EventStream
-   :members:
-
-Utility functions
-+++++++++++++++++
-
-.. automodule:: obstools.atacr.utils
-
-Plotting functions
-++++++++++++++++++
-
-.. automodule:: obstools.atacr.plot
 
 Tutorial
 ********

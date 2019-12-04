@@ -97,6 +97,24 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ATaCR</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#noise-corrections">Noise Corrections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#main-classes">Main Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#daynoise">DayNoise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stanoise">StaNoise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tfnoise">TFNoise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#eventstream">EventStream</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utility-classes">Utility Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#power">Power</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cross">Cross</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rotation">Rotation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.utils">Utility functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plot">Plotting functions</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#atacr-download-data-py"><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
@@ -128,21 +146,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#id11">Usage</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#power">Power</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#cross">Cross</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#rotation">Rotation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#daynoise">DayNoise</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#stanoise">StaNoise</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tfnoise">TFNoise</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#eventstream">EventStream</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.utils">Utility functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plot">Plotting functions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
@@ -272,724 +275,10 @@ sequentially. In this case the tilt noise is removed first, then compliance.
 This analysis requires all four components: three-component
 seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?XH</span></code>) data.</p>
 </div>
-<div class="section" id="scripts">
-<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
-<p>There are several Python scripts that accompany this package. Those relevant
-to the module <code class="docutils literal notranslate"><span class="pre">atacr</span></code> are called:</p>
-<ul class="simple">
-<li><p>atacr_download_data.py</p></li>
-<li><p>atacr_download_event.py</p></li>
-<li><p>atacr_daily_spectra.py</p></li>
-<li><p>atacr_clean_spectra.py</p></li>
-<li><p>atacr_transfer_functions.py</p></li>
-<li><p>atacr_correct_event.py</p></li>
-</ul>
-<div class="section" id="atacr-download-data-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code><a class="headerlink" href="#atacr-download-data-py" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="description">
-<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
-<p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
-to use in noise corrections of vertical
-component data. Station selection is specified by a network and
-station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="usage">
-<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py -h
-Usage: atacr_download_data.py [options] &lt;station database&gt;
-
-Script used to download and pre-process up to four-component (H1, H2, Z and
-P), day-long seismograms to use in noise corrections of vertical component of
-OBS data. Data are requested from the internet using the client services
-framework for a given date range. The stations are processed one by one and
-the data are stored to disk.
-
-Options:
-  -h, --help            show this help message and exit
-  --keys=STKEYS         Specify a comma-separated list of station keys for
-                        which to perform the analysis. These must be contained
-                        within the station database. Partial keys will be used
-                        to match against those in the dictionary. For
-                        instance, providing IU will match with all stations in
-                        the IU network. [Default processes all stations in the
-                        database]
-  -C CHANNELS, --channels=CHANNELS
-                        Specify a comma-separated list of channels for which
-                        to perform the transfer function analysis. Possible
-                        options are H (for horizontal channels) or P (for
-                        pressure channel). Specifying H allows for tilt
-                        correction. Specifying P allows for compliance
-                        correction. [Default looks for both horizontal and
-                        pressure and allows for both tilt AND compliance
-                        corrections]
-  -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                        False]
-
-  Server Settings:
-    Settings associated with which datacenter to log into.
-
-    -S SERVER, --Server=SERVER
-                        Specify the server to connect to. Options include:
-                        BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
-                        NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
-                        USP. [Default IRIS]
-    -U USERAUTH, --User-Auth=USERAUTH
-                        Enter your IRIS Authentification Username and Password
-                        (--User-Auth=&#39;username:authpassword&#39;) to access and
-                        download restricted data. [Default no user and
-                        password]
-
-  Time Search Settings:
-    Time settings associated with searching for day-long seismograms
-
-    --start=STARTT      Specify a UTCDateTime compatible string representing
-                        the start day for the data search. This will override
-                        any station start times. [Default start date for each
-                        station in database]
-    --end=ENDT          Specify a UTCDateTime compatible string representing
-                        the start time for the event search. This will
-                        override any station end times [Default end date for
-                        each station in database]
-
-  Frequency Settings:
-    Miscellaneous frequency settings
-
-    --sampling-rate=NEW_SAMPLING_RATE
-                        Specify new sampling rate (float, in Hz). [Default 5.]
-    --pre-filt=PRE_FILT
-                        Specify four comma-separated corner frequencies
-                        (float, in Hz) for deconvolution pre-filter. [Default
-                        0.001,0.005,45.,50.]
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="atacr-daily-spectra-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code><a class="headerlink" href="#atacr-daily-spectra-py" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id2">
-<h4>Description<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
-<p>Extracts two-hour-long windows from the day-long data, calculates
-power-spectral densities and flags windows for outlier from the PSD properties.
-Station selection is specified by a network and station code. The data base
-is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id3">
-<h4>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -h
-Usage: atacr_daily_spectra.py [options] &lt;station database&gt;
-
-Script used to extract shorter windows from the day-long seismograms,
-calculate the power-spectral properties, flag windows for outlier PSDs and
-calculate daily averages of the corresponding Fourier transforms. The stations
-are processed one by one and the data are stored to disk. The program will
-look for data saved in the previous steps and use all available components.
-
-Options:
-  -h, --help           show this help message and exit
-  --keys=STKEYS        Specify a comma separated list of station keys for
-                       which to perform the analysis. These must be contained
-                       within the station database. Partial keys will be used
-                       to match against those in the dictionary. For instance,
-                       providing IU will match with all stations in the IU
-                       network. [Default processes all stations in the
-                       database]
-  -O, --overwrite      Force the overwriting of pre-existing data. [Default
-                       False]
-
-  Parameter Settings:
-    Miscellaneous default values and settings
-
-    --window=WINDOW    Specify window length in seconds. Default value is
-                       highly recommended. Program may not be stable for large
-                       deviations from default value. [Default 7200. (or 2
-                       hours)]
-    --overlap=OVERLAP  Specify fraction of overlap between windows. [Default
-                       0.3 (or 30%)]
-    --minwin=MINWIN    Specify minimum number of &#39;good&#39; windows in any given
-                       day to continue with analysis. [Default 10]
-    --freq-band=PD     Specify comma-separated frequency limits (float, in Hz)
-                       over which to calculate spectral features used in
-                       flagging the days/windows. [Default 0.004,2.0]
-    --tolerance=TOL    Specify parameter for tolerance threshold. If spectrum
-                       &gt; std*tol, window is flagged as bad. [Default 1.5]
-    --alpha=ALPHA      Specify confidence level for f-test, for iterative
-                       flagging of windows. [Default 0.05, or 95% confidence]
-    --raw              Raw spectra will be used in calculating spectral
-                       features for flagging. [Default uses smoothed spectra]
-    --no-rotation      Do not rotate horizontal components to tilt direction.
-                       [Default calculates rotation]
-
-  Figure Settings:
-    Flags for plotting figures
-
-    --figQC            Plot Quality-Control figure. [Default does not plot
-                       figure]
-    --debug            Plot intermediate steps for debugging. [Default does
-                       not plot figure]
-    --figAverage       Plot daily average figure. [Default does not plot
-                       figure]
-    --figCoh           Plot Coherence and Phase figure. [Default does not plot
-                       figure]
-
-  Time Search Settings:
-    Time settings associated with searching for day-long seismograms
-
-    --start=STARTT     Specify a UTCDateTime compatible string representing
-                       the start day for the data search. This will override
-                       any station start times. [Default start date of each
-                       station in database]
-    --end=ENDT         Specify a UTCDateTime compatible string representing
-                       the start time for the data search. This will override
-                       any station end times. [Default end date of each
-                       station n database]
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="atacr-clean-spectra-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code><a class="headerlink" href="#atacr-clean-spectra-py" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id4">
-<h4>Description<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
-<p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code> and
-flags days for which the daily averages are outliers from the PSD properties.
-Further averages the spectra over the whole period specified by <code class="docutils literal notranslate"><span class="pre">--start</span></code>
-and <code class="docutils literal notranslate"><span class="pre">--end</span></code>.</p>
-<p>Station selection is specified by a network and station code.
-The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id5">
-<h4>Usage<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py -h
-Usage: atacr_clean_spectra.py [options] &lt;station database&gt;
-
-Script used to extract daily spectra calculated from ``obs_daily_spectra.py``
-and flag days for outlier PSDs and calculate spectral averages of the
-corresponding Fourier transforms over the entire time period specified. The
-stations are processed one by one and the data are stored to disk.
-
-Options:
-  -h, --help         show this help message and exit
-  --keys=STKEYS      Specify a comma separated list of station keys for which
-                     to perform the analysis. These must be contained within
-                     the station database. Partial keys will be used to match
-                     against those in the dictionary. For instance, providing
-                     IU will match with all stations in the IU network.
-                     [Default processes all stations in the database]
-  -O, --overwrite    Force the overwriting of pre-existing data. [Default
-                     False]
-
-  Parameter Settings:
-    Miscellaneous default values and settings
-
-    --freq-band=PD   Specify comma-separated frequency limits (float, in Hz)
-                     over which to calculate spectral features used in
-                     flagging the days/windows. [Default 0.004,2.0]
-    --tolerance=TOL  Specify parameter for tolerance threshold. If spectrum &gt;
-                     std*tol, window is flagged as bad. [Default 1.5]
-    --alpha=ALPHA    Confidence level for f-test, for iterative flagging of
-                     windows. [Default 0.05, or 95% confidence]
-
-  Figure Settings:
-    Flags for plotting figures
-
-    --figQC          Plot Quality-Control figure. [Default does not plot
-                     figure]
-    --debug          Plot intermediate steps for debugging. [Default does not
-                     plot figure]
-    --figAverage     Plot daily average figure. [Default does not plot figure]
-    --figCoh         Plot Coherence and Phase figure. [Default does not plot
-                     figure]
-    --figCross       Plot cross-spectra figure. [Default does not plot figure]
-
-  Time Search Settings:
-    Time settings associated with searching for day-long seismograms
-
-    --start=STARTT   Specify a UTCDateTime compatible string representing the
-                     start day for the data search. This will override any
-                     station start times. [Default start date of each station
-                     in database]
-    --end=ENDT       Specify a UTCDateTime compatible string representing the
-                     start time for the event search. This will override any
-                     station end times. [Default end date of each station in
-                     database]
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="atacr-transfer-functions-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code><a class="headerlink" href="#atacr-transfer-functions-py" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id6">
-<h4>Description<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
-<p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
-a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
-(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
-<p>Station selection is specified by a network and station code. The data base is
-provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id7">
-<h4>Usage<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions.py -h
-Usage: atacr_transfer_functions.py [options] &lt;station database&gt;
-
-Script used to calculate transfer functions between various components, to be
-used in cleaning vertical component of OBS data. The noise data can be those
-obtained from the daily spectra (i.e., from ``obs_daily_spectra.py``) or those
-obtained from the averaged noise spectra (i.e., from ``obs_clean_spectra.py``).
-Flags are available to specify the source of data to use as well as the time
-range over which to calculate the transfer functions. The stations are
-processed one by one and the data are stored to disk.
-
-Options:
-  -h, --help        show this help message and exit
-  --keys=STKEYS     Specify a comma separated list of station keys for which
-                    to perform the analysis. These must be contained within
-                    the station database. Partial keys will be used to match
-                    against those in the dictionary. For instance, providing
-                    IU will match with all stations in the IU network.
-                    [Default processes all stations in the database]
-  -O, --overwrite   Force the overwriting of pre-existing data. [Default
-                    False]
-
-  Parameter Settings:
-    Miscellaneous default values and settings
-
-    --skip-daily    Skip daily spectral averages in construction of transfer
-                    functions. [Default False]
-    --skip-clean    Skip cleaned spectral averages in construction of transfer
-                    functions. Defaults to True if data cannot be found in
-                    default directory. [Default False]
-
-  Figure Settings:
-    Flags for plotting figures
-
-    --figTF         Plot transfer function figure. [Default does not plot
-                    figure]
-
-  Time Search Settings:
-    Time settings associated with searching for day-long seismograms
-
-    --start=STARTT  Specify a UTCDateTime compatible string representing the
-                    start day for the data search. This will override any
-                    station start times. [Default start date of each station
-                    in database]
-    --end=ENDT      Specify a UTCDateTime compatible string representing the
-                    start time for the event search. This will override any
-                    station end times. [Default end date of each station in
-                    database]
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="atacr-download-event-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code><a class="headerlink" href="#atacr-download-event-py" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id8">
-<h4>Description<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
-<p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
-for individual seismic events to use in noise corrections of vertical
-component data. Station selection is specified by a network and
-station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id9">
-<h4>Usage<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py -h
-Usage: atacr_download_event.py [options] &lt;station database&gt;
-
-Script used to download and pre-process up to four-component (H1, H2, Z and P), two-
-hour-long seismograms for individual events on which to apply the de-noising
-algorithms. Data are requested from the internet using the client services
-framework for a given date range. The stations are processed one by one and
-the data are stored to disk.
-
-Options:
-  -h, --help            show this help message and exit
-  --keys=STKEYS         Specify a comma separated list of station keys for
-                        which to perform the analysis. These must be contained
-                        within the station database. Partial keys will be used
-                        to match against those in the dictionary. For
-                        instance, providing IU will match with all stations in
-                        the IU network [Default processes all stations in the
-                        database]
-  -C CHANNELS, --channels=CHANNELS
-                        Specify a comma-separated list of channels for which
-                        to perform the transfer function analysis. Possible
-                        options are H (for horizontal channels) or P (for
-                        pressure channel). Specifying H allows for tilt
-                        correction. Specifying P allows for compliance
-                        correction. [Default looks for both horizontal and
-                        pressure and allows for both tilt AND compliance
-                        corrections]
-  -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                        False]
-
-  Server Settings:
-    Settings associated with which datacenter to log into.
-
-    -S SERVER, --Server=SERVER
-                        Specify the server to connect to. Options include:
-                        BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
-                        NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
-                        USP. [Default IRIS]
-    -U USERAUTH, --User-Auth=USERAUTH
-                        Enter your IRIS Authentification Username and Password
-                        (--User-Auth=&#39;username:authpassword&#39;) to access and
-                        download restricted data. [Default no user and
-                        password]
-
-  Event Settings:
-    Settings associated with refining the events to include in matching
-    station pairs
-
-    --start=STARTT      Specify a UTCDateTime compatible string representing
-                        the start time for the event search. This will
-                        override any station start times. [Default start date
-                        of each station in database]
-    --end=ENDT          Specify a UTCDateTime compatible string representing
-                        the start time for the event search. This will
-                        override any station end times [Default end date of
-                        each station in database]
-    -R, --reverse-order
-                        Reverse order of events. Default behaviour starts at
-                        oldest event and works towards most recent. Specify
-                        reverse order and instead the program will start with
-                        the most recent events and work towards older
-    --min-mag=MINMAG    Specify the minimum magnitude of event for which to
-                        search. [Default 5.5]
-    --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
-                        search. [Default None, i.e. no limit]
-
-  Geometry Settings:
-    Settings associatd with the event-station geometries
-
-    --min-dist=MINDIST  Specify the minimum great circle distance (degrees)
-                        between the station and event. [Default 30]
-    --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
-                        between the station and event. [Default 120]
-
-  Frequency Settings:
-    Miscellaneous frequency settings
-
-    --sampling-rate=NEW_SAMPLING_RATE
-                        Specify new sampling rate (float, in Hz). [Default 5.]
-    --pre-filt=PRE_FILT
-                        Specify four comma-separated corner frequencies
-                        (float, in Hz) for deconvolution pre-filter. [Default
-                        0.001,0.005,45.,50.]
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="atacr-correct-event-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code><a class="headerlink" href="#atacr-correct-event-py" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id10">
-<h4>Description<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
-<p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
-a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
-(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
-<p>Station selection is specified by a network and station code. The data base is provided as a
-<code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id11">
-<h4>Usage<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py -h
-Usage: atacr_correct_event.py [options] &lt;station database&gt;
-
-Script used to extract transfer functions between various components, and use
-them to clean vertical component of OBS data for selected events. The noise
-data can be those obtained from the daily spectra (i.e., from
-``obs_daily_spectra.py``) or those obtained from the averaged noise spectra
-(i.e., from ``obs_clean_spectra.py``). Flags are available to specify the source
-of data to use as well as the time range for given events. The stations are
-processed one by one and the data are stored to disk.
-
-Options:
-  -h, --help        show this help message and exit
-  --keys=STKEYS     Specify a comma separated list of station keys for which
-                    to perform the analysis. These must be contained within
-                    the station database. Partial keys will be used to match
-                    against those in the dictionary. For instance, providing
-                    IU will match with all stations in the IU network.
-                    [Default processes all stations in the database]
-  -O, --overwrite   Force the overwriting of pre-existing data. [Default
-                    False]
-
-  Parameter Settings:
-    Miscellaneous default values and settings
-
-    --skip-daily    Skip daily spectral averages in application of transfer
-                    functions. [Default False]
-    --skip-clean    Skip cleaned spectral averages in application of transfer
-                    functions. [Default False]
-    --fmin=FMIN     Low frequency corner (in Hz) for plotting the raw (un-
-                    corrected) seismograms. Filter is a 2nd order, zero phase
-                    butterworth filter. [Default 1./150.]
-    --fmax=FMAX     High frequency corner (in Hz) for plotting the raw (un-
-                    corrected) seismograms. Filter is a 2nd order, zero phase
-                    butterworth filter. [Default 1./10.]
-
-  Figure Settings:
-    Flags for plotting figures
-
-    --figRaw        Plot raw seismogram figure. [Default does not plot figure]
-    --figClean      Plot cleaned vertical seismogram figure. [Default does not
-                    plot figure]
-
-  Time Search Settings:
-    Time settings associated with searching for specific event-related
-    seismograms
-
-    --start=STARTT  Specify a UTCDateTime compatible string representing the
-                    start day for the event search. This will override any
-                    station start times. [Default start date of each station
-                    in database]
-    --end=ENDT      Specify a UTCDateTime compatible string representing the
-                    start time for the event search. This will override any
-                    station end times. [Default end date of each station in
-                    database]
-</pre></div>
-</div>
-</div>
-</div>
-</div>
 <div class="section" id="api-documentation">
 <h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="power">
-<h4>Power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="obstools.atacr.classes.Power">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Power</code><span class="sig-paren">(</span><em class="sig-param">c11=None</em>, <em class="sig-param">c22=None</em>, <em class="sig-param">cZZ=None</em>, <em class="sig-param">cPP=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Power" title="Permalink to this definition">¶</a></dt>
-<dd><p>Container for power spectra for each component, with any shape</p>
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Power.c11">
-<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.atacr.classes.Power.c11" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power spectral density for component 1 (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Power.c22">
-<code class="sig-name descname">c22</code><a class="headerlink" href="#obstools.atacr.classes.Power.c22" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power spectral density for component 2 (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Power.cZZ">
-<code class="sig-name descname">cZZ</code><a class="headerlink" href="#obstools.atacr.classes.Power.cZZ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power spectral density for component Z (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Power.cPP">
-<code class="sig-name descname">cPP</code><a class="headerlink" href="#obstools.atacr.classes.Power.cPP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power spectral density for component P (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="cross">
-<h4>Cross<a class="headerlink" href="#cross" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="obstools.atacr.classes.Cross">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Cross</code><span class="sig-paren">(</span><em class="sig-param">c12=None</em>, <em class="sig-param">c1Z=None</em>, <em class="sig-param">c1P=None</em>, <em class="sig-param">c2Z=None</em>, <em class="sig-param">c2P=None</em>, <em class="sig-param">cZP=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Cross" title="Permalink to this definition">¶</a></dt>
-<dd><p>Container for cross-power spectra for each component pairs, with any shape</p>
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Cross.c12">
-<code class="sig-name descname">c12</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c12" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components 1 and 2 (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Cross.c1Z">
-<code class="sig-name descname">c1Z</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c1Z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components 1 and Z (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Cross.c1P">
-<code class="sig-name descname">c1P</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c1P" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components 1 and P (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Cross.c2Z">
-<code class="sig-name descname">c2Z</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c2Z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components 2 and Z (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Cross.c2P">
-<code class="sig-name descname">c2P</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c2P" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components 2 and P (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Cross.cZP">
-<code class="sig-name descname">cZP</code><a class="headerlink" href="#obstools.atacr.classes.Cross.cZP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components Z and P (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="rotation">
-<h4>Rotation<a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="obstools.atacr.classes.Rotation">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Rotation</code><span class="sig-paren">(</span><em class="sig-param">cHH=None</em>, <em class="sig-param">cHZ=None</em>, <em class="sig-param">cHP=None</em>, <em class="sig-param">coh=None</em>, <em class="sig-param">ph=None</em>, <em class="sig-param">tilt=None</em>, <em class="sig-param">coh_value=None</em>, <em class="sig-param">phase_value=None</em>, <em class="sig-param">direc=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Container for rotated spectra, with any shape</p>
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.cHH">
-<code class="sig-name descname">cHH</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHH" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power spectral density for rotated horizontal component H (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.cHZ">
-<code class="sig-name descname">cHZ</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHZ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components H and Z (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.cHP">
-<code class="sig-name descname">cHP</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cross-power spectral density for components H and P (any shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.coh">
-<code class="sig-name descname">coh</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Coherence between horizontal components</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.ph">
-<code class="sig-name descname">ph</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.ph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Phase of cross-power spectrum between horizontal components</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.tilt">
-<code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Angle (azimuth) of tilt axis</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.coh_value">
-<code class="sig-name descname">coh_value</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maximum coherence</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.phase_value">
-<code class="sig-name descname">phase_value</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.phase_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Phase at maximum coherence</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.Rotation.direc">
-<code class="sig-name descname">direc</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.direc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Directions for which the coherence is calculated</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
+<div class="section" id="main-classes">
+<h3>Main Classes<a class="headerlink" href="#main-classes" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="daynoise">
 <h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
@@ -1719,6 +1008,245 @@ component combinations) to produce corrected/cleaned vertical components.</p>
 
 </div>
 </div>
+<div class="section" id="utility-classes">
+<h3>Utility Classes<a class="headerlink" href="#utility-classes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="power">
+<h4>Power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="obstools.atacr.classes.Power">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Power</code><span class="sig-paren">(</span><em class="sig-param">c11=None</em>, <em class="sig-param">c22=None</em>, <em class="sig-param">cZZ=None</em>, <em class="sig-param">cPP=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for power spectra for each component, with any shape</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Power.c11">
+<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.atacr.classes.Power.c11" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectral density for component 1 (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Power.c22">
+<code class="sig-name descname">c22</code><a class="headerlink" href="#obstools.atacr.classes.Power.c22" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectral density for component 2 (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Power.cZZ">
+<code class="sig-name descname">cZZ</code><a class="headerlink" href="#obstools.atacr.classes.Power.cZZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectral density for component Z (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Power.cPP">
+<code class="sig-name descname">cPP</code><a class="headerlink" href="#obstools.atacr.classes.Power.cPP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectral density for component P (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cross">
+<h4>Cross<a class="headerlink" href="#cross" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="obstools.atacr.classes.Cross">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Cross</code><span class="sig-paren">(</span><em class="sig-param">c12=None</em>, <em class="sig-param">c1Z=None</em>, <em class="sig-param">c1P=None</em>, <em class="sig-param">c2Z=None</em>, <em class="sig-param">c2P=None</em>, <em class="sig-param">cZP=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Cross" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for cross-power spectra for each component pairs, with any shape</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Cross.c12">
+<code class="sig-name descname">c12</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c12" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components 1 and 2 (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Cross.c1Z">
+<code class="sig-name descname">c1Z</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c1Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components 1 and Z (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Cross.c1P">
+<code class="sig-name descname">c1P</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c1P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components 1 and P (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Cross.c2Z">
+<code class="sig-name descname">c2Z</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c2Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components 2 and Z (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Cross.c2P">
+<code class="sig-name descname">c2P</code><a class="headerlink" href="#obstools.atacr.classes.Cross.c2P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components 2 and P (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Cross.cZP">
+<code class="sig-name descname">cZP</code><a class="headerlink" href="#obstools.atacr.classes.Cross.cZP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components Z and P (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="rotation">
+<h4>Rotation<a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="obstools.atacr.classes.Rotation">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">Rotation</code><span class="sig-paren">(</span><em class="sig-param">cHH=None</em>, <em class="sig-param">cHZ=None</em>, <em class="sig-param">cHP=None</em>, <em class="sig-param">coh=None</em>, <em class="sig-param">ph=None</em>, <em class="sig-param">tilt=None</em>, <em class="sig-param">coh_value=None</em>, <em class="sig-param">phase_value=None</em>, <em class="sig-param">direc=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for rotated spectra, with any shape</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.cHH">
+<code class="sig-name descname">cHH</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectral density for rotated horizontal component H (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.cHZ">
+<code class="sig-name descname">cHZ</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components H and Z (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.cHP">
+<code class="sig-name descname">cHP</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross-power spectral density for components H and P (any shape)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.coh">
+<code class="sig-name descname">coh</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coherence between horizontal components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.ph">
+<code class="sig-name descname">ph</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.ph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase of cross-power spectrum between horizontal components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.tilt">
+<code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Angle (azimuth) of tilt axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.coh_value">
+<code class="sig-name descname">coh_value</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum coherence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.phase_value">
+<code class="sig-name descname">phase_value</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.phase_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase at maximum coherence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.Rotation.direc">
+<code class="sig-name descname">direc</code><a class="headerlink" href="#obstools.atacr.classes.Rotation.direc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directions for which the coherence is calculated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="module-obstools.atacr.utils">
 <span id="utility-functions"></span><h3>Utility functions<a class="headerlink" href="#module-obstools.atacr.utils" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="#module-obstools.atacr.utils" title="obstools.atacr.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a> contains several functions that are used in the
@@ -1728,6 +1256,484 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 <span id="plotting-functions"></span><h3>Plotting functions<a class="headerlink" href="#module-obstools.atacr.plot" title="Permalink to this headline">¶</a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">plot</span></code> contains several functions for plotting the results
 of the analysis at various final and intermediate steps.</p>
+</div>
+</div>
+<div class="section" id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>There are several Python scripts that accompany this package. Those relevant
+to the module <code class="docutils literal notranslate"><span class="pre">atacr</span></code> are called:</p>
+<ul class="simple">
+<li><p>atacr_download_data.py</p></li>
+<li><p>atacr_download_event.py</p></li>
+<li><p>atacr_daily_spectra.py</p></li>
+<li><p>atacr_clean_spectra.py</p></li>
+<li><p>atacr_transfer_functions.py</p></li>
+<li><p>atacr_correct_event.py</p></li>
+</ul>
+<div class="section" id="atacr-download-data-py">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code><a class="headerlink" href="#atacr-download-data-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="description">
+<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
+<p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
+to use in noise corrections of vertical
+component data. Station selection is specified by a network and
+station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="usage">
+<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py -h
+Usage: atacr_download_data.py [options] &lt;station database&gt;
+
+Script used to download and pre-process up to four-component (H1, H2, Z and
+P), day-long seismograms to use in noise corrections of vertical component of
+OBS data. Data are requested from the internet using the client services
+framework for a given date range. The stations are processed one by one and
+the data are stored to disk.
+
+Options:
+  -h, --help            show this help message and exit
+  --keys=STKEYS         Specify a comma-separated list of station keys for
+                        which to perform the analysis. These must be contained
+                        within the station database. Partial keys will be used
+                        to match against those in the dictionary. For
+                        instance, providing IU will match with all stations in
+                        the IU network. [Default processes all stations in the
+                        database]
+  -C CHANNELS, --channels=CHANNELS
+                        Specify a comma-separated list of channels for which
+                        to perform the transfer function analysis. Possible
+                        options are H (for horizontal channels) or P (for
+                        pressure channel). Specifying H allows for tilt
+                        correction. Specifying P allows for compliance
+                        correction. [Default looks for both horizontal and
+                        pressure and allows for both tilt AND compliance
+                        corrections]
+  -O, --overwrite       Force the overwriting of pre-existing data. [Default
+                        False]
+
+  Server Settings:
+    Settings associated with which datacenter to log into.
+
+    -S SERVER, --Server=SERVER
+                        Specify the server to connect to. Options include:
+                        BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
+                        NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
+                        USP. [Default IRIS]
+    -U USERAUTH, --User-Auth=USERAUTH
+                        Enter your IRIS Authentification Username and Password
+                        (--User-Auth=&#39;username:authpassword&#39;) to access and
+                        download restricted data. [Default no user and
+                        password]
+
+  Time Search Settings:
+    Time settings associated with searching for day-long seismograms
+
+    --start=STARTT      Specify a UTCDateTime compatible string representing
+                        the start day for the data search. This will override
+                        any station start times. [Default start date for each
+                        station in database]
+    --end=ENDT          Specify a UTCDateTime compatible string representing
+                        the start time for the event search. This will
+                        override any station end times [Default end date for
+                        each station in database]
+
+  Frequency Settings:
+    Miscellaneous frequency settings
+
+    --sampling-rate=NEW_SAMPLING_RATE
+                        Specify new sampling rate (float, in Hz). [Default 5.]
+    --pre-filt=PRE_FILT
+                        Specify four comma-separated corner frequencies
+                        (float, in Hz) for deconvolution pre-filter. [Default
+                        0.001,0.005,45.,50.]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="atacr-daily-spectra-py">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code><a class="headerlink" href="#atacr-daily-spectra-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4>Description<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>Extracts two-hour-long windows from the day-long data, calculates
+power-spectral densities and flags windows for outlier from the PSD properties.
+Station selection is specified by a network and station code. The data base
+is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="id3">
+<h4>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -h
+Usage: atacr_daily_spectra.py [options] &lt;station database&gt;
+
+Script used to extract shorter windows from the day-long seismograms,
+calculate the power-spectral properties, flag windows for outlier PSDs and
+calculate daily averages of the corresponding Fourier transforms. The stations
+are processed one by one and the data are stored to disk. The program will
+look for data saved in the previous steps and use all available components.
+
+Options:
+  -h, --help           show this help message and exit
+  --keys=STKEYS        Specify a comma separated list of station keys for
+                       which to perform the analysis. These must be contained
+                       within the station database. Partial keys will be used
+                       to match against those in the dictionary. For instance,
+                       providing IU will match with all stations in the IU
+                       network. [Default processes all stations in the
+                       database]
+  -O, --overwrite      Force the overwriting of pre-existing data. [Default
+                       False]
+
+  Parameter Settings:
+    Miscellaneous default values and settings
+
+    --window=WINDOW    Specify window length in seconds. Default value is
+                       highly recommended. Program may not be stable for large
+                       deviations from default value. [Default 7200. (or 2
+                       hours)]
+    --overlap=OVERLAP  Specify fraction of overlap between windows. [Default
+                       0.3 (or 30%)]
+    --minwin=MINWIN    Specify minimum number of &#39;good&#39; windows in any given
+                       day to continue with analysis. [Default 10]
+    --freq-band=PD     Specify comma-separated frequency limits (float, in Hz)
+                       over which to calculate spectral features used in
+                       flagging the days/windows. [Default 0.004,2.0]
+    --tolerance=TOL    Specify parameter for tolerance threshold. If spectrum
+                       &gt; std*tol, window is flagged as bad. [Default 1.5]
+    --alpha=ALPHA      Specify confidence level for f-test, for iterative
+                       flagging of windows. [Default 0.05, or 95% confidence]
+    --raw              Raw spectra will be used in calculating spectral
+                       features for flagging. [Default uses smoothed spectra]
+    --no-rotation      Do not rotate horizontal components to tilt direction.
+                       [Default calculates rotation]
+
+  Figure Settings:
+    Flags for plotting figures
+
+    --figQC            Plot Quality-Control figure. [Default does not plot
+                       figure]
+    --debug            Plot intermediate steps for debugging. [Default does
+                       not plot figure]
+    --figAverage       Plot daily average figure. [Default does not plot
+                       figure]
+    --figCoh           Plot Coherence and Phase figure. [Default does not plot
+                       figure]
+
+  Time Search Settings:
+    Time settings associated with searching for day-long seismograms
+
+    --start=STARTT     Specify a UTCDateTime compatible string representing
+                       the start day for the data search. This will override
+                       any station start times. [Default start date of each
+                       station in database]
+    --end=ENDT         Specify a UTCDateTime compatible string representing
+                       the start time for the data search. This will override
+                       any station end times. [Default end date of each
+                       station n database]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="atacr-clean-spectra-py">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code><a class="headerlink" href="#atacr-clean-spectra-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h4>Description<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code> and
+flags days for which the daily averages are outliers from the PSD properties.
+Further averages the spectra over the whole period specified by <code class="docutils literal notranslate"><span class="pre">--start</span></code>
+and <code class="docutils literal notranslate"><span class="pre">--end</span></code>.</p>
+<p>Station selection is specified by a network and station code.
+The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="id5">
+<h4>Usage<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py -h
+Usage: atacr_clean_spectra.py [options] &lt;station database&gt;
+
+Script used to extract daily spectra calculated from ``obs_daily_spectra.py``
+and flag days for outlier PSDs and calculate spectral averages of the
+corresponding Fourier transforms over the entire time period specified. The
+stations are processed one by one and the data are stored to disk.
+
+Options:
+  -h, --help         show this help message and exit
+  --keys=STKEYS      Specify a comma separated list of station keys for which
+                     to perform the analysis. These must be contained within
+                     the station database. Partial keys will be used to match
+                     against those in the dictionary. For instance, providing
+                     IU will match with all stations in the IU network.
+                     [Default processes all stations in the database]
+  -O, --overwrite    Force the overwriting of pre-existing data. [Default
+                     False]
+
+  Parameter Settings:
+    Miscellaneous default values and settings
+
+    --freq-band=PD   Specify comma-separated frequency limits (float, in Hz)
+                     over which to calculate spectral features used in
+                     flagging the days/windows. [Default 0.004,2.0]
+    --tolerance=TOL  Specify parameter for tolerance threshold. If spectrum &gt;
+                     std*tol, window is flagged as bad. [Default 1.5]
+    --alpha=ALPHA    Confidence level for f-test, for iterative flagging of
+                     windows. [Default 0.05, or 95% confidence]
+
+  Figure Settings:
+    Flags for plotting figures
+
+    --figQC          Plot Quality-Control figure. [Default does not plot
+                     figure]
+    --debug          Plot intermediate steps for debugging. [Default does not
+                     plot figure]
+    --figAverage     Plot daily average figure. [Default does not plot figure]
+    --figCoh         Plot Coherence and Phase figure. [Default does not plot
+                     figure]
+    --figCross       Plot cross-spectra figure. [Default does not plot figure]
+
+  Time Search Settings:
+    Time settings associated with searching for day-long seismograms
+
+    --start=STARTT   Specify a UTCDateTime compatible string representing the
+                     start day for the data search. This will override any
+                     station start times. [Default start date of each station
+                     in database]
+    --end=ENDT       Specify a UTCDateTime compatible string representing the
+                     start time for the event search. This will override any
+                     station end times. [Default end date of each station in
+                     database]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="atacr-transfer-functions-py">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code><a class="headerlink" href="#atacr-transfer-functions-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h4>Description<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
+a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
+(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
+<p>Station selection is specified by a network and station code. The data base is
+provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="id7">
+<h4>Usage<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions.py -h
+Usage: atacr_transfer_functions.py [options] &lt;station database&gt;
+
+Script used to calculate transfer functions between various components, to be
+used in cleaning vertical component of OBS data. The noise data can be those
+obtained from the daily spectra (i.e., from ``obs_daily_spectra.py``) or those
+obtained from the averaged noise spectra (i.e., from ``obs_clean_spectra.py``).
+Flags are available to specify the source of data to use as well as the time
+range over which to calculate the transfer functions. The stations are
+processed one by one and the data are stored to disk.
+
+Options:
+  -h, --help        show this help message and exit
+  --keys=STKEYS     Specify a comma separated list of station keys for which
+                    to perform the analysis. These must be contained within
+                    the station database. Partial keys will be used to match
+                    against those in the dictionary. For instance, providing
+                    IU will match with all stations in the IU network.
+                    [Default processes all stations in the database]
+  -O, --overwrite   Force the overwriting of pre-existing data. [Default
+                    False]
+
+  Parameter Settings:
+    Miscellaneous default values and settings
+
+    --skip-daily    Skip daily spectral averages in construction of transfer
+                    functions. [Default False]
+    --skip-clean    Skip cleaned spectral averages in construction of transfer
+                    functions. Defaults to True if data cannot be found in
+                    default directory. [Default False]
+
+  Figure Settings:
+    Flags for plotting figures
+
+    --figTF         Plot transfer function figure. [Default does not plot
+                    figure]
+
+  Time Search Settings:
+    Time settings associated with searching for day-long seismograms
+
+    --start=STARTT  Specify a UTCDateTime compatible string representing the
+                    start day for the data search. This will override any
+                    station start times. [Default start date of each station
+                    in database]
+    --end=ENDT      Specify a UTCDateTime compatible string representing the
+                    start time for the event search. This will override any
+                    station end times. [Default end date of each station in
+                    database]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="atacr-download-event-py">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code><a class="headerlink" href="#atacr-download-event-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h4>Description<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
+for individual seismic events to use in noise corrections of vertical
+component data. Station selection is specified by a network and
+station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="id9">
+<h4>Usage<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py -h
+Usage: atacr_download_event.py [options] &lt;station database&gt;
+
+Script used to download and pre-process up to four-component (H1, H2, Z and P), two-
+hour-long seismograms for individual events on which to apply the de-noising
+algorithms. Data are requested from the internet using the client services
+framework for a given date range. The stations are processed one by one and
+the data are stored to disk.
+
+Options:
+  -h, --help            show this help message and exit
+  --keys=STKEYS         Specify a comma separated list of station keys for
+                        which to perform the analysis. These must be contained
+                        within the station database. Partial keys will be used
+                        to match against those in the dictionary. For
+                        instance, providing IU will match with all stations in
+                        the IU network [Default processes all stations in the
+                        database]
+  -C CHANNELS, --channels=CHANNELS
+                        Specify a comma-separated list of channels for which
+                        to perform the transfer function analysis. Possible
+                        options are H (for horizontal channels) or P (for
+                        pressure channel). Specifying H allows for tilt
+                        correction. Specifying P allows for compliance
+                        correction. [Default looks for both horizontal and
+                        pressure and allows for both tilt AND compliance
+                        corrections]
+  -O, --overwrite       Force the overwriting of pre-existing data. [Default
+                        False]
+
+  Server Settings:
+    Settings associated with which datacenter to log into.
+
+    -S SERVER, --Server=SERVER
+                        Specify the server to connect to. Options include:
+                        BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
+                        NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
+                        USP. [Default IRIS]
+    -U USERAUTH, --User-Auth=USERAUTH
+                        Enter your IRIS Authentification Username and Password
+                        (--User-Auth=&#39;username:authpassword&#39;) to access and
+                        download restricted data. [Default no user and
+                        password]
+
+  Event Settings:
+    Settings associated with refining the events to include in matching
+    station pairs
+
+    --start=STARTT      Specify a UTCDateTime compatible string representing
+                        the start time for the event search. This will
+                        override any station start times. [Default start date
+                        of each station in database]
+    --end=ENDT          Specify a UTCDateTime compatible string representing
+                        the start time for the event search. This will
+                        override any station end times [Default end date of
+                        each station in database]
+    -R, --reverse-order
+                        Reverse order of events. Default behaviour starts at
+                        oldest event and works towards most recent. Specify
+                        reverse order and instead the program will start with
+                        the most recent events and work towards older
+    --min-mag=MINMAG    Specify the minimum magnitude of event for which to
+                        search. [Default 5.5]
+    --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
+                        search. [Default None, i.e. no limit]
+
+  Geometry Settings:
+    Settings associatd with the event-station geometries
+
+    --min-dist=MINDIST  Specify the minimum great circle distance (degrees)
+                        between the station and event. [Default 30]
+    --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
+                        between the station and event. [Default 120]
+
+  Frequency Settings:
+    Miscellaneous frequency settings
+
+    --sampling-rate=NEW_SAMPLING_RATE
+                        Specify new sampling rate (float, in Hz). [Default 5.]
+    --pre-filt=PRE_FILT
+                        Specify four comma-separated corner frequencies
+                        (float, in Hz) for deconvolution pre-filter. [Default
+                        0.001,0.005,45.,50.]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="atacr-correct-event-py">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code><a class="headerlink" href="#atacr-correct-event-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h4>Description<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
+a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
+(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
+<p>Station selection is specified by a network and station code. The data base is provided as a
+<code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="id11">
+<h4>Usage<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py -h
+Usage: atacr_correct_event.py [options] &lt;station database&gt;
+
+Script used to extract transfer functions between various components, and use
+them to clean vertical component of OBS data for selected events. The noise
+data can be those obtained from the daily spectra (i.e., from
+``obs_daily_spectra.py``) or those obtained from the averaged noise spectra
+(i.e., from ``obs_clean_spectra.py``). Flags are available to specify the source
+of data to use as well as the time range for given events. The stations are
+processed one by one and the data are stored to disk.
+
+Options:
+  -h, --help        show this help message and exit
+  --keys=STKEYS     Specify a comma separated list of station keys for which
+                    to perform the analysis. These must be contained within
+                    the station database. Partial keys will be used to match
+                    against those in the dictionary. For instance, providing
+                    IU will match with all stations in the IU network.
+                    [Default processes all stations in the database]
+  -O, --overwrite   Force the overwriting of pre-existing data. [Default
+                    False]
+
+  Parameter Settings:
+    Miscellaneous default values and settings
+
+    --skip-daily    Skip daily spectral averages in application of transfer
+                    functions. [Default False]
+    --skip-clean    Skip cleaned spectral averages in application of transfer
+                    functions. [Default False]
+    --fmin=FMIN     Low frequency corner (in Hz) for plotting the raw (un-
+                    corrected) seismograms. Filter is a 2nd order, zero phase
+                    butterworth filter. [Default 1./150.]
+    --fmax=FMAX     High frequency corner (in Hz) for plotting the raw (un-
+                    corrected) seismograms. Filter is a 2nd order, zero phase
+                    butterworth filter. [Default 1./10.]
+
+  Figure Settings:
+    Flags for plotting figures
+
+    --figRaw        Plot raw seismogram figure. [Default does not plot figure]
+    --figClean      Plot cleaned vertical seismogram figure. [Default does not
+                    plot figure]
+
+  Time Search Settings:
+    Time settings associated with searching for specific event-related
+    seismograms
+
+    --start=STARTT  Specify a UTCDateTime compatible string representing the
+                    start day for the event search. This will override any
+                    station start times. [Default start date of each station
+                    in database]
+    --end=ENDT      Specify a UTCDateTime compatible string representing the
+                    start time for the event search. This will override any
+                    station end times. [Default end date of each station in
+                    database]
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="tutorial">
