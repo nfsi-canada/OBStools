@@ -1033,8 +1033,6 @@ API documentation
 Classes
 +++++++
 
-.. automodule:: obstools.atacr.classes
-
 Power
 -----
 
