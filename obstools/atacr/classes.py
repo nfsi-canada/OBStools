@@ -219,6 +219,36 @@ class DayNoise(object):
         Frequency axis for corresponding time sampling parameters. Determined from method 
         :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
+    .. note::
+
+        In the examples below, the SAC data were obtained and pre-processed
+        using the accompanying script ``atacr_download_data.py``. See the script
+        and tutorial for details.
+
+    Example
+    -------
+
+    Get demo data
+
+    >>> from obstools.atacr.classes import DayNoise
+    >>> daynoise = DayNoise()
+    Uploading demo data
+    >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep = "\n") 
+    7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
+    7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
+    7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
+    7D.M08A..Z | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
+    >>> daynoise.window
+    7200.0
+    >>> daynoise.overlap
+    0.3
+    >>> daynoise.key
+    '7D.M08A'
+    >>> daynoise.ncomp
+    4
+    >>> daynoise.tf_list
+    {'ZP': True, 'Z1': True, 'Z2-1': True, 'ZP-21': True, 'ZH': True, 'ZP-H': True}
+
     """
     def __init__(self, tr1=None, tr2=None, trZ=None, trP=None, window=None, \
         overlap=None, key=None):
@@ -227,13 +257,12 @@ class DayNoise(object):
         if all(value == None for value in [tr1, tr2, trZ, trP]):
             print("Uploading demo data")
             import os
-            fname = os.path.join(os.path.dirname(__file__), "obstools/examples/data", \
-                "*.SAC")
-            st = read(fname)
-            tr1 = st.select(component='1')
-            tr2 = st.select(component='2')
-            trZ = st.select(component='Z')
-            trP = st.select(component='P')
+            st = read(os.path.join(os.path.dirname(__file__), "../examples/data", \
+                "*.SAC"))
+            tr1 = st.select(component='1')[0]
+            tr2 = st.select(component='2')[0]
+            trZ = st.select(component='Z')[0]
+            trP = st.select(component='P')[0]
             window = 7200.
             overlap = 0.3
             key = '7D.M08A'
@@ -242,7 +271,7 @@ class DayNoise(object):
         for tr in [tr1, tr2, trZ, trP]:
             if not isinstance(tr, Trace):
                 raise(Exception("Error initializing DayNoise object - "\
-                    +tr+" is not a Trace object"))
+                    +str(tr)+" is not a Trace object"))
 
         # Unpack everything
         self.tr1 = tr1
@@ -298,6 +327,22 @@ class DayNoise(object):
         ----------
         goodwins : list 
             List of booleans representing whether a window is good (True) or not (False)
+
+        Example
+        -------
+
+        Perform QC on DayNoise object using default values and plot final figure
+
+        >>> from obstools.atacr.classes import DayNoise
+        >>> daynoise = DayNoise()
+        >>> daynoise.QC_daily_spectra(fig_QC=True)
+
+        .. figure:: ../examples/figures/Figure_3a.png
+           :align: center
+
+        >>> daynoise.goodwins
+        array([False,  True,  True,  True,  True,  True,  True,  True, False,
+           False,  True,  True,  True,  True,  True,  True], dtype=bool)
 
         """
 
@@ -518,6 +563,22 @@ class DayNoise(object):
         rotation : :class:`~obstools.atacr.classes.Cross`, optional
             Container for the Rotated power and cross spectra
 
+        Example
+        -------
+
+        Average spectra for good windows using default values and plot final figure
+
+        >>> from obstools.atacr.classes import DayNoise
+        >>> daynoise = DayNoise()
+        >>> daynoise.QC_daily_spectra()
+        >>> daynoise.average_daily_spectra(fig_average=True)
+
+        .. figure:: ../examples/figures/Figure_3b.png
+           :align: center
+
+        >>> daynoise.power
+        <obstools.atacr.classes.Power object at 0x12e353860>
+
         """
 
         # Points in window
@@ -594,6 +655,18 @@ class DayNoise(object):
         ----------
         filename : str
             File name 
+
+        Example
+        -------
+
+        >>> from obstools.atacr.classes import DayNoise
+        >>> daynoise = DayNoise()
+        >>> daynoise.QC_daily_spectra()
+        >>> daynoise.average_daily_spectra()
+        >>> daynoise.save('daynoise_demo.pkl')
+        >>> import glob
+        >>> glob.glob("./daynoise_demo.pkl")
+        ['./daynoise_demo.pkl']
 
         """
 
