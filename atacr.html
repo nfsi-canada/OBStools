@@ -97,36 +97,35 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ATaCR</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#noise-corrections">Noise Corrections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#scripts-and-tutorial">Scripts and Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#creating-the-stdb-database">0. Creating the <code class="docutils literal notranslate"><span class="pre">StDb</span></code> Database</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-download-data-py">1. <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-download-data-py"><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-daily-spectra-py">2. <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id2">Usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-daily-spectra-py"><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-clean-spectra-py">3. <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id4">Usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-clean-spectra-py"><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-transfer-functions-py">4. <code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id6">Usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id7">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-transfer-functions-py"><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-download-event-py">5. <code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id8">Usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-download-event-py"><code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-correct-event-py">6. <code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id10">Usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-correct-event-py"><code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Usage</a></li>
 </ul>
 </li>
 </ul>
@@ -144,6 +143,16 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.utils">Utility functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plot">Plotting functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-the-stdb-database">0. Creating the <code class="docutils literal notranslate"><span class="pre">StDb</span></code> Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-noise-data">1. Download noise data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qc-for-daily-spectral-averages">2. QC for daily spectral averages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qc-for-clean-station-averages">3. QC for clean station averages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transfer-function-calculation">4. Transfer function calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-earthquake-data">5. Download earthquake data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correct-clean-earthquake-data">6. Correct/clean earthquake data</a></li>
 </ul>
 </li>
 </ul>
@@ -263,8 +272,8 @@ sequentially. In this case the tilt noise is removed first, then compliance.
 This analysis requires all four components: three-component
 seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?XH</span></code>) data.</p>
 </div>
-<div class="section" id="scripts-and-tutorial">
-<h2>Scripts and Tutorial<a class="headerlink" href="#scripts-and-tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
 <p>There are several Python scripts that accompany this package. Those relevant
 to the module <code class="docutils literal notranslate"><span class="pre">atacr</span></code> are called:</p>
 <ul class="simple">
@@ -275,51 +284,15 @@ to the module <code class="docutils literal notranslate"><span class="pre">atacr
 <li><p>atacr_transfer_functions.py</p></li>
 <li><p>atacr_correct_event.py</p></li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The order in which these programs are called is important. In particular,
-the spectral noise analysis and transfer function calculations need to be
-performed before correcting earthquake seismograms. Here we roughly follow
-the steps highlighted in the
-<a class="reference external" href="https://github.com/helenjanisz/ATaCR/blob/master/ATaCR_Manual.pdf">Matlab tutorial</a>
-for this code and reproduce
-the various figures. The examples provided below are for one month of data
-(March 2012) recorded at station M08A of the Cascadia Initiative Experiment.
-Corrections are applied to a magnitude 6.6 earthquake that occurred near
-Vanuatu on March 9, 2012.</p>
-</div>
-<div class="section" id="creating-the-stdb-database">
-<h3>0. Creating the <code class="docutils literal notranslate"><span class="pre">StDb</span></code> Database<a class="headerlink" href="#creating-the-stdb-database" title="Permalink to this headline">¶</a></h3>
-<p>All the scripts provided require a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> database containing station
-information and metadata. Let’s first create this database for station
-M08A and send the prompt to a logfile</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A &gt; logfile
-</pre></div>
-</div>
-<p>To see the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb.py</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb.py M08A.pkl
- Listing Station Pickle: M08A.pkl
- 7D.M08A
- --------------------------------------------------------------------------
- 1) 7D.M08A
-      Station: 7D M08A
-       Alternate Networks: None
-       Channel: BH ;  Location: --
-       Lon, Lat, Elev:  44.11870, -124.89530,  -0.126
-       StartTime: 2011-10-20 00:00:00
-       EndTime:   2012-07-18 23:59:59
-       Status:    open
-       Polarity: 1
-       Azimuth Correction: 0.000000
-</pre></div>
-</div>
-</div>
 <div class="section" id="atacr-download-data-py">
-<h3>1. <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code><a class="headerlink" href="#atacr-download-data-py" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code><a class="headerlink" href="#atacr-download-data-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="description">
+<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
 <p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
 to use in noise corrections of vertical
 component data. Station selection is specified by a network and
 station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
 <div class="section" id="usage">
 <h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py -h
@@ -390,82 +363,18 @@ Options:
 </pre></div>
 </div>
 </div>
-<div class="section" id="example">
-<h4>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
-<p>Here we wish to download one month of data for the station M08A for March 2012.
-The various options above allow us to select the additional channels to specify
-(e.g., <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">H,P</span></code> for both horizontal and pressure data - which is the default
-setting). Default frequency settings for data pre-processing match those of
-the Matlab <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> software and can therefore be ignore when calling the program.
-Since the file <code class="docutils literal notranslate"><span class="pre">M08A.pkl</span></code> contains only one station, it is not necessary to specify a
-key. This option would be useful if the database contained several stations
-and we were only interested in downloading data for M08A. In this case, we would
-specify <code class="docutils literal notranslate"><span class="pre">--keys=M08A</span></code> or <code class="docutils literal notranslate"><span class="pre">--keys=7D.M08A</span></code>.
-The only required options at this point are the <code class="docutils literal notranslate"><span class="pre">--start</span></code> and <code class="docutils literal notranslate"><span class="pre">--end</span></code> options
-to specify the dates for which data will will be downloaded.</p>
-<p>If you change your mind about the pre-processing options, you can always re-run the
-following line with the option <code class="docutils literal notranslate"><span class="pre">-O</span></code>, which will over-write the data saved to disk.</p>
-<p>To download all broadband seismic and pressure data, simply type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py --start=2012-03-01 --end=2012-04-01 M08A.pkl
-</pre></div>
-</div>
-<p>An example log printed on the terminal will look like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Path to DATA/7D.M08A/ doesn`t exist - creating it
-
-|===============================================|
-|===============================================|
-|                       M08A                    |
-|===============================================|
-|===============================================|
-|  Station: 7D.M08A                             |
-|      Channel: BH; Locations: --               |
-|      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20                   |
-|      End time:   2012-07-18                   |
-|-----------------------------------------------|
-| Searching day-long files:                     |
-|   Start: 2012-03-01                           |
-|   End:   2012-04-01                           |
-
-***********************************************************
-* Downloading day-long data for key 7D.M08A and day 2012.61
-*
-* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
-*   2012.061.*SAC
-*   -&gt; Downloading Seismic data...
-*      ...done
-*   -&gt; Downloading Pressure data...
-*      ...done
-*   -&gt; Removing responses - Seismic data
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
-*   -&gt; Removing responses - Pressure data
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
-
-***********************************************************
-* Downloading day-long data for key 7D.M08A and day 2012.62
-*
-* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
-*   2012.062.*SAC
-*   -&gt; Downloading Seismic data...
-
-...
-</pre></div>
-</div>
-<p>And so on until all day-long files have been downloaded. You will
-notice that a folder called <code class="docutils literal notranslate"><span class="pre">DATA/7D.M08A/</span></code> has been created.
-This is where all day-long files will be stored on disk.</p>
-</div>
 </div>
 <div class="section" id="atacr-daily-spectra-py">
-<h3>2. <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code><a class="headerlink" href="#atacr-daily-spectra-py" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code><a class="headerlink" href="#atacr-daily-spectra-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4>Description<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <p>Extracts two-hour-long windows from the day-long data, calculates
 power-spectral densities and flags windows for outlier from the PSD properties.
 Station selection is specified by a network and station code. The data base
 is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-<div class="section" id="id2">
-<h4>Usage<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id3">
+<h4>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -h
 Usage: atacr_daily_spectra.py [options] &lt;station database&gt;
 
@@ -536,86 +445,20 @@ Options:
 </pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h4>Example<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<p>For this step, there are several Parameter Settings that can be tuned. Once again,
-the default values are the ones used to reproduce the results of the Matlab
-ATaCR software and can be left un-changed. The Time Search Settings can be used
-to look at a subset of the available day-long data files. Here these options
-can be ignored since we wish to look at all the availble data that we just downloaded.
-We can therefore type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py M08A.pkl
-
-Path to SPECTRA/7D.M08A/ doesn`t exist - creating it
-
-|===============================================|
-|===============================================|
-|                       M08A                    |
-|===============================================|
-|===============================================|
-|  Station: 7D.M08A                             |
-|      Channel: BH; Locations: --               |
-|      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20 00:00:00          |
-|      End time:   2012-07-18 23:59:59          |
-|-----------------------------------------------|
-
-**********************************************************************
-* Calculating noise spectra for key 7D.M08A and day 2012.061
-*   12 good windows. Proceeding...
-
-**********************************************************************
-* Calculating noise spectra for key 7D.M08A and day 2012.062
-*   14 good windows. Proceeding...
-
-**********************************************************************
-* Calculating noise spectra for key 7D.M08A and day 2012.063
-*   16 good windows. Proceeding...
-
-...
-</pre></div>
-</div>
-<p>And so on until all available data have been processed. The software stores the
-<code class="docutils literal notranslate"><span class="pre">obstools.atacr.classes.DayNoise</span></code> objects to a newly
-created folder called <code class="docutils literal notranslate"><span class="pre">SPECTRA/7D.M08A/</span></code>. To produce figures for visualization,
-we can re-run the above script but now use the plotting options to look
-at one day of the month (March 04, 2012). In this case we need to over-write the
-previous results (option <code class="docutils literal notranslate"><span class="pre">-O</span></code>) and specify the date of interest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -O --figQC --figAverage --debug --start=2012-03-04 --end=2012-03-05 M08A.pkl &gt; logfile
-</pre></div>
-</div>
-<p>The script will produce several figures, including Figures 2 and 3 (separated
-into 3a and 3b below). Several intermediate steps are also produces, which show
-all the raw data and the window classification into good and bad windows for
-subsequent analysis.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_2.png" src="_images/Figure_2.png" />
-</div>
-<p>Figure 2: Daily spectrogram for the vertical (Z), horizontals (H1, H2), and pressure
-(P) components.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_3a.png" src="_images/Figure_3a.png" />
-</div>
-<p>Figure 3a: Power spectral density (PSD) functions for the Z, H1, H2, and P compo-
-nents from a single day of data (M08A, March 4, 2012, same as in Figure 2). The left
-column shows PSDs for each individual window; PSDs from windows that did not
-pass the quality control are colored red.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
-</div>
-<p>Figure 3a: Daily average PSD of bad (red) and good (black) windows.</p>
-</div>
 </div>
 <div class="section" id="atacr-clean-spectra-py">
-<h3>3. <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code><a class="headerlink" href="#atacr-clean-spectra-py" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code><a class="headerlink" href="#atacr-clean-spectra-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h4>Description<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code> and
 flags days for which the daily averages are outliers from the PSD properties.
 Further averages the spectra over the whole period specified by <code class="docutils literal notranslate"><span class="pre">--start</span></code>
 and <code class="docutils literal notranslate"><span class="pre">--end</span></code>.</p>
 <p>Station selection is specified by a network and station code.
 The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-<div class="section" id="id4">
-<h4>Usage<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id5">
+<h4>Usage<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py -h
 Usage: atacr_clean_spectra.py [options] &lt;station database&gt;
 
@@ -672,98 +515,19 @@ Options:
 </pre></div>
 </div>
 </div>
-<div class="section" id="id5">
-<h4>Example<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
-<p>Now that we have processed daily spectra for all available components, it is
-possible to further average the spectra over multiple days to produce a cleaned
-station average. It is still possible to specify a date range over which to
-average the spectra, thus giving flexibility in the production of the station
-averages. Parameter settings are similar to those used in <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code>
-but further include the option of plotting the averaged cross-spectral properties.
-To calcualte a single station average for the entire month of March 2012 (and
-therefore using all available data) and plot the results, we can type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py --figQC --figAverage --figCoh --figCross M08A.pkl
-
-Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
-
-|===============================================|
-|===============================================|
-|                       M08A                    |
-|===============================================|
-|===============================================|
-|  Station: 7D.M08A                             |
-|      Channel: BH; Locations: --               |
-|      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20 00:00:00          |
-|      End time:   2012-07-18 23:59:59          |
-|-----------------------------------------------|
-
-**********************************************************************
-* Calculating noise spectra for key 7D.M08A and day 2012.061
-*   -&gt; file SPECTRA/7D.M08A/2012.061.spectra.pkl found - loading
-
-**********************************************************************
-* Calculating noise spectra for key 7D.M08A and day 2012.062
-*   -&gt; file SPECTRA/7D.M08A/2012.062.spectra.pkl found - loading
-
-...
-</pre></div>
-</div>
-<p>And so on until all <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are averaged into a <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code>
-object, which is saved to a newly created folder called <code class="docutils literal notranslate"><span class="pre">AVG_STA/7D.M08A/</span></code>.
-Several figures are also produced, including Figures 4, 6-9.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_4.png" src="_images/Figure_4.png" />
-</div>
-<p>Figure 4: The orientation of maximum coherence between the vertical and the two
-horizontal components for M08A during March 2012. (Left) Coherence as a function
-of angle from the H1 component. (Right) Phase as a function of the angle. In this
-example, the coherence is low indicating the absence of dominant, uni-directional tilt
-noise.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_6.png" src="_images/Figure_6.png" />
-</div>
-<p>Figure 6: The daily PSDs plotted for the vertical (Z), horizontal (H1, H2), and
-pressure (P) components for March 2012 at station M08A. Each line is a daily PSD.
-Gray colors indicate days that were accepted by the second quality control step,
-while the red colors indicate days that were discarded.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_7.png" src="_images/Figure_7.png" />
-</div>
-<p>Figure 7: The daily coherences between pairs of components as indicated above each
-subplot for March 2012 at station M08A (e.g. 1Z - coherence between Horizontal 1
-and Vertical). Each line represents average coherence for a single day in the data
-set. Gray colors indicate days that were accepted by the second quality control step,
-while the red colors indicate days that were discarded. Note that some definitions
-are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used in the Matlab Tutorial.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_8.png" src="_images/Figure_8.png" />
-</div>
-<p>Figure 8: The daily admittances between pairs of components as indicated above
-(see Figure 7) each subplot for March 2012 at station M08A. Each line is a daily
-admittance. Gray colors indicate days that were accepted by the second quality
-control step, while the red colors indicate days that were discarded.
-Note that some definitions are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used
-in the Matlab Tutorial.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_9.png" src="_images/Figure_9.png" />
-</div>
-<p>Figure 9: The daily phases between pairs of components as indicated above (see
-Figure 7) each subplot for March 2012 at station M08A. Each line is a daily phase.
-Gray colors indicate days that were accepted by the second quality control step,
-while the red colors indicate days that were discarded. Note that some definitions
-are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used in the Matlab Tutorial.</p>
-</div>
 </div>
 <div class="section" id="atacr-transfer-functions-py">
-<h3>4. <code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code><a class="headerlink" href="#atacr-transfer-functions-py" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code><a class="headerlink" href="#atacr-transfer-functions-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h4>Description<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
 (from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
 <p>Station selection is specified by a network and station code. The data base is
 provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-<div class="section" id="id6">
-<h4>Usage<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id7">
+<h4>Usage<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions.py -h
 Usage: atacr_transfer_functions.py [options] &lt;station database&gt;
 
@@ -815,86 +579,18 @@ Options:
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h4>Example<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
-<p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the transfer
-functions across all available components can be calculated. By default the software
-will calculate the ones for which the spectral averages are available.</p>
-<p>For compliance only (i.e., only <code class="docutils literal notranslate"><span class="pre">?HZ</span></code> and <code class="docutils literal notranslate"><span class="pre">?XH?</span></code> components are available),
-the only transfer function possible is:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
-</ul>
-<p>For tilt only (i.e., all of <code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code> components are available), the transfer
-functions are:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Z1</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Z2-1</span></code></p></li>
-</ul>
-<p>For both tilt and compliance (i.e., all four components are available), the
-following transfer functions are possible:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Z1</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Z2-1</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ZP-21</span></code></p></li>
-</ul>
-<p>If you are using the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects to calculate the transfer functions,
-the following may be further available (if all components are available):</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ZH</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ZP-H</span></code></p></li>
-</ul>
-<p>In this example we calculate all available transfer functions for all available data.
-In this case we do not need to specify any option and type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Path</span> <span class="n">to</span> <span class="n">TF_STA</span><span class="o">/</span><span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span><span class="o">/</span> <span class="n">doesn</span><span class="s1">&#39;t exist - creating it</span>
-
-<span class="o">|===============================================|</span>
-<span class="o">|===============================================|</span>
-<span class="o">|</span>                       <span class="n">M08A</span>                    <span class="o">|</span>
-<span class="o">|===============================================|</span>
-<span class="o">|===============================================|</span>
-<span class="o">|</span>  <span class="n">Station</span><span class="p">:</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span>                             <span class="o">|</span>
-<span class="o">|</span>      <span class="n">Channel</span><span class="p">:</span> <span class="n">BH</span><span class="p">;</span> <span class="n">Locations</span><span class="p">:</span> <span class="o">--</span>               <span class="o">|</span>
-<span class="o">|</span>      <span class="n">Lon</span><span class="p">:</span> <span class="o">-</span><span class="mf">124.90</span><span class="p">;</span> <span class="n">Lat</span><span class="p">:</span>  <span class="mf">44.12</span>                <span class="o">|</span>
-<span class="o">|</span>      <span class="n">Start</span> <span class="n">time</span><span class="p">:</span> <span class="mi">2011</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>          <span class="o">|</span>
-<span class="o">|</span>      <span class="n">End</span> <span class="n">time</span><span class="p">:</span>   <span class="mi">2012</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">18</span> <span class="mi">23</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">59</span>          <span class="o">|</span>
-<span class="o">|-----------------------------------------------|</span>
-
-<span class="o">**********************************************************************</span>
-<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="n">day</span> <span class="mf">2012.088</span>
-
-<span class="o">**********************************************************************</span>
-<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="n">day</span> <span class="mf">2012.075</span>
-
-<span class="o">...</span>
-
-<span class="o">**********************************************************************</span>
-<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="nb">range</span> <span class="mf">2011.293</span><span class="o">-</span><span class="mf">2012.200</span><span class="o">.</span>
-</pre></div>
-</div>
-<p>Note how the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are read randomly from disk, followed by the
-<code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> object. The result is a <code class="docutils literal notranslate"><span class="pre">TFNoise</span></code> object that is saved to a newly
-created folder called <code class="docutils literal notranslate"><span class="pre">TF_STA/7D.M08A/</span></code>.</p>
-<p>We can produce Figure 10 by re-running the previous command with the options
-<code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--figTF</span></code>.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_10.png" src="_images/Figure_10.png" />
-</div>
-<p>Figure 10: Transfer function amplitudes for the component combinations of interest,
-as indicated in the title of each subplot. This example is for the month of March 2012
-for station M08A. The daily transfer functions are shown in grey and the average
-calculated for the whole month is shown in black.</p>
-</div>
 </div>
 <div class="section" id="atacr-download-event-py">
-<h3>5. <code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code><a class="headerlink" href="#atacr-download-event-py" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code><a class="headerlink" href="#atacr-download-event-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h4>Description<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
 <p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and
 station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-<div class="section" id="id8">
-<h4>Usage<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id9">
+<h4>Usage<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py -h
 Usage: atacr_download_event.py [options] &lt;station database&gt;
 
@@ -981,76 +677,19 @@ Options:
 </pre></div>
 </div>
 </div>
-<div class="section" id="id9">
-<h4>Example<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
-<p>This script is used to download the earthquake data, for which we wish to
-clean the vertical component using the transfer functions calculated.
-This script is very similar to <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>, with the addition
-of Event and Geometry Settings.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Be careful with the Frequency Settings, as these values need to be exactly
-the same as those used in <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code> but won’t be checked
-against.</p>
-</div>
-<p>To download the seismograms that recorded the March 9, 2012, magnitude 6.6
-Vanuatu earthquake (be conservative with the options), type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
-
-Path to EVENTS/7D.M08A/ doesn`t exist - creating it
-
-|===============================================|
-|===============================================|
-|                       M08A                    |
-|===============================================|
-|===============================================|
-|  Station: 7D.M08A                             |
-|      Channel: BH; Locations: --               |
-|      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20 00:00:00          |
-|      End time:   2012-07-18 23:59:59          |
-|-----------------------------------------------|
-| Searching Possible events:                    |
-|   Start: 2012-03-08 00:00:00                  |
-|   End:   2012-03-10 00:00:00                  |
-|   Mag:   6.3 - 6.7                            |
-| ...                                           |
-|  Found     1 possible events                  |
-
-****************************************************
-* #1 (2/1):  20120309_070953
-*   Origin Time: 2012-03-09 07:09:53
-*   Lat: -19.22; Lon:  169.75
-*   Dep:  33.70; Mag: 6.6
-*     M08A  -&gt; Ev: 9651.91 km;   86.80 deg; 239.43;  40.95
-
-* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
-*   2012.069.07.09
-*   -&gt; Downloading Seismic data...
-*      ...done
-*   -&gt; Downloading Pressure data...
-     ...done
-*   -&gt; Removing responses - Seismic data
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
-*   -&gt; Removing responses - Pressure data
- WARNING: FIR normalized: sum[coef]=9.767192E-01;
-</pre></div>
-</div>
-<p>The data are stored as an <code class="docutils literal notranslate"><span class="pre">EventStream</span></code> object, saved to disk in the
-newly created folder <code class="docutils literal notranslate"><span class="pre">EVENTS/7D.M08A/</span></code>.</p>
-</div>
 </div>
 <div class="section" id="atacr-correct-event-py">
-<h3>6. <code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code><a class="headerlink" href="#atacr-correct-event-py" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code><a class="headerlink" href="#atacr-correct-event-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h4>Description<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
 (from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
 <p>Station selection is specified by a network and station code. The data base is provided as a
 <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-<div class="section" id="id10">
-<h4>Usage<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id11">
+<h4>Usage<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py -h
 Usage: atacr_correct_event.py [options] &lt;station database&gt;
 
@@ -1108,53 +747,6 @@ Options:
                     database]
 </pre></div>
 </div>
-</div>
-<div class="section" id="id11">
-<h4>Example<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
-<p>The final step in the analysis is the application of the transfer functions
-to the raw earthquake seismograms to clean up the vertical component.
-Once again, the default settings can be used. To make the final Figures 11 and 12,
-specify the <code class="docutils literal notranslate"><span class="pre">--fig_Raw</span></code> and <code class="docutils literal notranslate"><span class="pre">--figClean</span></code> options:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py --figRaw --figClean M08A.pkl
-
-
-|===============================================|
-|===============================================|
-|                       M08A                    |
-|===============================================|
-|===============================================|
-|  Station: 7D.M08A                             |
-|      Channel: BH; Locations: --               |
-|      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20 00:00:00          |
-|      End time:   2012-07-18 23:59:59          |
-|-----------------------------------------------|
-TF_STA/7D.M08A/2011.293-2012.200.transfunc.pkl file found - applying transfer functions
-TF_STA/7D.M08A/2012.069.transfunc.pkl file found - applying transfer functions
-</pre></div>
-</div>
-<p>Results are saved as <code class="docutils literal notranslate"><span class="pre">EventStream</span></code> objects that now contain the corrected
-vertical components.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_11.png" src="_images/Figure_11.png" />
-</div>
-<p>Figure 11: Event time series for the vertical (Z), horizontal 1 (H1), horizontal 2 (H2),
-and pressure (P) components. No corrections have been applied. The data is for
-station M08A for the Mw 6.6 earthquake that occurred near Vanuatu on March 9,
-2012 and has been bandpass filtered from 10 - 150 s.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_12a.png" src="_images/Figure_12a.png" />
-</div>
-<p>Figure 12a: Event time series for the vertical (Z) components after each of the transfer
-functions of interest have been applied. The corrections are specified in the titles of
-each subplot. The data is for station M08A for the Mw 6.6 earthquake that occurred
-near Vanuatu on March 9, 2012 (same as Figure 11) and has been bandpass filtered
-from 10 - 150 s. Traces in grey show the original (raw, un-corrected) vertical component.</p>
-<div class="figure align-center">
-<img alt="_images/Figure_12b.png" src="_images/Figure_12b.png" />
-</div>
-<p>Figure 12b: Same as Figure 12a but using the station averaged transfer functions. In this
-case the <code class="docutils literal notranslate"><span class="pre">ZH</span></code> and <code class="docutils literal notranslate"><span class="pre">ZP-H</span></code> transfer functions are not available.</p>
 </div>
 </div>
 </div>
@@ -2190,6 +1782,441 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 <span id="plotting-functions"></span><h3>Plotting functions<a class="headerlink" href="#module-obstools.atacr.plot" title="Permalink to this headline">¶</a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">plot</span></code> contains several functions for plotting the results
 of the analysis at various final and intermediate steps.</p>
+</div>
+</div>
+<div class="section" id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here we roughly follow the steps highlighted in the
+<a class="reference external" href="https://github.com/helenjanisz/ATaCR/blob/master/ATaCR_Manual.pdf">Matlab tutorial</a>
+for this code and reproduce
+the various figures. The examples provided below are for one month of data
+(March 2012) recorded at station M08A of the Cascadia Initiative Experiment.
+Corrections are applied to a magnitude 6.6 earthquake that occurred near
+Vanuatu on March 9, 2012.</p>
+</div>
+<div class="section" id="creating-the-stdb-database">
+<h3>0. Creating the <code class="docutils literal notranslate"><span class="pre">StDb</span></code> Database<a class="headerlink" href="#creating-the-stdb-database" title="Permalink to this headline">¶</a></h3>
+<p>All the scripts provided require a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> database containing station
+information and metadata. Let’s first create this database for station
+M08A and send the prompt to a logfile</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A &gt; logfile
+</pre></div>
+</div>
+<p>To see the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb.py M08A.pkl
+ Listing Station Pickle: M08A.pkl
+ 7D.M08A
+ --------------------------------------------------------------------------
+ 1) 7D.M08A
+      Station: 7D M08A
+       Alternate Networks: None
+       Channel: BH ;  Location: --
+       Lon, Lat, Elev:  44.11870, -124.89530,  -0.126
+       StartTime: 2011-10-20 00:00:00
+       EndTime:   2012-07-18 23:59:59
+       Status:    open
+       Polarity: 1
+       Azimuth Correction: 0.000000
+</pre></div>
+</div>
+</div>
+<div class="section" id="download-noise-data">
+<h3>1. Download noise data<a class="headerlink" href="#download-noise-data" title="Permalink to this headline">¶</a></h3>
+<p>We wish to download one month of data for the station M08A for March 2012.
+The various options above allow us to select the additional channels to specify
+(e.g., <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">H,P</span></code> for both horizontal and pressure data - which is the default
+setting). Default frequency settings for data pre-processing match those of
+the Matlab <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> software and can therefore be ignore when calling the program.
+Since the file <code class="docutils literal notranslate"><span class="pre">M08A.pkl</span></code> contains only one station, it is not necessary to specify a
+key. This option would be useful if the database contained several stations
+and we were only interested in downloading data for M08A. In this case, we would
+specify <code class="docutils literal notranslate"><span class="pre">--keys=M08A</span></code> or <code class="docutils literal notranslate"><span class="pre">--keys=7D.M08A</span></code>.
+The only required options at this point are the <code class="docutils literal notranslate"><span class="pre">--start</span></code> and <code class="docutils literal notranslate"><span class="pre">--end</span></code> options
+to specify the dates for which data will will be downloaded.</p>
+<p>If you change your mind about the pre-processing options, you can always re-run the
+following line with the option <code class="docutils literal notranslate"><span class="pre">-O</span></code>, which will over-write the data saved to disk.</p>
+<p>To download all broadband seismic and pressure data, simply type in a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py --start=2012-03-01 --end=2012-04-01 M08A.pkl
+</pre></div>
+</div>
+<p>An example log printed on the terminal will look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Path to DATA/7D.M08A/ doesn`t exist - creating it
+
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20                   |
+|      End time:   2012-07-18                   |
+|-----------------------------------------------|
+| Searching day-long files:                     |
+|   Start: 2012-03-01                           |
+|   End:   2012-04-01                           |
+
+***********************************************************
+* Downloading day-long data for key 7D.M08A and day 2012.61
+*
+* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
+*   2012.061.*SAC
+*   -&gt; Downloading Seismic data...
+*      ...done
+*   -&gt; Downloading Pressure data...
+*      ...done
+*   -&gt; Removing responses - Seismic data
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+*   -&gt; Removing responses - Pressure data
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+
+***********************************************************
+* Downloading day-long data for key 7D.M08A and day 2012.62
+*
+* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
+*   2012.062.*SAC
+*   -&gt; Downloading Seismic data...
+
+...
+</pre></div>
+</div>
+<p>And so on until all day-long files have been downloaded. You will
+notice that a folder called <code class="docutils literal notranslate"><span class="pre">DATA/7D.M08A/</span></code> has been created.
+This is where all day-long files will be stored on disk.</p>
+</div>
+<div class="section" id="qc-for-daily-spectral-averages">
+<h3>2. QC for daily spectral averages<a class="headerlink" href="#qc-for-daily-spectral-averages" title="Permalink to this headline">¶</a></h3>
+<p>For this step, there are several Parameter Settings that can be tuned. Once again,
+the default values are the ones used to reproduce the results of the Matlab
+ATaCR software and can be left un-changed. The Time Search Settings can be used
+to look at a subset of the available day-long data files. Here these options
+can be ignored since we wish to look at all the availble data that we just downloaded.
+We can therefore type in a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py M08A.pkl
+
+Path to SPECTRA/7D.M08A/ doesn`t exist - creating it
+
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20 00:00:00          |
+|      End time:   2012-07-18 23:59:59          |
+|-----------------------------------------------|
+
+**********************************************************************
+* Calculating noise spectra for key 7D.M08A and day 2012.061
+*   12 good windows. Proceeding...
+
+**********************************************************************
+* Calculating noise spectra for key 7D.M08A and day 2012.062
+*   14 good windows. Proceeding...
+
+**********************************************************************
+* Calculating noise spectra for key 7D.M08A and day 2012.063
+*   16 good windows. Proceeding...
+
+...
+</pre></div>
+</div>
+<p>And so on until all available data have been processed. The software stores the
+<code class="docutils literal notranslate"><span class="pre">obstools.atacr.classes.DayNoise</span></code> objects to a newly
+created folder called <code class="docutils literal notranslate"><span class="pre">SPECTRA/7D.M08A/</span></code>. To produce figures for visualization,
+we can re-run the above script but now use the plotting options to look
+at one day of the month (March 04, 2012). In this case we need to over-write the
+previous results (option <code class="docutils literal notranslate"><span class="pre">-O</span></code>) and specify the date of interest:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -O --figQC --figAverage --debug --start=2012-03-04 --end=2012-03-05 M08A.pkl &gt; logfile
+</pre></div>
+</div>
+<p>The script will produce several figures, including Figures 2 and 3 (separated
+into 3a and 3b below). Several intermediate steps are also produces, which show
+all the raw data and the window classification into good and bad windows for
+subsequent analysis.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_2.png" src="_images/Figure_2.png" />
+</div>
+<p>Figure 2: Daily spectrogram for the vertical (Z), horizontals (H1, H2), and pressure
+(P) components.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_3a.png" src="_images/Figure_3a.png" />
+</div>
+<p>Figure 3a: Power spectral density (PSD) functions for the Z, H1, H2, and P compo-
+nents from a single day of data (M08A, March 4, 2012, same as in Figure 2). The left
+column shows PSDs for each individual window; PSDs from windows that did not
+pass the quality control are colored red.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
+</div>
+<p>Figure 3a: Daily average PSD of bad (red) and good (black) windows.</p>
+</div>
+<div class="section" id="qc-for-clean-station-averages">
+<h3>3. QC for clean station averages<a class="headerlink" href="#qc-for-clean-station-averages" title="Permalink to this headline">¶</a></h3>
+<p>Now that we have processed daily spectra for all available components, it is
+possible to further average the spectra over multiple days to produce a cleaned
+station average. It is still possible to specify a date range over which to
+average the spectra, thus giving flexibility in the production of the station
+averages. Parameter settings are similar to those used in <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code>
+but further include the option of plotting the averaged cross-spectral properties.
+To calcualte a single station average for the entire month of March 2012 (and
+therefore using all available data) and plot the results, we can type in a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py --figQC --figAverage --figCoh --figCross M08A.pkl
+
+Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
+
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20 00:00:00          |
+|      End time:   2012-07-18 23:59:59          |
+|-----------------------------------------------|
+
+**********************************************************************
+* Calculating noise spectra for key 7D.M08A and day 2012.061
+*   -&gt; file SPECTRA/7D.M08A/2012.061.spectra.pkl found - loading
+
+**********************************************************************
+* Calculating noise spectra for key 7D.M08A and day 2012.062
+*   -&gt; file SPECTRA/7D.M08A/2012.062.spectra.pkl found - loading
+
+...
+</pre></div>
+</div>
+<p>And so on until all <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are averaged into a <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code>
+object, which is saved to a newly created folder called <code class="docutils literal notranslate"><span class="pre">AVG_STA/7D.M08A/</span></code>.
+Several figures are also produced, including Figures 4, 6-9.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_4.png" src="_images/Figure_4.png" />
+</div>
+<p>Figure 4: The orientation of maximum coherence between the vertical and the two
+horizontal components for M08A during March 2012. (Left) Coherence as a function
+of angle from the H1 component. (Right) Phase as a function of the angle. In this
+example, the coherence is low indicating the absence of dominant, uni-directional tilt
+noise.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_6.png" src="_images/Figure_6.png" />
+</div>
+<p>Figure 6: The daily PSDs plotted for the vertical (Z), horizontal (H1, H2), and
+pressure (P) components for March 2012 at station M08A. Each line is a daily PSD.
+Gray colors indicate days that were accepted by the second quality control step,
+while the red colors indicate days that were discarded.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_7.png" src="_images/Figure_7.png" />
+</div>
+<p>Figure 7: The daily coherences between pairs of components as indicated above each
+subplot for March 2012 at station M08A (e.g. 1Z - coherence between Horizontal 1
+and Vertical). Each line represents average coherence for a single day in the data
+set. Gray colors indicate days that were accepted by the second quality control step,
+while the red colors indicate days that were discarded. Note that some definitions
+are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used in the Matlab Tutorial.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_8.png" src="_images/Figure_8.png" />
+</div>
+<p>Figure 8: The daily admittances between pairs of components as indicated above
+(see Figure 7) each subplot for March 2012 at station M08A. Each line is a daily
+admittance. Gray colors indicate days that were accepted by the second quality
+control step, while the red colors indicate days that were discarded.
+Note that some definitions are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used
+in the Matlab Tutorial.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_9.png" src="_images/Figure_9.png" />
+</div>
+<p>Figure 9: The daily phases between pairs of components as indicated above (see
+Figure 7) each subplot for March 2012 at station M08A. Each line is a daily phase.
+Gray colors indicate days that were accepted by the second quality control step,
+while the red colors indicate days that were discarded. Note that some definitions
+are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used in the Matlab Tutorial.</p>
+</div>
+<div class="section" id="transfer-function-calculation">
+<h3>4. Transfer function calculation<a class="headerlink" href="#transfer-function-calculation" title="Permalink to this headline">¶</a></h3>
+<p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the transfer
+functions across all available components can be calculated. By default the software
+will calculate the ones for which the spectral averages are available.</p>
+<p>For compliance only (i.e., only <code class="docutils literal notranslate"><span class="pre">?HZ</span></code> and <code class="docutils literal notranslate"><span class="pre">?XH?</span></code> components are available),
+the only transfer function possible is:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
+</ul>
+<p>For tilt only (i.e., all of <code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code> components are available), the transfer
+functions are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Z1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Z2-1</span></code></p></li>
+</ul>
+<p>For both tilt and compliance (i.e., all four components are available), the
+following transfer functions are possible:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Z1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Z2-1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP-21</span></code></p></li>
+</ul>
+<p>If you are using the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects to calculate the transfer functions,
+the following may be further available (if all components are available):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ZH</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP-H</span></code></p></li>
+</ul>
+<p>In this example we calculate all available transfer functions for all available data.
+In this case we do not need to specify any option and type in a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Path</span> <span class="n">to</span> <span class="n">TF_STA</span><span class="o">/</span><span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span><span class="o">/</span> <span class="n">doesn</span><span class="s1">&#39;t exist - creating it</span>
+
+<span class="o">|===============================================|</span>
+<span class="o">|===============================================|</span>
+<span class="o">|</span>                       <span class="n">M08A</span>                    <span class="o">|</span>
+<span class="o">|===============================================|</span>
+<span class="o">|===============================================|</span>
+<span class="o">|</span>  <span class="n">Station</span><span class="p">:</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span>                             <span class="o">|</span>
+<span class="o">|</span>      <span class="n">Channel</span><span class="p">:</span> <span class="n">BH</span><span class="p">;</span> <span class="n">Locations</span><span class="p">:</span> <span class="o">--</span>               <span class="o">|</span>
+<span class="o">|</span>      <span class="n">Lon</span><span class="p">:</span> <span class="o">-</span><span class="mf">124.90</span><span class="p">;</span> <span class="n">Lat</span><span class="p">:</span>  <span class="mf">44.12</span>                <span class="o">|</span>
+<span class="o">|</span>      <span class="n">Start</span> <span class="n">time</span><span class="p">:</span> <span class="mi">2011</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>          <span class="o">|</span>
+<span class="o">|</span>      <span class="n">End</span> <span class="n">time</span><span class="p">:</span>   <span class="mi">2012</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">18</span> <span class="mi">23</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">59</span>          <span class="o">|</span>
+<span class="o">|-----------------------------------------------|</span>
+
+<span class="o">**********************************************************************</span>
+<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="n">day</span> <span class="mf">2012.088</span>
+
+<span class="o">**********************************************************************</span>
+<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="n">day</span> <span class="mf">2012.075</span>
+
+<span class="o">...</span>
+
+<span class="o">**********************************************************************</span>
+<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="nb">range</span> <span class="mf">2011.293</span><span class="o">-</span><span class="mf">2012.200</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Note how the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are read randomly from disk, followed by the
+<code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> object. The result is a <code class="docutils literal notranslate"><span class="pre">TFNoise</span></code> object that is saved to a newly
+created folder called <code class="docutils literal notranslate"><span class="pre">TF_STA/7D.M08A/</span></code>.</p>
+<p>We can produce Figure 10 by re-running the previous command with the options
+<code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--figTF</span></code>.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_10.png" src="_images/Figure_10.png" />
+</div>
+<p>Figure 10: Transfer function amplitudes for the component combinations of interest,
+as indicated in the title of each subplot. This example is for the month of March 2012
+for station M08A. The daily transfer functions are shown in grey and the average
+calculated for the whole month is shown in black.</p>
+</div>
+<div class="section" id="download-earthquake-data">
+<h3>5. Download earthquake data<a class="headerlink" href="#download-earthquake-data" title="Permalink to this headline">¶</a></h3>
+<p>Now we need to download the earthquake data, for which we wish to
+clean the vertical component using the transfer functions calculated.
+This script <code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code> is very similar to <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>,
+with the addition of Event and Geometry Settings.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful with the Frequency Settings, as these values need to be exactly
+the same as those used in <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code> but won’t be checked
+against.</p>
+</div>
+<p>To download the seismograms that recorded the March 9, 2012, magnitude 6.6
+Vanuatu earthquake (be conservative with the options), type in a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
+
+Path to EVENTS/7D.M08A/ doesn`t exist - creating it
+
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20 00:00:00          |
+|      End time:   2012-07-18 23:59:59          |
+|-----------------------------------------------|
+| Searching Possible events:                    |
+|   Start: 2012-03-08 00:00:00                  |
+|   End:   2012-03-10 00:00:00                  |
+|   Mag:   6.3 - 6.7                            |
+| ...                                           |
+|  Found     1 possible events                  |
+
+****************************************************
+* #1 (2/1):  20120309_070953
+*   Origin Time: 2012-03-09 07:09:53
+*   Lat: -19.22; Lon:  169.75
+*   Dep:  33.70; Mag: 6.6
+*     M08A  -&gt; Ev: 9651.91 km;   86.80 deg; 239.43;  40.95
+
+* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
+*   2012.069.07.09
+*   -&gt; Downloading Seismic data...
+*      ...done
+*   -&gt; Downloading Pressure data...
+     ...done
+*   -&gt; Removing responses - Seismic data
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+*   -&gt; Removing responses - Pressure data
+ WARNING: FIR normalized: sum[coef]=9.767192E-01;
+</pre></div>
+</div>
+<p>The data are stored as an <code class="docutils literal notranslate"><span class="pre">EventStream</span></code> object, saved to disk in the
+newly created folder <code class="docutils literal notranslate"><span class="pre">EVENTS/7D.M08A/</span></code>.</p>
+</div>
+<div class="section" id="correct-clean-earthquake-data">
+<h3>6. Correct/clean earthquake data<a class="headerlink" href="#correct-clean-earthquake-data" title="Permalink to this headline">¶</a></h3>
+<p>The final step in the analysis is the application of the transfer functions
+to the raw earthquake seismograms to clean up the vertical component.
+Once again, the default settings can be used. To make the final Figures 11 and 12,
+specify the <code class="docutils literal notranslate"><span class="pre">--fig_Raw</span></code> and <code class="docutils literal notranslate"><span class="pre">--figClean</span></code> options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py --figRaw --figClean M08A.pkl
+
+
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20 00:00:00          |
+|      End time:   2012-07-18 23:59:59          |
+|-----------------------------------------------|
+TF_STA/7D.M08A/2011.293-2012.200.transfunc.pkl file found - applying transfer functions
+TF_STA/7D.M08A/2012.069.transfunc.pkl file found - applying transfer functions
+</pre></div>
+</div>
+<p>Results are saved as <code class="docutils literal notranslate"><span class="pre">EventStream</span></code> objects that now contain the corrected
+vertical components.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_11.png" src="_images/Figure_11.png" />
+</div>
+<p>Figure 11: Event time series for the vertical (Z), horizontal 1 (H1), horizontal 2 (H2),
+and pressure (P) components. No corrections have been applied. The data is for
+station M08A for the Mw 6.6 earthquake that occurred near Vanuatu on March 9,
+2012 and has been bandpass filtered from 10 - 150 s.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_12a.png" src="_images/Figure_12a.png" />
+</div>
+<p>Figure 12a: Event time series for the vertical (Z) components after each of the transfer
+functions of interest have been applied. The corrections are specified in the titles of
+each subplot. The data is for station M08A for the Mw 6.6 earthquake that occurred
+near Vanuatu on March 9, 2012 (same as Figure 11) and has been bandpass filtered
+from 10 - 150 s. Traces in grey show the original (raw, un-corrected) vertical component.</p>
+<div class="figure align-center">
+<img alt="_images/Figure_12b.png" src="_images/Figure_12b.png" />
+</div>
+<p>Figure 12b: Same as Figure 12a but using the station averaged transfer functions. In this
+case the <code class="docutils literal notranslate"><span class="pre">ZH</span></code> and <code class="docutils literal notranslate"><span class="pre">ZP-H</span></code> transfer functions are not available.</p>
 </div>
 </div>
 </div>
