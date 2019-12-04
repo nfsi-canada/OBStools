@@ -15,7 +15,7 @@ before_install:
   - if [[ $DOCS == 1 ]]; then
       DEP="sphinx sphinx_rtd_theme";
     else
-      DEP="";
+      DEP="pytest-cov";
     fi
   - conda create -q -n testenv
       python=$PYTHON_VERSION obspy $DEP
@@ -28,9 +28,7 @@ script:
   - if [[ $DOCS == 1 ]]; then
       cd docs; make html; touch _build/html/.nojekyll; cd ..;
     else
-      python -c "import obstools";
-      python -c "import obstools.atacr"
-      python -c "from obstools.atacr.classes import DayNoise";
+      mkdir empty; cd empty; pytest -v --cov=obstools --pyargs obstools;
     fi
 after_success:
   - if [[ $DOCS != 1 ]]; then
