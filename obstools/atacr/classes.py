@@ -95,7 +95,7 @@ class Power(object):
     cPP : :class:`~numpy.ndarray`
         Power spectral density for component P (any shape)
     """
-    def __init__(self, c11, c22, cZZ, cPP):
+    def __init__(self, c11=None, c22=None, cZZ=None, cPP=None):
         self.c11 = c11
         self.c22 = c22
         self.cZZ = cZZ
@@ -121,7 +121,7 @@ class Cross(object):
     cZP : :class:`~numpy.ndarray`
         Cross-power spectral density for components Z and P (any shape)
     """
-    def __init__(self, c12, c1Z, c1P, c2Z, c2P, cZP):
+    def __init__(self, c12=None, c1Z=None, c1P=None, c2Z=None, c2P=None, cZP=None):
         self.c12 = c12
         self.c1Z = c1Z
         self.c1P = c1P
@@ -156,7 +156,7 @@ class Rotation(object):
         Directions for which the coherence is calculated
 
     """
-    def __init__(self, cHH, cHZ, cHP, coh=None, ph=None, tilt=None, \
+    def __init__(self, cHH=None, cHZ=None, cHP=None, coh=None, ph=None, tilt=None, \
         coh_value=None, phase_value=None, direc=None):
 
         self.cHH = cHH
@@ -190,37 +190,42 @@ class DayNoise(object):
         Length of time window in seconds
     overlap : float
         Fraction of overlap between adjacent windows
-    dt : float
-        Sampling distance in seconds
-    npts : int
-        Number of points in time series
-    fs : float
-        Sampling frequency (in Hz)
-    year : str
-        Year for current object (obtained from UTCDateTime)
-    julday : str
-        Julian day for current object (obtained from UTCDateTime)
     key : str
         Station key for current object
+    dt : float
+        Sampling distance in seconds. Obtained from ``trZ`` object
+    npts : int
+        Number of points in time series. Obtained from ``trZ`` object
+    fs : float
+        Sampling frequency (in Hz). Obtained from ``trZ`` object
+    year : str
+        Year for current object (obtained from UTCDateTime). Obtained from ``trZ`` object
+    julday : str
+        Julian day for current object (obtained from UTCDateTime). Obtained from ``trZ`` object
     ncomp : int
-        Number of available components (either 2, 3 or 4)
+        Number of available components (either 2, 3 or 4). Obtained from non-empty ``Trace`` objects
+    tf_list : Dict
+        Dictionary of possible transfer functions given the available components. 
     goodwins : list 
         List of booleans representing whether a window is good (True) or not (False). 
         This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
     power : :class:`~obstools.atacr.classes.Power`
         Container for daily spectral power for all available components
-    cross :
+    cross : :class:`~obstools.atacr.classes.Cross`
         Container for daily cross spectral power for all available components
-    rotation :
+    rotation : :class:`~obstools.atacr.classes.Rotation`
         Container for daily rotated (cross) spectral power for all available components
     f : :class:`~numpy.ndarray`
-        Frequency axis for corresponding time sampling parameters
-    tf_list : Dict
-        Dictionary of possible transfer functions given the available components. This is determined
-        as the object is saved.
+        Frequency axis for corresponding time sampling parameters. Determined from method 
+        :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
     """
     def __init__(self, tr1, tr2, trZ, trP, window, overlap, key):
+
+        for tr in [tr1, tr2, trZ, trP]:
+            if not isinstance(tr, Trace):
+                raise(Exception("Error initializing DayNoise object - "\
+                    +tr+" is not a Trace object"))
 
         self.tr1 = tr1
         self.tr2 = tr2
@@ -228,14 +233,24 @@ class DayNoise(object):
         self.trP = trP
         self.window = window
         self.overlap = overlap
+        self.key = key
+
         self.dt = self.trZ.stats.delta
         self.npts = self.trZ.stats.npts
         self.fs = self.trZ.stats.sampling_rate
         self.year = self.trZ.stats.starttime.year
         self.julday = self.trZ.stats.starttime.julday
-        self.key = key
         self.ncomp = np.sum(1 for tr in 
             Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data))
+
+        # Build list of available transfer functions based on the number of components
+        if self.ncomp==2:
+            self.tf_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        elif self.ncomp==3:
+            self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
+        else:
+            self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
+
 
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
@@ -548,7 +563,8 @@ class DayNoise(object):
             if fig_coh_ph:
                 plot.fig_coh_ph(coh, ph, direc)
         else:
-            self.rotation = Rotation(None, None, None)
+            self.rotation = Rotation()
+
 
     def save(self, filename):
         """
@@ -566,14 +582,6 @@ class DayNoise(object):
         del self.tr2 
         del self.trZ
         del self.trP
-
-        # Build list of available transfer functions for future use
-        if self.ncomp==2:
-            self.tf_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
-        elif self.ncomp==3:
-            self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
-        else:
-            self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
 
         file = open(filename, 'wb')
         pickle.dump(self, file)
@@ -604,6 +612,8 @@ class StaNoise(object):
         Station key for current object
     ncomp : int
         Number of available components (either 2, 3 or 4)
+    tf_list : Dict
+        Dictionary of possible transfer functions given the available components. 
     power : :class:`~obstools.atacr.classes.Power`
         Container for station-averaged spectral power for all available components
     cross :
@@ -613,31 +623,44 @@ class StaNoise(object):
     gooddays : list 
         List of booleans representing whether a day is good (True) or not (False). 
         This attribute is returned from the method :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra`
-    tf_list : Dict
-        Dictionary of possible transfer functions given the available components. This is determined
-        as the object is saved.
 
     """
     def __init__(self, power, cross, rotation, f, nwins, ncomp, key):
-        self.f = f
-        self.nwins = nwins
-        self.key = key
-        self.ncomp = ncomp
+
+        if all(value == None for value in power.values()):
+            raise(Exception("Container Power is empty - aborting"))
+        if all(value == None for value in cross.values()):
+            raise(Exception("Container Cross is empty - aborting"))
+
         # Unbox the container attributes
         self.c11 = power.c11.T
         self.c22 = power.c22.T
         self.cZZ = power.cZZ.T
         self.cPP = power.cPP.T
-        self.cHH = rotation.cHH.T
-        self.cHZ = rotation.cHZ.T
-        self.cHP = rotation.cHP.T
         self.c12 = cross.c12.T
         self.c1Z = cross.c1Z.T
         self.c1P = cross.c1P.T
         self.c2Z = cross.c2Z.T
         self.c2P = cross.c2P.T
         self.cZP = cross.cZP.T
+        self.cHH = rotation.cHH.T
+        self.cHZ = rotation.cHZ.T
+        self.cHP = rotation.cHP.T
         self.tilt = rotation.tilt
+
+        self.f = f
+        self.nwins = nwins
+        self.key = key
+        self.ncomp = ncomp
+
+        # Build list of available transfer functions for future use
+        if self.ncomp==2:
+            self.tf_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        elif self.ncomp==3:
+            self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
+        else:
+            self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
+
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False):
         """
@@ -866,14 +889,6 @@ class StaNoise(object):
         del self.c2P
         del self.cZP
 
-        # Build list of available transfer functions for future use
-        if self.ncomp==2:
-            self.tf_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
-        elif self.ncomp==3:
-            self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
-        else:
-            self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
-
         file = open(filename, 'wb')
         pickle.dump(self, file)
         file.close()
@@ -904,6 +919,11 @@ class TFNoise(object):
     """
 
     def __init__(self, f, power, cross, rotation, tf_list):
+
+        if all(value == None for value in power.values()):
+            raise(Exception("Container Power is empty - aborting"))
+        if all(value == None for value in cross.values()):
+            raise(Exception("Container Cross is empty - aborting"))
 
         self.f = f
         self.c11 = power.c11
@@ -1109,6 +1129,7 @@ class EventStream(object):
         self.fs = sampling_rate
         self.dt = 1./sampling_rate
         self.ncomp = ncomp
+        
         # Build list of available transfer functions for future use
         if self.ncomp==2:
             self.ev_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
