@@ -233,7 +233,7 @@ class DayNoise(object):
     >>> from obstools.atacr.classes import DayNoise
     >>> daynoise = DayNoise()
     Uploading demo data
-    >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep = "\n") 
+    >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep="\n") 
     7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
     7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
     7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
@@ -257,7 +257,7 @@ class DayNoise(object):
         if all(value == None for value in [tr1, tr2, trZ, trP]):
             print("Uploading demo data")
             import os
-            st = read(os.path.join(os.path.dirname(__file__), "../examples/data", \
+            st = read(os.path.join(os.path.dirname(__file__), "../examples/data/2012March04", \
                 "*.SAC"))
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
@@ -337,7 +337,7 @@ class DayNoise(object):
         >>> daynoise = DayNoise()
         >>> daynoise.QC_daily_spectra(fig_QC=True)
 
-        .. figure:: ../examples/figures/Figure_3a.png
+        .. figure:: ../obstools/examples/figures/Figure_3a.png
            :align: center
 
         >>> daynoise.goodwins
@@ -573,7 +573,7 @@ class DayNoise(object):
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra(fig_average=True)
 
-        .. figure:: ../examples/figures/Figure_3b.png
+        .. figure:: ../obstools/examples/figures/Figure_3b.png
            :align: center
 
         >>> daynoise.power
