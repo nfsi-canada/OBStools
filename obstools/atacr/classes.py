@@ -152,9 +152,13 @@ class Rotation(object):
         Maximum coherence 
     phase_value : float
         Phase at maximum coherence
+    direc : :class:`~numpy.ndarray`
+        Directions for which the coherence is calculated
 
     """
-    def __init__(self, cHH, cHZ, cHP, coh=None, ph=None, tilt=None, coh_value=None, phase_value=None):
+    def __init__(self, cHH, cHZ, cHP, coh=None, ph=None, tilt=None, \
+        coh_value=None, phase_value=None, direc=None):
+
         self.cHH = cHH
         self.cHZ = cHZ
         self.cHP = cHP
@@ -163,6 +167,7 @@ class Rotation(object):
         self.tilt = tilt
         self.coh_value = coh_value
         self.phase_value = phase_value
+        self.direc = direc
 
 
 class DayNoise(object):
@@ -173,8 +178,36 @@ class DayNoise(object):
     control steps and the average daily spectra for windows flagged as 
     "good". 
 
+    Note
+    ----
+    The object is initialized with :class:`~obspy.core.Trace` objects for 
+    H1, H2, HZ and P components. Traces can be empty if data are not available.
+    Upon saving, those traces are discarded to save disk space. 
+
     Attributes
     ----------
+    window : float
+        Length of time window in seconds
+    overlap : float
+        Fraction of overlap between adjacent windows
+    dt : float
+        Sampling distance in seconds
+    npts : int
+        Number of points in time series
+    fs : float
+        Sampling frequency (in Hz)
+    year : str
+        Year for current object (obtained from UTCDateTime)
+    julday : str
+        Julian day for current object (obtained from UTCDateTime)
+    key : str
+        Station key for current object
+    ncomp : int
+        Number of available components (either 2, 3 or 4)
+    goodwins : list 
+        List of booleans representing whether a window is good (True) or not (False). 
+        This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
+
 
 
     """
@@ -501,8 +534,7 @@ class DayNoise(object):
         if calc_rotation and self.ncomp>=3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = utils.calculate_tilt( \
                 ft1, ft2, ftZ, ftP, f, self.goodwins)
-            self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value)
-            self.direc = direc
+            self.rotation = Rotation(cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
             if fig_coh_ph:
                 plot.fig_coh_ph(coh, ph, direc)

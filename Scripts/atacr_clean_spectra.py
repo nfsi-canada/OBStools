@@ -235,7 +235,7 @@ def main():
             if opts.fig_coh_ph:
                 try:
                     # Directions array
-                    direc = daynoise.direc
+                    direc = daynoise.rotation.direc
                 except:
                     pass
 
