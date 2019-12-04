@@ -1055,10 +1055,44 @@ class EventStream(object):
 
     Note
     ----
-    
+    An ``EventStream`` object is defined as the data (:class:`~obspy.core.Stream` object) 
+    are read from file or downloaded from an ``obspy`` Client. Based on the available 
+    components, a list of possible corrections is determined automatically.
 
     Attributes
     ----------
+    sta : :class:`~stdb.StdbElement`
+        An instance of an stdb object
+    key : str
+        Station key for current object
+    sth : :class:`~obspy.core.Stream`
+        Stream containing three-component seismic data (traces are empty if data are not available)
+    stp : :class:`~obspy.core.Stream`
+        Stream containing pressure data (trace is empty if data are not available)
+    tstamp : str
+        Time stamp for event
+    evlat : float
+        Latitude of seismic event
+    evlon : float
+        Longitude of seismic event
+    evtime : :class:`~obspy.core.UTCDateTime`
+        Origin time of seismic event
+    window : float
+        Length of time window in seconds
+    fs : float
+        Sampling frequency (in Hz)
+    dt : float
+        Sampling distance in seconds
+    npts : int
+        Number of points in time series
+    ncomp : int
+        Number of available components (either 2, 3 or 4)
+    ev_list : Dict
+        Dictionary of possible transfer functions given the available components. This is determined
+        during initialization.
+    correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
+        Container Dictionary for all possible corrections from the transfer functions. This is 
+        calculated from the method :func:`~obstools.atacr.classes.EventStream.correct_data`
 
     """
 
