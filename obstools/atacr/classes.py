@@ -207,12 +207,21 @@ class DayNoise(object):
     goodwins : list 
         List of booleans representing whether a window is good (True) or not (False). 
         This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
-
-
+    power : :class:`~obstools.atacr.classes.Power`
+        Container for daily spectral power for all available components
+    cross :
+        Container for daily cross spectral power for all available components
+    rotation :
+        Container for daily rotated (cross) spectral power for all available components
+    f : :class:`~numpy.ndarray`
+        Frequency axis for corresponding time sampling parameters
+    tf_list : Dict
+        Dictionary of possible transfer functions given the available components. This is determined
+        as the object is saved.
 
     """
-
     def __init__(self, tr1, tr2, trZ, trP, window, overlap, key):
+
         self.tr1 = tr1
         self.tr2 = tr2
         self.trZ = trZ
@@ -577,8 +586,36 @@ class StaNoise(object):
     three-component raw (or deconvolved) traces, metadata information
     and window parameters.
 
+    Note
+    ----
+    The object is initialized with :class:`~obstools.atacr.classes.Power`,
+    :class:`~obstools.atacr.classes.Cross` and :class:`~obstools.atacr.classes.Rotation` 
+    objects. Each individual spectral quantity is unpacked as an object attribute, 
+    but all of them are discarded as the object is saved to disk and new container objects
+    are defined and saved.
+
     Attributes
     ----------
+    f : :class:`~numpy.ndarray`
+        Frequency axis for corresponding time sampling parameters
+    nwins : int
+        Number of good windows from the :class:`~obstools.atacr.classes.DayNoise` object
+    key : str
+        Station key for current object
+    ncomp : int
+        Number of available components (either 2, 3 or 4)
+    power : :class:`~obstools.atacr.classes.Power`
+        Container for station-averaged spectral power for all available components
+    cross :
+        Container for station-averaged cross spectral power for all available components
+    rotation :
+        Container for station-averaged rotated (cross) spectral power for all available components
+    gooddays : list 
+        List of booleans representing whether a day is good (True) or not (False). 
+        This attribute is returned from the method :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra`
+    tf_list : Dict
+        Dictionary of possible transfer functions given the available components. This is determined
+        as the object is saved.
 
     """
     def __init__(self, power, cross, rotation, f, nwins, ncomp, key):
@@ -847,8 +884,22 @@ class TFNoise(object):
     A TFNoise object contains attributes that store the transfer function information
     from multiple components (and component combinations). 
 
+    Note
+    ----
+    The object is initialized with :class:`~obstools.atacr.classes.Power`,
+    :class:`~obstools.atacr.classes.Cross` and :class:`~obstools.atacr.classes.Rotation` 
+    objects. Each individual spectral quantity is unpacked as an object attribute, 
+    but all of them are discarded as the object is saved to disk and new container objects
+    are defined and saved.
+
     Attributes
     ----------
+    f : :class:`~numpy.ndarray`
+        Frequency axis for corresponding time sampling parameters
+    tf_list : Dict
+        Dictionary of possible transfer functions given the available components. 
+    transfunc : Dict
+        Dictionary of transfer function arrays for the list of available functions.
 
     """
 
@@ -1001,6 +1052,10 @@ class EventStream(object):
     An EventStream object contains attributes that store station-event metadata and 
     methods for applying the transfer functions to the various components and produce
     corrected/cleaned vertical components.
+
+    Note
+    ----
+    
 
     Attributes
     ----------
