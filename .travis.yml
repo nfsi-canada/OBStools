@@ -28,7 +28,7 @@ script:
   - if [[ $DOCS == 1 ]]; then
       cd docs; make html; touch _build/html/.nojekyll; cd ..;
     else
-      mkdir empty; cd empty; pytest -v --cov=obstools ../tests/;
+      mkdir empty; cd empty; pytest -v --cov=obstools ../obstools/tests/;
     fi
 after_success:
   - if [[ $DOCS != 1 ]]; then
