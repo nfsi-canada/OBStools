@@ -20,4 +20,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from obstools.atacr.classes import DayNoise, StaNoise, TFNoise, EventStream, Power, Cross, Rotation
+from .classes import DayNoise, StaNoise, TFNoise, EventStream, Power, Cross, Rotation
