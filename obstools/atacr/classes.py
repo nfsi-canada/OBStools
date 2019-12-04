@@ -76,7 +76,7 @@ from scipy.linalg import norm
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
-from obspy.core import Stream, Trace
+from obspy.core import Stream, Trace, read
 from obstools.atacr import utils, plot
 
 
@@ -220,13 +220,31 @@ class DayNoise(object):
         :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
     """
-    def __init__(self, tr1, tr2, trZ, trP, window, overlap, key):
+    def __init__(self, tr1=None, tr2=None, trZ=None, trP=None, window=None, \
+        overlap=None, key=None):
 
+        # Load example data if initializing empty object
+        if all(value == None for value in [tr1, tr2, trZ, trP]):
+            print("Uploading demo data")
+            import os
+            fname = os.path.join(os.path.dirname(__file__), "obstools/examples/data", \
+                "*.SAC")
+            st = read(fname)
+            tr1 = st.select(component='1')
+            tr2 = st.select(component='2')
+            trZ = st.select(component='Z')
+            trP = st.select(component='P')
+            window = 7200.
+            overlap = 0.3
+            key = '7D.M08A'
+
+        # Check that all traces are valid Trace objects
         for tr in [tr1, tr2, trZ, trP]:
             if not isinstance(tr, Trace):
                 raise(Exception("Error initializing DayNoise object - "\
                     +tr+" is not a Trace object"))
 
+        # Unpack everything
         self.tr1 = tr1
         self.tr2 = tr2
         self.trZ = trZ
@@ -235,11 +253,14 @@ class DayNoise(object):
         self.overlap = overlap
         self.key = key
 
+        # Get trace attributes
         self.dt = self.trZ.stats.delta
         self.npts = self.trZ.stats.npts
         self.fs = self.trZ.stats.sampling_rate
         self.year = self.trZ.stats.starttime.year
         self.julday = self.trZ.stats.starttime.julday
+
+        # Get number of components for the available, non-empty traces
         self.ncomp = np.sum(1 for tr in 
             Stream(traces=[tr1,tr2,trZ,trP]) if np.any(tr.data))
 
@@ -250,7 +271,6 @@ class DayNoise(object):
             self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':True, 'ZP-H':False}
         else:
             self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
-
 
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
@@ -1129,7 +1149,7 @@ class EventStream(object):
         self.fs = sampling_rate
         self.dt = 1./sampling_rate
         self.ncomp = ncomp
-        
+
         # Build list of available transfer functions for future use
         if self.ncomp==2:
             self.ev_list = {'ZP': True, 'Z1':False, 'Z2-1':False, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
