@@ -6,7 +6,6 @@ def test_obspy_import():
 
 def test_obstools_modules():
     import obstools
-    import obstools.atacr
     from obstools.atacr import classes
     from obstools.atacr import utils
     import matplotlib
