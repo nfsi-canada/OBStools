@@ -108,3 +108,4 @@ __version__ = '0.0.1'
 
 __author__ = 'Pascal Audet & Helen Janiszewski'
 
+from obstools.atacr.classes import DayNoise, StaNoise, TFNoise, EventStream, Power, Cross, Rotation
