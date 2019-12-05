@@ -174,7 +174,7 @@ class DayNoise(object):
 
     Get demo data as DayNoise object
 
-    >>> from obstools.atacr.classes import DayNoise
+    >>> from obstools.atacr import DayNoise
     >>> daynoise = DayNoise()
     Uploading demo data
 
@@ -280,7 +280,7 @@ class DayNoise(object):
 
         Perform QC on DayNoise object using default values and plot final figure
 
-        >>> from obstools.atacr.classes import DayNoise
+        >>> from obstools.atacr import DayNoise
         >>> daynoise = DayNoise()
         >>> daynoise.QC_daily_spectra(fig_QC=True)
 
@@ -517,7 +517,7 @@ class DayNoise(object):
 
         Average spectra for good windows using default values and plot final figure
 
-        >>> from obstools.atacr.classes import DayNoise
+        >>> from obstools.atacr import DayNoise
         >>> daynoise = DayNoise()
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra(fig_average=True)
@@ -612,7 +612,7 @@ class DayNoise(object):
 
         Run demo through all methods
 
-        >>> from obstools.atacr.classes import DayNoise
+        >>> from obstools.atacr import DayNoise
         >>> daynoise = DayNoise()
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra()
