@@ -19,57 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""
 
-:mod:`~obstools.atacr` defines the following base classes:
-
-- :class:`~obstools.atacr.classes.DayNoise`
-- :class:`~obstools.atacr.classes.StaNoise`
-- :class:`~obstools.atacr.classes.TFNoise`
-- :class:`~obstools.atacr.classes.EventStream`
-
-The class :class:`~obstools.atacr.classes.DayNoise` contains attributes
-and methods for the analysis of two- to four-component day-long time-series
-(3-component seismograms and pressure data). Objects created with this class
-are required in any subsequent analysis. The available methods calculate the
-power-spectral density (psd) function of sub-windows and identifies windows
-with anomalous psd properties. These windows are flagged as 'bad' and are excluded
-from the final averages of all possible Fourier power spectra and cross spectra
-across all available components.
-
-The class :class:`~obstools.atacr.classes.StaNoise` contains attributes
-and methods for the aggregation of day-long time series into station
-average. An object created with this class requires that objects created with
-`DayNoise` are available in memory. Methods available for this calss are
-similar to those defined in the `DayNoise` class, but are applied to daily 
-spectral averages, as opposed to sub-daily averages. The result is a spectral
-average that represents all available data for the specific stations.  
-
-The class :class:`~obstools.atacr.classes.TFNoise` contains attributes
-and methods for the calculation of transfer functions from noise
-traces used to correct the vertical component. A `TFNoise` object works with 
-either one (or both) `DayNoise` and `StaNoise` objects to calculate all possible
-transfer functions across all available components. These transfer functions
-are saved as attributes of the object in a Dictionary. 
-
-The class :class:`~obstools.atacr.classes.EventStream` contains attributes
-and methods for the application of the transfer functions to the
-event traces for the correction (cleaning) of vertical component
-seismograms. An `EventStream` object is initialized with raw (or pre-processed)
-seismic and/or pressure data and needs to be processed using the same (sub) window 
-properties as the `DayNoise` objects. This ensures that the component corrections
-are safely applied to produce corrected (cleaned) vertical components. 
-
-:mod:`~obstoolsatacr.` further defines the following container classes:
-
-- :class:`~obstools.atacr.classes.Power`
-- :class:`~obstools.atacr.classes.Cross`
-- :class:`~obstools.atacr.classes.Rotation`
-
-These classes are used as containers for individual traces/objects
-that are used as attributes of the base classes. 
-
-"""
 
 from scipy.signal import spectrogram, detrend
 from scipy.linalg import norm
@@ -171,15 +121,15 @@ class Rotation(object):
 
 
 class DayNoise(object):
-    """
+    r"""
     A DayNoise object contains attributes that associate
     three-component raw (or deconvolved) traces, metadata information
     and window parameters. The available methods carry out the quality 
     control steps and the average daily spectra for windows flagged as 
     "good". 
 
-    Note
-    ----
+    Notes
+    -----
     The object is initialized with :class:`~obspy.core.Trace` objects for 
     H1, H2, HZ and P components. Traces can be empty if data are not available.
     Upon saving, those traces are discarded to save disk space. 
@@ -219,20 +169,17 @@ class DayNoise(object):
         Frequency axis for corresponding time sampling parameters. Determined from method 
         :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
-    .. note::
+    Examples
+    --------
 
-        In the examples below, the SAC data were obtained and pre-processed
-        using the accompanying script ``atacr_download_data.py``. See the script
-        and tutorial for details.
-
-    Example
-    -------
-
-    Get demo data
+    Get demo data as DayNoise object
 
     >>> from obstools.atacr.classes import DayNoise
     >>> daynoise = DayNoise()
     Uploading demo data
+
+    Now check its main attributes
+
     >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep="\n") 
     7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
     7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
@@ -328,8 +275,8 @@ class DayNoise(object):
         goodwins : list 
             List of booleans representing whether a window is good (True) or not (False)
 
-        Example
-        -------
+        Examples
+        --------
 
         Perform QC on DayNoise object using default values and plot final figure
 
@@ -339,6 +286,8 @@ class DayNoise(object):
 
         .. figure:: ../obstools/examples/figures/Figure_3a.png
            :align: center
+
+        Print out new attribute of DayNoise object
 
         >>> daynoise.goodwins
         array([False,  True,  True,  True,  True,  True,  True,  True, False,
@@ -367,7 +316,7 @@ class DayNoise(object):
             f, t, psd1 = spectrogram(self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
             f, t, psd2 = spectrogram(self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
 
-        if debug:
+        if fig_QC:
             if self.ncomp==2:
                 plt.figure(1)
                 plt.subplot(2,1,1)
@@ -563,8 +512,8 @@ class DayNoise(object):
         rotation : :class:`~obstools.atacr.classes.Cross`, optional
             Container for the Rotated power and cross spectra
 
-        Example
-        -------
+        Examples
+        --------
 
         Average spectra for good windows using default values and plot final figure
 
@@ -575,6 +524,8 @@ class DayNoise(object):
 
         .. figure:: ../obstools/examples/figures/Figure_3b.png
            :align: center
+
+        Print out new attribute(s) of DayNoise object - only Power
 
         >>> daynoise.power
         <obstools.atacr.classes.Power object at 0x12e353860>
@@ -656,14 +607,22 @@ class DayNoise(object):
         filename : str
             File name 
 
-        Example
-        -------
+        Examples
+        --------
+
+        Run demo through all methods
 
         >>> from obstools.atacr.classes import DayNoise
         >>> daynoise = DayNoise()
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra()
+
+        Save object
+
         >>> daynoise.save('daynoise_demo.pkl')
+
+        Check that it has been saved
+
         >>> import glob
         >>> glob.glob("./daynoise_demo.pkl")
         ['./daynoise_demo.pkl']
@@ -687,8 +646,8 @@ class StaNoise(object):
     three-component raw (or deconvolved) traces, metadata information
     and window parameters.
 
-    Note
-    ----
+    Notes
+    -----
     The object is initialized with :class:`~obstools.atacr.classes.Power`,
     :class:`~obstools.atacr.classes.Cross` and :class:`~obstools.atacr.classes.Rotation` 
     objects. Each individual spectral quantity is unpacked as an object attribute, 
@@ -992,8 +951,8 @@ class TFNoise(object):
     A TFNoise object contains attributes that store the transfer function information
     from multiple components (and component combinations). 
 
-    Note
-    ----
+    Notes
+    -----
     The object is initialized with :class:`~obstools.atacr.classes.Power`,
     :class:`~obstools.atacr.classes.Cross` and :class:`~obstools.atacr.classes.Rotation` 
     objects. Each individual spectral quantity is unpacked as an object attribute, 
@@ -1166,8 +1125,8 @@ class EventStream(object):
     methods for applying the transfer functions to the various components and produce
     corrected/cleaned vertical components.
 
-    Note
-    ----
+    Notes
+    -----
     An ``EventStream`` object is defined as the data (:class:`~obspy.core.Stream` object) 
     are read from file or downloaded from an ``obspy`` Client. Based on the available 
     components, a list of possible corrections is determined automatically.
