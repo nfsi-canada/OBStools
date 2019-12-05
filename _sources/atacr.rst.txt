@@ -62,8 +62,62 @@ seismic (``?HZ,1,2``) and pressure (``?XH``) data.
 API documentation
 *****************
 
-Main Classes
+Base Classes
 ++++++++++++
+
+:mod:`~obstools.atacr` defines the following base classes:
+
+- :class:`~obstools.atacr.classes.DayNoise`
+- :class:`~obstools.atacr.classes.StaNoise`
+- :class:`~obstools.atacr.classes.TFNoise`
+- :class:`~obstools.atacr.classes.EventStream`
+
+The class :class:`~obstools.atacr.classes.DayNoise` contains attributes
+and methods for the analysis of two- to four-component day-long time-series
+(3-component seismograms and pressure data). Objects created with this class
+are required in any subsequent analysis. The available methods calculate the
+power-spectral density (psd) function of sub-windows and identifies windows
+with anomalous psd properties. These windows are flagged as 'bad' and are excluded
+from the final averages of all possible Fourier power spectra and cross spectra
+across all available components.
+
+The class :class:`~obstools.atacr.classes.StaNoise` contains attributes
+and methods for the aggregation of day-long time series into station
+average. An object created with this class requires that objects created with
+`DayNoise` are available in memory. Methods available for this calss are
+similar to those defined in the `DayNoise` class, but are applied to daily 
+spectral averages, as opposed to sub-daily averages. The result is a spectral
+average that represents all available data for the specific stations.  
+
+The class :class:`~obstools.atacr.classes.TFNoise` contains attributes
+and methods for the calculation of transfer functions from noise
+traces used to correct the vertical component. A `TFNoise` object works with 
+either one (or both) `DayNoise` and `StaNoise` objects to calculate all possible
+transfer functions across all available components. These transfer functions
+are saved as attributes of the object in a Dictionary. 
+
+The class :class:`~obstools.atacr.classes.EventStream` contains attributes
+and methods for the application of the transfer functions to the
+event traces for the correction (cleaning) of vertical component
+seismograms. An `EventStream` object is initialized with raw (or pre-processed)
+seismic and/or pressure data and needs to be processed using the same (sub) window 
+properties as the `DayNoise` objects. This ensures that the component corrections
+are safely applied to produce corrected (cleaned) vertical components. 
+
+:mod:`~obstools.atacr` further defines the following container classes:
+
+- :class:`~obstools.atacr.classes.Power`
+- :class:`~obstools.atacr.classes.Cross`
+- :class:`~obstools.atacr.classes.Rotation`
+
+These classes are used as containers for individual traces/objects
+that are used as attributes of the base classes. 
+
+.. note::
+
+    In the examples below, the SAC data were obtained and pre-processed
+    using the accompanying script ``atacr_download_data.py``. See the script
+    and tutorial for details.
 
 DayNoise
 --------
@@ -89,8 +143,8 @@ EventStream
 .. autoclass:: obstools.atacr.classes.EventStream
    :members:
 
-Utility Classes
-+++++++++++++++
+Container Classes
++++++++++++++++++
 
 Power
 -----
@@ -123,8 +177,11 @@ Plotting functions
 Scripts
 *******
 
-There are several Python scripts that accompany this package. Those relevant
-to the module ``atacr`` are called:
+There are several Python scripts that accompany ``~obstools.atacr``. These can be used
+in bash scripts to automate data analysis. These include scripts to download noise and
+event data, and perform tilt and compliance noise removal using either the default
+program values or by refining parameters. All of them use a data base provided as a
+``StDb`` dictionary. These scripts are:
 
 - atacr_download_data.py
 
@@ -137,7 +194,6 @@ to the module ``atacr`` are called:
 - atacr_transfer_functions.py
 
 - atacr_correct_event.py
-
 
 ``atacr_download_data.py``
 ++++++++++++++++++++++++++
@@ -795,7 +851,7 @@ previous results (option ``-O``) and specify the date of interest:
 
 .. code-block:: 
 
-    $ atacr_daily_spectra.py -O --figQC --figAverage --debug --start=2012-03-04 --end=2012-03-05 M08A.pkl > logfile
+    $ atacr_daily_spectra.py -O --figQC --figAverage --start=2012-03-04 --end=2012-03-05 M08A.pkl > logfile
 
 The script will produce several figures, including Figures 2 and 3 (separated 
 into 3a and 3b below). Several intermediate steps are also produces, which show

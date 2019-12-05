@@ -98,14 +98,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#noise-corrections">Noise Corrections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#api-documentation">API documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#main-classes">Main Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#base-classes">Base Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#daynoise">DayNoise</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stanoise">StaNoise</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tfnoise">TFNoise</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#eventstream">EventStream</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#utility-classes">Utility Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#container-classes">Container Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#power">Power</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cross">Cross</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#rotation">Rotation</a></li>
@@ -277,87 +277,263 @@ seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</s
 </div>
 <div class="section" id="api-documentation">
 <h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="main-classes">
-<h3>Main Classes<a class="headerlink" href="#main-classes" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="daynoise">
-<h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="obstools.atacr.classes.DayNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">DayNoise</code><span class="sig-paren">(</span><em class="sig-param">tr1=None</em>, <em class="sig-param">tr2=None</em>, <em class="sig-param">trZ=None</em>, <em class="sig-param">trP=None</em>, <em class="sig-param">window=None</em>, <em class="sig-param">overlap=None</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>A DayNoise object contains attributes that associate
-three-component raw (or deconvolved) traces, metadata information
-and window parameters. The available methods carry out the quality
-control steps and the average daily spectra for windows flagged as
-“good”.</p>
-<p>The object is initialized with <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> objects for
-H1, H2, HZ and P components. Traces can be empty if data are not available.
-Upon saving, those traces are discarded to save disk space.</p>
-<dl>
-<dt>window<span class="classifier">float</span></dt><dd><p>Length of time window in seconds</p>
-</dd>
-<dt>overlap<span class="classifier">float</span></dt><dd><p>Fraction of overlap between adjacent windows</p>
-</dd>
-<dt>key<span class="classifier">str</span></dt><dd><p>Station key for current object</p>
-</dd>
-<dt>dt<span class="classifier">float</span></dt><dd><p>Sampling distance in seconds. Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
-</dd>
-<dt>npts<span class="classifier">int</span></dt><dd><p>Number of points in time series. Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
-</dd>
-<dt>fs<span class="classifier">float</span></dt><dd><p>Sampling frequency (in Hz). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
-</dd>
-<dt>year<span class="classifier">str</span></dt><dd><p>Year for current object (obtained from UTCDateTime). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
-</dd>
-<dt>julday<span class="classifier">str</span></dt><dd><p>Julian day for current object (obtained from UTCDateTime). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
-</dd>
-<dt>ncomp<span class="classifier">int</span></dt><dd><p>Number of available components (either 2, 3 or 4). Obtained from non-empty <code class="docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
-</dd>
-<dt>tf_list<span class="classifier">Dict</span></dt><dd><p>Dictionary of possible transfer functions given the available components.</p>
-</dd>
-<dt>goodwins<span class="classifier">list</span></dt><dd><p>List of booleans representing whether a window is good (True) or not (False).
-This attribute is returned from the method <a class="reference internal" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="obstools.atacr.classes.DayNoise.QC_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_daily_spectra()</span></code></a></p>
-</dd>
-<dt>power<span class="classifier"><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></span></dt><dd><p>Container for daily spectral power for all available components</p>
-</dd>
-<dt>cross<span class="classifier"><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></span></dt><dd><p>Container for daily cross spectral power for all available components</p>
-</dd>
-<dt>rotation<span class="classifier"><a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a></span></dt><dd><p>Container for daily rotated (cross) spectral power for all available components</p>
-</dd>
-<dt>f<span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></dt><dd><p>Frequency axis for corresponding time sampling parameters. Determined from method
-<a class="reference internal" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="obstools.atacr.classes.DayNoise.average_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">average_daily_spectra()</span></code></a></p>
-</dd>
-</dl>
+<div class="section" id="base-classes">
+<h3>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">atacr</span></code> defines the following base classes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.EventStream" title="obstools.atacr.classes.EventStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code></a></p></li>
+</ul>
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> contains attributes
+and methods for the analysis of two- to four-component day-long time-series
+(3-component seismograms and pressure data). Objects created with this class
+are required in any subsequent analysis. The available methods calculate the
+power-spectral density (psd) function of sub-windows and identifies windows
+with anomalous psd properties. These windows are flagged as ‘bad’ and are excluded
+from the final averages of all possible Fourier power spectra and cross spectra
+across all available components.</p>
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> contains attributes
+and methods for the aggregation of day-long time series into station
+average. An object created with this class requires that objects created with
+<cite>DayNoise</cite> are available in memory. Methods available for this calss are
+similar to those defined in the <cite>DayNoise</cite> class, but are applied to daily
+spectral averages, as opposed to sub-daily averages. The result is a spectral
+average that represents all available data for the specific stations.</p>
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a> contains attributes
+and methods for the calculation of transfer functions from noise
+traces used to correct the vertical component. A <cite>TFNoise</cite> object works with
+either one (or both) <cite>DayNoise</cite> and <cite>StaNoise</cite> objects to calculate all possible
+transfer functions across all available components. These transfer functions
+are saved as attributes of the object in a Dictionary.</p>
+<p>The class <a class="reference internal" href="#obstools.atacr.classes.EventStream" title="obstools.atacr.classes.EventStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code></a> contains attributes
+and methods for the application of the transfer functions to the
+event traces for the correction (cleaning) of vertical component
+seismograms. An <cite>EventStream</cite> object is initialized with raw (or pre-processed)
+seismic and/or pressure data and needs to be processed using the same (sub) window
+properties as the <cite>DayNoise</cite> objects. This ensures that the component corrections
+are safely applied to produce corrected (cleaned) vertical components.</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">atacr</span></code> further defines the following container classes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p></li>
+<li><p><a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a></p></li>
+</ul>
+<p>These classes are used as containers for individual traces/objects
+that are used as attributes of the base classes.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the examples below, the SAC data were obtained and pre-processed
 using the accompanying script <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>. See the script
 and tutorial for details.</p>
 </div>
-<p>Get demo data</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr.classes</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
-<span class="go">Uploading demo data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">daynoise</span><span class="o">.</span><span class="n">tr1</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">tr2</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trZ</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trP</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span>
-</pre></div>
-</div>
-</div></blockquote>
-<dl class="simple">
-<dt>“)</dt><dd><p>7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-7D.M08A..Z | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-&gt;&gt;&gt; daynoise.window
-7200.0
-&gt;&gt;&gt; daynoise.overlap
-0.3
-&gt;&gt;&gt; daynoise.key
-‘7D.M08A’
-&gt;&gt;&gt; daynoise.ncomp
-4
-&gt;&gt;&gt; daynoise.tf_list
-{‘ZP’: True, ‘Z1’: True, ‘Z2-1’: True, ‘ZP-21’: True, ‘ZH’: True, ‘ZP-H’: True}</p>
+<div class="section" id="daynoise">
+<h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="obstools.atacr.classes.DayNoise">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">DayNoise</code><span class="sig-paren">(</span><em class="sig-param">tr1=None</em>, <em class="sig-param">tr2=None</em>, <em class="sig-param">trZ=None</em>, <em class="sig-param">trP=None</em>, <em class="sig-param">window=None</em>, <em class="sig-param">overlap=None</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>A DayNoise object contains attributes that associate
+three-component raw (or deconvolved) traces, metadata information
+and window parameters. The available methods carry out the quality
+control steps and the average daily spectra for windows flagged as
+“good”.</p>
+<p class="rubric">Notes</p>
+<p>The object is initialized with <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> objects for
+H1, H2, HZ and P components. Traces can be empty if data are not available.
+Upon saving, those traces are discarded to save disk space.</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.window">
+<code class="sig-name descname">window</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of time window in seconds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.overlap">
+<code class="sig-name descname">overlap</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fraction of overlap between adjacent windows</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.key">
+<code class="sig-name descname">key</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Station key for current object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.dt">
+<code class="sig-name descname">dt</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampling distance in seconds. Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.npts">
+<code class="sig-name descname">npts</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.npts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of points in time series. Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.fs">
+<code class="sig-name descname">fs</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.fs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampling frequency (in Hz). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.year">
+<code class="sig-name descname">year</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Year for current object (obtained from UTCDateTime). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.julday">
+<code class="sig-name descname">julday</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.julday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Julian day for current object (obtained from UTCDateTime). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.ncomp">
+<code class="sig-name descname">ncomp</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.ncomp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of available components (either 2, 3 or 4). Obtained from non-empty <code class="docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.tf_list">
+<code class="sig-name descname">tf_list</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.tf_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of possible transfer functions given the available components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.goodwins">
+<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.goodwins" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of booleans representing whether a window is good (True) or not (False).
+This attribute is returned from the method <a class="reference internal" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="obstools.atacr.classes.DayNoise.QC_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_daily_spectra()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.power">
+<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for daily spectral power for all available components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.cross">
+<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.cross" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for daily cross spectral power for all available components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.rotation">
+<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for daily rotated (cross) spectral power for all available components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.DayNoise.f">
+<code class="sig-name descname">f</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Frequency axis for corresponding time sampling parameters. Determined from method
+<a class="reference internal" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="obstools.atacr.classes.DayNoise.average_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">average_daily_spectra()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>Get demo data as DayNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="go">Uploading demo data</span>
+</pre></div>
+</div>
+<p>Now check its main attributes</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">daynoise</span><span class="o">.</span><span class="n">tr1</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">tr2</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trZ</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trP</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
+<span class="go">7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
+<span class="go">7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
+<span class="go">7D.M08A..Z | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">window</span>
+<span class="go">7200.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">overlap</span>
+<span class="go">0.3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">key</span>
+<span class="go">&#39;7D.M08A&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">ncomp</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">tf_list</span>
+<span class="go">{&#39;ZP&#39;: True, &#39;Z1&#39;: True, &#39;Z2-1&#39;: True, &#39;ZP-21&#39;: True, &#39;ZH&#39;: True, &#39;ZP-H&#39;: True}</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="obstools.atacr.classes.DayNoise.QC_daily_spectra">
 <code class="sig-name descname">QC_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition">¶</a></dt>
@@ -377,8 +553,8 @@ transfer functions.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.atacr.classes.DayNoise.goodwins">
-<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.goodwins" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-name descname">goodwins</code></dt>
 <dd><p>List of booleans representing whether a window is good (True) or not (False)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -387,9 +563,9 @@ transfer functions.</p>
 </dl>
 </dd></dl>
 
-<p class="rubric">Example</p>
+<p class="rubric">Examples</p>
 <p>Perform QC on DayNoise object using default values and plot final figure</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr.classes</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -397,6 +573,7 @@ transfer functions.</p>
 <div class="figure align-center">
 <img alt="_images/Figure_3a.png" src="_images/Figure_3a.png" />
 </div>
+<p>Print out new attribute of DayNoise object</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">goodwins</span>
 <span class="go">array([False,  True,  True,  True,  True,  True,  True,  True, False,</span>
 <span class="go">   False,  True,  True,  True,  True,  True,  True], dtype=bool)</span>
@@ -422,8 +599,8 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.atacr.classes.DayNoise.f">
-<code class="sig-name descname">f</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.f" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-name descname">f</code></dt>
 <dd><p>Positive frequency axis for corresponding window parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -433,8 +610,8 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.atacr.classes.DayNoise.power">
-<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.power" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-name descname">power</code></dt>
 <dd><p>Container for the Power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -444,8 +621,8 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.atacr.classes.DayNoise.cross">
-<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.cross" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-name descname">cross</code></dt>
 <dd><p>Container for the Cross power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -455,8 +632,8 @@ the rotated horizontals in the transfer function calculations.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.atacr.classes.DayNoise.rotation">
-<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.atacr.classes.DayNoise.rotation" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-name descname">rotation</code></dt>
 <dd><p>Container for the Rotated power and cross spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -465,9 +642,9 @@ the rotated horizontals in the transfer function calculations.</p>
 </dl>
 </dd></dl>
 
-<p class="rubric">Example</p>
+<p class="rubric">Examples</p>
 <p>Average spectra for good windows using default values and plot final figure</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr.classes</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">(</span><span class="n">fig_average</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -476,6 +653,7 @@ the rotated horizontals in the transfer function calculations.</p>
 <div class="figure align-center">
 <img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
 </div>
+<p>Print out new attribute(s) of DayNoise object - only Power</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">power</span>
 <span class="go">&lt;obstools.atacr.classes.Power object at 0x12e353860&gt;</span>
 </pre></div>
@@ -491,13 +669,20 @@ the rotated horizontals in the transfer function calculations.</p>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr.classes</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<p class="rubric">Examples</p>
+<p>Run demo through all methods</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;daynoise_demo.pkl&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+</pre></div>
+</div>
+<p>Save object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;daynoise_demo.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that it has been saved</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./daynoise_demo.pkl&quot;</span><span class="p">)</span>
 <span class="go">[&#39;./daynoise_demo.pkl&#39;]</span>
 </pre></div>
@@ -515,14 +700,12 @@ the rotated horizontals in the transfer function calculations.</p>
 <dd><p>A StaNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>The object is initialized with <a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a>,
 <a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a> and <a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a>
 objects. Each individual spectral quantity is unpacked as an object attribute,
 but all of them are discarded as the object is saved to disk and new container objects
 are defined and saved.</p>
-</div>
 <dl class="attribute">
 <dt id="obstools.atacr.classes.StaNoise.f">
 <code class="sig-name descname">f</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.f" title="Permalink to this definition">¶</a></dt>
@@ -711,14 +894,12 @@ long-term transfer functions.</p>
 <em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">TFNoise</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">tf_list</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>A TFNoise object contains attributes that store the transfer function information
 from multiple components (and component combinations).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>The object is initialized with <a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a>,
 <a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a> and <a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a>
 objects. Each individual spectral quantity is unpacked as an object attribute,
 but all of them are discarded as the object is saved to disk and new container objects
 are defined and saved.</p>
-</div>
 <dl class="attribute">
 <dt id="obstools.atacr.classes.TFNoise.f">
 <code class="sig-name descname">f</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.f" title="Permalink to this definition">¶</a></dt>
@@ -797,12 +978,10 @@ component combinations) from the averaged (daily or station-averaged) noise spec
 <dd><p>An EventStream object contains attributes that store station-event metadata and
 methods for applying the transfer functions to the various components and produce
 corrected/cleaned vertical components.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>An <code class="docutils literal notranslate"><span class="pre">EventStream</span></code> object is defined as the data (<code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> object)
 are read from file or downloaded from an <code class="docutils literal notranslate"><span class="pre">obspy</span></code> Client. Based on the available
 components, a list of possible corrections is determined automatically.</p>
-</div>
 <dl class="attribute">
 <dt id="obstools.atacr.classes.EventStream.sta">
 <code class="sig-name descname">sta</code><a class="headerlink" href="#obstools.atacr.classes.EventStream.sta" title="Permalink to this definition">¶</a></dt>
@@ -1008,8 +1187,8 @@ component combinations) to produce corrected/cleaned vertical components.</p>
 
 </div>
 </div>
-<div class="section" id="utility-classes">
-<h3>Utility Classes<a class="headerlink" href="#utility-classes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="container-classes">
+<h3>Container Classes<a class="headerlink" href="#container-classes" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="power">
 <h4>Power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
@@ -1260,8 +1439,11 @@ of the analysis at various final and intermediate steps.</p>
 </div>
 <div class="section" id="scripts">
 <h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
-<p>There are several Python scripts that accompany this package. Those relevant
-to the module <code class="docutils literal notranslate"><span class="pre">atacr</span></code> are called:</p>
+<p>There are several Python scripts that accompany <code class="docutils literal notranslate"><span class="pre">~obstools.atacr</span></code>. These can be used
+in bash scripts to automate data analysis. These include scripts to download noise and
+event data, and perform tilt and compliance noise removal using either the default
+program values or by refining parameters. All of them use a data base provided as a
+<code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary. These scripts are:</p>
 <ul class="simple">
 <li><p>atacr_download_data.py</p></li>
 <li><p>atacr_download_event.py</p></li>
@@ -1886,7 +2068,7 @@ created folder called <code class="docutils literal notranslate"><span class="pr
 we can re-run the above script but now use the plotting options to look
 at one day of the month (March 04, 2012). In this case we need to over-write the
 previous results (option <code class="docutils literal notranslate"><span class="pre">-O</span></code>) and specify the date of interest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -O --figQC --figAverage --debug --start=2012-03-04 --end=2012-03-05 M08A.pkl &gt; logfile
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -O --figQC --figAverage --start=2012-03-04 --end=2012-03-05 M08A.pkl &gt; logfile
 </pre></div>
 </div>
 <p>The script will produce several figures, including Figures 2 and 3 (separated
