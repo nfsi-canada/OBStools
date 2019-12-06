@@ -1307,6 +1307,7 @@ class TFNoise(object):
         >>> daynoise.average_daily_spectra()
         >>> tfnoise = TFNoise(daynoise)
         >>> tfnoise.transfer_func()
+        >>> tfnoise.transfunc.keys()
         dict_keys(['ZP', 'Z1', 'Z2-1', 'ZP-21', 'ZH', 'ZP-H'])
 
         Calculate transfer functions for a StaNoise object
