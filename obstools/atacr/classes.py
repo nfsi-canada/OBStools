@@ -202,10 +202,10 @@ class DayNoise(object):
 
         # Load example data if initializing empty object
         if all(value == None for value in [tr1, tr2, trZ, trP]):
-            print("Uploading demo data")
+            print("Uploading demo data - March 04, 2012, station 7D.M08A")
             import os
-            st = read(os.path.join(os.path.dirname(__file__), "../examples/data/2012March04", \
-                "*.SAC"))
+            st = read(os.path.join(os.path.dirname(__file__), "../examples/data", \
+                "2012.064*.SAC"))
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
@@ -248,6 +248,8 @@ class DayNoise(object):
         else:
             self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
 
+        self.QC = False
+        self.av = False
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False):
         """
@@ -482,6 +484,7 @@ class DayNoise(object):
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
             plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
 
+        self.QC = True
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False, fig_coh_ph=False, debug=False):
         """
@@ -597,6 +600,7 @@ class DayNoise(object):
         else:
             self.rotation = Rotation()
 
+        self.av = True
 
     def save(self, filename):
         """
@@ -628,6 +632,9 @@ class DayNoise(object):
         ['./daynoise_demo.pkl']
 
         """
+
+        if not self.QC and not self.av:
+            print("Warning: Daynoise objects have not been processed before saving")
 
         # Remove original traces to save disk space
         del self.tr1 
@@ -677,33 +684,103 @@ class StaNoise(object):
         This attribute is returned from the method :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra`
 
     """
-    def __init__(self, power, cross, rotation, f, nwins, ncomp, key):
+    def __init__(self, daylist=None):
 
-        if all(value == None for value in power.values()):
-            raise(Exception("Container Power is empty - aborting"))
-        if all(value == None for value in cross.values()):
-            raise(Exception("Container Cross is empty - aborting"))
+        def _load_dn(day):
+            import os
+            st = read(os.path.join(os.path.dirname(__file__), "../examples/data", \
+                "2012."+day+"*.SAC"))
+            tr1 = st.select(component='1')[0]
+            tr2 = st.select(component='2')[0]
+            trZ = st.select(component='Z')[0]
+            trP = st.select(component='P')[0]
+            window = 7200.
+            overlap = 0.3
+            key = '7D.M08A'
+            return DayNoise(tr1, tr2, trZ, trP, window, overlap, key)
 
-        # Unbox the container attributes
-        self.c11 = power.c11.T
-        self.c22 = power.c22.T
-        self.cZZ = power.cZZ.T
-        self.cPP = power.cPP.T
-        self.c12 = cross.c12.T
-        self.c1Z = cross.c1Z.T
-        self.c1P = cross.c1P.T
-        self.c2Z = cross.c2Z.T
-        self.c2P = cross.c2P.T
-        self.cZP = cross.cZP.T
-        self.cHH = rotation.cHH.T
-        self.cHZ = rotation.cHZ.T
-        self.cHP = rotation.cHP.T
-        self.tilt = rotation.tilt
+        self.daylist = []
+        self.initialized = False
 
-        self.f = f
-        self.nwins = nwins
-        self.key = key
-        self.ncomp = ncomp
+        if isinstance(daylist, DayNoise):
+            daylist = [daylist]
+        elif daylist=='demo':
+            self.daylist = [_load_dn('061'), _load_dn('062'), _load_dn('063'), _load_dn('064')]
+        if not daylist=='demo' and daylist:
+            self.daylist.extend(daylist)
+
+    def __add__(self, other):
+
+        if isinstance(other, DayNoise):
+            other = StaNoise([other])
+        if not isinstance(other, StaNoise):
+            raise TypeError
+        daylist = self.daylist + other.daylist
+        return self.__class__(daylist=daylist)
+
+    def __iter__(self):
+
+        return List(self.daylist).__iter__()
+
+    def append(self, daynoise):
+
+        if isinstance(daynoise, DayNoise):
+            self.daylist.append(daynoise)
+        else:
+            msg = 'Append only supports a single DayNoise object as argument'
+            raise TypeError(msg)
+
+        return self
+    
+    def extend(self, daynoise_list):
+
+        if isinstance(daynoise_list, list):
+            for _i in daynoise_list:
+                # Make sure each item in the list is a Grid object.
+                if not isinstance(_i, DayNoise):
+                    msg = 'Extend only accepts a list of Daynoise objects.'
+                    raise TypeError(msg)
+            self.grids.extend(daynoise_list)
+        elif isinstance(daynoise_list, StaNoise):
+            self.grids.extend(daynoise_list.daylist)
+        else:
+            msg = 'Extend only supports a list of DayNoise objects as argument.'
+            raise TypeError(msg)
+        return self
+
+    def init(self):
+
+        # First, check that the StaNoise object contains at least two DayNoise objects
+        if len(self.daylist)<2:
+            raise(Exception("StaNoise requires at least two DayNoise objects to execute its methods"))
+
+        for dn in self.daylist:
+            if not dn.QC:
+                print("Processing daily spectra for DayNoise object in StaNoise")
+                dn.QC_daily_spectra()
+            if not dn.av:
+                print("Averaging daily spectra for DayNoise object in StaNoise")
+                dn.average_daily_spectra()
+
+        # Then unpack the DayNoise objects
+        self.c11 = np.array([dn.power.c11 for dn in self.daylist])
+        self.c22 = np.array([dn.power.c22 for dn in self.daylist])
+        self.cZZ = np.array([dn.power.cZZ for dn in self.daylist])
+        self.cPP = np.array([dn.power.cPP for dn in self.daylist])
+        self.c12 = np.array([dn.cross.c12 for dn in self.daylist])
+        self.c1Z = np.array([dn.cross.c1Z for dn in self.daylist])
+        self.c1P = np.array([dn.cross.c1P for dn in self.daylist])
+        self.c2Z = np.array([dn.cross.c2Z for dn in self.daylist])
+        self.c2P = np.array([dn.cross.c2P for dn in self.daylist])
+        self.cZP = np.array([dn.cross.cZP for dn in self.daylist])
+        self.cHH = np.array([dn.rotation.cHH for dn in self.daylist])
+        self.cHZ = np.array([dn.rotation.cHZ for dn in self.daylist])
+        self.cHP = np.array([dn.rotation.cHP for dn in self.daylist])
+        self.tilt = self.daylist[0].rotation.tilt
+        self.f = self.daylist[0].f
+        self.nwins = [np.sum(dn.goodwins) for dn in self.daylist]
+        self.ncomp = np.min([dn.ncomp for dn in self.daylist])
+        self.key = self.daylist[0].key
 
         # Build list of available transfer functions for future use
         if self.ncomp==2:
@@ -712,6 +789,11 @@ class StaNoise(object):
             self.tf_list = {'ZP': False, 'Z1':True, 'Z2-1':True, 'ZP-21':False, 'ZH':False, 'ZP-H':False}
         else:
             self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
+
+        self.initialized = True
+
+        # Remove DayNoise objects from memory
+        del self.daylist
 
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False):
@@ -739,6 +821,12 @@ class StaNoise(object):
             List of booleans representing whether a window is good (True) or not (False)
 
         """
+
+        if self.initialized:
+            raise(Exception("Object has been initialized already - "+\
+                "list of DayNoise objects has been lost and method cannot proceed"))
+        else:
+            self.init()
 
         # Select bandpass frequencies
         ff = (self.f>pd[0]) & (self.f<pd[1])
