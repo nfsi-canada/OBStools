@@ -838,7 +838,6 @@ class StaNoise(object):
         AttributeError                            Traceback (most recent call last)
         <ipython-input-4-a292a91450a9> in <module>
         ----> 1 stanoise.daylist
-
         AttributeError: 'StaNoise' object has no attribute 'daylist'      
         >>> stanoise.__dict__.keys()
         dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P', 
@@ -1227,7 +1226,6 @@ class TFNoise(object):
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "/Users/pascalaudet/Softwares/Python/Projects/dev/OBStools/obstools/atacr/classes.py", line 1215, in __init__
-     
     Exception: Error: Noise object has not been processed (QC and averaging) - aborting
 
     Now re-initialized with a processed DayNoise object
@@ -1246,7 +1244,7 @@ class TFNoise(object):
     Uploading demo data - March 01 to 04, 2012, station 7D.M08A
     >>> stanoise.QC_sta_spectra()
     >>> stanoise.average_sta_spectra()
-    >>> tfnoise = TFNoise(daynoise)
+    >>> tfnoise = TFNoise(stanoise)
 
     """
 
