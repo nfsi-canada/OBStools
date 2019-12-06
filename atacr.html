@@ -910,13 +910,13 @@ been called.</p>
 <span class="go">AttributeError                            Traceback (most recent call last)</span>
 <span class="go">&lt;ipython-input-4-a292a91450a9&gt; in &lt;module&gt;</span>
 <span class="go">----&gt; 1 stanoise.daylist</span>
+<span class="go">AttributeError: &#39;StaNoise&#39; object has no attribute &#39;daylist&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;initialized&#39;, &#39;c11&#39;, &#39;c22&#39;, &#39;cZZ&#39;, &#39;cPP&#39;, &#39;c12&#39;, &#39;c1Z&#39;, &#39;c1P&#39;,</span>
+<span class="go">&#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;direc&#39;, &#39;tilt&#39;, &#39;f&#39;, &#39;nwins&#39;,</span>
+<span class="go">&#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
 </pre></div>
 </div>
-<p>AttributeError: ‘StaNoise’ object has no attribute ‘daylist’
-&gt;&gt;&gt; stanoise.__dict__.keys()
-dict_keys([‘initialized’, ‘c11’, ‘c22’, ‘cZZ’, ‘cPP’, ‘c12’, ‘c1Z’, ‘c1P’,
-‘c2Z’, ‘c2P’, ‘cZP’, ‘cHH’, ‘cHZ’, ‘cHP’, ‘direc’, ‘tilt’, ‘f’, ‘nwins’,
-‘ncomp’, ‘key’, ‘tf_list’, ‘QC’, ‘av’])</p>
 </dd></dl>
 
 <dl class="method">
@@ -1116,9 +1116,9 @@ processed for QC and averaging, otherwise the TFNoise object will not initialize
 <span class="gt">Traceback (most recent call last):</span>
   File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
   File <span class="nb">&quot;/Users/pascalaudet/Softwares/Python/Projects/dev/OBStools/obstools/atacr/classes.py&quot;</span>, line <span class="m">1215</span>, in <span class="n">__init__</span>
+<span class="gr">Exception</span>: <span class="n">Error: Noise object has not been processed (QC and averaging) - aborting</span>
 </pre></div>
 </div>
-<p>Exception: Error: Noise object has not been processed (QC and averaging) - aborting</p>
 <p>Now re-initialized with a processed DayNoise object</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
@@ -1134,7 +1134,7 @@ processed for QC and averaging, otherwise the TFNoise object will not initialize
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">stanoise</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="class">
