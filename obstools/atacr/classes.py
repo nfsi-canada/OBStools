@@ -175,7 +175,7 @@ class DayNoise(object):
     Get demo data as DayNoise object
 
     >>> from obstools.atacr import DayNoise
-    >>> daynoise = DayNoise()
+    >>> daynoise = DayNoise('demo')
     Uploading demo data - March 04, 2012, station 7D.M08A
 
     Now check its main attributes
@@ -201,7 +201,7 @@ class DayNoise(object):
         overlap=None, key=None):
 
         # Load example data if initializing empty object
-        if all(value == None for value in [tr1, tr2, trZ, trP]):
+        if tr1=='demo' or tr1=='Demo':
             print("Uploading demo data - March 04, 2012, station 7D.M08A")
             import os
             st = read(os.path.join(os.path.dirname(__file__), "../examples/data", \
@@ -283,7 +283,7 @@ class DayNoise(object):
         Perform QC on DayNoise object using default values and plot final figure
 
         >>> from obstools.atacr import DayNoise
-        >>> daynoise = DayNoise()
+        >>> daynoise = DayNoise('demo')
         Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra(fig_QC=True)
 
@@ -522,7 +522,7 @@ class DayNoise(object):
         Average spectra for good windows using default values and plot final figure
 
         >>> from obstools.atacr import DayNoise
-        >>> daynoise = DayNoise()
+        >>> daynoise = DayNoise('demo')
         Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra(fig_average=True)
@@ -623,7 +623,7 @@ class DayNoise(object):
         Run demo through all methods
 
         >>> from obstools.atacr import DayNoise
-        >>> daynoise = DayNoise()
+        >>> daynoise = DayNoise('demo')
         Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra()
@@ -689,7 +689,7 @@ class StaNoise(object):
     Initialize with DayNoise object
 
     >>> from obstools.atacr import DayNoise
-    >>> daynoise = DayNoise()
+    >>> daynoise = DayNoise('demo')
     Uploading demo data - March 04, 2012, station 7D.M08A
     >>> stanoise = StaNoise(daylist=[daynoise])
 
@@ -697,6 +697,7 @@ class StaNoise(object):
 
     >>> stanoise = StaNoise()
     >>> stanoise += daynoise
+
     >>> stanoise = StaNoise()
     >>> stanoise.append(daynoise)
 
@@ -734,7 +735,7 @@ class StaNoise(object):
 
         if isinstance(daylist, DayNoise):
             daylist = [daylist]
-        elif daylist=='demo':
+        elif daylist=='demo' or daylist=='Demo':
             print("Uploading demo data - March 01 to 04, 2012, station 7D.M08A")
             self.daylist = [_load_dn('061'), _load_dn('062'), _load_dn('063'), _load_dn('064')]
         if not daylist=='demo' and daylist:
