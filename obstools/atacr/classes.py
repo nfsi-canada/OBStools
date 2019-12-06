@@ -176,7 +176,7 @@ class DayNoise(object):
 
     >>> from obstools.atacr import DayNoise
     >>> daynoise = DayNoise()
-    Uploading demo data
+    Uploading demo data - March 04, 2012, station 7D.M08A
 
     Now check its main attributes
 
@@ -284,6 +284,7 @@ class DayNoise(object):
 
         >>> from obstools.atacr import DayNoise
         >>> daynoise = DayNoise()
+        Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra(fig_QC=True)
 
         .. figure:: ../obstools/examples/figures/Figure_3a.png
@@ -522,6 +523,7 @@ class DayNoise(object):
 
         >>> from obstools.atacr import DayNoise
         >>> daynoise = DayNoise()
+        Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra(fig_average=True)
 
@@ -534,6 +536,10 @@ class DayNoise(object):
         <obstools.atacr.classes.Power object at 0x12e353860>
 
         """
+
+        if not self.QC:
+            print("Warning: processing daynoise object for QC_daily_spectra using default values")
+            self.QC_daily_spectra()
 
         # Points in window
         ws = int(self.window/self.dt)
@@ -618,6 +624,7 @@ class DayNoise(object):
 
         >>> from obstools.atacr import DayNoise
         >>> daynoise = DayNoise()
+        Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra()
 
@@ -655,33 +662,56 @@ class StaNoise(object):
 
     Notes
     -----
-    The object is initialized with :class:`~obstools.atacr.classes.Power`,
-    :class:`~obstools.atacr.classes.Cross` and :class:`~obstools.atacr.classes.Rotation` 
-    objects. Each individual spectral quantity is unpacked as an object attribute, 
-    but all of them are discarded as the object is saved to disk and new container objects
+    The object is initially a container for :class:`~obstools.atacr.classes.DayNoise` 
+    objects. Once the StaNoise object is initialized (using the method `init()` or by calling
+    the `QC_sta_spectra` method), each individual spectral quantity is unpacked as an object 
+    attribute and the original `DayNoise` objects are removed from memory. In addition,
+    all spectral quantities associated with the original `DayNoise` objects (now stored as
+    attributes) are discarded as the object is saved to disk and new container objects
     are defined and saved.
 
     Attributes
     ----------
-    f : :class:`~numpy.ndarray`
-        Frequency axis for corresponding time sampling parameters
-    nwins : int
-        Number of good windows from the :class:`~obstools.atacr.classes.DayNoise` object
-    key : str
-        Station key for current object
-    ncomp : int
-        Number of available components (either 2, 3 or 4)
-    tf_list : Dict
-        Dictionary of possible transfer functions given the available components. 
-    power : :class:`~obstools.atacr.classes.Power`
-        Container for station-averaged spectral power for all available components
-    cross :
-        Container for station-averaged cross spectral power for all available components
-    rotation :
-        Container for station-averaged rotated (cross) spectral power for all available components
-    gooddays : list 
-        List of booleans representing whether a day is good (True) or not (False). 
-        This attribute is returned from the method :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra`
+    daylist : list
+        A list of :class:`~obstools.atacr.classes.DayNoise` objects to process and produce
+        a station average
+    initialized : bool
+        Whether or not the object has been initialized - `False` unless one of the methods have
+        been called. When `True`, the `daylist` attribute is deleted from memory
+
+    Examples
+    --------
+    Initialize empty object
+
+    >>> from obstools.atacr import StaNoise
+    >>> stanoise = StaNoise()
+
+    Initialize with DayNoise object
+
+    >>> from obstools.atacr import DayNoise
+    >>> daynoise = DayNoise()
+    Uploading demo data - March 04, 2012, station 7D.M08A
+    >>> stanoise = StaNoise(daylist=[daynoise])
+
+    Add or append DayNoise object to StaNoise
+
+    >>> stanoise = StaNoise()
+    >>> stanoise += daynoise
+    >>> stanoise = StaNoise()
+    >>> stanoise.append(daynoise)
+
+    Import demo data with 4 DayNoise objects
+
+    >>> from obstools.atacr import StaNoise
+    >>> stanoise = StaNoise('demo')
+    Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+    >>> stanoise.daylist
+    [<obstools.atacr.classes.DayNoise at 0x11e3ce8d0>,
+     <obstools.atacr.classes.DayNoise at 0x121c7ae10>,
+     <obstools.atacr.classes.DayNoise at 0x121ca5940>,
+     <obstools.atacr.classes.DayNoise at 0x121e7dd30>]
+     >>> sta.initialized
+     False
 
     """
     def __init__(self, daylist=None):
@@ -705,6 +735,7 @@ class StaNoise(object):
         if isinstance(daylist, DayNoise):
             daylist = [daylist]
         elif daylist=='demo':
+            print("Uploading demo data - March 01 to 04, 2012, station 7D.M08A")
             self.daylist = [_load_dn('061'), _load_dn('062'), _load_dn('063'), _load_dn('064')]
         if not daylist=='demo' and daylist:
             self.daylist.extend(daylist)
@@ -729,7 +760,6 @@ class StaNoise(object):
         else:
             msg = 'Append only supports a single DayNoise object as argument'
             raise TypeError(msg)
-
         return self
     
     def extend(self, daynoise_list):
@@ -749,6 +779,65 @@ class StaNoise(object):
         return self
 
     def init(self):
+        """
+        Method to initialize the `StaNoise` object. This method is used to unpack the 
+        spectral quantities from the original :class:`~obstools.atacr.classes.DayNoise` objects
+        and allow the methods to proceed. The original :class:`~obstools.atacr.classes.DayNoise` 
+        objects are deleted from memory during this process. 
+
+        Notes
+        -----
+        If the original :class:`~obstools.atacr.classes.DayNoise` objects have not been processed
+        using their QC and averaging methods, these will be called first before unpacking into 
+        the object attributes.
+
+        Attributes
+        ----------
+        f : :class:`~numpy.ndarray`
+            Frequency axis for corresponding time sampling parameters
+        nwins : int
+            Number of good windows from the :class:`~obstools.atacr.classes.DayNoise` object
+        key : str
+            Station key for current object
+        ncomp : int
+            Number of available components (either 2, 3 or 4)
+        tf_list : Dict
+            Dictionary of possible transfer functions given the available components. 
+        c11 : `numpy.ndarray`
+            Power spectra for component `H1`. Other identical attributes are available for
+            the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]
+        direc : `numpy.ndarray`
+            Array of azimuths used in determining the tilt direction
+        tilt : float
+            Tile direction from maximum coherence between rotated `H1` and `HZ` components
+        QC : bool
+            Whether or not the method :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra` has
+            been called.
+        av : bool
+            Whether or not the method :func:`~obstools.atacr.classes.StaNoise.average_sta_spectra` has
+            been called.
+
+        Examples
+        --------
+
+        Initialize demo data 
+
+        >>> from obstools.atacr import StaNoise
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+        >>> stanoise.init()
+
+        Check that `daylist` attribute has been deleted
+
+        >>> stanoise.daylist
+        ---------------------------------------------------------------------------
+        AttributeError                            Traceback (most recent call last)
+        <ipython-input-4-a292a91450a9> in <module>
+        ----> 1 stanoise.daylist
+
+        AttributeError: 'StaNoise' object has no attribute 'daylist'        
+
+        """
 
         # First, check that the StaNoise object contains at least two DayNoise objects
         if len(self.daylist)<2:
@@ -756,29 +845,32 @@ class StaNoise(object):
 
         for dn in self.daylist:
             if not dn.QC:
-                print("Processing daily spectra for DayNoise object in StaNoise")
+                # print("Warning: Processing daily spectra for key "+dn.key+" and date "+str(dn.year)+\
+                    # '.'+str(dn.julday)+' using default values')
                 dn.QC_daily_spectra()
             if not dn.av:
-                print("Averaging daily spectra for DayNoise object in StaNoise")
+                # print("Warning: Averaging daily spectra for key "+dn.key+" and date "+str(dn.year)+\
+                #     '.'+str(dn.julday)+' using default values')
                 dn.average_daily_spectra()
 
         # Then unpack the DayNoise objects
-        self.c11 = np.array([dn.power.c11 for dn in self.daylist])
-        self.c22 = np.array([dn.power.c22 for dn in self.daylist])
-        self.cZZ = np.array([dn.power.cZZ for dn in self.daylist])
-        self.cPP = np.array([dn.power.cPP for dn in self.daylist])
-        self.c12 = np.array([dn.cross.c12 for dn in self.daylist])
-        self.c1Z = np.array([dn.cross.c1Z for dn in self.daylist])
-        self.c1P = np.array([dn.cross.c1P for dn in self.daylist])
-        self.c2Z = np.array([dn.cross.c2Z for dn in self.daylist])
-        self.c2P = np.array([dn.cross.c2P for dn in self.daylist])
-        self.cZP = np.array([dn.cross.cZP for dn in self.daylist])
-        self.cHH = np.array([dn.rotation.cHH for dn in self.daylist])
-        self.cHZ = np.array([dn.rotation.cHZ for dn in self.daylist])
-        self.cHP = np.array([dn.rotation.cHP for dn in self.daylist])
+        self.c11 = np.array([dn.power.c11 for dn in self.daylist]).T
+        self.c22 = np.array([dn.power.c22 for dn in self.daylist]).T
+        self.cZZ = np.array([dn.power.cZZ for dn in self.daylist]).T
+        self.cPP = np.array([dn.power.cPP for dn in self.daylist]).T
+        self.c12 = np.array([dn.cross.c12 for dn in self.daylist]).T
+        self.c1Z = np.array([dn.cross.c1Z for dn in self.daylist]).T
+        self.c1P = np.array([dn.cross.c1P for dn in self.daylist]).T
+        self.c2Z = np.array([dn.cross.c2Z for dn in self.daylist]).T
+        self.c2P = np.array([dn.cross.c2P for dn in self.daylist]).T
+        self.cZP = np.array([dn.cross.cZP for dn in self.daylist]).T
+        self.cHH = np.array([dn.rotation.cHH for dn in self.daylist]).T
+        self.cHZ = np.array([dn.rotation.cHZ for dn in self.daylist]).T
+        self.cHP = np.array([dn.rotation.cHP for dn in self.daylist]).T
+        self.direc = self.daylist[0].rotation.direc
         self.tilt = self.daylist[0].rotation.tilt
         self.f = self.daylist[0].f
-        self.nwins = [np.sum(dn.goodwins) for dn in self.daylist]
+        self.nwins = np.array([np.sum(dn.goodwins) for dn in self.daylist])
         self.ncomp = np.min([dn.ncomp for dn in self.daylist])
         self.key = self.daylist[0].key
 
@@ -791,6 +883,8 @@ class StaNoise(object):
             self.tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':False, 'ZP-H':False}
 
         self.initialized = True
+        self.QC = False
+        self.av = False
 
         # Remove DayNoise objects from memory
         del self.daylist
@@ -817,8 +911,19 @@ class StaNoise(object):
 
         Attributes
         ----------
-        goodwins : list 
-            List of booleans representing whether a window is good (True) or not (False)
+        gooddays : list 
+            List of booleans representing whether a day is good (True) or not (False)
+
+        Examples
+        --------
+        Import demo data, call method and generate final figure
+
+        >>> obstools.atacr import StaNoise
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+        >>> stanoise.QC_sta_spectra(fig_QC=True)
+        >>> stanoise.QC
+        True
 
         """
 
@@ -915,6 +1020,7 @@ class StaNoise(object):
             kill = penalty > tol*np.std(penalty)
             if np.sum(kill)==0: 
                 self.gooddays = gooddays
+                self.QC = True
                 moveon = True
                 if fig_QC:
                     power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
@@ -931,13 +1037,15 @@ class StaNoise(object):
                 moveon = True
 
         self.gooddays = gooddays
+        self.QC = True
 
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
             plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key)
 
+
     def average_sta_spectra(self, fig_average=False, debug=False):
-        """
+        r"""
         Method to average the daily station spectra for good windows.
 
         Parameters
@@ -956,7 +1064,21 @@ class StaNoise(object):
         rotation : :class:`~obstools.atacr.classes.Cross`, optional
             Container for the Rotated power and cross spectra
 
+        Examples
+        --------
+        Average daily spectra for good days using default values and produce final figure
+
+        >>> obstools.atacr import StaNoise
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+        >>> stanoise.QC_sta_spectra()
+        >>> stanoise.average_sta_spectra()
+
         """
+
+        if not self.QC:
+            print("Warning: processing stanoise object for QC_sta_spectra using default values")
+            self.QC_sta_spectra()
 
         # Power spectra
         c11 = None; c22 = None; cZZ = None; cPP = None
@@ -1005,6 +1127,7 @@ class StaNoise(object):
         if fig_average:
             plot.fig_average(self.f, self.power, bad, self.gooddays, self.ncomp, key=self.key)
 
+        self.av = True
 
     def save(self, filename):
         """
@@ -1014,6 +1137,28 @@ class StaNoise(object):
         ----------
         filename : str
             File name 
+
+        Examples
+        --------
+
+        Run demo through all methods
+
+        >>> from obstools.atacr import StaNoise
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 04, 2012, station 7D.M08A
+        >>> stanoise.QC_sta_spectra()
+        >>> stanoise.average_sta_spectra()
+
+        Save object
+
+        >>> stanoise.save('stanoise_demo.pkl')
+
+        Check that it has been saved
+
+        >>> import glob
+        >>> glob.glob("./stanoise_demo.pkl")
+        ['./stanoise_demo.pkl']
+
 
         """
 

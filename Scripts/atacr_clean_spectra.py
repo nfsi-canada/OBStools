@@ -192,9 +192,6 @@ def main():
                 continue
 
         # Containers for power and cross spectra
-        c11_all = []; c22_all = []; cZZ_all = []; cPP_all = []
-        c12_all = []; c1Z_all = []; c1P_all = []; c2Z_all = []; c2P_all = []; cZP_all = []
-        cHH_all = []; cHZ_all = []; cHP_all = []
         coh_all = []; ph_all = []
         coh_12_all = []; coh_1Z_all = []; coh_1P_all = []; coh_2Z_all = []; coh_2P_all = []; coh_ZP_all = []
         ph_12_all = []; ph_1Z_all = []; ph_1P_all = []; ph_2Z_all = []; ph_2P_all = []; ph_ZP_all = []
@@ -202,6 +199,9 @@ def main():
         nwins = []
 
         t1 = tstart
+
+        # Initialize StaNoise object
+        stanoise = StaNoise()
 
         # Loop through each day withing time range
         while t1 < tend:
@@ -221,42 +221,11 @@ def main():
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()
+                stanoise += daynoise
             else:
                 t1 += 3600.*24.
                 continue
 
-            # Frequency axis
-            f = daynoise.f
-            nwins.append(np.sum(daynoise.goodwins))
-
-            # Number of components
-            ncomp = daynoise.ncomp
-
-            if opts.fig_coh_ph:
-                try:
-                    # Directions array
-                    direc = daynoise.rotation.direc
-                except:
-                    pass
-
-            # Power spectra
-            cZZ_all.append(daynoise.power.cZZ)
-            c11_all.append(daynoise.power.c11)
-            c22_all.append(daynoise.power.c22)
-            cPP_all.append(daynoise.power.cPP)
-
-            # Cross spectra
-            c12_all.append(daynoise.cross.c12)
-            c1Z_all.append(daynoise.cross.c1Z)
-            c1P_all.append(daynoise.cross.c1P)
-            c2Z_all.append(daynoise.cross.c2Z)
-            c2P_all.append(daynoise.cross.c2P)
-            cZP_all.append(daynoise.cross.cZP)
-
-            # Rotated spectra
-            cHH_all.append(daynoise.rotation.cHH)
-            cHZ_all.append(daynoise.rotation.cHZ)
-            cHP_all.append(daynoise.rotation.cHP)
             coh_all.append(daynoise.rotation.coh)
             ph_all.append(daynoise.rotation.ph)
 
@@ -305,10 +274,6 @@ def main():
             t1 += 3600.*24.
 
         # Convert to numpy arrays
-        c11_all = np.array(c11_all); c22_all = np.array(c22_all); cZZ_all = np.array(cZZ_all); cPP_all = np.array(cPP_all)
-        c12_all = np.array(c12_all); c1Z_all = np.array(c1Z_all); c1P_all = np.array(c1P_all); c2Z_all = np.array(c2Z_all)
-        c2P_all = np.array(c2P_all); cZP_all = np.array(cZP_all)
-        cHH_all = np.array(cHH_all); cHZ_all = np.array(cHZ_all); cHP_all = np.array(cHP_all)
         coh_all = np.array(coh_all); ph_all = np.array(ph_all)
         coh_12_all = np.array(coh_12_all); coh_1Z_all = np.array(coh_1Z_all); coh_1P_all = np.array(coh_1P_all); coh_2Z_all = np.array(coh_2Z_all)
         coh_2P_all = np.array(coh_2P_all); coh_ZP_all = np.array(coh_ZP_all)
@@ -316,16 +281,6 @@ def main():
         ph_2P_all = np.array(ph_2P_all); ph_ZP_all = np.array(ph_ZP_all)
         ad_12_all = np.array(ad_12_all); ad_1Z_all = np.array(ad_1Z_all); ad_1P_all = np.array(ad_1P_all); ad_2Z_all = np.array(ad_2Z_all)
         ad_2P_all = np.array(ad_2P_all); ad_ZP_all = np.array(ad_ZP_all)
-
-        nwins = np.array(nwins)
-
-        # Store spectra as objects
-        power = Power(c11_all, c22_all, cZZ_all, cPP_all)
-        cross = Cross(c12_all, c1Z_all, c1P_all, c2Z_all, c2P_all, cZP_all)
-        rotation = Rotation(cHH_all, cHZ_all, cHP_all)
-
-        # Initialize StaNoise object
-        stanoise = StaNoise(power, cross, rotation, f, nwins, ncomp, key=stkey)
 
         # Store transfer functions as objects for plotting
         coh = Cross(coh_12_all, coh_1Z_all, coh_1P_all, coh_2Z_all, coh_2P_all, coh_ZP_all)
@@ -344,8 +299,8 @@ def main():
             plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', ncomp, key=stkey, lw=0.5)
             plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', ncomp, key=stkey, marker=',', lw=0)
 
-        if opts.fig_coh_ph:
-            plot.fig_coh_ph(coh_all, ph_all, direc)
+        if opts.fig_coh_ph and stanoise.direc:
+            plot.fig_coh_ph(coh_all, ph_all, stanoise.direc)
 
         # Save to file
         stanoise.save(fileavst)
