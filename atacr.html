@@ -332,7 +332,7 @@ and tutorial for details.</p>
 <h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="obstools.atacr.classes.DayNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">DayNoise</code><span class="sig-paren">(</span><em class="sig-param">tr1=None</em>, <em class="sig-param">tr2=None</em>, <em class="sig-param">trZ=None</em>, <em class="sig-param">trP=None</em>, <em class="sig-param">window=None</em>, <em class="sig-param">overlap=None</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">DayNoise</code><span class="sig-paren">(</span><em class="sig-param">tr1=None</em>, <em class="sig-param">tr2=None</em>, <em class="sig-param">trZ=None</em>, <em class="sig-param">trP=None</em>, <em class="sig-param">window=7200.0</em>, <em class="sig-param">overlap=0.3</em>, <em class="sig-param">key=''</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>A DayNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters. The available methods carry out the quality
@@ -510,9 +510,9 @@ This attribute is returned from the method <a class="reference internal" href="#
 </dd></dl>
 
 <p class="rubric">Examples</p>
-<p>Get demo data as DayNoise object</p>
+<p>Get demo noise data as DayNoise object</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 </pre></div>
 </div>
@@ -566,7 +566,7 @@ transfer functions.</p>
 <p class="rubric">Examples</p>
 <p>Perform QC on DayNoise object using default values and plot final figure</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -646,7 +646,7 @@ the rotated horizontals in the transfer function calculations.</p>
 <p class="rubric">Examples</p>
 <p>Average spectra for good windows using default values and plot final figure</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">(</span><span class="n">fig_average</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -655,9 +655,11 @@ the rotated horizontals in the transfer function calculations.</p>
 <div class="figure align-center">
 <img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
 </div>
-<p>Print out new attribute(s) of DayNoise object - only Power</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">power</span>
-<span class="go">&lt;obstools.atacr.classes.Power object at 0x12e353860&gt;</span>
+<p>Print out available attributes of DayNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;tr1&#39;, &#39;tr2&#39;, &#39;trZ&#39;, &#39;trP&#39;, &#39;window&#39;, &#39;overlap&#39;, &#39;key&#39;,</span>
+<span class="go">&#39;dt&#39;, &#39;npts&#39;, &#39;fs&#39;, &#39;year&#39;, &#39;julday&#39;, &#39;ncomp&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;,</span>
+<span class="go">&#39;goodwins&#39;, &#39;f&#39;, &#39;power&#39;, &#39;cross&#39;, &#39;rotation&#39;])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -674,7 +676,7 @@ the rotated horizontals in the transfer function calculations.</p>
 <p class="rubric">Examples</p>
 <p>Run demo through all methods</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
@@ -743,7 +745,7 @@ been called. When <cite>True</cite>, the <cite>daylist</cite> attribute is delet
 </div>
 <p>Initialize with DayNoise object</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="n">daylist</span><span class="o">=</span><span class="p">[</span><span class="n">daynoise</span><span class="p">])</span>
 </pre></div>
@@ -751,11 +753,13 @@ been called. When <cite>True</cite>, the <cite>daylist</cite> attribute is delet
 <p>Add or append DayNoise object to StaNoise</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">+=</span> <span class="n">daynoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Import demo data with 4 DayNoise objects</p>
+<p>Import demo noise data with 4 DayNoise objects</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
@@ -860,7 +864,7 @@ the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, H
 <dl class="attribute">
 <dt id="obstools.atacr.classes.StaNoise.tilt">
 <code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.tilt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tile direction from maximum coherence between rotated <cite>H1</cite> and <cite>HZ</cite> components</p>
+<dd><p>Tilt direction from maximum coherence between rotated <cite>H1</cite> and <cite>HZ</cite> components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>float</p>
@@ -908,7 +912,11 @@ been called.</p>
 <span class="go">----&gt; 1 stanoise.daylist</span>
 </pre></div>
 </div>
-<p>AttributeError: ‘StaNoise’ object has no attribute ‘daylist’</p>
+<p>AttributeError: ‘StaNoise’ object has no attribute ‘daylist’
+&gt;&gt;&gt; stanoise.__dict__.keys()
+dict_keys([‘initialized’, ‘c11’, ‘c22’, ‘cZZ’, ‘cPP’, ‘c12’, ‘c1Z’, ‘c1P’,
+‘c2Z’, ‘c2P’, ‘cZP’, ‘cHH’, ‘cHZ’, ‘cHP’, ‘direc’, ‘tilt’, ‘f’, ‘nwins’,
+‘ncomp’, ‘key’, ‘tf_list’, ‘QC’, ‘av’])</p>
 </dd></dl>
 
 <dl class="method">
@@ -1020,7 +1028,7 @@ long-term transfer functions.</p>
 <p>Run demo through all methods</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
-<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
 </pre></div>
@@ -1044,13 +1052,13 @@ long-term transfer functions.</p>
 <h4>TFNoise<a class="headerlink" href="#tfnoise" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="obstools.atacr.classes.TFNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">TFNoise</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">tf_list</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">TFNoise</code><span class="sig-paren">(</span><em class="sig-param">objnoise=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>A TFNoise object contains attributes that store the transfer function information
 from multiple components (and component combinations).</p>
 <p class="rubric">Notes</p>
-<p>The object is initialized with <a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a>,
-<a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a> and <a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a>
-objects. Each individual spectral quantity is unpacked as an object attribute,
+<p>The object is initialized with either a processed
+<a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> or <a class="reference internal" href="#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a>
+object. Each individual spectral quantity is unpacked as an object attribute,
 but all of them are discarded as the object is saved to disk and new container objects
 are defined and saved.</p>
 <dl class="attribute">
@@ -1060,6 +1068,29 @@ are defined and saved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.TFNoise.c11">
+<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.c11" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectra for component <cite>H1</cite>. Other identical attributes are available for
+the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.TFNoise.tilt">
+<code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.tilt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tile direction from maximum coherence between rotated <cite>H1</cite> and <cite>HZ</cite> components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1075,17 +1106,37 @@ are defined and saved.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="obstools.atacr.classes.TFNoise.transfunc">
-<code class="sig-name descname">transfunc</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfunc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dictionary of transfer function arrays for the list of available functions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-</dl>
-</dd></dl>
-
+<p class="rubric">Examples</p>
+<p>Initialize a TFNoise object with a DayNoise object. The DayNoise object must be
+processed for QC and averaging, otherwise the TFNoise object will not initialize.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;/Users/pascalaudet/Softwares/Python/Projects/dev/OBStools/obstools/atacr/classes.py&quot;</span>, line <span class="m">1215</span>, in <span class="n">__init__</span>
+</pre></div>
+</div>
+<p>Exception: Error: Noise object has not been processed (QC and averaging) - aborting</p>
+<p>Now re-initialized with a processed DayNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initialize a TFNoise object with a processed StaNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="class">
 <dt id="obstools.atacr.classes.TFNoise.TfDict">
 <em class="property">class </em><code class="sig-name descname">TfDict</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.TfDict" title="Permalink to this definition">¶</a></dt>
@@ -1097,8 +1148,8 @@ are defined and saved.</p>
 <dd><p>Method to calculate transfer functions between multiple components (and
 component combinations) from the averaged (daily or station-averaged) noise spectra.</p>
 <dl class="attribute">
-<dt>
-<code class="sig-name descname">transfunc</code></dt>
+<dt id="obstools.atacr.classes.TFNoise.transfunc">
+<code class="sig-name descname">transfunc</code><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfunc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container Dictionary for all possible transfer functions</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1107,6 +1158,30 @@ component combinations) from the averaged (daily or station-averaged) noise spec
 </dl>
 </dd></dl>
 
+<p class="rubric">Examples</p>
+<p>Calculate transfer functions for a DayNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;ZP&#39;, &#39;Z1&#39;, &#39;Z2-1&#39;, &#39;ZP-21&#39;, &#39;ZH&#39;, &#39;ZP-H&#39;])</span>
+</pre></div>
+</div>
+<p>Calculate transfer functions for a StaNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;ZP&#39;, &#39;Z1&#39;, &#39;Z2-1&#39;, &#39;ZP-21&#39;])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1118,6 +1193,36 @@ component combinations) from the averaged (daily or station-averaged) noise spec
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>Run demo through all methods</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_sta</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">stanoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Save object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;tf_daynoise_demo.pkl&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;tf_stanoise_demo.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that everything has been saved</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./tf_daynoise_demo.pkl&quot;</span><span class="p">)</span>
+<span class="go">[&#39;./tf_daynoise_demo.pkl&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./tf_stanoise_demo.pkl&quot;</span><span class="p">)</span>
+<span class="go">[&#39;./tf_stanoise_demo.pkl&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -1127,7 +1232,7 @@ component combinations) from the averaged (daily or station-averaged) noise spec
 <h4>EventStream<a class="headerlink" href="#eventstream" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="obstools.atacr.classes.EventStream">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">EventStream</code><span class="sig-paren">(</span><em class="sig-param">sta</em>, <em class="sig-param">sth</em>, <em class="sig-param">stp</em>, <em class="sig-param">tstamp</em>, <em class="sig-param">lat</em>, <em class="sig-param">lon</em>, <em class="sig-param">time</em>, <em class="sig-param">window</em>, <em class="sig-param">sampling_rate</em>, <em class="sig-param">ncomp</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">EventStream</code><span class="sig-paren">(</span><em class="sig-param">sta=None</em>, <em class="sig-param">sth=None</em>, <em class="sig-param">stp=None</em>, <em class="sig-param">tstamp=None</em>, <em class="sig-param">lat=None</em>, <em class="sig-param">lon=None</em>, <em class="sig-param">time=None</em>, <em class="sig-param">window=None</em>, <em class="sig-param">sampling_rate=None</em>, <em class="sig-param">ncomp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream" title="Permalink to this definition">¶</a></dt>
 <dd><p>An EventStream object contains attributes that store station-event metadata and
 methods for applying the transfer functions to the various components and produce
 corrected/cleaned vertical components.</p>
@@ -1302,6 +1407,24 @@ calculated from the method <a class="reference internal" href="#obstools.atacr.c
 </dl>
 </dd></dl>
 
+<p class="rubric">Examples</p>
+<p>Get demo earthquake data as EventStream object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">EventStream</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span> <span class="o">=</span> <span class="n">EventStream</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo earthquake data - March 09, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;sta&#39;, &#39;key&#39;, &#39;sth&#39;, &#39;stp&#39;, &#39;tstamp&#39;, &#39;evlat&#39;, &#39;evlon&#39;, &#39;evtime&#39;,</span>
+<span class="go">&#39;window&#39;, &#39;fs&#39;, &#39;dt&#39;, &#39;ncomp&#39;, &#39;ev_list&#39;])</span>
+</pre></div>
+</div>
+<p>Plot the raw traces</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_raw</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mf">150.</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<img alt="_images/Figure_11.png" src="_images/Figure_11.png" />
+</div>
 <dl class="class">
 <dt id="obstools.atacr.classes.EventStream.CorrectDict">
 <em class="property">class </em><code class="sig-name descname">CorrectDict</code><a class="headerlink" href="#obstools.atacr.classes.EventStream.CorrectDict" title="Permalink to this definition">¶</a></dt>
@@ -1312,6 +1435,11 @@ calculated from the method <a class="reference internal" href="#obstools.atacr.c
 <code class="sig-name descname">correct_data</code><span class="sig-paren">(</span><em class="sig-param">tfnoise</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream.correct_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to apply transfer functions between multiple components (and
 component combinations) to produce corrected/cleaned vertical components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tfnoise</strong> (<a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a>) – Object that contains the noise transfer functions used in the correction</p>
+</dd>
+</dl>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">correct</code></dt>
@@ -1323,6 +1451,52 @@ component combinations) to produce corrected/cleaned vertical components.</p>
 </dl>
 </dd></dl>
 
+<p class="rubric">Examples</p>
+<p>Let’s carry through the correction of the vertical component for a single
+day of noise, say corresponding to the noise recorded on March 04, 2012.
+In practice, the DayNoise object should correspond to the same day at that
+of the recorded earthquake to avoid bias in the correction.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span> <span class="o">=</span> <span class="n">EventStream</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo earthquake data - March 09, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="n">correct_data</span><span class="p">(</span><span class="n">tfnoise_day</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Plot the corrected traces</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_corrected</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">tfnoise_day</span><span class="o">.</span><span class="n">tf_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<img alt="_images/Figure_corrected_march04.png" src="_images/Figure_corrected_march04.png" />
+</div>
+<p>Carry out the same exercise but this time using a StaNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_sta</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">stanoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span> <span class="o">=</span> <span class="n">EventStream</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo earthquake data - March 09, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="n">correct_data</span><span class="p">(</span><span class="n">tfnoise_sta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Plot the corrected traces</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_corrected</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">tf_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<img alt="_images/Figure_corrected_sta.png" src="_images/Figure_corrected_sta.png" />
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1334,6 +1508,19 @@ component combinations) to produce corrected/cleaned vertical components.</p>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>Following from the example outlined in method
+<a class="reference internal" href="#obstools.atacr.classes.EventStream.correct_data" title="obstools.atacr.classes.EventStream.correct_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">correct_data()</span></code></a>, we simply save the
+final object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;evstream_demo.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that object has been saved</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./evstream_demo.pkl&quot;</span><span class="p">)</span>
+<span class="go">[&#39;./evstream_demo.pkl&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
