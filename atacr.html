@@ -513,7 +513,7 @@ This attribute is returned from the method <a class="reference internal" href="#
 <p>Get demo data as DayNoise object</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
-<span class="go">Uploading demo data</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 </pre></div>
 </div>
 <p>Now check its main attributes</p>
@@ -567,6 +567,7 @@ transfer functions.</p>
 <p>Perform QC on DayNoise object using default values and plot final figure</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -646,6 +647,7 @@ the rotated horizontals in the transfer function calculations.</p>
 <p>Average spectra for good windows using default values and plot final figure</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">(</span><span class="n">fig_average</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -673,6 +675,7 @@ the rotated horizontals in the transfer function calculations.</p>
 <p>Run demo through all methods</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
 </pre></div>
@@ -696,16 +699,86 @@ the rotated horizontals in the transfer function calculations.</p>
 <h4>StaNoise<a class="headerlink" href="#stanoise" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="obstools.atacr.classes.StaNoise">
-<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">StaNoise</code><span class="sig-paren">(</span><em class="sig-param">power</em>, <em class="sig-param">cross</em>, <em class="sig-param">rotation</em>, <em class="sig-param">f</em>, <em class="sig-param">nwins</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">obstools.atacr.classes.</code><code class="sig-name descname">StaNoise</code><span class="sig-paren">(</span><em class="sig-param">daylist=None</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>A StaNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters.</p>
 <p class="rubric">Notes</p>
-<p>The object is initialized with <a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a>,
-<a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a> and <a class="reference internal" href="#obstools.atacr.classes.Rotation" title="obstools.atacr.classes.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></a>
-objects. Each individual spectral quantity is unpacked as an object attribute,
-but all of them are discarded as the object is saved to disk and new container objects
+<p>The object is initially a container for <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a>
+objects. Once the StaNoise object is initialized (using the method <cite>init()</cite> or by calling
+the <cite>QC_sta_spectra</cite> method), each individual spectral quantity is unpacked as an object
+attribute and the original <cite>DayNoise</cite> objects are removed from memory. In addition,
+all spectral quantities associated with the original <cite>DayNoise</cite> objects (now stored as
+attributes) are discarded as the object is saved to disk and new container objects
 are defined and saved.</p>
+<dl class="attribute">
+<dt id="obstools.atacr.classes.StaNoise.daylist">
+<code class="sig-name descname">daylist</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.daylist" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> objects to process and produce
+a station average</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.StaNoise.initialized">
+<code class="sig-name descname">initialized</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the object has been initialized - <cite>False</cite> unless one of the methods have
+been called. When <cite>True</cite>, the <cite>daylist</cite> attribute is deleted from memory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>Initialize empty object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Initialize with DayNoise object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">()</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="n">daylist</span><span class="o">=</span><span class="p">[</span><span class="n">daynoise</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Add or append DayNoise object to StaNoise</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">+=</span> <span class="n">daynoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Import demo data with 4 DayNoise objects</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">daylist</span>
+<span class="go">[&lt;obstools.atacr.classes.DayNoise at 0x11e3ce8d0&gt;,</span>
+<span class="go"> &lt;obstools.atacr.classes.DayNoise at 0x121c7ae10&gt;,</span>
+<span class="go"> &lt;obstools.atacr.classes.DayNoise at 0x121ca5940&gt;,</span>
+<span class="go"> &lt;obstools.atacr.classes.DayNoise at 0x121e7dd30&gt;]</span>
+<span class="go"> &gt;&gt;&gt; sta.initialized</span>
+<span class="go"> False</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="obstools.atacr.classes.StaNoise.init">
+<code class="sig-name descname">init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to initialize the <cite>StaNoise</cite> object. This method is used to unpack the
+spectral quantities from the original <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> objects
+and allow the methods to proceed. The original <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a>
+objects are deleted from memory during this process.</p>
+<p class="rubric">Notes</p>
+<p>If the original <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> objects have not been processed
+using their QC and averaging methods, these will be called first before unpacking into
+the object attributes.</p>
 <dl class="attribute">
 <dt id="obstools.atacr.classes.StaNoise.f">
 <code class="sig-name descname">f</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.f" title="Permalink to this definition">¶</a></dt>
@@ -762,38 +835,80 @@ are defined and saved.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.atacr.classes.StaNoise.power">
-<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.power" title="Permalink to this definition">¶</a></dt>
-<dd><p>Container for station-averaged spectral power for all available components</p>
+<dt id="obstools.atacr.classes.StaNoise.c11">
+<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.c11" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectra for component <cite>H1</cite>. Other identical attributes are available for
+the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
+<dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="obstools.atacr.classes.StaNoise.cross">
-<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.cross" title="Permalink to this definition">¶</a></dt>
-<dd><p>Container for station-averaged cross spectral power for all available components</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.StaNoise.rotation">
-<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.rotation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Container for station-averaged rotated (cross) spectral power for all available components</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="obstools.atacr.classes.StaNoise.gooddays">
-<code class="sig-name descname">gooddays</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.gooddays" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of booleans representing whether a day is good (True) or not (False).
-This attribute is returned from the method <a class="reference internal" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="obstools.atacr.classes.StaNoise.QC_sta_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_sta_spectra()</span></code></a></p>
+<dt id="obstools.atacr.classes.StaNoise.direc">
+<code class="sig-name descname">direc</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.direc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array of azimuths used in determining the tilt direction</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.StaNoise.tilt">
+<code class="sig-name descname">tilt</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.tilt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tile direction from maximum coherence between rotated <cite>H1</cite> and <cite>HZ</cite> components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.StaNoise.QC">
+<code class="sig-name descname">QC</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the method <a class="reference internal" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="obstools.atacr.classes.StaNoise.QC_sta_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_sta_spectra()</span></code></a> has
+been called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="obstools.atacr.classes.StaNoise.av">
+<code class="sig-name descname">av</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.av" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the method <a class="reference internal" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="obstools.atacr.classes.StaNoise.average_sta_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">average_sta_spectra()</span></code></a> has
+been called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>Initialize demo data</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Check that <cite>daylist</cite> attribute has been deleted</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">daylist</span>
+<span class="go">---------------------------------------------------------------------------</span>
+<span class="go">AttributeError                            Traceback (most recent call last)</span>
+<span class="go">&lt;ipython-input-4-a292a91450a9&gt; in &lt;module&gt;</span>
+<span class="go">----&gt; 1 stanoise.daylist</span>
+</pre></div>
+</div>
+<p>AttributeError: ‘StaNoise’ object has no attribute ‘daylist’</p>
 </dd></dl>
 
 <dl class="method">
@@ -814,9 +929,9 @@ long-term transfer functions.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="obstools.atacr.classes.StaNoise.goodwins">
-<code class="sig-name descname">goodwins</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.goodwins" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of booleans representing whether a window is good (True) or not (False)</p>
+<dt id="obstools.atacr.classes.StaNoise.gooddays">
+<code class="sig-name descname">gooddays</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.gooddays" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of booleans representing whether a day is good (True) or not (False)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>list</p>
@@ -824,6 +939,16 @@ long-term transfer functions.</p>
 </dl>
 </dd></dl>
 
+<p class="rubric">Examples</p>
+<p>Import demo data, call method and generate final figure</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obstools</span><span class="o">.</span><span class="n">atacr</span> <span class="kn">import</span> <span class="nn">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -839,8 +964,8 @@ long-term transfer functions.</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt>
-<code class="sig-name descname">power</code></dt>
+<dt id="obstools.atacr.classes.StaNoise.power">
+<code class="sig-name descname">power</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -850,8 +975,8 @@ long-term transfer functions.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="sig-name descname">cross</code></dt>
+<dt id="obstools.atacr.classes.StaNoise.cross">
+<code class="sig-name descname">cross</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.cross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Cross power spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -861,8 +986,8 @@ long-term transfer functions.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="sig-name descname">rotation</code></dt>
+<dt id="obstools.atacr.classes.StaNoise.rotation">
+<code class="sig-name descname">rotation</code><a class="headerlink" href="#obstools.atacr.classes.StaNoise.rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Rotated power and cross spectra</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -871,6 +996,15 @@ long-term transfer functions.</p>
 </dl>
 </dd></dl>
 
+<p class="rubric">Examples</p>
+<p>Average daily spectra for good days using default values and produce final figure</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obstools</span><span class="o">.</span><span class="n">atacr</span> <span class="kn">import</span> <span class="nn">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -882,6 +1016,25 @@ long-term transfer functions.</p>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>Run demo through all methods</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Save object</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;stanoise_demo.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that it has been saved</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./stanoise_demo.pkl&quot;</span><span class="p">)</span>
+<span class="go">[&#39;./stanoise_demo.pkl&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
