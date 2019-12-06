@@ -172,7 +172,7 @@ class DayNoise(object):
     Examples
     --------
 
-    Get demo data as DayNoise object
+    Get demo noise data as DayNoise object
 
     >>> from obstools.atacr import DayNoise
     >>> daynoise = DayNoise('demo')
@@ -197,8 +197,8 @@ class DayNoise(object):
     {'ZP': True, 'Z1': True, 'Z2-1': True, 'ZP-21': True, 'ZH': True, 'ZP-H': True}
 
     """
-    def __init__(self, tr1=None, tr2=None, trZ=None, trP=None, window=None, \
-        overlap=None, key=None):
+    def __init__(self, tr1=None, tr2=None, trZ=None, trP=None, window=7200., \
+        overlap=0.3, key=''):
 
         # Load example data if initializing empty object
         if tr1=='demo' or tr1=='Demo':
@@ -530,10 +530,12 @@ class DayNoise(object):
         .. figure:: ../obstools/examples/figures/Figure_3b.png
            :align: center
 
-        Print out new attribute(s) of DayNoise object - only Power
+        Print out available attributes of DayNoise object
 
-        >>> daynoise.power
-        <obstools.atacr.classes.Power object at 0x12e353860>
+        >>> daynoise.__dict__.keys()
+        dict_keys(['tr1', 'tr2', 'trZ', 'trP', 'window', 'overlap', 'key', 
+        'dt', 'npts', 'fs', 'year', 'julday', 'ncomp', 'tf_list', 'QC', 'av', 
+        'goodwins', 'f', 'power', 'cross', 'rotation'])
 
         """
 
@@ -640,8 +642,8 @@ class DayNoise(object):
 
         """
 
-        if not self.QC and not self.av:
-            print("Warning: Daynoise objects have not been processed before saving")
+        if not self.av:
+            print("Warning: saving before having calculated the average spectra")
 
         # Remove original traces to save disk space
         del self.tr1 
@@ -681,6 +683,7 @@ class StaNoise(object):
 
     Examples
     --------
+
     Initialize empty object
 
     >>> from obstools.atacr import StaNoise
@@ -701,7 +704,7 @@ class StaNoise(object):
     >>> stanoise = StaNoise()
     >>> stanoise.append(daynoise)
 
-    Import demo data with 4 DayNoise objects
+    Import demo noise data with 4 DayNoise objects
 
     >>> from obstools.atacr import StaNoise
     >>> stanoise = StaNoise('demo')
@@ -810,7 +813,7 @@ class StaNoise(object):
         direc : `numpy.ndarray`
             Array of azimuths used in determining the tilt direction
         tilt : float
-            Tile direction from maximum coherence between rotated `H1` and `HZ` components
+            Tilt direction from maximum coherence between rotated `H1` and `HZ` components
         QC : bool
             Whether or not the method :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra` has
             been called.
@@ -836,7 +839,11 @@ class StaNoise(object):
         <ipython-input-4-a292a91450a9> in <module>
         ----> 1 stanoise.daylist
 
-        AttributeError: 'StaNoise' object has no attribute 'daylist'        
+        AttributeError: 'StaNoise' object has no attribute 'daylist'      
+        >>> stanoise.__dict__.keys()
+        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P', 
+        'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f', 'nwins', 
+        'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
 
@@ -1146,7 +1153,7 @@ class StaNoise(object):
 
         >>> from obstools.atacr import StaNoise
         >>> stanoise = StaNoise('demo')
-        Uploading demo data - March 04, 2012, station 7D.M08A
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
         >>> stanoise.QC_sta_spectra()
         >>> stanoise.average_sta_spectra()
 
@@ -1160,8 +1167,10 @@ class StaNoise(object):
         >>> glob.glob("./stanoise_demo.pkl")
         ['./stanoise_demo.pkl']
 
-
         """
+
+        if not self.av:
+            print("Warning: saving before having calculated the average spectra")
 
         # Remove traces to save disk space
         del self.c11 
@@ -1187,46 +1196,87 @@ class TFNoise(object):
 
     Notes
     -----
-    The object is initialized with :class:`~obstools.atacr.classes.Power`,
-    :class:`~obstools.atacr.classes.Cross` and :class:`~obstools.atacr.classes.Rotation` 
-    objects. Each individual spectral quantity is unpacked as an object attribute, 
+    The object is initialized with either a processed 
+    :class:`~obstools.atacr.classes.DayNoise` or :class:`~obstools.atacr.classes.StaNoise` 
+    object. Each individual spectral quantity is unpacked as an object attribute, 
     but all of them are discarded as the object is saved to disk and new container objects
-    are defined and saved.
+    are defined and saved. 
 
     Attributes
     ----------
     f : :class:`~numpy.ndarray`
         Frequency axis for corresponding time sampling parameters
+    c11 : `numpy.ndarray`
+        Power spectra for component `H1`. Other identical attributes are available for
+        the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]
+    tilt : float
+        Tile direction from maximum coherence between rotated `H1` and `HZ` components
     tf_list : Dict
         Dictionary of possible transfer functions given the available components. 
-    transfunc : Dict
-        Dictionary of transfer function arrays for the list of available functions.
+
+    Examples
+    --------
+
+    Initialize a TFNoise object with a DayNoise object. The DayNoise object must be 
+    processed for QC and averaging, otherwise the TFNoise object will not initialize.
+
+    >>> from obstools.atacr import DayNoise, TFNoise
+    >>> daynoise = DayNoise('demo')
+    Uploading demo data - March 04, 2012, station 7D.M08A
+    >>> tfnoise = TFNoise(daynoise)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/Users/pascalaudet/Softwares/Python/Projects/dev/OBStools/obstools/atacr/classes.py", line 1215, in __init__
+     
+    Exception: Error: Noise object has not been processed (QC and averaging) - aborting
+
+    Now re-initialized with a processed DayNoise object
+
+    >>> from obstools.atacr import DayNoise, TFNoise
+    >>> daynoise = DayNoise('demo')
+    Uploading demo data - March 04, 2012, station 7D.M08A
+    >>> daynoise.QC_daily_spectra()
+    >>> daynoise.average_daily_spectra()
+    >>> tfnoise = TFNoise(daynoise)
+
+    Initialize a TFNoise object with a processed StaNoise object
+
+    >>> from obstools.atacr import StaNoise, TFNoise
+    >>> stanoise = StaNoise('demo')
+    Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+    >>> stanoise.QC_sta_spectra()
+    >>> stanoise.average_sta_spectra()
+    >>> tfnoise = TFNoise(daynoise)
 
     """
 
-    def __init__(self, f, power, cross, rotation, tf_list):
+    def __init__(self, objnoise=None):
 
-        if all(value == None for value in power.values()):
-            raise(Exception("Container Power is empty - aborting"))
-        if all(value == None for value in cross.values()):
-            raise(Exception("Container Cross is empty - aborting"))
+        if not objnoise and not isinstance(objnoise, DayNoise) and not isinstance(objnoise, StaNoise):
+            msg = "Error: A TFNoise object must be initialized with only one of type "+\
+            "DayNoise or StaNoise object"
+            raise TypeError(msg)
 
-        self.f = f
-        self.c11 = power.c11
-        self.c22 = power.c22
-        self.cZZ = power.cZZ
-        self.cPP = power.cPP
-        self.cHH = rotation.cHH
-        self.cHZ = rotation.cHZ
-        self.cHP = rotation.cHP
-        self.c12 = cross.c12
-        self.c1Z = cross.c1Z
-        self.c1P = cross.c1P
-        self.c2Z = cross.c2Z
-        self.c2P = cross.c2P
-        self.cZP = cross.cZP
-        self.tilt = rotation.tilt
-        self.tf_list = tf_list
+        if not objnoise.av:
+            raise(Exception("Error: Noise object has not been processed (QC and averaging) - aborting"))
+
+        self.f = objnoise.f
+        self.c11 = objnoise.power.c11
+        self.c22 = objnoise.power.c22
+        self.cZZ = objnoise.power.cZZ
+        self.cPP = objnoise.power.cPP
+        self.cHH = objnoise.rotation.cHH
+        self.cHZ = objnoise.rotation.cHZ
+        self.cHP = objnoise.rotation.cHP
+        self.c12 = objnoise.cross.c12
+        self.c1Z = objnoise.cross.c1Z
+        self.c1P = objnoise.cross.c1P
+        self.c2Z = objnoise.cross.c2Z
+        self.c2P = objnoise.cross.c2P
+        self.cZP = objnoise.cross.cZP
+        self.tilt = objnoise.rotation.tilt
+        self.tf_list = objnoise.tf_list
+
 
     class TfDict(dict):
 
@@ -1235,6 +1285,7 @@ class TFNoise(object):
 
         def add(self, key, value):
             self[key] = value
+
 
     def transfer_func(self):
         """
@@ -1245,6 +1296,32 @@ class TFNoise(object):
         ----------
         transfunc : :class:`~obstools.atacr.classes.TFNoise.TfDict`
             Container Dictionary for all possible transfer functions
+
+        Examples
+        --------
+
+        Calculate transfer functions for a DayNoise object
+
+        >>> from obstools.atacr import DayNoise, TFNoise
+        >>> daynoise = DayNoise('demo')
+        Uploading demo data - March 04, 2012, station 7D.M08A
+        >>> daynoise.QC_daily_spectra()
+        >>> daynoise.average_daily_spectra()
+        >>> tfnoise = TFNoise(daynoise)
+        >>> tfnoise.transfer_func()
+        dict_keys(['ZP', 'Z1', 'Z2-1', 'ZP-21', 'ZH', 'ZP-H'])
+
+        Calculate transfer functions for a StaNoise object
+
+        >>> from obstools.atacr import StaNoise, TFNoise
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+        >>> stanoise.QC_sta_spectra()
+        >>> stanoise.average_sta_spectra()
+        >>> tfnoise = TFNoise(daynoise)
+        >>> tfnoise.transfer_func()
+        >>> tfnoise.transfunc.keys()
+        dict_keys(['ZP', 'Z1', 'Z2-1', 'ZP-21'])
 
         """
 
@@ -1332,7 +1409,42 @@ class TFNoise(object):
         filename : str
             File name 
 
+        Examples
+        --------
+
+        Run demo through all methods
+
+        >>> from obstools.atacr import DayNoise, StaNoise, TFNoise
+        >>> daynoise = DayNoise('demo')
+        Uploading demo data - March 04, 2012, station 7D.M08A
+        >>> daynoise.QC_daily_spectra()
+        >>> daynoise.average_daily_spectra()
+        >>> tfnoise_day = TFNoise(daynoise)
+        >>> tfnoise_day.transfer_func()
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+        >>> stanoise.QC_sta_spectra()
+        >>> stanoise.average_sta_spectra()
+        >>> tfnoise_sta = TFNoise(stanoise)
+        >>> tfnoise_sta.transfer_func()
+
+        Save object
+
+        >>> tfnoise_day.save('tf_daynoise_demo.pkl')
+        >>> tfnoise_sta.save('tf_stanoise_demo.pkl')
+
+        Check that everything has been saved
+
+        >>> import glob
+        >>> glob.glob("./tf_daynoise_demo.pkl")
+        ['./tf_daynoise_demo.pkl']
+        >>> glob.glob("./tf_stanoise_demo.pkl")
+        ['./tf_stanoise_demo.pkl']
+
         """
+
+        if not self.transfunc:
+            print("Warning: saving before having calculated the transfer functions")
 
         # Remove traces to save disk space
         del self.c11 
@@ -1400,9 +1512,52 @@ class EventStream(object):
         Container Dictionary for all possible corrections from the transfer functions. This is 
         calculated from the method :func:`~obstools.atacr.classes.EventStream.correct_data`
 
+    Examples
+    --------
+
+    Get demo earthquake data as EventStream object
+
+    >>> from obstools.atacr import EventStream
+    >>> evstream = EventStream('demo')
+    Uploading demo earthquake data - March 09, 2012, station 7D.M08A
+    >>> evstream.__dict__.keys()
+    dict_keys(['sta', 'key', 'sth', 'stp', 'tstamp', 'evlat', 'evlon', 'evtime', 
+    'window', 'fs', 'dt', 'ncomp', 'ev_list'])
+
+    Plot the raw traces
+
+    >>> import obstools.atacr.plot as plot
+    >>> plot.fig_event_raw(evstream, fmin=1./150., fmax=2.)
+
+    .. figure:: ../obstools/examples/figures/Figure_11.png
+       :align: center
+
     """
 
-    def __init__(self, sta, sth, stp, tstamp, lat, lon, time, window, sampling_rate, ncomp):
+    def __init__(self, sta=None, sth=None, stp=None, tstamp=None, lat=None, 
+        lon=None, time=None, window=None, sampling_rate=None, ncomp=None):
+
+        if sta=='demo' or sta=='Demo':
+            print("Uploading demo earthquake data - March 09, 2012, station 7D.M08A")
+            import os
+            evstream = pickle.load(open(os.path.join(os.path.dirname(__file__), \
+                "../examples/event", "2012.069.07.09.event.pkl"), 'rb'))
+            sta = evstream.sta
+            key = evstream.key
+            sth = evstream.sth
+            stp = evstream.stp
+            tstamp = evstream.tstamp
+            lat = evstream.evlat
+            lon = evstream.evlon
+            time = evstream.evtime
+            window = evstream.window
+            sampling_rate = evstream.fs
+            ncomp = evstream.ncomp
+
+        if any(value==None for value in [sta, sth, stp, tstamp, lat, lon, \
+            time, window, sampling_rate, ncomp]):
+            raise(Exception("Error: Initializing EventStream object with None values - aborting"))
+
         self.sta = sta
         self.key = sta.network+'.'+sta.station
         self.sth = sth
@@ -1437,12 +1592,68 @@ class EventStream(object):
         Method to apply transfer functions between multiple components (and 
         component combinations) to produce corrected/cleaned vertical components.
 
+        Parameters
+        ----------
+        tfnoise : :class:`~obstools.atacr.classes.TFNoise`
+            Object that contains the noise transfer functions used in the correction
+
         Attributes
         ----------
         correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
             Container Dictionary for all possible corrections from the transfer functions
 
+        Examples
+        --------
+
+        Let's carry through the correction of the vertical component for a single
+        day of noise, say corresponding to the noise recorded on March 04, 2012. 
+        In practice, the DayNoise object should correspond to the same day at that
+        of the recorded earthquake to avoid bias in the correction.
+
+        >>> from obstools.atacr import DayNoise, TFNoise, EventStream
+        >>> daynoise = DayNoise('demo')
+        Uploading demo data - March 04, 2012, station 7D.M08A
+        >>> daynoise.QC_daily_spectra()
+        >>> daynoise.average_daily_spectra()
+        >>> tfnoise_day = TFNoise(daynoise)
+        >>> tfnoise_day.transfer_func()
+        >>> evstream = EventStream('demo')
+        Uploading demo earthquake data - March 09, 2012, station 7D.M08A
+        >>> evstream.correct_data(tfnoise_day)
+
+        Plot the corrected traces
+
+        >>> import obstools.atacr.plot as plot
+        >>> plot.fig_event_corrected(evstream, tfnoise_day.tf_list)
+
+        .. figure:: ../obstools/examples/figures/Figure_corrected_march04.png
+           :align: center
+
+        Carry out the same exercise but this time using a StaNoise object
+
+        >>> from obstools.atacr import StaNoise, TFNoise, EventStream
+        >>> stanoise = StaNoise('demo')
+        Uploading demo data - March 01 to 04, 2012, station 7D.M08A
+        >>> stanoise.QC_sta_spectra()
+        >>> stanoise.average_sta_spectra()
+        >>> tfnoise_sta = TFNoise(stanoise)
+        >>> tfnoise_sta.transfer_func()
+        >>> evstream = EventStream('demo')
+        Uploading demo earthquake data - March 09, 2012, station 7D.M08A
+        >>> evstream.correct_data(tfnoise_sta)
+
+        Plot the corrected traces
+
+        >>> import obstools.atacr.plot as plot
+        >>> plot.fig_event_corrected(evstream, tfnoise_sta.tf_list)
+
+        .. figure:: ../obstools/examples/figures/Figure_corrected_sta.png
+           :align: center
+
         """
+
+        if not tfnoise.transfunc:
+            raise(Exception("Error: Object TFNoise has no transfunc attribute - aborting"))
 
         correct = self.CorrectDict()
 
@@ -1563,7 +1774,25 @@ class EventStream(object):
         filename : str
             File name 
 
+        Examples
+        --------
+
+        Following from the example outlined in method 
+        :func:`~obstools.atacr.classes.EventStream.correct_data`, we simply save the
+        final object
+
+        >>> evstream.save('evstream_demo.pkl')
+
+        Check that object has been saved
+
+        >>> import glob
+        >>> glob.glob("./evstream_demo.pkl")
+        ['./evstream_demo.pkl']
+
         """
+
+        if not self.correct:
+            print("Warning: saving EventStream object before having done the corrections")
 
         file = open(filename, 'wb')
         pickle.dump(self, file)
