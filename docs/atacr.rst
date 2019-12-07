@@ -43,7 +43,7 @@ This analysis therefore requires both vertical (``?HZ``) and pressure (``?XH``) 
 **Tilt**
 
 Tilt noise arises from OBS stations that are not perfectly leveled, and
-therefore the horizontal seafloor deformation leaks into the vertical
+therefore the horizontal seafloor deformation leaks onto the vertical
 component. This effect can be removed by calculating the spectral
 ratio between horizontal and vertical displacement data. In most cases,
 however, the tilt direction (measured on a compass - as opposed to tilt
@@ -55,7 +55,7 @@ horizontal (``?H1,2``) component data.
 **Compliance + Tilt**
 
 It is of course possible to combine both corrections and apply them
-sequentially. In this case the tilt noise is removed first, then compliance.
+sequentially. In this case the tilt noise is removed first, followed by compliance.
 This analysis requires all four components: three-component
 seismic (``?HZ,1,2``) and pressure (``?XH``) data.
 
@@ -76,23 +76,23 @@ The class :class:`~obstools.atacr.classes.DayNoise` contains attributes
 and methods for the analysis of two- to four-component day-long time-series
 (3-component seismograms and pressure data). Objects created with this class
 are required in any subsequent analysis. The available methods calculate the
-power-spectral density (psd) function of sub-windows and identifies windows
-with anomalous psd properties. These windows are flagged as 'bad' and are excluded
-from the final averages of all possible Fourier power spectra and cross spectra
-across all available components.
+power-spectral density (PSD) functions of sub-windows (default is 2-hour windows) 
+and identifies windows with anomalous PSD properties. These windows are flagged 
+and are excluded from the final averages of all possible PSD and cross-spectral density
+functions between all available components.
 
 The class :class:`~obstools.atacr.classes.StaNoise` contains attributes
-and methods for the aggregation of day-long time series into station
-average. An object created with this class requires that objects created with
-`DayNoise` are available in memory. Methods available for this calss are
+and methods for the aggregation of averaged daily spectra into a station
+average. An object created with this class requires that at least two
+`DayNoise` objects are available in memory. Methods available for this class are
 similar to those defined in the `DayNoise` class, but are applied to daily 
 spectral averages, as opposed to sub-daily averages. The result is a spectral
-average that represents all available data for the specific stations.  
+average that represents all available data for the specific station.  
 
 The class :class:`~obstools.atacr.classes.TFNoise` contains attributes
 and methods for the calculation of transfer functions from noise
 traces used to correct the vertical component. A `TFNoise` object works with 
-either one (or both) `DayNoise` and `StaNoise` objects to calculate all possible
+either one of `DayNoise` and `StaNoise` objects to calculate all possible
 transfer functions across all available components. These transfer functions
 are saved as attributes of the object in a Dictionary. 
 
@@ -116,8 +116,8 @@ that are used as attributes of the base classes.
 .. note::
 
     In the examples below, the SAC data were obtained and pre-processed
-    using the accompanying script ``atacr_download_data.py``. See the script
-    and tutorial for details.
+    using the accompanying scripts ``atacr_download_data.py`` and 
+    ``atacr_download_event.py``. See the script and tutorial for details.
 
 DayNoise
 --------
@@ -178,9 +178,9 @@ Scripts
 *******
 
 There are several Python scripts that accompany ``~obstools.atacr``. These can be used
-in bash scripts to automate data analysis. These include scripts to download noise and
+in bash scripts to automate data processing. These include scripts to download noise and
 event data, and perform tilt and compliance noise removal using either the default
-program values or by refining parameters. All of them use a data base provided as a
+program values or by refining parameters. All of them use a station database provided as a
 ``StDb`` dictionary. These scripts are:
 
 - atacr_download_data.py
@@ -204,7 +204,7 @@ Description
 Downloads up to four-component (H1, H2, Z and P), day-long seismograms 
 to use in noise corrections of vertical
 component data. Station selection is specified by a network and 
-station code. The data base is provided as a ``StDb`` dictionary.
+station code. The database is provided as a ``StDb`` dictionary.
 
 Usage
 -----
@@ -287,7 +287,7 @@ Description
 
 Extracts two-hour-long windows from the day-long data, calculates 
 power-spectral densities and flags windows for outlier from the PSD properties. 
-Station selection is specified by a network and station code. The data base 
+Station selection is specified by a network and station code. The database 
 is provided as a ``StDb`` dictionary.
 
 Usage
@@ -374,10 +374,8 @@ Description
 Extracts daily spectra calculated from ``obs_daily_spectra.py`` and 
 flags days for which the daily averages are outliers from the PSD properties. 
 Further averages the spectra over the whole period specified by ``--start``
-and ``--end``.
-
-Station selection is specified by a network and station code. 
-The data base is provided as a ``StDb`` dictionary.
+and ``--end``. Station selection is specified by a network and station code. 
+The database is provided as a ``StDb`` dictionary.
 
 Usage
 -----
@@ -448,8 +446,7 @@ Description
 Calculates transfer functions using the noise windows flagged as *good*, for either
 a single day (from ``obs_daily_spectra.py``) or for those averaged over several days
 (from ``obs_clean_spectra.py``), if available. The transfer functions are stored to disk.
-
-Station selection is specified by a network and station code. The data base is 
+Station selection is specified by a network and station code. The database is 
 provided as a ``StDb`` dictionary.
 
 Usage
@@ -516,7 +513,7 @@ Description
 Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms 
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and 
-station code. The data base is provided as a ``StDb`` dictionary.
+station code. The database is provided as a ``StDb`` dictionary.
 
 Usage
 -----
@@ -617,8 +614,7 @@ Description
 Calculates transfer functions using the noise windows flagged as *good*, for either
 a single day (from ``obs_daily_spectra.py``) or for those averaged over several days
 (from ``obs_clean_spectra.py``), if available. The transfer functions are stored to disk.
-
-Station selection is specified by a network and station code. The data base is provided as a 
+Station selection is specified by a network and station code. The database is provided as a 
 ``StDb`` dictionary.
 
 Usage
@@ -707,7 +703,7 @@ M08A and send the prompt to a logfile
 
    $ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A > logfile
 
-To see the station info for M08A, use the program ``ls_stdb.py``:
+To check the station info for M08A, use the program ``ls_stdb.py``:
 
 .. code-block::
 
@@ -979,8 +975,8 @@ the only transfer function possible is:
 
 - ``ZP``
 
-For tilt only (i.e., all of ``?HZ,1,2`` components are available), the transfer 
-functions are:
+For tilt only (i.e., all of ``?HZ,1,2`` components are available, but not ``?XH``), 
+the transfer functions are:
 
 - ``Z1``
 
@@ -997,8 +993,8 @@ following transfer functions are possible:
 
 - ``ZP-21``
 
-If you are using the ``DayNoise`` objects to calculate the transfer functions,
-the following may be further available (if all components are available):
+If you are using a ``DayNoise`` object to calculate the transfer functions,
+the following may also be possible (if all components are available):
 
 - ``ZH``
 
@@ -1008,6 +1004,8 @@ In this example we calculate all available transfer functions for all available 
 In this case we do not need to specify any option and type in a terminal:
 
 .. code-block::
+
+    $ atacr_transfer_functions.py M08A.pkl
 
     Path to TF_STA/7D.M08A/ doesn't exist - creating it
      
@@ -1053,14 +1051,14 @@ calculated for the whole month is shown in black.
 +++++++++++++++++++++++++++
 
 Now we need to download the earthquake data, for which we wish to 
-clean the vertical component using the transfer functions calculated. 
+clean the vertical component using the transfer functions just calculated. 
 This script ``atacr_download_event.py`` is very similar to ``atacr_download_data.py``, 
-with the addition of Event and Geometry Settings. 
+with the addition of the Event and Geometry Settings. 
 
 .. warning::
 
     Be careful with the Frequency Settings, as these values need to be exactly
-    the same as those used in ``atacr_download_data.py`` but won't be checked
+    the same as those used in ``atacr_download_data.py``, but won't be checked
     against. 
 
 To download the seismograms that recorded the March 9, 2012, magnitude 6.6 
