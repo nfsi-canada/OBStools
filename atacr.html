@@ -261,7 +261,7 @@ This is likely the main source of noise in vertical component OBS data.
 This analysis therefore requires both vertical (<code class="docutils literal notranslate"><span class="pre">?HZ</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?XH</span></code>) data.</p>
 <p><strong>Tilt</strong></p>
 <p>Tilt noise arises from OBS stations that are not perfectly leveled, and
-therefore the horizontal seafloor deformation leaks into the vertical
+therefore the horizontal seafloor deformation leaks onto the vertical
 component. This effect can be removed by calculating the spectral
 ratio between horizontal and vertical displacement data. In most cases,
 however, the tilt direction (measured on a compass - as opposed to tilt
@@ -271,7 +271,7 @@ component. This analysis therefore requires vertical (<code class="docutils lite
 horizontal (<code class="docutils literal notranslate"><span class="pre">?H1,2</span></code>) component data.</p>
 <p><strong>Compliance + Tilt</strong></p>
 <p>It is of course possible to combine both corrections and apply them
-sequentially. In this case the tilt noise is removed first, then compliance.
+sequentially. In this case the tilt noise is removed first, followed by compliance.
 This analysis requires all four components: three-component
 seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?XH</span></code>) data.</p>
 </div>
@@ -290,21 +290,21 @@ seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</s
 and methods for the analysis of two- to four-component day-long time-series
 (3-component seismograms and pressure data). Objects created with this class
 are required in any subsequent analysis. The available methods calculate the
-power-spectral density (psd) function of sub-windows and identifies windows
-with anomalous psd properties. These windows are flagged as ‘bad’ and are excluded
-from the final averages of all possible Fourier power spectra and cross spectra
-across all available components.</p>
+power-spectral density (PSD) functions of sub-windows (default is 2-hour windows)
+and identifies windows with anomalous PSD properties. These windows are flagged
+and are excluded from the final averages of all possible PSD and cross-spectral density
+functions between all available components.</p>
 <p>The class <a class="reference internal" href="#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> contains attributes
-and methods for the aggregation of day-long time series into station
-average. An object created with this class requires that objects created with
-<cite>DayNoise</cite> are available in memory. Methods available for this calss are
+and methods for the aggregation of averaged daily spectra into a station
+average. An object created with this class requires that at least two
+<cite>DayNoise</cite> objects are available in memory. Methods available for this class are
 similar to those defined in the <cite>DayNoise</cite> class, but are applied to daily
 spectral averages, as opposed to sub-daily averages. The result is a spectral
-average that represents all available data for the specific stations.</p>
+average that represents all available data for the specific station.</p>
 <p>The class <a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a> contains attributes
 and methods for the calculation of transfer functions from noise
 traces used to correct the vertical component. A <cite>TFNoise</cite> object works with
-either one (or both) <cite>DayNoise</cite> and <cite>StaNoise</cite> objects to calculate all possible
+either one of <cite>DayNoise</cite> and <cite>StaNoise</cite> objects to calculate all possible
 transfer functions across all available components. These transfer functions
 are saved as attributes of the object in a Dictionary.</p>
 <p>The class <a class="reference internal" href="#obstools.atacr.classes.EventStream" title="obstools.atacr.classes.EventStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code></a> contains attributes
@@ -325,8 +325,8 @@ that are used as attributes of the base classes.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the examples below, the SAC data were obtained and pre-processed
-using the accompanying script <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>. See the script
-and tutorial for details.</p>
+using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code> and
+<code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code>. See the script and tutorial for details.</p>
 </div>
 <div class="section" id="daynoise">
 <h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h4>
@@ -1167,6 +1167,7 @@ component combinations) from the averaged (daily or station-averaged) noise spec
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;ZP&#39;, &#39;Z1&#39;, &#39;Z2-1&#39;, &#39;ZP-21&#39;, &#39;ZH&#39;, &#39;ZP-H&#39;])</span>
 </pre></div>
 </div>
@@ -1780,9 +1781,9 @@ of the analysis at various final and intermediate steps.</p>
 <div class="section" id="scripts">
 <h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
 <p>There are several Python scripts that accompany <code class="docutils literal notranslate"><span class="pre">~obstools.atacr</span></code>. These can be used
-in bash scripts to automate data analysis. These include scripts to download noise and
+in bash scripts to automate data processing. These include scripts to download noise and
 event data, and perform tilt and compliance noise removal using either the default
-program values or by refining parameters. All of them use a data base provided as a
+program values or by refining parameters. All of them use a station database provided as a
 <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary. These scripts are:</p>
 <ul class="simple">
 <li><p>atacr_download_data.py</p></li>
@@ -1799,7 +1800,7 @@ program values or by refining parameters. All of them use a data base provided a
 <p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
 to use in noise corrections of vertical
 component data. Station selection is specified by a network and
-station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+station code. The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="usage">
 <h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
@@ -1878,7 +1879,7 @@ Options:
 <h4>Description<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <p>Extracts two-hour-long windows from the day-long data, calculates
 power-spectral densities and flags windows for outlier from the PSD properties.
-Station selection is specified by a network and station code. The data base
+Station selection is specified by a network and station code. The database
 is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id3">
@@ -1961,9 +1962,8 @@ Options:
 <p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code> and
 flags days for which the daily averages are outliers from the PSD properties.
 Further averages the spectra over the whole period specified by <code class="docutils literal notranslate"><span class="pre">--start</span></code>
-and <code class="docutils literal notranslate"><span class="pre">--end</span></code>.</p>
-<p>Station selection is specified by a network and station code.
-The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+and <code class="docutils literal notranslate"><span class="pre">--end</span></code>. Station selection is specified by a network and station code.
+The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id5">
 <h4>Usage<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
@@ -2030,8 +2030,8 @@ Options:
 <h4>Description<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
-(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
-<p>Station selection is specified by a network and station code. The data base is
+(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.
+Station selection is specified by a network and station code. The database is
 provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id7">
@@ -2095,7 +2095,7 @@ Options:
 <p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and
-station code. The data base is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+station code. The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id9">
 <h4>Usage<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
@@ -2192,8 +2192,8 @@ Options:
 <h4>Description<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
-(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.</p>
-<p>Station selection is specified by a network and station code. The data base is provided as a
+(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.
+Station selection is specified by a network and station code. The database is provided as a
 <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id11">
@@ -2278,7 +2278,7 @@ M08A and send the prompt to a logfile</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A &gt; logfile
 </pre></div>
 </div>
-<p>To see the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb.py</span></code>:</p>
+<p>To check the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb.py</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb.py M08A.pkl
  Listing Station Pickle: M08A.pkl
  7D.M08A
@@ -2524,8 +2524,8 @@ the only transfer function possible is:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
 </ul>
-<p>For tilt only (i.e., all of <code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code> components are available), the transfer
-functions are:</p>
+<p>For tilt only (i.e., all of <code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code> components are available, but not <code class="docutils literal notranslate"><span class="pre">?XH</span></code>),
+the transfer functions are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Z1</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Z2-1</span></code></p></li>
@@ -2538,38 +2538,40 @@ following transfer functions are possible:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ZP-21</span></code></p></li>
 </ul>
-<p>If you are using the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects to calculate the transfer functions,
-the following may be further available (if all components are available):</p>
+<p>If you are using a <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> object to calculate the transfer functions,
+the following may also be possible (if all components are available):</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">ZH</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ZP-H</span></code></p></li>
 </ul>
 <p>In this example we calculate all available transfer functions for all available data.
 In this case we do not need to specify any option and type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Path</span> <span class="n">to</span> <span class="n">TF_STA</span><span class="o">/</span><span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span><span class="o">/</span> <span class="n">doesn</span><span class="s1">&#39;t exist - creating it</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions.py M08A.pkl
 
-<span class="o">|===============================================|</span>
-<span class="o">|===============================================|</span>
-<span class="o">|</span>                       <span class="n">M08A</span>                    <span class="o">|</span>
-<span class="o">|===============================================|</span>
-<span class="o">|===============================================|</span>
-<span class="o">|</span>  <span class="n">Station</span><span class="p">:</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span>                             <span class="o">|</span>
-<span class="o">|</span>      <span class="n">Channel</span><span class="p">:</span> <span class="n">BH</span><span class="p">;</span> <span class="n">Locations</span><span class="p">:</span> <span class="o">--</span>               <span class="o">|</span>
-<span class="o">|</span>      <span class="n">Lon</span><span class="p">:</span> <span class="o">-</span><span class="mf">124.90</span><span class="p">;</span> <span class="n">Lat</span><span class="p">:</span>  <span class="mf">44.12</span>                <span class="o">|</span>
-<span class="o">|</span>      <span class="n">Start</span> <span class="n">time</span><span class="p">:</span> <span class="mi">2011</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>          <span class="o">|</span>
-<span class="o">|</span>      <span class="n">End</span> <span class="n">time</span><span class="p">:</span>   <span class="mi">2012</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">18</span> <span class="mi">23</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">59</span>          <span class="o">|</span>
-<span class="o">|-----------------------------------------------|</span>
+Path to TF_STA/7D.M08A/ doesn&#39;t exist - creating it
 
-<span class="o">**********************************************************************</span>
-<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="n">day</span> <span class="mf">2012.088</span>
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20 00:00:00          |
+|      End time:   2012-07-18 23:59:59          |
+|-----------------------------------------------|
 
-<span class="o">**********************************************************************</span>
-<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="n">day</span> <span class="mf">2012.075</span>
+**********************************************************************
+* Calculating transfer functions for key 7D.M08A and day 2012.088
 
-<span class="o">...</span>
+**********************************************************************
+* Calculating transfer functions for key 7D.M08A and day 2012.075
 
-<span class="o">**********************************************************************</span>
-<span class="o">*</span> <span class="n">Calculating</span> <span class="n">transfer</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">key</span> <span class="mi">7</span><span class="n">D</span><span class="o">.</span><span class="n">M08A</span> <span class="ow">and</span> <span class="nb">range</span> <span class="mf">2011.293</span><span class="o">-</span><span class="mf">2012.200</span><span class="o">.</span>
+...
+
+**********************************************************************
+* Calculating transfer functions for key 7D.M08A and range 2011.293-2012.200.
 </pre></div>
 </div>
 <p>Note how the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are read randomly from disk, followed by the
@@ -2588,13 +2590,13 @@ calculated for the whole month is shown in black.</p>
 <div class="section" id="download-earthquake-data">
 <h3>5. Download earthquake data<a class="headerlink" href="#download-earthquake-data" title="Permalink to this headline">¶</a></h3>
 <p>Now we need to download the earthquake data, for which we wish to
-clean the vertical component using the transfer functions calculated.
+clean the vertical component using the transfer functions just calculated.
 This script <code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code> is very similar to <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>,
-with the addition of Event and Geometry Settings.</p>
+with the addition of the Event and Geometry Settings.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Be careful with the Frequency Settings, as these values need to be exactly
-the same as those used in <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code> but won’t be checked
+the same as those used in <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>, but won’t be checked
 against.</p>
 </div>
 <p>To download the seismograms that recorded the March 9, 2012, magnitude 6.6
