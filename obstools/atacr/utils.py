@@ -35,6 +35,28 @@ from scipy.signal import savgol_filter
 
 
 def update_stats(tr, stla, stlo, stel, cha):
+    """
+    Function to include SAC metadata to :class:`~obspy.core.Trace` objects
+
+    Parameters
+    ----------
+
+    tr : :class:`~obspy.core.Trace` object
+        Trace object to update
+    stla : float
+        Latitude of station
+    stlo : float
+        Longitude of station
+    cha : str
+        Channel for component
+
+    Returns
+    -------
+
+    tr : :class:`~obspy.core.Trace` object
+        Updated trace object
+
+    """
 
     tr.stats.sac = AttribDict()
     tr.stats.sac.stla = stla
@@ -45,6 +67,25 @@ def update_stats(tr, stla, stlo, stel, cha):
     return tr
 
 def get_data(datapath, tstart, tend):
+    """
+    Function to grab all available noise data given a path and data time range
+
+    Parameters
+    ----------
+    datapath : str
+        Path to noise data folder
+    tstart : :class:`~obspy.class.UTCDateTime`
+        Start time for query
+    tend : :class:`~obspy.class.UTCDateTime`
+        End time for query
+
+    Returns
+    -------
+    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+        Corresponding trace objects for components H1, H2, HZ and HP. Returns empty traces
+        for missing components.
+
+    """
 
     # Define empty streams
     trN1 = Stream()
@@ -93,6 +134,25 @@ def get_data(datapath, tstart, tend):
 
 
 def get_event(eventpath, tstart, tend):
+    """
+    Function to grab all available earthquake data given a path and data time range
+
+    Parameters
+    ----------
+    eventpath : str
+        Path to earthquake data folder
+    tstart : :class:`~obspy.class.UTCDateTime`
+        Start time for query
+    tend : :class:`~obspy.class.UTCDateTime`
+        End time for query
+
+    Returns
+    -------
+    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+        Corresponding trace objects for components H1, H2, HZ and HP. Returns empty traces
+        for missing components.
+
+    """
 
     # Define empty streams
     tr1 = Stream()
@@ -141,8 +201,37 @@ def get_event(eventpath, tstart, tend):
 
 def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     """ 
-    Determines tilt direction from maximum
-    coherence between H1 and Z
+    Determines tilt direction from maximum coherence between rotated H1 and Z.
+
+    Parameters
+    ----------
+    ft1, ft2, ftZ, ftP : :class:`~numpy.ndarray`
+        Fourier transform of corresponding H1, H2, HZ and HP components
+    f : :class:`~numpy.ndarray`
+        Frequency axis in Hz
+    goodwins : list 
+        List of booleans representing whether a window is good (True) or not (False). 
+        This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
+    tiltfreq : list 
+        Two floats representing the frequency band at which the tilt is calculated
+
+    Returns
+    -------
+    cHH, cHZ, cHP : :class:`~numpy.ndarray`
+        Arrays of power and cross-spectral density functions of components HH (rotated H1 
+        in direction of maximum tilt), HZ, and HP
+    coh : :class:`~numpy.ndarray`
+        Coherence value between rotated H and Z components, as a function of directions (azimuths)
+    ph : :class:`~numpy.ndarray`
+        Phase value between rotated H and Z components, as a function of directions (azimuths)
+    direc : :class:`~numpy.ndarray`
+        Array of directions (azimuths) considered
+    tilt : float 
+        Direction (azimuth) of maximum coherence between rotated H1 and Z 
+    coh_value : float
+        Coherence value at tilt direction
+    phase_value : float
+        Phase value at tilt direction
 
     """
 
@@ -228,10 +317,25 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
 
 def calculate_windowed_fft(trace, ws, ss=None, hann=True):
     """
-    Calculates cross-spectral quantities
+    Calculates windowed Fourier transform
 
-    ws: window size
-    ss: step size (number of samples until next window)
+    Parameters
+    ----------
+    trace : :class:`~obspy.core.Trace`
+        Input trace data
+    ws : int
+        Window size, in number of samples
+    ss : int
+        Step size, or number of samples until next window
+    han : bool
+        Whether or not to apply a Hanning taper to data
+
+    Returns
+    -------
+    ft : :class:`~numpy.ndarray`
+        Fourier transform of trace
+    f : :class:`~numpy.ndarray`
+        Frequency axis in Hz
 
     """
 
@@ -250,7 +354,25 @@ def calculate_windowed_fft(trace, ws, ss=None, hann=True):
 #     return savgol_filter(data, np, poly, axis=axis, mode='wrap')
 
 def smooth(data, nd, axis=0):
+    """
+    Function to smooth power spectral density functions from the convolution
+    of a boxcar function with the PSD
 
+    Parameters
+    ----------
+    data : :class:`~numpy.ndarray`
+        Real-valued array to smooth (PSD)
+    nd : int
+        Number of samples over which to smooth
+    axis : int
+        axis over which to perform the smoothing
+
+    Returns
+    -------
+    filt : :class:`~numpy.ndarray`, optional
+        Filtered data
+
+    """
     if np.any(data):
         if data.ndim > 1:
             filt = np.zeros(data.shape)
@@ -267,6 +389,22 @@ def smooth(data, nd, axis=0):
 
 
 def admittance(Gxy, Gxx):
+    """
+    Calculates admittance between two components
+
+    Parameters
+    ---------
+    Gxy : :class:`~numpy.ndarray`
+        Cross spectral density function of `x` and `y`
+    Gxx : :class:`~numpy.ndarray`
+        Power spectral density function of `x`
+
+    Returns
+    -------
+    : :class:`~numpy.ndarray`, optional
+        Admittance between `x` and `y`
+
+    """
 
     if np.any(Gxy) and np.any(Gxx):
         return np.abs(Gxy)/Gxx
@@ -275,6 +413,24 @@ def admittance(Gxy, Gxx):
 
 
 def coherence(Gxy, Gxx, Gyy):
+    """
+    Calculates coherence between two components
+
+    Parameters
+    ---------
+    Gxy : :class:`~numpy.ndarray`
+        Cross spectral density function of `x` and `y`
+    Gxx : :class:`~numpy.ndarray`
+        Power spectral density function of `x`
+    Gyy : :class:`~numpy.ndarray`
+        Power spectral density function of `y`
+
+    Returns
+    -------
+    : :class:`~numpy.ndarray`, optional
+        Coherence between `x` and `y`
+
+    """
 
     if np.any(Gxy) and np.any(Gxx) and np.any(Gxx):
         return np.abs(Gxy)**2/(Gxx*Gyy)
@@ -283,7 +439,21 @@ def coherence(Gxy, Gxx, Gyy):
 
 
 def phase(Gxy):
-    
+    """
+    Calculates phase angle between two components
+
+    Parameters
+    ---------
+    Gxy : :class:`~numpy.ndarray`
+        Cross spectral density function of `x` and `y`
+
+    Returns
+    -------
+    : :class:`~numpy.ndarray`, optional
+        Phase angle between `x` and `y`
+
+    """
+
     if np.any(Gxy):
         return np.angle(Gxy)
     else:
@@ -292,13 +462,24 @@ def phase(Gxy):
 
 def sliding_window(a, ws, ss=None, hann=True):
     """
+    Function to split a data array into overlapping, possibly tapered sub-windows
+
     Parameters
     ----------
-    
-        a  - a 1D array
-        ws - the window size, in samples
-        ss - the step size, in samples. If not provided, window and step size
-             are equal.
+    a : :class:`~numpy.ndarray`
+        1D array of data to split
+    ws : int
+        Window size in samples
+    ss : int
+        Step size in samples. If not provided, window and step size
+         are equal.
+
+    Returns
+    -------
+    out : :class:`~numpy.ndarray`
+        1D array of windowed data
+    nd : int
+        Number of windows
 
     """
      
@@ -331,10 +512,6 @@ def sliding_window(a, ws, ss=None, hann=True):
 
 
 def rotate_dir(tr1, tr2, direc):
-    """
-    Rotate horizontals
-
-    """
 
     d = -direc*np.pi/180.+np.pi/2.
     rot_mat = np.array([[np.cos(d), -np.sin(d)],

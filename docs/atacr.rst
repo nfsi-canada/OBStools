@@ -168,11 +168,13 @@ Utility functions
 +++++++++++++++++
 
 .. automodule:: obstools.atacr.utils
+   :members:
 
 Plotting functions
 ++++++++++++++++++
 
 .. automodule:: obstools.atacr.plot
+   :members:
 
 Scripts
 *******

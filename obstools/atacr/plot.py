@@ -390,7 +390,7 @@ def fig_event_corrected(evstream, TF_list):
     ----------
     evstream : :class:`~obtsools.classes.EventStream`
         Container for the event stream data
-    Tf_list : List
+    Tf_list : list
         List of Dictionary elements of transfer functions used 
         for plotting the corrected vertical component.
 
