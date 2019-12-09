@@ -50,7 +50,7 @@ Installation
 Dependencies
 ++++++++++++
 
-The current version was developed using **Python3.7** \
+The current version has been tested using **Python3.6 and 3.7** \
 Also, the following packages are required:
 
 - `stdb <https://github.com/paudetseis/StDb>`_

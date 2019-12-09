@@ -28,7 +28,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7'],
-    install_requires=['obspy', 'stdb'],
+    install_requires=['numpy', 'obspy', 'stdb'],
     python_requires='>=3.6',
 	packages=['obstools'],
 	scripts=scripts)
