@@ -9,8 +9,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -55,30 +55,30 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
     sl_cZZ = power.cZZ
     sl_cPP = power.cPP
 
-    if ncomp==2:
+    if ncomp == 2:
         sls = [sl_cZZ, sl_cPP]
-        title = ['HZ component, Station: '+key, \
+        title = ['HZ component, Station: '+key,
                  'HP component, Station: '+key]
-    elif ncomp==3:
+    elif ncomp == 3:
         sls = [sl_c11, sl_c22, sl_cZZ]
-        title = ['H1 component, Station: '+key, \
-                 'H2 component, Station: '+key, \
+        title = ['H1 component, Station: '+key,
+                 'H2 component, Station: '+key,
                  'HZ component, Station: '+key]
     else:
         sls = [sl_c11, sl_c22, sl_cZZ, sl_cPP]
-        title = ['H1 component, Station: '+key, \
-                 'H2 component, Station: '+key, \
-                 'HZ component, Station: '+key, \
+        title = ['H1 component, Station: '+key,
+                 'H2 component, Station: '+key,
+                 'HZ component, Station: '+key,
                  'HP component, Station: '+key]
 
     fig = plt.figure(6)
     for i, sl in enumerate(sls):
-        ax = fig.add_subplot(ncomp,1,i+1)
-        ax.semilogx(f, sl[:,gooddays], 'k', lw=0.5)
-        if np.sum(~gooddays)>0:
-            plt.semilogx(f, sl[:,~gooddays], 'r', lw=0.5)
+        ax = fig.add_subplot(ncomp, 1, i+1)
+        ax.semilogx(f, sl[:, gooddays], 'k', lw=0.5)
+        if np.sum(~gooddays) > 0:
+            plt.semilogx(f, sl[:, ~gooddays], 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
-        if i==len(sls)-1:
+        if i == len(sls)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
@@ -116,33 +116,33 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
     bcZZ = bad.cZZ
     bcPP = bad.cPP
 
-    if ncomp==2:
+    if ncomp == 2:
         ccs = [cZZ, cPP]
         bcs = [bcZZ, bcPP]
-        title = ['Average HZ, Station: '+key, \
+        title = ['Average HZ, Station: '+key,
                  'Average HP, Station: '+key]
-    elif ncomp==3:
+    elif ncomp == 3:
         ccs = [c11, c22, cZZ]
         bcs = [bc11, bc22, bcZZ]
-        title = ['Average H1, Station: '+key, \
-                 'Average H2, Station: '+key, \
+        title = ['Average H1, Station: '+key,
+                 'Average H2, Station: '+key,
                  'Average HZ, Station: '+key]
     else:
         ccs = [c11, c22, cZZ, cPP]
         bcs = [bc11, bc22, bcZZ, bcPP]
-        title = ['Average H1, Station: '+key, \
-                 'Average H2, Station: '+key, \
-                 'Average HZ, Station: '+key, \
+        title = ['Average H1, Station: '+key,
+                 'Average H2, Station: '+key,
+                 'Average HZ, Station: '+key,
                  'Average HP, Station: '+key]
 
     plt.figure()
     for i, (cc, bc) in enumerate(zip(ccs, bcs)):
-        ax = plt.subplot(ncomp,1,i+1)
+        ax = plt.subplot(ncomp, 1, i+1)
         ax.semilogx(f, utils.smooth(np.log(cc), 50), 'k', lw=0.5)
-        if np.sum(~gooddays)>0:
+        if np.sum(~gooddays) > 0:
             ax.semilogx(f, utils.smooth(np.log(bc), 50), 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
-        if i==len(ccs)-1:
+        if i == len(ccs)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
     plt.show()
@@ -170,19 +170,18 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='', **kwargs):
 
     """
 
-
-    if ncomp==2 :
+    if ncomp == 2:
         fieldZP = field.cZP.T
         fields = [fieldZP]
         title = [': ZP']
-        fig = plt.figure(figsize=(6,2.667))
-    elif ncomp==3:
+        fig = plt.figure(figsize=(6, 2.667))
+    elif ncomp == 3:
         field12 = field.c12.T
         field1Z = field.c1Z.T
         field2Z = field.c2Z.T
         fields = [field12, field1Z, field2Z]
         title = [': 12', ': 1Z', ': 2Z']
-        fig = plt.figure(figsize=(6,4))
+        fig = plt.figure(figsize=(6, 4))
     else:
         fieldZP = field.cZP.T
         field12 = field.c12.T
@@ -192,22 +191,22 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='', **kwargs):
         field2P = field.c2P.T
         fields = [field12, field1Z, field1P, field2Z, field2P, fieldZP]
         title = [': 12', ': 1Z', ': 1P', ': 2Z', ': 2P', ': ZP']
-        fig = plt.figure(figsize=(6,8))
+        fig = plt.figure(figsize=(6, 8))
 
     for i, field in enumerate(fields):
-        ax = fig.add_subplot(len(fields),1,i+1)
+        ax = fig.add_subplot(len(fields), 1, i+1)
         # Extact field
         if ftype == 'Admittance':
-            ax.loglog(f, field[:,gooddays], color='gray', **kwargs)
-            if np.sum(~gooddays)>0:
-                ax.loglog(f, field[:,~gooddays], color='r', **kwargs)
+            ax.loglog(f, field[:, gooddays], color='gray', **kwargs)
+            if np.sum(~gooddays) > 0:
+                ax.loglog(f, field[:, ~gooddays], color='r', **kwargs)
         else:
-            ax.semilogx(f, field[:,gooddays], color='gray', **kwargs)
-            if np.sum(~gooddays)>0:
-                ax.semilogx(f, field[:,~gooddays], color='r', **kwargs)
+            ax.semilogx(f, field[:, gooddays], color='gray', **kwargs)
+            if np.sum(~gooddays) > 0:
+                ax.semilogx(f, field[:, ~gooddays], color='r', **kwargs)
         plt.ylabel(ftype, fontdict={'fontsize': 8})
         plt.title(key+' '+ftype+title[i], fontdict={'fontsize': 8})
-        if i==len(fields)-1:
+        if i == len(fields)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
 
     plt.tight_layout()
@@ -230,10 +229,10 @@ def fig_coh_ph(coh, ph, direc):
 
     """
 
-    colors = plt.cm.cividis(np.linspace(0,1,coh.shape[0]))
+    colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
     if coh.ndim > 1:
-        f, (ax1, ax2) = plt.subplots(1,2)
+        f, (ax1, ax2) = plt.subplots(1, 2)
         for i, (co, p) in enumerate(zip(coh, ph)):
             ax1.plot(direc, co, c=colors[i])
             ax2.plot(direc, p*180./np.pi, c=colors[i])
@@ -278,12 +277,13 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     ntf = max(sum(day_list.values()), sum(sta_list.values()))
 
     # Define all possible compbinations
-    tf_list = {'ZP': True, 'Z1':True, 'Z2-1':True, 'ZP-21':True, 'ZH':True, 'ZP-H':True}
+    tf_list = {'ZP': True, 'Z1': True, 'Z2-1': True,
+               'ZP-21': True, 'ZH': True, 'ZP-H': True}
 
-    if ntf==1:
-        fig = plt.figure(figsize=(6,1.75))
+    if ntf == 1:
+        fig = plt.figure(figsize=(6, 1.75))
     else:
-        fig = plt.figure(figsize=(6,1.33333333*ntf))
+        fig = plt.figure(figsize=(6, 1.33333333*ntf))
 
     j = 1
     for key in tf_list:
@@ -291,37 +291,44 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
         if not day_list[key] and not sta_list[key]:
             continue
 
-        ax = fig.add_subplot(ntf,1,j)
+        ax = fig.add_subplot(ntf, 1, j)
 
         if day_list[key]:
             for i in range(len(day_trfs)):
-                ax.loglog(f, np.abs(day_trfs[i][key]['TF_'+key]), 'gray', lw=0.5)
+                ax.loglog(
+                    f, np.abs(day_trfs[i][key]['TF_'+key]), 'gray', lw=0.5)
         if sta_list[key]:
             ax.loglog(f, np.abs(sta_trfs[key]['TF_'+key]), 'k', lw=0.5)
-        if key=='ZP':
+        if key == 'ZP':
             ax.set_ylim(1.e-20, 1.e0)
             ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Transfer Function: ZP', fontdict={'fontsize': 8})
-        elif key=='Z1':
+            ax.set_title(skey+' Transfer Function: ZP',
+                         fontdict={'fontsize': 8})
+        elif key == 'Z1':
             ax.set_ylim(1.e-5, 1.e5)
             ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Transfer Function: Z1', fontdict={'fontsize': 8})
-        elif key=='Z2-1':
+            ax.set_title(skey+' Transfer Function: Z1',
+                         fontdict={'fontsize': 8})
+        elif key == 'Z2-1':
             ax.set_ylim(1.e-5, 1.e5)
             ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Transfer Function: Z2-1', fontdict={'fontsize': 8})
-        elif key=='ZP-21':
+            ax.set_title(skey+' Transfer Function: Z2-1',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZP-21':
             ax.set_ylim(1.e-20, 1.e0)
             ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Transfer Function: ZP-21', fontdict={'fontsize': 8})
-        elif key=='ZH':
+            ax.set_title(skey+' Transfer Function: ZP-21',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZH':
             ax.set_ylim(1.e-10, 1.e10)
             ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Transfer Function: ZH', fontdict={'fontsize': 8})
-        elif key=='ZP-H':
+            ax.set_title(skey+' Transfer Function: ZH',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZP-H':
             ax.set_ylim(1.e-20, 1.e0)
             ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Transfer Function: ZP-H', fontdict={'fontsize': 8})
+            ax.set_title(skey+' Transfer Function: ZP-H',
+                         fontdict={'fontsize': 8})
 
         j += 1
 
@@ -346,34 +353,41 @@ def fig_event_raw(evstream, fmin, fmax):
     """
 
     import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+    evstream.sth.filter('bandpass', freqmin=fmin,
+                        freqmax=fmax, corners=2, zerophase=True)
+    evstream.stp.filter('bandpass', freqmin=fmin,
+                        freqmax=fmax, corners=2, zerophase=True)
     sr = evstream.sth[0].stats.sampling_rate
     taxis = np.arange(0., 7200., 1./sr)
-    
-    plt.figure(figsize=(6,6))
+
+    plt.figure(figsize=(6, 6))
 
     plt.subplot(411)
     plt.plot(taxis, evstream.sth[0].data, 'k', lw=0.5)
-    plt.title(evstream.key+' '+evstream.tstamp+': H1', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.title(evstream.key+' '+evstream.tstamp +
+              ': H1', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.subplot(412)
     plt.plot(taxis, evstream.sth[1].data, 'k', lw=0.5)
     plt.xlim((0., 7200.))
     plt.title(evstream.tstamp+': H2', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
 
     plt.subplot(413)
     plt.plot(taxis, evstream.sth[2].data, 'k', lw=0.5)
     plt.xlim((0., 7200.))
     plt.title(evstream.tstamp+': Z', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
 
     plt.subplot(414)
     plt.plot(taxis, evstream.stp[0].data, 'k', lw=0.5)
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
     plt.title(evstream.tstamp+': P', fontdict={'fontsize': 8})
 
@@ -397,19 +411,23 @@ def fig_event_corrected(evstream, TF_list):
     """
 
     import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=1./150., freqmax = 1./10., corners=2, zerophase=True)
+    evstream.sth.filter('bandpass', freqmin=1./150.,
+                        freqmax=1./10., corners=2, zerophase=True)
+    evstream.stp.filter('bandpass', freqmin=1./150.,
+                        freqmax=1./10., corners=2, zerophase=True)
     sr = evstream.sth[0].stats.sampling_rate
     taxis = np.arange(0., 7200., 1./sr)
 
-    plt.figure(figsize=(8,8))
-    
+    plt.figure(figsize=(8, 8))
+
     plt.subplot(611)
     plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
         plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
-    plt.title(evstream.key+' '+evstream.tstamp+': Z1', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.title(evstream.key+' '+evstream.tstamp +
+              ': Z1', fontdict={'fontsize': 8})
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.subplot(612)
@@ -417,7 +435,8 @@ def fig_event_corrected(evstream, TF_list):
     if TF_list['Z2-1']:
         plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': Z2-1', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.subplot(613)
@@ -425,7 +444,8 @@ def fig_event_corrected(evstream, TF_list):
     if TF_list['ZP-21']:
         plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP-21', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.subplot(614)
@@ -433,7 +453,8 @@ def fig_event_corrected(evstream, TF_list):
     if TF_list['ZH']:
         plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZH', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.subplot(615)
@@ -441,7 +462,8 @@ def fig_event_corrected(evstream, TF_list):
     if TF_list['ZP-H']:
         plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP-H', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.subplot(616)
@@ -449,11 +471,10 @@ def fig_event_corrected(evstream, TF_list):
     if TF_list['ZP']:
         plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True, scilimits=(-3,3))
+    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
+                               scilimits=(-3, 3))
     plt.xlim((0., 7200.))
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
     plt.show()
-
-
