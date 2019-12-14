@@ -9,8 +9,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -65,6 +65,7 @@ def update_stats(tr, stla, stlo, stel, cha):
     tr.stats.channel = cha
 
     return tr
+
 
 def get_data(datapath, tstart, tend):
     """
@@ -199,6 +200,7 @@ def get_event(eventpath, tstart, tend):
 
     return trN1, trN2, trNZ, trNP
 
+
 def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     """ 
     Determines tilt direction from maximum coherence between rotated H1 and Z.
@@ -238,26 +240,29 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     direc = np.arange(0., 360., 10.)
     coh = np.zeros(len(direc))
     ph = np.zeros(len(direc))
-    cZZ = np.abs(np.mean(ftZ[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0))[0:len(f)]
+    cZZ = np.abs(np.mean(ftZ[goodwins, :] *
+                         np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
 
     for i, d in enumerate(direc):
 
         # Rotate horizontals
         ftH = rotate_dir(ft1, ft2, d)
-    
+
         # Get transfer functions
-        cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
-        cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
+        cHH = np.abs(np.mean(ftH[goodwins, :] *
+                             np.conj(ftH[goodwins, :]), axis=0))[0:len(f)]
+        cHZ = np.mean(ftH[goodwins, :] *
+                      np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
 
         Co = coherence(cHZ, cHH, cZZ)
         Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        coh[i] = np.mean(Co[(f>tiltfreq[0]) & (f<tiltfreq[1])])
-        ph[i] = np.pi/2. - np.mean(Ph[(f>tiltfreq[0]) & (f<tiltfreq[1])])
+        coh[i] = np.mean(Co[(f > tiltfreq[0]) & (f < tiltfreq[1])])
+        ph[i] = np.pi/2. - np.mean(Ph[(f > tiltfreq[0]) & (f < tiltfreq[1])])
 
     # Index where coherence is max
-    ind = np.argwhere(coh==coh.max())
+    ind = np.argwhere(coh == coh.max())
 
     # Phase and direction at maximum coherence
     phase_value = ph[ind[0]][0]
@@ -273,20 +278,22 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
 
         # Rotate horizontals
         ftH = rotate_dir(ft1, ft2, d)
-    
+
         # Get transfer functions
-        cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
-        cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
+        cHH = np.abs(np.mean(ftH[goodwins, :] *
+                             np.conj(ftH[goodwins, :]), axis=0))[0:len(f)]
+        cHZ = np.mean(ftH[goodwins, :] *
+                      np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
 
         Co = coherence(cHZ, cHH, cZZ)
         Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        rcoh[i] = np.mean(Co[(f>tiltfreq[0]) & (f<tiltfreq[1])])
-        rph[i] = np.pi/2. - np.mean(Ph[(f>tiltfreq[0]) & (f<tiltfreq[1])])
+        rcoh[i] = np.mean(Co[(f > tiltfreq[0]) & (f < tiltfreq[1])])
+        rph[i] = np.pi/2. - np.mean(Ph[(f > tiltfreq[0]) & (f < tiltfreq[1])])
 
     # Index where coherence is max
-    ind = np.argwhere(rcoh==rcoh.max())
+    ind = np.argwhere(rcoh == rcoh.max())
 
     # Phase and direction at maximum coherence
     phase_value = rph[ind[0]][0]
@@ -298,17 +305,19 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
         tilt += 180.
     if tilt > 360.:
         tilt -= 360.
-    
+
     # print('Maximum coherence for tilt = ', tilt)
 
     # Now calculate spectra at tilt direction
     ftH = rotate_dir(ft1, ft2, tilt)
 
     # Get transfer functions
-    cHH = np.abs(np.mean(ftH[goodwins,:]*np.conj(ftH[goodwins,:]), axis=0))[0:len(f)]
-    cHZ = np.mean(ftH[goodwins,:]*np.conj(ftZ[goodwins,:]), axis=0)[0:len(f)]
+    cHH = np.abs(np.mean(ftH[goodwins, :] *
+                         np.conj(ftH[goodwins, :]), axis=0))[0:len(f)]
+    cHZ = np.mean(ftH[goodwins, :]*np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
     if np.any(ftP):
-        cHP = np.mean(ftH[goodwins,:]*np.conj(ftP[goodwins,:]), axis=0)[0:len(f)]
+        cHP = np.mean(ftH[goodwins, :] *
+                      np.conj(ftP[goodwins, :]), axis=0)[0:len(f)]
     else:
         cHP = None
 
@@ -347,11 +356,12 @@ def calculate_windowed_fft(trace, ws, ss=None, hann=True):
 
     # Fourier transform
     ft = np.fft.fft(tr, n=n2)
-    
+
     return ft, f
 
 # def smooth(data, np, poly=0, axis=0):
 #     return savgol_filter(data, np, poly, axis=axis, mode='wrap')
+
 
 def smooth(data, nd, axis=0):
     """
@@ -377,10 +387,12 @@ def smooth(data, nd, axis=0):
         if data.ndim > 1:
             filt = np.zeros(data.shape)
             for i in range(data.shape[::-1][axis]):
-                if axis==0:
-                    filt[:,i] = np.convolve(data[:,i], np.ones((nd,))/nd, mode='same')
-                elif axis==1:
-                    filt[i,:] = np.convolve(data[i,:], np.ones((nd,))/nd, mode='same')
+                if axis == 0:
+                    filt[:, i] = np.convolve(
+                        data[:, i], np.ones((nd,))/nd, mode='same')
+                elif axis == 1:
+                    filt[i, :] = np.convolve(
+                        data[i, :], np.ones((nd,))/nd, mode='same')
         else:
             filt = np.convolve(data, np.ones((nd,))/nd, mode='same')
         return filt
@@ -482,16 +494,16 @@ def sliding_window(a, ws, ss=None, hann=True):
         Number of windows
 
     """
-     
+
     if ss is None:
         # no step size was provided. Return non-overlapping windows
         ss = ws
-    
+
     # Calculate the number of windows to return, ignoring leftover samples, and
     # allocate memory to contain the samples
     valid = len(a) - ss
     nd = (valid) // ss
-    out = np.ndarray((nd,ws), dtype=a.dtype)
+    out = np.ndarray((nd, ws), dtype=a.dtype)
 
     if nd == 0:
         if hann:
@@ -504,10 +516,10 @@ def sliding_window(a, ws, ss=None, hann=True):
         start = i * ss
         stop = start + ws
         if hann:
-            out[i] = a[start : stop] * np.hanning(ws)
+            out[i] = a[start: stop] * np.hanning(ws)
         else:
-            out[i] = a[start : stop]
-     
+            out[i] = a[start: stop]
+
     return out, nd
 
 
@@ -515,12 +527,12 @@ def rotate_dir(tr1, tr2, direc):
 
     d = -direc*np.pi/180.+np.pi/2.
     rot_mat = np.array([[np.cos(d), -np.sin(d)],
-        [np.sin(d), np.cos(d)]])
+                        [np.sin(d), np.cos(d)]])
 
     v12 = np.array([tr2, tr1])
     vxy = np.tensordot(rot_mat, v12, axes=1)
-    tr_2 = vxy[0,:]
-    tr_1 = vxy[1,:]
+    tr_2 = vxy[0, :]
+    tr_1 = vxy[1, :]
 
     return tr_1
 
@@ -544,6 +556,6 @@ def ftest(res1, pars1, res2, pars2):
 
     return P
 
-def _npow2(x):
-    return 1 if x==0 else 2**(x-1).bit_length()
 
+def _npow2(x):
+    return 1 if x == 0 else 2**(x-1).bit_length()
