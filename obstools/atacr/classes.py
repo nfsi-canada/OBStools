@@ -1934,10 +1934,10 @@ class EventStream(object):
                     TF_ZP_21 = transfunc[key]['TF_ZP-21']
                     fTF_ZP_21 = np.hstack(
                         (TF_ZP_21, np.conj(TF_ZP_21[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1 -
-                    (ft2 - ft1*fTF_21)*fTF_Z2_1 -
-                    (ftP - ft1*fTF_P1 -
-                     (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
+                    corrspec = ftZ - fTF_Z1*ft1 - \
+                        (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
+                        (ftP - ft1*fTF_P1 - \
+                        (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP-21', corrtime)
 
