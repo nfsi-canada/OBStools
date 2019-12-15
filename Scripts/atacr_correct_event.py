@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -106,6 +106,7 @@ import stdb
 from obstools.atacr.classes import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, options
 
+
 def main():
 
     # Run Input Parser
@@ -135,12 +136,12 @@ def main():
 
         # Path where transfer functions will be located
         transpath = 'TF_STA/' + stkey + '/'
-        if not os.path.isdir(transpath): 
+        if not os.path.isdir(transpath):
             raise(Exception("Path to "+transpath+" doesn`t exist - aborting"))
 
         # Path where event data are located
         eventpath = 'EVENTS/' + stkey + '/'
-        if not os.path.isdir(eventpath): 
+        if not os.path.isdir(eventpath):
             raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
 
         # Get catalogue search start time
@@ -160,9 +161,11 @@ def main():
 
         # Temporary print locations
         tlocs = sta.location
-        if len(tlocs) == 0: tlocs = ['']
+        if len(tlocs) == 0:
+            tlocs = ['']
         for il in range(0, len(tlocs)):
-            if len(tlocs[il]) == 0: tlocs[il] = "--"
+            if len(tlocs[il]) == 0:
+                tlocs[il] = "--"
         sta.location = tlocs
 
         # Update Display
@@ -170,16 +173,21 @@ def main():
         print(" ")
         print("|===============================================|")
         print("|===============================================|")
-        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|                   {0:>8s}                    |".format(
+            sta.station))
         print("|===============================================|")
         print("|===============================================|")
-        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
-        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
-        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
-        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
-        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(
+            sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(
+            sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(
+            sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(
+            sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(
+            sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
         print("|-----------------------------------------------|")
-
 
         # Find all files in directories
         event_files = os.listdir(eventpath)
@@ -187,16 +195,17 @@ def main():
 
         # Check if folders contain anything
         if not event_files:
-            raise(Exception("There are no events in folder "+eventpath))
+            raise(Exception("There are no events in folder " + eventpath))
 
         if not trans_files:
-            raise(Exception("There are no transfer functions in folder "+transpath))
+            raise(Exception("There are no transfer functions in folder " +
+                            transpath))
 
         # Cycle through available files
         for eventfile in event_files:
 
             # Skip hidden files and folders
-            if eventfile[0]=='.':
+            if eventfile[0] == '.':
                 continue
 
             evprefix = eventfile.split('.')
@@ -211,7 +220,8 @@ def main():
                     eventstream = pickle.load(file)
                     file.close()
                 except:
-                    print("File "+eventpath+eventfile+" exists but cannot be loaded")
+                    print("File "+eventpath+eventfile +
+                          " exists but cannot be loaded")
                     continue
 
             else:
@@ -224,7 +234,7 @@ def main():
             for transfile in trans_files:
 
                 # Skip hidden files and folders
-                if transfile[0]=='.':
+                if transfile[0] == '.':
                     continue
 
                 tfprefix = transfile.split('transfunc')[0]
@@ -239,48 +249,55 @@ def main():
                         date1 = UTCDateTime(yr1+'-'+jd1)
                         date2 = UTCDateTime(yr2+'-'+jd2)
                         dateev = UTCDateTime(evprefix[0]+'-'+evprefix[1])
-                        if dateev>=date1 and dateev<=date2:
-                            print(transpath+transfile+" file found - applying transfer functions")
+                        if dateev >= date1 and dateev <= date2:
+                            print(transpath+transfile +
+                                  " file found - applying transfer functions")
 
                             try:
                                 file = open(transpath+transfile, 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
                             except:
-                                print("File "+transpath+transfile+" exists but cannot be loaded")
+                                print("File "+transpath+transfile +
+                                      " exists but cannot be loaded")
                                 continue
 
-                            # List of possible transfer functions for station average files
+                            # List of possible transfer functions for station
+                            # average files
                             eventstream.correct_data(tfaverage)
 
                             correct = eventstream.correct
                             if opts.fig_plot_corrected:
-                                plot.fig_event_corrected(eventstream, tfaverage.tf_list)
+                                plot.fig_event_corrected(
+                                    eventstream, tfaverage.tf_list)
 
                 # This case refers to the "daily" spectral averages
                 else:
                     if not opts.skip_daily:
-                        if tfprefix==evstamp:
-                            print(transpath+transfile+" file found - applying transfer functions")
+                        if tfprefix == evstamp:
+                            print(transpath+transfile +
+                                  " file found - applying transfer functions")
 
                             try:
                                 file = open(transpath+transfile, 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
                             except:
-                                print("File "+transpath+transfile+" exists but cannot be loaded")
+                                print("File "+transpath+transfile +
+                                      " exists but cannot be loaded")
                                 continue
 
-                            # List of possible transfer functions for station average files
+                            # List of possible transfer functions for station
+                            # average files
                             eventstream.correct_data(tfaverage)
 
                             correct = eventstream.correct
                             if opts.fig_plot_corrected:
-                                plot.fig_event_corrected(eventstream, tfaverage.tf_list)
+                                plot.fig_event_corrected(
+                                    eventstream, tfaverage.tf_list)
 
 
 if __name__ == "__main__":
 
     # Run main program
     main()
-
