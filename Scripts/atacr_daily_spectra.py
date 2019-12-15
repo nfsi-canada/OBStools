@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -114,6 +114,7 @@ import stdb
 from obstools.atacr.classes import DayNoise
 from obstools.atacr import utils, options
 
+
 def main():
 
     # Run Input Parser
@@ -147,7 +148,7 @@ def main():
 
         # Path where spectra will be saved
         specpath = 'SPECTRA/' + stkey + '/'
-        if not os.path.isdir(specpath): 
+        if not os.path.isdir(specpath):
             print()
             print("Path to "+specpath+" doesn`t exist - creating it")
             os.makedirs(specpath)
@@ -169,34 +170,42 @@ def main():
 
         # Temporary print locations
         tlocs = sta.location
-        if len(tlocs) == 0: tlocs = ['']
+        if len(tlocs) == 0:
+            tlocs = ['']
         for il in range(0, len(tlocs)):
-            if len(tlocs[il]) == 0: tlocs[il] = "--"
+            if len(tlocs[il]) == 0:
+                tlocs[il] = "--"
         sta.location = tlocs
 
         # Update Display
         print()
         print("|===============================================|")
         print("|===============================================|")
-        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|                   {0:>8s}                    |".format(
+            sta.station))
         print("|===============================================|")
         print("|===============================================|")
-        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
-        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
-        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
-        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
-        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(
+            sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(
+            sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(
+            sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(
+            sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(
+            sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
         print("|-----------------------------------------------|")
 
         # Get all components
         trN1, trN2, trNZ, trNP = utils.get_data(datapath, tstart, tend)
 
-        # Window size 
+        # Window size
         window = opts.window
-        overlap = opts.overlap 
+        overlap = opts.overlap
 
         # minimum numer of windows
-        minwin = opts.minwin 
+        minwin = opts.minwin
 
         # Time axis
         taxis = np.arange(0., window, trNZ[0].stats.delta)
@@ -208,8 +217,10 @@ def main():
             jday = str(trZ.stats.starttime.julday).zfill(3)
 
             print()
-            print("**********************************************************************")
-            print("* Calculating noise spectra for key "+stkey+" and day "+year+"."+jday)
+            print(
+                "************************************************************")
+            print("* Calculating noise spectra for key " +
+                  stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'
             filename = specpath + tstamp + 'spectra.pkl'
 
@@ -222,19 +233,24 @@ def main():
             daynoise = DayNoise(tr1, tr2, trZ, trP, window, overlap, key=stkey)
 
             # Quality control to identify outliers
-            daynoise.QC_daily_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha, smooth=opts.smooth, 
-                fig_QC=opts.fig_QC, debug=opts.debug)
+            daynoise.QC_daily_spectra(
+                pd=opts.pd, tol=opts.tol, alpha=opts.alpha,
+                smooth=opts.smooth, fig_QC=opts.fig_QC,
+                debug=opts.debug)
 
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
             if nwin < minwin:
-                print("*   Too few good data segments to calculate average day spectra")
+                print("*   Too few good data segments to calculate " +
+                      "average day spectra")
                 # continue
             else:
                 print("*   {0} good windows. Proceeding...".format(nwin))
 
             # Average spectra for good windows
-            daynoise.average_daily_spectra(calc_rotation=opts.calc_rotation, fig_average=opts.fig_average, 
+            daynoise.average_daily_spectra(
+                calc_rotation=opts.calc_rotation,
+                fig_average=opts.fig_average,
                 fig_coh_ph=opts.fig_coh_ph)
 
             # Save to file
