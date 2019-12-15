@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -137,6 +137,8 @@ from obstools.atacr import utils, options
 from obstools.atacr.classes import EventStream
 
 # Main function
+
+
 def main():
 
     # Run Input Parser
@@ -166,7 +168,7 @@ def main():
 
         # Define path to see if it exists
         eventpath = 'EVENTS/' + stkey + '/'
-        if not os.path.isdir(eventpath): 
+        if not os.path.isdir(eventpath):
             print('Path to '+eventpath+' doesn`t exist - creating it')
             os.makedirs(eventpath)
 
@@ -174,7 +176,8 @@ def main():
         if len(opts.UserAuth) == 0:
             client = Client(opts.Server)
         else:
-            client = Client(opts.Server, user=opts.UserAuth[0], password=opts.UserAuth[1])
+            client = Client(
+                opts.Server, user=opts.UserAuth[0], password=opts.UserAuth[1])
 
         # Get catalogue search start time
         if opts.startT is None:
@@ -192,9 +195,11 @@ def main():
 
         # Temporary print locations
         tlocs = sta.location
-        if len(tlocs) == 0: tlocs = ['']
+        if len(tlocs) == 0:
+            tlocs = ['']
         for il in range(0, len(tlocs)):
-            if len(tlocs[il]) == 0: tlocs[il] = "--"
+            if len(tlocs[il]) == 0:
+                tlocs[il] = "--"
         sta.location = tlocs
 
         # Update Display
@@ -202,32 +207,47 @@ def main():
         print(" ")
         print("|===============================================|")
         print("|===============================================|")
-        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|                   {0:>8s}                    |".format(
+            sta.station))
         print("|===============================================|")
         print("|===============================================|")
-        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
-        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
-        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
-        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
-        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(
+            sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(
+            sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(
+            sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(
+            sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(
+            sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
         print("|-----------------------------------------------|")
         print("| Searching Possible events:                    |")
-        print("|   Start: {0:19s}                  |".format(tstart.strftime("%Y-%m-%d %H:%M:%S")))
-        print("|   End:   {0:19s}                  |".format(tend.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|   Start: {0:19s}                  |".format(
+            tstart.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|   End:   {0:19s}                  |".format(
+            tend.strftime("%Y-%m-%d %H:%M:%S")))
         if opts.maxmag is None:
-            print("|   Mag:   >{0:3.1f}                                 |".format(opts.minmag))
+            print("|   Mag:   >{0:3.1f}                                 " +
+                  "|".format(
+                      opts.minmag))
         else:
-            print("|   Mag:   {0:3.1f} - {1:3.1f}                            |".format(opts.minmag, opts.maxmag))
+            print(
+                "|   Mag:   {0:3.1f} - {1:3.1f}                         " +
+                "   |".format(opts.minmag, opts.maxmag))
         print("| ...                                           |")
 
         # Get catalogue using deployment start and end
-        cat = client.get_events(starttime=tstart, endtime=tend,    \
-                    minmagnitude=opts.minmag, maxmagnitude=opts.maxmag)
+        cat = client.get_events(
+            starttime=tstart, endtime=tend,
+            minmagnitude=opts.minmag, maxmagnitude=opts.maxmag)
 
         # Total number of events in Catalogue
         nevK = 0
         nevtT = len(cat)
-        print("|  Found {0:5d} possible events                  |".format(nevtT))
+        print(
+            "|  Found {0:5d} possible events                  " +
+            "|".format(nevtT))
         ievs = range(0, nevtT)
 
         # Select order of processing
@@ -253,7 +273,8 @@ def main():
             epi_dist /= 1000.
             gac = k2d(epi_dist)
             mag = ev.magnitudes[0].mag
-            if mag is None: mag = -9.
+            if mag is None:
+                mag = -9.
 
             # If distance between 85 and 120 deg:
             if (gac > opts.mindist and gac < opts.maxdist):
@@ -265,29 +286,40 @@ def main():
                 else:
                     inum = nevtT - iev + 1
                 print(" ")
-                print("****************************************************")
-                print("* #{0:d} ({1:d}/{2:d}):  {3:13s}".format(nevK, inum, nevtT, time.strftime("%Y%m%d_%H%M%S")))
-                print("*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
-                print("*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
-                print("*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
-                print("*     {0:5s} -> Ev: {1:7.2f} km; {2:7.2f} deg; {3:6.2f}; {4:6.2f}".format(\
-                    sta.station, epi_dist, gac, baz, az))
+                print(
+                    "****************************************************")
+                print(
+                    "* #{0:d} ({1:d}/{2:d}):  {3:13s}".format(
+                        nevK, inum, nevtT, time.strftime("%Y%m%d_%H%M%S")))
+                print(
+                    "*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
+                print(
+                    "*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
+                print(
+                    "*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
+                print(
+                    "*     {0:5s} -> Ev: {1:7.2f} km; {2:7.2f} deg; " +
+                    "{3:6.2f}; {4:6.2f}".format(
+                        sta.station, epi_dist, gac, baz, az))
 
-                t1 = time 
+                t1 = time
                 t2 = t1 + window
 
                 # Time stamp
-                tstamp = str(time.year).zfill(4)+'.'+str(time.julday).zfill(3)+'.'
-                tstamp = tstamp + str(time.hour).zfill(2)+'.'+str(time.minute).zfill(2)
-         
+                tstamp = str(time.year).zfill(4)+'.' +
+                str(time.julday).zfill(3)+'.'
+                tstamp = tstamp + str(time.hour).zfill(2) +
+                '.'+str(time.minute).zfill(2)
+
                 # Define file names (to check if files already exist)
                 filename = eventpath + tstamp + '.event.pkl'
 
                 print()
-                print("* Channels selected: "+str(opts.channels)+' and vertical')
+                print("* Channels selected: " +
+                      str(opts.channels)+' and vertical')
 
                 # If data file exists, continue
-                if glob.glob(filename): 
+                if glob.glob(filename):
                     if not opts.ovr:
                         print("*")
                         print("*   "+filename)
@@ -300,17 +332,24 @@ def main():
                     ncomp = 3
 
                     # Comma-separated list of channels for Client
-                    channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
+                    channels = sta.channel.upper() + '1,' + \
+                        sta.channel.upper() + '2,' + \
+                        sta.channel.upper() + 'Z'
 
                     # Get waveforms from client
                     try:
-                        print("*   "+tstamp+"                                     ")
+                        print("*   "+tstamp +
+                              "                                     ")
                         print("*   -> Downloading Seismic data... ")
-                        sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                                channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                        sth = client.get_waveforms(
+                            network=sta.network, station=sta.station,
+                            location=sta.location[0], channel=channels,
+                            starttime=t1, endtime=t2, attach_response=True)
                         print("*      ...done")
                     except:
-                        print(" Error: Unable to download ?H? components - continuing")
+                        print(
+                            " Error: Unable to download ?H? components - " +
+                            "continuing")
                         continue
 
                     # Make sure length is ok
@@ -339,21 +378,29 @@ def main():
 
                     # Get waveforms from client
                     try:
-                        print("*   "+tstamp+"                                     ")
+                        print("*   "+tstamp +
+                              "                                     ")
                         print("*   -> Downloading Seismic data... ")
-                        sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                                channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                        sth = client.get_waveforms(
+                            network=sta.network, station=sta.station,
+                            location=sta.location[0], channel=channels,
+                            starttime=t1, endtime=t2, attach_response=True)
                         print("*      ...done")
                     except:
-                        print(" Error: Unable to download ?H? components - continuing")
+                        print(
+                            " Error: Unable to download ?H? components - " +
+                            "continuing")
                         continue
                     try:
                         print("*   -> Downloading Pressure data...")
-                        stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                                channel='??H', starttime=t1, endtime=t2, attach_response=True)
+                        stp = client.get_waveforms(
+                            network=sta.network, station=sta.station,
+                            location=sta.location[0], channel='??H',
+                            starttime=t1, endtime=t2, attach_response=True)
                         print("*      ...done")
                     except:
-                        print(" Error: Unable to download ??H component - continuing")
+                        print(" Error: Unable to download ??H component - " +
+                              "continuing")
                         continue
 
                     # Make sure length is ok
@@ -370,32 +417,42 @@ def main():
                         print(" Error: Time series too short - continuing")
                         print(np.abs(llZ - ll))
                         continue
-                
+
                 else:
 
                     # Comma-separated list of channels for Client
                     ncomp = 4
 
                     # Comma-separated list of channels for Client
-                    channels = sta.channel.upper() + '1,' + sta.channel.upper() + '2,' + sta.channel.upper() + 'Z'
+                    channels = sta.channel.upper() + '1,' + \
+                        sta.channel.upper() + '2,' + \
+                        sta.channel.upper() + 'Z'
 
                     # Get waveforms from client
                     try:
-                        print("*   "+tstamp+"                                     ")
+                        print("*   "+tstamp +
+                              "                                     ")
                         print("*   -> Downloading Seismic data... ")
-                        sth = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                                channel=channels, starttime=t1, endtime=t2, attach_response=True)
+                        sth = client.get_waveforms(
+                            network=sta.network, station=sta.station,
+                            location=sta.location[0], channel=channels,
+                            starttime=t1, endtime=t2, attach_response=True)
                         print("*      ...done")
                     except:
-                        print(" Error: Unable to download ?H? components - continuing")
+                        print(
+                            " Error: Unable to download ?H? components - " +
+                            "continuing")
                         continue
                     try:
                         print("*   -> Downloading Pressure data...")
-                        stp = client.get_waveforms(network=sta.network, station=sta.station, location=sta.location[0], \
-                                channel='??H', starttime=t1, endtime=t2, attach_response=True)
+                        stp = client.get_waveforms(
+                            network=sta.network, station=sta.station,
+                            location=sta.location[0], channel='??H',
+                            starttime=t1, endtime=t2, attach_response=True)
                         print("     ...done")
                     except:
-                        print(" Error: Unable to download ??H component - continuing")
+                        print(" Error: Unable to download ??H component - " +
+                              "continuing")
                         continue
 
                     # Make sure length is ok
@@ -425,19 +482,24 @@ def main():
                 # Detrend, filter - seismic data
                 sth.detrend('demean')
                 sth.detrend('linear')
-                sth.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
+                sth.filter('lowpass', freq=0.5*opts.new_sampling_rate,
+                           corners=2, zerophase=True)
                 sth.resample(opts.new_sampling_rate)
 
                 if "P" in opts.channels:
                     # Detrend, filter - pressure data
                     stp.detrend('demean')
                     stp.detrend('linear')
-                    stp.filter('lowpass', freq=0.5*opts.new_sampling_rate, corners=2, zerophase=True)
+                    stp.filter('lowpass', freq=0.5 *
+                               opts.new_sampling_rate, corners=2,
+                               zerophase=True)
                     stp.resample(opts.new_sampling_rate)
                 else:
                     stp = Stream()
 
-                eventstream = EventStream(sta, sth, stp, tstamp, lat, lon, time, window, opts.new_sampling_rate, ncomp)
+                eventstream = EventStream(
+                    sta, sth, stp, tstamp, lat, lon, time, window,
+                    opts.new_sampling_rate, ncomp)
 
                 eventstream.save(filename)
 
