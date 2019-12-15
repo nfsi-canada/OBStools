@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -105,6 +105,7 @@ import stdb
 from obstools.atacr.classes import StaNoise, Power, Cross, Rotation
 from obstools.atacr import utils, options, plot
 
+
 def main():
 
     # Run Input Parser
@@ -134,13 +135,13 @@ def main():
 
         # Path where spectra are located
         specpath = 'SPECTRA/' + stkey + '/'
-        if not os.path.isdir(specpath): 
+        if not os.path.isdir(specpath):
             print("Path to "+specpath+" doesn`t exist - aborting")
             sys.exit()
 
         # Path where average spectra will be saved
         avstpath = 'AVG_STA/' + stkey + '/'
-        if not os.path.isdir(avstpath): 
+        if not os.path.isdir(avstpath):
             print("Path to "+avstpath+" doesn`t exist - creating it")
             os.makedirs(avstpath)
 
@@ -161,25 +162,32 @@ def main():
 
         # Temporary print locations
         tlocs = sta.location
-        if len(tlocs) == 0: tlocs = ['']
+        if len(tlocs) == 0:
+            tlocs = ['']
         for il in range(0, len(tlocs)):
-            if len(tlocs[il]) == 0: tlocs[il] = "--"
+            if len(tlocs[il]) == 0:
+                tlocs[il] = "--"
         sta.location = tlocs
 
         # Update Display
         print()
         print("|===============================================|")
         print("|===============================================|")
-        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|                   {0:>8s}                    |".format(
+            sta.station))
         print("|===============================================|")
         print("|===============================================|")
-        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
-        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
-        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
-        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
-        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(
+            sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(
+            sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(
+            sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(
+            sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(
+            sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
         print("|-----------------------------------------------|")
-
 
         # Filename for output average spectra
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
@@ -192,10 +200,26 @@ def main():
                 continue
 
         # Containers for power and cross spectra
-        coh_all = []; ph_all = []
-        coh_12_all = []; coh_1Z_all = []; coh_1P_all = []; coh_2Z_all = []; coh_2P_all = []; coh_ZP_all = []
-        ph_12_all = []; ph_1Z_all = []; ph_1P_all = []; ph_2Z_all = []; ph_2P_all = []; ph_ZP_all = []
-        ad_12_all = []; ad_1Z_all = []; ad_1P_all = []; ad_2Z_all = []; ad_2P_all = []; ad_ZP_all = []
+        coh_all = []
+        ph_all = []
+        coh_12_all = []
+        coh_1Z_all = []
+        coh_1P_all = []
+        coh_2Z_all = []
+        coh_2P_all = []
+        coh_ZP_all = []
+        ph_12_all = []
+        ph_1Z_all = []
+        ph_1P_all = []
+        ph_2Z_all = []
+        ph_2P_all = []
+        ph_ZP_all = []
+        ad_12_all = []
+        ad_1Z_all = []
+        ad_1P_all = []
+        ad_2Z_all = []
+        ad_2P_all = []
+        ad_ZP_all = []
         nwins = []
 
         t1 = tstart
@@ -215,8 +239,11 @@ def main():
             # Load file if it exists
             if os.path.exists(filespec):
                 print()
-                print("**********************************************************************")
-                print('* Calculating noise spectra for key '+stkey+' and day '+year+'.'+jday)
+                print(
+                    "*******************************************" +
+                    "*****************")
+                print('* Calculating noise spectra for key ' +
+                      stkey+' and day '+year+'.'+jday)
                 print("*   -> file "+filespec+" found - loading")
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
@@ -230,74 +257,136 @@ def main():
             ph_all.append(daynoise.rotation.ph)
 
             # Coherence
-            coh_12_all.append(utils.smooth(utils.coherence(daynoise.cross.c12, daynoise.power.c11, daynoise.power.c22), 50))
-            coh_1Z_all.append(utils.smooth(utils.coherence(daynoise.cross.c1Z, daynoise.power.c11, daynoise.power.cZZ), 50))
-            coh_1P_all.append(utils.smooth(utils.coherence(daynoise.cross.c1P, daynoise.power.c11, daynoise.power.cPP), 50))
-            coh_2Z_all.append(utils.smooth(utils.coherence(daynoise.cross.c2Z, daynoise.power.c22, daynoise.power.cZZ), 50))
-            coh_2P_all.append(utils.smooth(utils.coherence(daynoise.cross.c2P, daynoise.power.c22, daynoise.power.cPP), 50))
-            coh_ZP_all.append(utils.smooth(utils.coherence(daynoise.cross.cZP, daynoise.power.cZZ, daynoise.power.cPP), 50))
+            coh_12_all.append(
+                utils.smooth(
+                    utils.coherence(
+                        daynoise.cross.c12,
+                        daynoise.power.c11,
+                        daynoise.power.c22), 50))
+            coh_1Z_all.append(
+                utils.smooth(
+                    utils.coherence(
+                        daynoise.cross.c1Z,
+                        daynoise.power.c11,
+                        daynoise.power.cZZ), 50))
+            coh_1P_all.append(
+                utils.smooth(
+                    utils.coherence(
+                        daynoise.cross.c1P,
+                        daynoise.power.c11,
+                        daynoise.power.cPP), 50))
+            coh_2Z_all.append(
+                utils.smooth(
+                    utils.coherence(
+                        daynoise.cross.c2Z,
+                        daynoise.power.c22,
+                        daynoise.power.cZZ), 50))
+            coh_2P_all.append(
+                utils.smooth(
+                    utils.coherence(
+                        daynoise.cross.c2P,
+                        daynoise.power.c22,
+                        daynoise.power.cPP), 50))
+            coh_ZP_all.append(
+                utils.smooth(
+                    utils.coherence(
+                        daynoise.cross.cZP,
+                        daynoise.power.cZZ,
+                        daynoise.power.cPP), 50))
 
             # Phase
             try:
-                ph_12_all.append(180./np.pi*utils.phase(daynoise.cross.c12))
+                ph_12_all.append(
+                    180./np.pi*utils.phase(daynoise.cross.c12))
             except:
                 ph_12_all.append(None)
             try:
-                ph_1Z_all.append(180./np.pi*utils.phase(daynoise.cross.c1Z))
+                ph_1Z_all.append(
+                    180./np.pi*utils.phase(daynoise.cross.c1Z))
             except:
                 ph_1Z_all.append(None)
             try:
-                ph_1P_all.append(180./np.pi*utils.phase(daynoise.cross.c1P))
+                ph_1P_all.append(
+                    180./np.pi*utils.phase(daynoise.cross.c1P))
             except:
                 ph_1P_all.append(None)
             try:
-                ph_2Z_all.append(180./np.pi*utils.phase(daynoise.cross.c2Z))
+                ph_2Z_all.append(
+                    180./np.pi*utils.phase(daynoise.cross.c2Z))
             except:
                 ph_2Z_all.append(None)
             try:
-                ph_2P_all.append(180./np.pi*utils.phase(daynoise.cross.c2P))
+                ph_2P_all.append(
+                    180./np.pi*utils.phase(daynoise.cross.c2P))
             except:
                 ph_2P_all.append(None)
             try:
-                ph_ZP_all.append(180./np.pi*utils.phase(daynoise.cross.cZP))
+                ph_ZP_all.append(
+                    180./np.pi*utils.phase(daynoise.cross.cZP))
             except:
                 ph_ZP_all.append(None)
 
             # Admittance
-            ad_12_all.append(utils.smooth(utils.admittance(daynoise.cross.c12, daynoise.power.c11), 50))
-            ad_1Z_all.append(utils.smooth(utils.admittance(daynoise.cross.c1Z, daynoise.power.c11), 50))
-            ad_1P_all.append(utils.smooth(utils.admittance(daynoise.cross.c1P, daynoise.power.c11), 50))
-            ad_2Z_all.append(utils.smooth(utils.admittance(daynoise.cross.c2Z, daynoise.power.c22), 50))
-            ad_2P_all.append(utils.smooth(utils.admittance(daynoise.cross.c2P, daynoise.power.c22), 50))
-            ad_ZP_all.append(utils.smooth(utils.admittance(daynoise.cross.cZP, daynoise.power.cZZ), 50))
+            ad_12_all.append(utils.smooth(utils.admittance(
+                daynoise.cross.c12, daynoise.power.c11), 50))
+            ad_1Z_all.append(utils.smooth(utils.admittance(
+                daynoise.cross.c1Z, daynoise.power.c11), 50))
+            ad_1P_all.append(utils.smooth(utils.admittance(
+                daynoise.cross.c1P, daynoise.power.c11), 50))
+            ad_2Z_all.append(utils.smooth(utils.admittance(
+                daynoise.cross.c2Z, daynoise.power.c22), 50))
+            ad_2P_all.append(utils.smooth(utils.admittance(
+                daynoise.cross.c2P, daynoise.power.c22), 50))
+            ad_ZP_all.append(utils.smooth(utils.admittance(
+                daynoise.cross.cZP, daynoise.power.cZZ), 50))
 
             t1 += 3600.*24.
 
         # Convert to numpy arrays
-        coh_all = np.array(coh_all); ph_all = np.array(ph_all)
-        coh_12_all = np.array(coh_12_all); coh_1Z_all = np.array(coh_1Z_all); coh_1P_all = np.array(coh_1P_all); coh_2Z_all = np.array(coh_2Z_all)
-        coh_2P_all = np.array(coh_2P_all); coh_ZP_all = np.array(coh_ZP_all)
-        ph_12_all = np.array(ph_12_all); ph_1Z_all = np.array(ph_1Z_all); ph_1P_all = np.array(ph_1P_all); ph_2Z_all = np.array(ph_2Z_all)
-        ph_2P_all = np.array(ph_2P_all); ph_ZP_all = np.array(ph_ZP_all)
-        ad_12_all = np.array(ad_12_all); ad_1Z_all = np.array(ad_1Z_all); ad_1P_all = np.array(ad_1P_all); ad_2Z_all = np.array(ad_2Z_all)
-        ad_2P_all = np.array(ad_2P_all); ad_ZP_all = np.array(ad_ZP_all)
+        coh_all = np.array(coh_all)
+        ph_all = np.array(ph_all)
+        coh_12_all = np.array(coh_12_all)
+        coh_1Z_all = np.array(coh_1Z_all)
+        coh_1P_all = np.array(coh_1P_all)
+        coh_2Z_all = np.array(coh_2Z_all)
+        coh_2P_all = np.array(coh_2P_all)
+        coh_ZP_all = np.array(coh_ZP_all)
+        ph_12_all = np.array(ph_12_all)
+        ph_1Z_all = np.array(ph_1Z_all)
+        ph_1P_all = np.array(ph_1P_all)
+        ph_2Z_all = np.array(ph_2Z_all)
+        ph_2P_all = np.array(ph_2P_all)
+        ph_ZP_all = np.array(ph_ZP_all)
+        ad_12_all = np.array(ad_12_all)
+        ad_1Z_all = np.array(ad_1Z_all)
+        ad_1P_all = np.array(ad_1P_all)
+        ad_2Z_all = np.array(ad_2Z_all)
+        ad_2P_all = np.array(ad_2P_all)
+        ad_ZP_all = np.array(ad_ZP_all)
 
         # Store transfer functions as objects for plotting
-        coh = Cross(coh_12_all, coh_1Z_all, coh_1P_all, coh_2Z_all, coh_2P_all, coh_ZP_all)
-        ph = Cross(ph_12_all, ph_1Z_all, ph_1P_all, ph_2Z_all, ph_2P_all, ph_ZP_all)
-        ad = Cross(ad_12_all, ad_1Z_all, ad_1P_all, ad_2Z_all, ad_2P_all, ad_ZP_all)
+        coh = Cross(coh_12_all, coh_1Z_all, coh_1P_all,
+                    coh_2Z_all, coh_2P_all, coh_ZP_all)
+        ph = Cross(ph_12_all, ph_1Z_all, ph_1P_all,
+                   ph_2Z_all, ph_2P_all, ph_ZP_all)
+        ad = Cross(ad_12_all, ad_1Z_all, ad_1P_all,
+                   ad_2Z_all, ad_2P_all, ad_ZP_all)
 
         # Quality control to identify outliers
-        stanoise.QC_sta_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha, 
-            fig_QC=opts.fig_QC, debug=opts.debug)
+        stanoise.QC_sta_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha,
+                                fig_QC=opts.fig_QC, debug=opts.debug)
 
         # Average spectra for good days
-        stanoise.average_sta_spectra(fig_average=opts.fig_average, debug=opts.debug)
+        stanoise.average_sta_spectra(
+            fig_average=opts.fig_average, debug=opts.debug)
 
         if opts.fig_av_cross:
-            plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays, 'Coherence', ncomp, key=stkey, lw=0.5)
-            plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays, 'Admittance', ncomp, key=stkey, lw=0.5)
-            plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays, 'Phase', ncomp, key=stkey, marker=',', lw=0)
+            plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
+                              'Coherence', ncomp, key=stkey, lw=0.5)
+            plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
+                              'Admittance', ncomp, key=stkey, lw=0.5)
+            plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
+                              'Phase', ncomp, key=stkey, marker=',', lw=0)
 
         if opts.fig_coh_ph and stanoise.direc:
             plot.fig_coh_ph(coh_all, ph_all, stanoise.direc)
@@ -310,4 +399,3 @@ if __name__ == "__main__":
 
     # Run main program
     main()
-
