@@ -1415,8 +1415,8 @@ class TFNoise(object):
 
         if (not objnoise and not isinstance(objnoise, DayNoise) and
                 not isinstance(objnoise, StaNoise)):
-            msg = "Error: A TFNoise object must be initialized with only " +
-            "one of type DayNoise or StaNoise object"
+            msg = "Error: A TFNoise object must be initialized with only " +\
+                "one of type DayNoise or StaNoise object"
             raise TypeError(msg)
 
         if not objnoise.av:
