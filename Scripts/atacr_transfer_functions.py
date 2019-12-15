@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -100,6 +100,7 @@ import stdb
 from obstools.atacr.classes import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, options
 
+
 def main():
 
     # Run Input Parser
@@ -130,14 +131,16 @@ def main():
         if not opts.skip_daily:
             # Path where spectra are located
             specpath = 'SPECTRA/' + stkey + '/'
-            if not os.path.isdir(specpath): 
-                raise(Exception("Path to "+specpath+" doesn't exist - aborting"))
+            if not os.path.isdir(specpath):
+                raise(Exception(
+                    "Path to "+specpath+" doesn't exist - aborting"))
 
         if not opts.skip_clean:
             # Path where average spectra will be saved
             avstpath = 'AVG_STA/' + stkey + '/'
-            if not os.path.isdir(avstpath): 
-                print("Path to "+avstpath+" doesn't exist - skipping cleaned station spectra")
+            if not os.path.isdir(avstpath):
+                print("Path to "+avstpath +
+                      " doesn't exist - skipping cleaned station spectra")
                 opts.skip_clean = True
 
         if opts.skip_daily and opts.skip_clean:
@@ -146,7 +149,7 @@ def main():
 
         # Path where transfer functions will be located
         tfpath = 'TF_STA/' + stkey + '/'
-        if not os.path.isdir(tfpath): 
+        if not os.path.isdir(tfpath):
             print("Path to "+tfpath+" doesn't exist - creating it")
             os.makedirs(tfpath)
 
@@ -167,9 +170,11 @@ def main():
 
         # Temporary print locations
         tlocs = sta.location
-        if len(tlocs) == 0: tlocs = ['']
+        if len(tlocs) == 0:
+            tlocs = ['']
         for il in range(0, len(tlocs)):
-            if len(tlocs[il]) == 0: tlocs[il] = "--"
+            if len(tlocs[il]) == 0:
+                tlocs[il] = "--"
         sta.location = tlocs
 
         # Update Display
@@ -177,22 +182,26 @@ def main():
         print(" ")
         print("|===============================================|")
         print("|===============================================|")
-        print("|                   {0:>8s}                    |".format(sta.station))
+        print("|                   {0:>8s}                    |".format(
+            sta.station))
         print("|===============================================|")
         print("|===============================================|")
-        print("|  Station: {0:>2s}.{1:5s}                            |".format(sta.network, sta.station))
-        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(sta.channel, ",".join(tlocs)))
-        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(sta.longitude, sta.latitude))
-        print("|      Start time: {0:19s}          |".format(sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
-        print("|      End time:   {0:19s}          |".format(sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|  Station: {0:>2s}.{1:5s}                            |".format(
+            sta.network, sta.station))
+        print("|      Channel: {0:2s}; Locations: {1:15s}  |".format(
+            sta.channel, ",".join(tlocs)))
+        print("|      Lon: {0:7.2f}; Lat: {1:6.2f}                |".format(
+            sta.longitude, sta.latitude))
+        print("|      Start time: {0:19s}          |".format(
+            sta.startdate.strftime("%Y-%m-%d %H:%M:%S")))
+        print("|      End time:   {0:19s}          |".format(
+            sta.enddate.strftime("%Y-%m-%d %H:%M:%S")))
         print("|-----------------------------------------------|")
-
 
         # Filename for output transfer functions
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
         fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
-
 
         # Find all files in directories
         spectra_files = os.listdir(specpath)
@@ -210,8 +219,11 @@ def main():
                 jday = filespec.split('.')[1]
 
                 print()
-                print("**********************************************************************")
-                print("* Calculating transfer functions for key "+stkey+" and day "+year+"."+jday)
+                print(
+                    "*********************************************" +
+                    "***************")
+                print("* Calculating transfer functions for key " +
+                      stkey+" and day "+year+"."+jday)
                 tstamp = year+'.'+jday+'.'
                 filename = tfpath + tstamp + 'transfunc.pkl'
 
@@ -221,7 +233,10 @@ def main():
                 file.close()
 
                 # Load spectra into TFNoise object
-                daytransfer = TFNoise(daynoise.f, daynoise.power, daynoise.cross, daynoise.rotation, daynoise.tf_list)
+                daytransfer = TFNoise(
+                    daynoise.f, daynoise.power,
+                    daynoise.cross, daynoise.rotation,
+                    daynoise.tf_list)
 
                 # Calculate the transfer functions
                 daytransfer.transfer_func()
@@ -243,8 +258,11 @@ def main():
                 name = fileavst.split('avg_sta')
 
                 print()
-                print("**********************************************************************")
-                print("* Calculating transfer functions for key "+stkey+" and range "+name[0])
+                print(
+                    "*********************************************" +
+                    "***************")
+                print("* Calculating transfer functions for key " +
+                      stkey+" and range "+name[0])
                 filename = tfpath + name[0] + 'transfunc.pkl'
 
                 # Load file
@@ -252,9 +270,12 @@ def main():
                 stanoise = pickle.load(file)
                 file.close()
 
-                # Load spectra into TFNoise object - no Rotation object for station averages
+                # Load spectra into TFNoise object - no Rotation object
+                # for station averages
                 rotation = Rotation(None, None, None)
-                statransfer = TFNoise(stanoise.f, stanoise.power, stanoise.cross, rotation, stanoise.tf_list)
+                statransfer = TFNoise(
+                    stanoise.f, stanoise.power,
+                    stanoise.cross, rotation, stanoise.tf_list)
 
                 # Calculate the transfer functions
                 statransfer.transfer_func()
@@ -269,11 +290,11 @@ def main():
                 statransfer.save(filename)
 
         if opts.fig_TF:
-            plot.fig_TF(f, day_transfer_functions, daynoise.tf_list, 
-                sta_transfer_functions, stanoise.tf_list, skey=stkey)
+            plot.fig_TF(f, day_transfer_functions, daynoise.tf_list,
+                        sta_transfer_functions, stanoise.tf_list, skey=stkey)
+
 
 if __name__ == "__main__":
 
     # Run main program
     main()
-
