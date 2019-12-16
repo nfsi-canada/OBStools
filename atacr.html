@@ -519,13 +519,13 @@ from method
 
 <p class="rubric">Examples</p>
 <p>Get demo noise data as DayNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 </pre></div>
 </div>
 <p>Now check its main attributes</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">daynoise</span><span class="o">.</span><span class="n">tr1</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">tr2</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trZ</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trP</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">daynoise</span><span class="o">.</span><span class="n">tr1</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">tr2</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trZ</span><span class="p">,</span> <span class="n">daynoise</span><span class="o">.</span><span class="n">trP</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
 <span class="go">7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
 <span class="go">7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples</span>
@@ -578,7 +578,7 @@ or not (False)</p>
 <p class="rubric">Examples</p>
 <p>Perform QC on DayNoise object using default values and plot final
 figure</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -588,7 +588,7 @@ figure</p>
 <img alt="_images/Figure_3a.png" src="_images/Figure_3a.png" />
 </div>
 <p>Print out new attribute of DayNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">goodwins</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">goodwins</span>
 <span class="go">array([False,  True,  True,  True,  True,  True,  True,  True, False,</span>
 <span class="go">   False,  True,  True,  True,  True,  True,  True], dtype=bool)</span>
 </pre></div>
@@ -663,7 +663,7 @@ debugging</p></li>
 <p class="rubric">Examples</p>
 <p>Average spectra for good windows using default values and plot final
 figure</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -674,7 +674,7 @@ figure</p>
 <img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
 </div>
 <p>Print out available attributes of DayNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;tr1&#39;, &#39;tr2&#39;, &#39;trZ&#39;, &#39;trP&#39;, &#39;window&#39;, &#39;overlap&#39;, &#39;key&#39;,</span>
 <span class="go">&#39;dt&#39;, &#39;npts&#39;, &#39;fs&#39;, &#39;year&#39;, &#39;julday&#39;, &#39;ncomp&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;,</span>
 <span class="go">&#39;goodwins&#39;, &#39;f&#39;, &#39;power&#39;, &#39;cross&#39;, &#39;rotation&#39;])</span>
@@ -693,7 +693,7 @@ figure</p>
 </dl>
 <p class="rubric">Examples</p>
 <p>Run demo through all methods</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -701,11 +701,11 @@ figure</p>
 </pre></div>
 </div>
 <p>Save object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;daynoise_demo.pkl&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;daynoise_demo.pkl&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Check that it has been saved</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./daynoise_demo.pkl&quot;</span><span class="p">)</span>
 <span class="go">[&#39;./daynoise_demo.pkl&#39;]</span>
 </pre></div>
@@ -760,28 +760,28 @@ is deleted from memory</p>
 
 <p class="rubric">Examples</p>
 <p>Initialize empty object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Initialize with DayNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="n">daylist</span><span class="o">=</span><span class="p">[</span><span class="n">daynoise</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Add or append DayNoise object to StaNoise</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">+=</span> <span class="n">daynoise</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Import demo noise data with 4 DayNoise objects</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">daylist</span>
@@ -928,14 +928,14 @@ been called.</p>
 
 <p class="rubric">Examples</p>
 <p>Initialize demo data</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Check that <cite>daylist</cite> attribute has been deleted</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">daylist</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">daylist</span>
 <span class="go">---------------------------------------------------------------------------</span>
 <span class="go">AttributeError                            Traceback (most recent call last)</span>
 <span class="go">&lt;ipython-input-4-a292a91450a9&gt; in &lt;module&gt;</span>
@@ -983,7 +983,7 @@ debugging</p></li>
 
 <p class="rubric">Examples</p>
 <p>Import demo data, call method and generate final figure</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obstools</span><span class="o">.</span><span class="n">atacr</span> <span class="kn">import</span> <span class="nn">StaNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obstools</span><span class="o">.</span><span class="n">atacr</span> <span class="kn">import</span> <span class="nn">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1043,7 +1043,7 @@ for debugging</p></li>
 <p class="rubric">Examples</p>
 <p>Average daily spectra for good days using default values and produce
 final figure</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obstools</span><span class="o">.</span><span class="n">atacr</span> <span class="kn">import</span> <span class="nn">StaNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obstools</span><span class="o">.</span><span class="n">atacr</span> <span class="kn">import</span> <span class="nn">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
@@ -1063,7 +1063,7 @@ final figure</p>
 </dl>
 <p class="rubric">Examples</p>
 <p>Run demo through all methods</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
@@ -1071,11 +1071,11 @@ final figure</p>
 </pre></div>
 </div>
 <p>Save object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;stanoise_demo.pkl&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;stanoise_demo.pkl&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Check that it has been saved</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./stanoise_demo.pkl&quot;</span><span class="p">)</span>
 <span class="go">[&#39;./stanoise_demo.pkl&#39;]</span>
 </pre></div>
@@ -1151,7 +1151,7 @@ components.</p>
 <p>Initialize a TFNoise object with a DayNoise object. The DayNoise
 object must be processed for QC and averaging, otherwise the TFNoise
 object will not initialize.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
@@ -1162,7 +1162,7 @@ object will not initialize.</p>
 </pre></div>
 </div>
 <p>Now re-initialized with a processed DayNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -1171,7 +1171,7 @@ object will not initialize.</p>
 </pre></div>
 </div>
 <p>Initialize a TFNoise object with a processed StaNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
@@ -1203,7 +1203,7 @@ components (and component combinations) from the averaged
 
 <p class="rubric">Examples</p>
 <p>Calculate transfer functions for a DayNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -1215,7 +1215,7 @@ components (and component combinations) from the averaged
 </pre></div>
 </div>
 <p>Calculate transfer functions for a StaNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
@@ -1239,7 +1239,7 @@ components (and component combinations) from the averaged
 </dl>
 <p class="rubric">Examples</p>
 <p>Run demo through all methods</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -1255,12 +1255,12 @@ components (and component combinations) from the averaged
 </pre></div>
 </div>
 <p>Save object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;tf_daynoise_demo.pkl&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_day</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;tf_daynoise_demo.pkl&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;tf_stanoise_demo.pkl&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Check that everything has been saved</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./tf_daynoise_demo.pkl&quot;</span><span class="p">)</span>
 <span class="go">[&#39;./tf_daynoise_demo.pkl&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./tf_stanoise_demo.pkl&quot;</span><span class="p">)</span>
@@ -1457,7 +1457,7 @@ functions. This is calculated from the method
 
 <p class="rubric">Examples</p>
 <p>Get demo earthquake data as EventStream object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">EventStream</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">EventStream</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span> <span class="o">=</span> <span class="n">EventStream</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo earthquake data - March 09, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -1466,7 +1466,7 @@ functions. This is calculated from the method
 </pre></div>
 </div>
 <p>Plot the raw traces</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_raw</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mf">150.</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1508,7 +1508,7 @@ single day of noise, say corresponding to the noise recorded on March
 04, 2012. In practice, the DayNoise object should correspond to the
 same day at that of the recorded earthquake to avoid bias in the
 correction.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -1521,7 +1521,7 @@ correction.</p>
 </pre></div>
 </div>
 <p>Plot the corrected traces</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_corrected</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">tfnoise_day</span><span class="o">.</span><span class="n">tf_list</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1529,7 +1529,7 @@ correction.</p>
 <img alt="_images/Figure_corrected_march04.png" src="_images/Figure_corrected_march04.png" />
 </div>
 <p>Carry out the same exercise but this time using a StaNoise object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
@@ -1542,7 +1542,7 @@ correction.</p>
 </pre></div>
 </div>
 <p>Plot the corrected traces</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">obstools.atacr.plot</span> <span class="k">as</span> <span class="nn">plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_corrected</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">tf_list</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1564,11 +1564,11 @@ correction.</p>
 <p>Following from the example outlined in method
 <a class="reference internal" href="#obstools.atacr.classes.EventStream.correct_data" title="obstools.atacr.classes.EventStream.correct_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">correct_data()</span></code></a>, we simply
 save the final object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;evstream_demo.pkl&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;evstream_demo.pkl&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Check that object has been saved</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./evstream_demo.pkl&quot;</span><span class="p">)</span>
 <span class="go">[&#39;./evstream_demo.pkl&#39;]</span>
 </pre></div>
