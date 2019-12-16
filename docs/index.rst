@@ -2,6 +2,9 @@
 .. figure:: ../obstools/examples/picture/obstools_logo.png
    :align: center
 
+Documentation
+=============
+
 OBStools is a package containing Python tools for processing broadband
 ocean-bottom seismic (OBS) data. Current functionalities include removing
 vertical component noise from tilt and compliance effects. The code uses 
