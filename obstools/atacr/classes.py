@@ -132,8 +132,8 @@ class DayNoise(object):
     control steps and the average daily spectra for windows flagged as 
     "good". 
 
-    Notes
-    -----
+    Note
+    ----
     The object is initialized with :class:`~obspy.core.Trace` objects for 
     H1, H2, HZ and P components. Traces can be empty if data are not 
     available. Upon saving, those traces are discarded to save disk space. 
@@ -749,8 +749,8 @@ class StaNoise(object):
     three-component raw (or deconvolved) traces, metadata information
     and window parameters.
 
-    Notes
-    -----
+    Note
+    ----
     The object is initially a container for 
     :class:`~obstools.atacr.classes.DayNoise` objects. Once the StaNoise 
     object is initialized (using the method `init()` or by calling the 
@@ -886,8 +886,8 @@ class StaNoise(object):
         :class:`~obstools.atacr.classes.DayNoise` objects are deleted from 
         memory during this process. 
 
-        Notes
-        -----
+        Note
+        ----
         If the original :class:`~obstools.atacr.classes.DayNoise` objects 
         have not been processed using their QC and averaging methods, these 
         will be called first before unpacking into the object attributes.
@@ -1351,8 +1351,8 @@ class TFNoise(object):
     A TFNoise object contains attributes that store the transfer function 
     information from multiple components (and component combinations). 
 
-    Notes
-    -----
+    Note
+    ----
     The object is initialized with either a processed 
     :class:`~obstools.atacr.classes.DayNoise` or 
     :class:`~obstools.atacr.classes.StaNoise` object. Each individual 
@@ -1638,8 +1638,8 @@ class EventStream(object):
     metadata and methods for applying the transfer functions to the various 
     components and produce corrected/cleaned vertical components.
 
-    Notes
-    -----
+    Note
+    ----
     An ``EventStream`` object is defined as the data 
     (:class:`~obspy.core.Stream` object) are read from file or downloaded 
     from an ``obspy`` Client. Based on the available components, a list of 
