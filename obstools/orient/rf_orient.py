@@ -24,7 +24,7 @@ import numpy as np
 from obspy.core import Stream
 
 
-def find_azcorr(radialRF, transvRF, t1=0., t2=1.):
+def find_azcorr(RF_r, RF_t, t1=0., t2=1.):
     """
     Function to decompose radial and transverse receiver function 
     streams into back-azimuth harmonics and determine the main 
@@ -33,9 +33,9 @@ def find_azcorr(radialRF, transvRF, t1=0., t2=1.):
 
     Parameters
     ----------
-    radialRF : :class:`~obspy.core.Stream`
+    RF_r : :class:`~obspy.core.Stream`
         Stream containing the radial component receiver functions
-    transvRF : :class:`~obspy.core.Stream`
+    RF_t : :class:`~obspy.core.Stream`
         Stream containing the transverse component receiver functions
     t1 : float
         Minimum time over which to calculate ``azcorr`` (sec)
@@ -59,24 +59,24 @@ def find_azcorr(radialRF, transvRF, t1=0., t2=1.):
     print()
     print('Decomposing receiver functions into baz harmonics')
 
-    if not isinstance(radialRF, obspy.core.Stream):
+    if not isinstance(RF_r, obspy.core.Stream):
         raise(Exception("Input radial component is not a Stream object"))
-    if not isinstance(transvRF, obspy.core.Stream):
+    if not isinstance(RF_t, obspy.core.Stream):
         raise(Exception("Input transverse component is not a Stream object"))
 
     # Some integers
-    nbin = len(radialRF)
-    nt = len(radialRF[0].data)
+    nbin = len(RF_r)
+    nt = len(RF_r[0].data)
     daz = 0.01
     naz = int(180./daz)
     deg2rad = np.pi/180.
 
     # Define time range over which to calculate azimuth
-    indmin = int(t1/radialRF[0].stats.delta)
-    indmax = int(t2/radialRF[0].stats.delta)
+    indmin = int(t1/RF_r[0].stats.delta)
+    indmax = int(t2/RF_r[0].stats.delta)
 
     # Copy stream stats
-    str_stats = radialRF[0].stats
+    str_stats = RF_r[0].stats
 
     # Initialize work arrays
     hr0_rot = np.zeros((nt, naz))
@@ -93,9 +93,9 @@ def find_azcorr(radialRF, transvRF, t1=0., t2=1.):
         # Build arrays and matrices 
         for itrace in range(nbin):
 
-            baz = radialRF[itrace].stats.baz
-            d_r[itrace] = radialRF[itrace].data[it]
-            d_t[itrace] = transvRF[itrace].data[iz]
+            baz = RF_r[itrace].stats.baz
+            d_r[itrace] = RF_r[itrace].data[it]
+            d_t[itrace] = RF_t[itrace].data[iz]
             G[itrace, 0] = 1.0
             G[itrace, 1] = np.cos(deg2rad*baz)
             G[itrace, 2] = np.sin(deg2rad*baz)
