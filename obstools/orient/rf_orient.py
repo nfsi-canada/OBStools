@@ -24,7 +24,7 @@ import numpy as np
 from obspy.core import Stream
 
 
-def dcomp_find_azim(radialRF, transvRF, t1=0., t2=1.):
+def find_azcorr(radialRF, transvRF, t1=0., t2=1.):
     """
     Function to decompose radial and transverse receiver function 
     streams into back-azimuth harmonics and determine the main 
