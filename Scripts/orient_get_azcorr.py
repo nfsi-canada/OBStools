@@ -30,7 +30,8 @@ import pickle
 import glob
 import stdb
 from obspy import Stream
-from obstools.orient import rf_orient
+from obstools.orient import rf_orient, options
+from rfpy import binning
 
 
 def main():
@@ -111,14 +112,14 @@ def main():
 
         # Remove outliers wrt variance
         # Calculate variance over 30. sec
-        nt = int(30./rfRstream[0].stats.delta)
+        nt = int(10./rfRstream[0].stats.delta)
         varR = np.array([np.var(tr.data[0:nt]) for tr in rfRstream])
 
         # Calculate outliers
         medvarR = np.median(varR)
         madvarR = 1.4826*np.median(np.abs(varR-medvarR))
         robustR = np.abs((varR-medvarR)/madvarR)
-        outliersR = np.arange(len(rfRstream))[robustR > 2.]
+        outliersR = np.arange(len(rfRstream))[robustR > 2.5]
         for i in outliersR[::-1]:
             rfRstream.remove(rfRstream[i])
             rfTstream.remove(rfTstream[i])
@@ -128,7 +129,7 @@ def main():
         medvarT = np.median(varT)
         madvarT = 1.4826*np.median(np.abs(varT-medvarT))
         robustT = np.abs((varT-medvarT)/madvarT)
-        outliersT = np.arange(len(rfTstream))[robustT > 2.]
+        outliersT = np.arange(len(rfTstream))[robustT > 2.5]
         for i in outliersT[::-1]:
             rfRstream.remove(rfRstream[i])
             rfTstream.remove(rfTstream[i])
@@ -143,7 +144,15 @@ def main():
         rf_tmp = binning.bin(rfRstream, rfTstream,
                              typ='baz', nbin=opts.nbaz+1)
 
-        rf_orient.find_azcorr(rfRstream, rfTstream, opts.t1, opts.t2)
+        azcorr, *_ = rf_orient.decompose(
+            rf_tmp[0], rf_tmp[1], opts.t1, opts.t2)
+        print("Best fit azcorr: "+
+            "{0:5.1f}".format(azcorr))
+
+        azcorr, err_azcorr = rf_orient.get_azcorr(
+            rf_tmp[0], rf_tmp[1], opts.t1, opts.t2)
+        print("Bootstrap azcorr and uncertainty: "+
+            "{0:5.1f}, {1:5.1f}".format(azcorr, err_azcorr))
 
 
 if __name__ == "__main__":
