@@ -100,8 +100,6 @@ def main():
                 rfdata = pickle.load(file)
                 if rfdata[0].stats.snr > opts.snr and \
                         rfdata[0].stats.cc > opts.cc:
-                    # if np.std(rfdata[1].data) < 0.2 and \
-                    #         np.std(rfdata[2].data) < 0.2:
 
                     rfRstream.append(rfdata[1])
                     rfTstream.append(rfdata[2])
@@ -110,49 +108,54 @@ def main():
         if len(rfRstream) == 0:
             continue
 
-        # Remove outliers wrt variance
-        # Calculate variance over 30. sec
-        nt = int(10./rfRstream[0].stats.delta)
-        varR = np.array([np.var(tr.data[0:nt]) for tr in rfRstream])
+        if opts.no_outl:
+            # Remove outliers wrt variance
+            varR = np.array([np.var(tr.data) for tr in rfRstream])
+            medvarR = np.median(varR)
+            madvarR = 1.4826*np.median(np.abs(varR-medvarR))
+            robustR = np.abs((varR-medvarR)/madvarR)
+            outliersR = np.arange(len(rfRstream))[robustR > 2.5]
+            for i in outliersR[::-1]:
+                rfRstream.remove(rfRstream[i])
+                rfTstream.remove(rfTstream[i])
 
-        # Calculate outliers
-        medvarR = np.median(varR)
-        madvarR = 1.4826*np.median(np.abs(varR-medvarR))
-        robustR = np.abs((varR-medvarR)/madvarR)
-        outliersR = np.arange(len(rfRstream))[robustR > 2.5]
-        for i in outliersR[::-1]:
-            rfRstream.remove(rfRstream[i])
-            rfTstream.remove(rfTstream[i])
+            # Do the same for transverse
+            varT = np.array([np.var(tr.data) for tr in rfTstream])
+            medvarT = np.median(varT)
+            madvarT = 1.4826*np.median(np.abs(varT-medvarT))
+            robustT = np.abs((varT-medvarT)/madvarT)
+            outliersT = np.arange(len(rfTstream))[robustT > 2.5]
+            for i in outliersT[::-1]:
+                rfRstream.remove(rfRstream[i])
+                rfTstream.remove(rfTstream[i])
 
-        # Do the same for transverse
-        varT = np.array([np.var(tr.data[0:nt]) for tr in rfTstream])
-        medvarT = np.median(varT)
-        madvarT = 1.4826*np.median(np.abs(varT-medvarT))
-        robustT = np.abs((varT-medvarT)/madvarT)
-        outliersT = np.arange(len(rfTstream))[robustT > 2.5]
-        for i in outliersT[::-1]:
-            rfRstream.remove(rfRstream[i])
-            rfTstream.remove(rfTstream[i])
+        if opts.bp:
+            # Filter
+            rfRstream.filter('bandpass', freqmin=opts.bp[0],
+                             freqmax=opts.bp[1], corners=2,
+                             zerophase=True)
+            rfTstream.filter('bandpass', freqmin=opts.bp[0],
+                             freqmax=opts.bp[1], corners=2,
+                             zerophase=True)
 
-        rfRstream.filter('bandpass', freqmin=opts.fmin,
-                         freqmax=opts.fmax, corners=2,
-                         zerophase=True)
-        rfTstream.filter('bandpass', freqmin=opts.fmin,
-                         freqmax=opts.fmax, corners=2,
-                         zerophase=True)
-
+        # Binning
         rf_tmp = binning.bin(rfRstream, rfTstream,
-                             typ='baz', nbin=opts.nbaz+1)
+                             typ='baz', nbin=opts.nbaz+1,
+                             pws=opts.pws)
 
         azcorr, *_ = rf_orient.decompose(
-            rf_tmp[0], rf_tmp[1], opts.t1, opts.t2)
+            rf_tmp[0], rf_tmp[1], opts.trange[0], opts.trange[1],
+            plot_f=opts.plot_f, plot_comps=opts.plot_comps)
         print("Best fit azcorr: "+
             "{0:5.1f}".format(azcorr))
 
-        azcorr, err_azcorr = rf_orient.get_azcorr(
-            rf_tmp[0], rf_tmp[1], opts.t1, opts.t2)
-        print("Bootstrap azcorr and uncertainty: "+
-            "{0:5.1f}, {1:5.1f}".format(azcorr, err_azcorr))
+        # Bootstrap statistics?
+        if opts.boot:
+            azcorr, err_azcorr = rf_orient.get_bootstrap(
+                rf_tmp[0], rf_tmp[1], opts.trange[0], opts.trange[1],
+                plot_hist=True)
+            print("Bootstrap azcorr and uncertainty: "+
+                "{0:5.1f}, {1:5.1f}".format(azcorr, err_azcorr))
 
 
 if __name__ == "__main__":

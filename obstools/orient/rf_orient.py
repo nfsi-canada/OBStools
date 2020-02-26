@@ -26,7 +26,7 @@ from obspy.core import Stream
 import matplotlib.pyplot as plt
 
 
-def decompose(RF_r, RF_t, t1=0., t2=1., plot=True):
+def decompose(RF_r, RF_t, t1=0., t2=1., plot_f=False, plot_comps=False):
     """
     Function to decompose radial and transverse receiver function 
     streams into back-azimuth harmonics and determine the main 
@@ -65,25 +65,27 @@ def decompose(RF_r, RF_t, t1=0., t2=1., plot=True):
 
     # Some integers
     nbin = len(RF_r)
-    nt = len(RF_r[0].data)
+    nn = len(RF_r[0].data)
     dt = RF_r[0].stats.delta
     daz = 0.1
     naz = int(180./daz)
     deg2rad = np.pi/180.
 
-    # # Define time range over which to calculate azimuth
-    # indmin = int(t1/RF_r[0].stats.delta)
-    # indmax = int(t2/RF_r[0].stats.delta)
-
     # Initialize work arrays
-    it1 = int(t1/dt)
-    it2 = int(t2/dt)
-    nt = it2-it1
+    taxis = np.arange(-nn/2, nn/2)*dt
+    trange = np.where((taxis>t1) & (taxis<t2))[0]
+    print(trange)
+    print(taxis[trange])
+    nt = len(trange)
     hr0_rot = np.zeros((nt, naz))
     ht0_rot = np.zeros((nt, naz))
+    hr0 = np.zeros(nt); hr1 = np.zeros(nt); hr2 = np.zeros(nt) 
+    hr3 = np.zeros(nt); hr4 = np.zeros(nt); meanr = np.zeros(nt)
+    ht0 = np.zeros(nt); ht1 = np.zeros(nt); ht2 = np.zeros(nt) 
+    ht3 = np.zeros(nt); ht4 = np.zeros(nt); meant = np.zeros(nt)
 
     # Loop over each depth step
-    for ii, it in enumerate(range(it1, it2)):
+    for ii, it in enumerate(trange):
 
         # Initialize work arrays
         d_r = np.zeros(nbin)
@@ -102,11 +104,26 @@ def decompose(RF_r, RF_t, t1=0., t2=1., plot=True):
             G[itrace, 3] = np.cos(2.*deg2rad*baz)
             G[itrace, 4] = np.sin(2.*deg2rad*baz)
 
-        # Solve system of equations with truncated SVD
-        u, s, v = np.linalg.svd(G)
-        s[s < 0.001] = 0.
-        m_r = np.linalg.solve(s[:, None] * v, u.T.dot(d_r)[:5])
-        m_t = np.linalg.solve(s[:, None] * v, u.T.dot(d_t)[:5])
+        # Solve using damped least squares
+        lam=1.e-25
+        m_r = np.linalg.solve(np.dot(G.T, G)+lam*np.identity(G.shape[1]),
+            np.dot(G.T, d_r))
+        m_t = np.linalg.solve(np.dot(G.T, G)+lam*np.identity(G.shape[1]),
+            np.dot(G.T, d_t))
+
+        meanr[ii] = np.mean(d_r)
+        hr0[ii] = m_r[0]
+        hr1[ii] = m_r[1]
+        hr2[ii] = m_r[2]
+        hr3[ii] = m_r[3]
+        hr4[ii] = m_r[4]
+
+        meant[ii] = np.mean(d_t)
+        ht0[ii] = m_t[0]
+        ht1[ii] = m_t[1]
+        ht2[ii] = m_t[2]
+        ht3[ii] = m_t[3]
+        ht4[ii] = m_t[4]
 
         for iaz in range(naz):
             phi = iaz*daz*deg2rad
@@ -124,7 +141,28 @@ def decompose(RF_r, RF_t, t1=0., t2=1., plot=True):
     indaz = np.argmin(RMS)
     azcorr = indaz*daz
 
-    if plot:
+    # Resolve ambiguity based on radial component
+    if np.mean(hr0_rot[:, indaz]) < 0.:
+        azcorr += 180.
+
+    # Rotated components
+    phi = deg2rad*azcorr
+    meanr_r = np.cos(phi)*meanr + np.sin(phi)*meant
+    hr0_r = np.cos(phi)*hr0 + np.sin(phi)*ht0
+    hr1_r = np.cos(phi)*hr1 + np.sin(phi)*ht1
+    hr2_r = np.cos(phi)*hr2 + np.sin(phi)*ht2
+    hr3_r = np.cos(phi)*hr3 + np.sin(phi)*ht3
+    hr4_r = np.cos(phi)*hr4 + np.sin(phi)*ht4
+
+    meant_r = -np.sin(phi)*meanr + np.cos(phi)*meant
+    ht0_r = -np.sin(phi)*hr0 + np.cos(phi)*ht0
+    ht1_r = -np.sin(phi)*hr1 + np.cos(phi)*ht1
+    ht2_r = -np.sin(phi)*hr2 + np.cos(phi)*ht2
+    ht3_r = -np.sin(phi)*hr3 + np.cos(phi)*ht3
+    ht4_r = -np.sin(phi)*hr4 + np.cos(phi)*ht4
+
+
+    if plot_f:
         fig, ax1 = plt.subplots()
         ax1.set_xlabel("Azimuth (deg)")
         ax1.set_ylabel(r"$f(\phi)$")
@@ -133,17 +171,91 @@ def decompose(RF_r, RF_t, t1=0., t2=1., plot=True):
         ax2.plot(daz*np.arange(naz),np.sign(np.mean(hr0_rot,axis=0)),c='tab:blue')
         ax2.tick_params(axis='y', labelcolor='tab:blue')
         ax2.set_ylabel(r"sign(mean($H_{R1}$))", c='tab:blue')
+        plt.tight_layout()
         plt.show()
 
+    if plot_comps:
+        time = np.linspace(t1, t2, nt)
+        fig, ax = plt.subplots(6,4)
+        ax[0][0].fill_between(time, 0., meanr, where=meanr>0., facecolor='k', linewidth=0.2)
+        ax[1][0].fill_between(time, 0., hr0, where=hr0>0., facecolor='k', linewidth=0.2)
+        ax[2][0].fill_between(time, 0., hr1, where=hr1>0., facecolor='k', linewidth=0.2)
+        ax[3][0].fill_between(time, 0., hr2, where=hr2>0., facecolor='k', linewidth=0.2)
+        ax[4][0].fill_between(time, 0., hr3, where=hr3>0., facecolor='k', linewidth=0.2)
+        ax[5][0].fill_between(time, 0., hr4, where=hr4>0., facecolor='k', linewidth=0.2)
+        ax[0][0].fill_between(time, 0., meanr, where=meanr<=0., facecolor='r', linewidth=0.2)
+        ax[1][0].fill_between(time, 0., hr0, where=hr0<=0., facecolor='r', linewidth=0.2)
+        ax[2][0].fill_between(time, 0., hr1, where=hr1<=0., facecolor='r', linewidth=0.2)
+        ax[3][0].fill_between(time, 0., hr2, where=hr2<=0., facecolor='r', linewidth=0.2)
+        ax[4][0].fill_between(time, 0., hr3, where=hr3<=0., facecolor='r', linewidth=0.2)
+        ax[5][0].fill_between(time, 0., hr4, where=hr4<=0., facecolor='r', linewidth=0.2)
 
-    # Resolve ambiguity based on radial component
-    if np.mean(hr0_rot[:, indaz]) < 0.:
-        azcorr += 180.
+        ax[0][1].fill_between(time, 0., meant, where=meant>0., facecolor='k', linewidth=0.2)
+        ax[1][1].fill_between(time, 0., ht0, where=ht0>0., facecolor='k', linewidth=0.2)
+        ax[2][1].fill_between(time, 0., ht1, where=ht1>0., facecolor='k', linewidth=0.2)
+        ax[3][1].fill_between(time, 0., ht2, where=ht2>0., facecolor='k', linewidth=0.2)
+        ax[4][1].fill_between(time, 0., ht3, where=ht3>0., facecolor='k', linewidth=0.2)
+        ax[5][1].fill_between(time, 0., ht4, where=ht4>0., facecolor='k', linewidth=0.2)
+        ax[0][1].fill_between(time, 0., meant, where=meant<=0., facecolor='r', linewidth=0.2)
+        ax[1][1].fill_between(time, 0., ht0, where=ht0<=0., facecolor='r', linewidth=0.2)
+        ax[2][1].fill_between(time, 0., ht1, where=ht1<=0., facecolor='r', linewidth=0.2)
+        ax[3][1].fill_between(time, 0., ht2, where=ht2<=0., facecolor='r', linewidth=0.2)
+        ax[4][1].fill_between(time, 0., ht3, where=ht3<=0., facecolor='r', linewidth=0.2)
+        ax[5][1].fill_between(time, 0., ht4, where=ht4<=0., facecolor='r', linewidth=0.2)
+
+        ax[0][2].fill_between(time, 0., meanr_r, where=meanr_r>0., facecolor='k', linewidth=0.2)
+        ax[1][2].fill_between(time, 0., hr0_r, where=hr0_r>0., facecolor='k', linewidth=0.2)
+        ax[2][2].fill_between(time, 0., hr1_r, where=hr1_r>0., facecolor='k', linewidth=0.2)
+        ax[3][2].fill_between(time, 0., hr2_r, where=hr2_r>0., facecolor='k', linewidth=0.2)
+        ax[4][2].fill_between(time, 0., hr3_r, where=hr3_r>0., facecolor='k', linewidth=0.2)
+        ax[5][2].fill_between(time, 0., hr4_r, where=hr4_r>0., facecolor='k', linewidth=0.2)
+        ax[0][2].fill_between(time, 0., meanr_r, where=meanr_r<=0., facecolor='r', linewidth=0.2)
+        ax[1][2].fill_between(time, 0., hr0_r, where=hr0_r<=0., facecolor='r', linewidth=0.2)
+        ax[2][2].fill_between(time, 0., hr1_r, where=hr1_r<=0., facecolor='r', linewidth=0.2)
+        ax[3][2].fill_between(time, 0., hr2_r, where=hr2_r<=0., facecolor='r', linewidth=0.2)
+        ax[4][2].fill_between(time, 0., hr3_r, where=hr3_r<=0., facecolor='r', linewidth=0.2)
+        ax[5][2].fill_between(time, 0., hr4_r, where=hr4_r<=0., facecolor='r', linewidth=0.2)
+
+        ax[0][3].fill_between(time, 0., meant_r, where=meant_r>0., facecolor='k', linewidth=0.2)
+        ax[1][3].fill_between(time, 0., ht0_r, where=ht0_r>0., facecolor='k', linewidth=0.2)
+        ax[2][3].fill_between(time, 0., ht1_r, where=ht1_r>0., facecolor='k', linewidth=0.2)
+        ax[3][3].fill_between(time, 0., ht2_r, where=ht2_r>0., facecolor='k', linewidth=0.2)
+        ax[4][3].fill_between(time, 0., ht3_r, where=ht3_r>0., facecolor='k', linewidth=0.2)
+        ax[5][3].fill_between(time, 0., ht4_r, where=ht4_r>0., facecolor='k', linewidth=0.2)
+        ax[0][3].fill_between(time, 0., meant_r, where=meant_r<=0., facecolor='r', linewidth=0.2)
+        ax[1][3].fill_between(time, 0., ht0_r, where=ht0_r<=0., facecolor='r', linewidth=0.2)
+        ax[2][3].fill_between(time, 0., ht1_r, where=ht1_r<=0., facecolor='r', linewidth=0.2)
+        ax[3][3].fill_between(time, 0., ht2_r, where=ht2_r<=0., facecolor='r', linewidth=0.2)
+        ax[4][3].fill_between(time, 0., ht3_r, where=ht3_r<=0., facecolor='r', linewidth=0.2)
+        ax[5][3].fill_between(time, 0., ht4_r, where=ht4_r<=0., facecolor='r', linewidth=0.2)
+
+        # Setting the values for all axes.
+        plt.setp(ax[0:2], ylim=(-0.0036, 0.0036))
+        plt.setp(ax[2:], ylim=(-0.02, 0.02))
+        for axis, mode in zip(ax[:, 0], 
+            ["Mean", "$H_{1}$", "$H_{2}$", "$H_{3}$", "$H_{4}$", "$H_{5}$"]):
+            axis.set_ylabel(mode, size=10)
+        ax[0][0].set_title("Radial")
+        ax[0][2].set_title("Radial")
+        ax[0][1].set_title("Transverse")
+        ax[0][3].set_title("Transverse")
+        plt.setp(ax[:,1:4], yticklabels=[], yticks=[])
+        plt.setp(ax[0:5], xticklabels=[], xticks=[])
+        plt.setp(ax[5], xlabel="Time (s)")
+        # plt.suptitle("Station: "+RF_r[0].stats.station)
+        ax[0, 1].annotate('Misoriented', (0., 0.), xytext=(-12, 60),
+                            textcoords='offset points', xycoords='axes fraction',
+                            ha='center', va='bottom', size=12)
+        ax[0, 3].annotate('Rotated', (0., 0.), xytext=(-12, 60),
+                            textcoords='offset points', xycoords='axes fraction',
+                            ha='center', va='bottom', size=12)
+        plt.show()
+
 
     return azcorr, RMS, hr0_rot, ht0_rot
 
 
-def get_azcorr(RF_r, RF_t, t1=0., t2=1.):
+def get_bootstrap(RF_r, RF_t, t1=0., t2=1., plot_hist=True):
 
     # Bootstrap
     indices = range(len(RF_r))
@@ -158,12 +270,14 @@ def get_azcorr(RF_r, RF_t, t1=0., t2=1.):
         for ic in cc:
             RF_r_tmp.append(RF_r[ic])
             RF_t_tmp.append(RF_t[ic])
-        azcorr, *_ = decompose(RF_r_tmp, RF_t_tmp, t1, t2, plot=False)
+        azcorr, *_ = decompose(RF_r_tmp, RF_t_tmp, t1, t2)
         az_boot.append(azcorr)
 
     az_boot = np.array(az_boot)
-    plt.hist(az_boot)
-    plt.show()
+
+    if plot_hist:
+        plt.hist(az_boot)
+        plt.show()
 
     maz, daz = az_average(az_boot)
     if maz<0.:

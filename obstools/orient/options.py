@@ -87,33 +87,47 @@ def get_orient_options():
         action="store",
         type=float,
         dest="snr",
-        default=5.,
+        default=-9999.,
         help="Specify the SNR threshold for extracting receiver functions. " +
-        "[Default 5.]")
+        "[Default None]")
+    PreGroup.add_option(
+        "--snrh",
+        action="store",
+        type=float,
+        dest="snrh",
+        default=-9999.,
+        help="Specify the horizontal component SNR threshold for extracting receiver functions. " +
+        "[Default None]")
     PreGroup.add_option(
         "--cc",
         action="store",
         type=float,
         dest="cc",
-        default=0.5,
+        default=-1.,
         help="Specify the CC threshold for extracting receiver functions. " +
-        "[Default 0.5]")
+        "[Default None]")
     PreGroup.add_option(
-        "--fmin",
-        action="store",
-        type=float,
-        dest="fmin",
-        default=0.05,
-        help="Specify the low frequency corner for the bandpass filter. " +
-        "[Default [0.05]]")
+        "--no-outlier",
+        action="store_true",
+        dest="no_outl",
+        default=False,
+        help="Set this option to delete outliers based on the MAD "+
+        "on the variance. [Default False]")
     PreGroup.add_option(
-        "--fmax",
+        "--bp",
         action="store",
-        type=float,
-        dest="fmax",
-        default=0.5,
-        help="Specify the high frequency corner for the bandpass filter. " +
-        "[Default [0.5]]")
+        type=str,
+        dest="bp",
+        default=None,
+        help="Specify the corner frequencies for the bandpass filter. " +
+        "[Default no filtering]")
+    PreGroup.add_option(
+        "--pws",
+        action="store_true",
+        dest="pws",
+        default=False,
+        help="Set this option to use phase-weighted stacking during binning "+
+        " [Default False]")
     PreGroup.add_option(
         "--nbaz",
         action="store",
@@ -124,21 +138,36 @@ def get_orient_options():
         "(typically 36 or 72). If not None, the plot will show receiver " +
         "functions sorted by back-azimuth values. [Default 72]")
     PreGroup.add_option(
-        "--t1",
+        "--trange",
         action="store",
-        default=0.,
-        type=float,
-        dest="t1",
-        help="Specify the minimum time of receiver functions for "+
-        "estimating azcorr. [Default 0.]")
+        default=None,
+        type=str,
+        dest="trange",
+        help="Specify the time range for decomposition (sec). Negative times "+
+        "are allowed [Default -1., 1.]")
     PreGroup.add_option(
-        "--t2",
-        action="store",
-        default=0.,
-        type=float,
-        dest="t2",
-        help="Specify the maximum time of receiver functions for "+
-        "estimating azcorr. [Default 0.]")
+        "--boot",
+        action="store_true",
+        dest="boot",
+        default=False,
+        help="Set this option to calculate bootstrap statistics "+
+        " [Default False]")
+    PreGroup.add_option(
+        "--plot-f",
+        action="store_true",
+        dest="plot_f",
+        default=False,
+        help="Set this option to plot the function f(phi) "+
+        "[Default False]")
+    PreGroup.add_option(
+        "--plot-comps",
+        action="store_true",
+        dest="plot_comps",
+        default=False,
+        help="Set this option to plot the misoriented and rotated harmonic "+
+        "components [Default False]")
+
+
 
 
     parser.add_option_group(PreGroup)
@@ -155,6 +184,25 @@ def get_orient_options():
     # create station key list
     if len(opts.stkeys) > 0:
         opts.stkeys = opts.stkeys.split(',')
+
+    if opts.bp is not None:
+        opts.bp = [float(val) for val in opts.bp.split(',')]
+        opts.bp = sorted(opts.bp)
+        if (len(opts.bp)) != 2:
+            parser.error(
+                "Error: --bp should contain 2 " +
+                "comma-separated floats")
+
+    if opts.trange is None:
+        opts.tmin = -1.
+        opts.tmax = 1.
+    if opts.trange is not None:
+        opts.trange = [float(val) for val in opts.trange.split(',')]
+        opts.trange = sorted(opts.trange)
+        if (len(opts.trange)) != 2:
+            parser.error(
+                "Error: --trange should contain 2 " +
+                "comma-separated floats")
 
     return (opts, indb)
 
