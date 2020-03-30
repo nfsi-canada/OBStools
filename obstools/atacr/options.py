@@ -734,6 +734,22 @@ def get_dailyspec_options():
         default=False,
         help="Plot Coherence and Phase figure. " +
         "[Default does not plot figure]")
+    FigureGroup.add_option(
+        "--save-fig",
+        action="store_true",
+        dest="saveplot",
+        default=False,
+        help="Set this option if you wish to save the figure(s). [Default " +
+        "does not save figure]")
+    FigureGroup.add_option(
+        "--format",
+        action="store",
+        type=str,
+        dest="form",
+        default="png",
+        help="Specify format of figure. Can be any one of the valid" +
+        "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
+
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)
@@ -937,6 +953,21 @@ def get_cleanspec_options():
         default=False,
         help="Plot cross-spectra figure. " +
         "[Default does not plot figure]")
+    FigureGroup.add_option(
+        "--save-fig",
+        action="store_true",
+        dest="saveplot",
+        default=False,
+        help="Set this option if you wish to save the figure(s). [Default " +
+        "does not save figure]")
+    FigureGroup.add_option(
+        "--format",
+        action="store",
+        type=str,
+        dest="form",
+        default="png",
+        help="Specify format of figure. Can be any one of the valid" +
+        "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)
@@ -1101,6 +1132,21 @@ def get_transfer_options():
         default=False,
         help="Plot transfer function figure. " +
         "[Default does not plot figure]")
+    FigureGroup.add_option(
+        "--save-fig",
+        action="store_true",
+        dest="saveplot",
+        default=False,
+        help="Set this option if you wish to save the figure(s). [Default " +
+        "does not save figure]")
+    FigureGroup.add_option(
+        "--format",
+        action="store",
+        type=str,
+        dest="form",
+        default="png",
+        help="Specify format of figure. Can be any one of the valid" +
+        "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)
@@ -1284,6 +1330,21 @@ def get_correct_options():
         default=False,
         help="Plot cleaned vertical seismogram figure. " +
         "[Default does not plot figure]")
+    FigureGroup.add_option(
+        "--save-fig",
+        action="store_true",
+        dest="saveplot",
+        default=False,
+        help="Set this option if you wish to save the figure(s). [Default " +
+        "does not save figure]")
+    FigureGroup.add_option(
+        "--format",
+        action="store",
+        type=str,
+        dest="form",
+        default="png",
+        help="Specify format of figure. Can be any one of the valid" +
+        "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
     parser.add_option_group(ConstGroup)
     parser.add_option_group(FigureGroup)
