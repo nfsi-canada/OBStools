@@ -360,10 +360,16 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey='',
 
     ax.set_xlabel('Frequency (Hz)')
     plt.tight_layout()
-    plt.show()
+
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
 
 
-def fig_event_raw(evstream, fmin, fmax, save=False, form='png'):
+def fig_event_raw(evstream, fmin, fmax, save=False, fname='', form='png'):
     """
     Function to plot the raw (although bandpassed) seismograms.
 
@@ -419,10 +425,16 @@ def fig_event_raw(evstream, fmin, fmax, save=False, form='png'):
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
-    plt.show()
+
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
 
 
-def fig_event_corrected(evstream, TF_list, save=False, form='png'):
+def fig_event_corrected(evstream, TF_list, save=False, fname='', form='png'):
     """
     Function to plot the corrected vertical component seismograms.
 
@@ -503,4 +515,10 @@ def fig_event_corrected(evstream, TF_list, save=False, form='png'):
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
-    plt.show()
+    
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
