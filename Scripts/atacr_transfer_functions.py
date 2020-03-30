@@ -88,7 +88,7 @@ def main():
 
         # Path where plots will be saved
         plotpath = tfpath + 'PLOTS/'
-        if opts.saveplot and not os.path.isdir(tfpath):
+        if opts.saveplot and not os.path.isdir(plotpath):
             os.makedirs(tfpath)
         else:
             plotpath = False
