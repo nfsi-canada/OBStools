@@ -86,6 +86,13 @@ def main():
             print("Path to "+tfpath+" doesn't exist - creating it")
             os.makedirs(tfpath)
 
+        # Path where plots will be saved
+        plotpath = tfpath + 'PLOTS/'
+        if opts.saveplot and not os.path.isdir(tfpath):
+            os.makedirs(tfpath)
+        else:
+            plotpath = False
+
         # Get catalogue search start time
         if opts.startT is None:
             tstart = sta.startdate
@@ -225,7 +232,7 @@ def main():
         if opts.fig_TF:
             plot.fig_TF(f, day_transfer_functions, daynoise.tf_list,
                         sta_transfer_functions, stanoise.tf_list, skey=stkey,
-                        save=opts.saveplot, form=opts.form)
+                        save=plotpath, form=opts.form)
 
 
 if __name__ == "__main__":
