@@ -270,7 +270,8 @@ class DayNoise(object):
         self.av = False
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05,
-                         smooth=True, fig_QC=False, debug=False):
+                         smooth=True, fig_QC=False, debug=False, save=False,
+                         form='png'):
         """
         Method to determine daily time windows for which the spectra are 
         anomalous and should be discarded in the calculation of the
@@ -361,6 +362,9 @@ class DayNoise(object):
                 plt.title('P', fontdict={'fontsize': 8})
                 plt.xlabel('Seconds')
                 plt.tight_layout()
+                if save:
+                    plt.savefig(save + self.key + 'QC_Z.P.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
                 plt.show()
 
             elif self.ncomp == 3:
