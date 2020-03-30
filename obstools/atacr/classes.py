@@ -1030,7 +1030,7 @@ class StaNoise(object):
         del self.daylist
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05,
-                       fig_QC=False, debug=False):
+                       fig_QC=False, debug=False, save=False, form='png'):
         """
         Method to determine the days (for given time window) for which the 
         spectra are anomalous and should be discarded in the calculation of 
@@ -1193,9 +1193,12 @@ class StaNoise(object):
 
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-            plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key)
+            fname = self.key + '.' + 'QC'
+            plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key,
+                save=save, fname=fname, form=form)
 
-    def average_sta_spectra(self, fig_average=False, debug=False):
+    def average_sta_spectra(self, fig_average=False, debug=False,
+                            save=False, form='png'):
         r"""
         Method to average the daily station spectra for good windows.
 
@@ -1315,8 +1318,10 @@ class StaNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
+            fname = self.key + '.' + 'average'
             plot.fig_average(self.f, self.power, bad,
-                             self.gooddays, self.ncomp, key=self.key)
+                             self.gooddays, self.ncomp, key=self.key,
+                             save=save, fname=fname, form=form)
 
         self.av = True
 
