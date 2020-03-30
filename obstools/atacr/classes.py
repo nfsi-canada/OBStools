@@ -248,6 +248,7 @@ class DayNoise(object):
         self.fs = self.trZ.stats.sampling_rate
         self.year = self.trZ.stats.starttime.year
         self.julday = self.trZ.stats.starttime.julday
+        self.tkey = self.year + '.' + self.julday
 
         # Get number of components for the available, non-empty traces
         ncomp = np.sum(1 for tr in
@@ -270,7 +271,8 @@ class DayNoise(object):
         self.av = False
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05,
-                         smooth=True, fig_QC=False, debug=False):
+                         smooth=True, fig_QC=False, debug=False, save=False,
+                         form='png'):
         """
         Method to determine daily time windows for which the spectra are 
         anomalous and should be discarded in the calculation of the
@@ -361,7 +363,13 @@ class DayNoise(object):
                 plt.title('P', fontdict={'fontsize': 8})
                 plt.xlabel('Seconds')
                 plt.tight_layout()
-                plt.show()
+                if save:
+                    title = save + '.' + self.key + '.' + tkey + \
+                        '.specgram_Z.P.'
+                    plt.savefig(title + form,
+                                dpi=300, bbox_inches='tight', format=form)
+                else:
+                    plt.show()
 
             elif self.ncomp == 3:
                 plt.figure(1)
@@ -376,7 +384,13 @@ class DayNoise(object):
                 plt.title('Z', fontdict={'fontsize': 8})
                 plt.xlabel('Seconds')
                 plt.tight_layout()
-                plt.show()
+                if save:
+                    title = save + '.' + self.key + '.' + self.tkey + \
+                        '.specgram_H1.H2.Z.'
+                    plt.savefig(title + form,
+                                dpi=300, bbox_inches='tight', format=form)
+                else:
+                    plt.show()
 
             else:
                 plt.figure(1)
@@ -394,7 +408,13 @@ class DayNoise(object):
                 plt.title('P', fontdict={'fontsize': 8})
                 plt.xlabel('Seconds')
                 plt.tight_layout()
-                plt.show()
+                if save:
+                    title = save + '.' + self.key + '.' + self.tkey + \
+                        '.specgram_H1.H2.Z.'
+                    plt.savefig(title + form,
+                                dpi=300, bbox_inches='tight', format=form)
+                else:
+                    plt.show()
 
         # Select bandpass frequencies
         ff = (f > pd[0]) & (f < pd[1])
@@ -523,12 +543,14 @@ class DayNoise(object):
 
         if fig_QC:
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-            plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
+            fname = self.key + '.' + self.tkey + '.' + 'QC'
+            plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key,
+                        save=save, fname=fname, form=form)
 
         self.QC = True
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False,
-                              fig_coh_ph=False, debug=False):
+                              fig_coh_ph=False, save=False, form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
         method will attempt to calculate the azimuth of maximum coherence 
@@ -546,9 +568,6 @@ class DayNoise(object):
         fig_coh_ph : boolean
             Whether or not to produce a figure showing the maximum coherence 
             between H and Z
-        debug : boolean
-            Whether or not to plot intermediate steps in the QC procedure for
-            debugging
 
         Attributes
         ----------
@@ -679,8 +698,10 @@ class DayNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
+            fname = self.key + '.' + self.tkey + '.' + 'average'
             plot.fig_average(f, self.power, bad, self.goodwins,
-                             self.ncomp, key=self.key)
+                             self.ncomp, key=self.key, save=save,
+                             fname=fname, form=form)
 
         if calc_rotation and self.ncomp >= 3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
@@ -690,7 +711,9 @@ class DayNoise(object):
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
             if fig_coh_ph:
-                plot.fig_coh_ph(coh, ph, direc)
+                fname = self.key + '.' + self.tkey + '.' + 'coh_ph'
+                plot.fig_coh_ph(coh, ph, direc, save=save,
+                                fname=fname, form=form)
         else:
             self.rotation = Rotation()
 
@@ -1003,7 +1026,7 @@ class StaNoise(object):
         del self.daylist
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05,
-                       fig_QC=False, debug=False):
+                       fig_QC=False, debug=False, save=False, form='png'):
         """
         Method to determine the days (for given time window) for which the 
         spectra are anomalous and should be discarded in the calculation of 
@@ -1166,9 +1189,11 @@ class StaNoise(object):
 
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-            plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key)
+            fname = self.key + '.' + 'QC'
+            plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key,
+                save=save, fname=fname, form=form)
 
-    def average_sta_spectra(self, fig_average=False, debug=False):
+    def average_sta_spectra(self, fig_average=False, save=False, form='png'):
         r"""
         Method to average the daily station spectra for good windows.
 
@@ -1177,9 +1202,6 @@ class StaNoise(object):
         fig_average : boolean
             Whether or not to produce a figure showing the average daily 
             spectra
-        debug : boolean
-            Whether or not to plot intermediate steps in the QC procedure 
-            for debugging
 
         Attributes
         ----------
@@ -1288,8 +1310,10 @@ class StaNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
+            fname = self.key + '.' + 'average'
             plot.fig_average(self.f, self.power, bad,
-                             self.gooddays, self.ncomp, key=self.key)
+                             self.gooddays, self.ncomp, key=self.key,
+                             save=save, fname=fname, form=form)
 
         self.av = True
 
@@ -1936,8 +1960,8 @@ class EventStream(object):
                         (TF_ZP_21, np.conj(TF_ZP_21[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_Z1*ft1 - \
                         (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
-                        (ftP - ft1*fTF_P1 - \
-                        (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
+                        (ftP - ft1*fTF_P1 -
+                         (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
                     corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
                     correct.add('ZP-21', corrtime)
 

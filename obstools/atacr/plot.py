@@ -30,7 +30,8 @@ from matplotlib import pyplot as plt
 from obstools.atacr import utils, plot
 
 
-def fig_QC(f, power, gooddays, ncomp, key=''):
+def fig_QC(f, power, gooddays, ncomp, key='',
+           save=False, fname='', form='png'):
     """
     Function to plot the Quality-Control step of the analysis. This function is used
     in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
@@ -81,10 +82,17 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
         if i == len(sls)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
-    plt.show()
+
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
 
 
-def fig_average(f, power, bad, gooddays, ncomp, key=''):
+def fig_average(f, power, bad, gooddays, ncomp, key='',
+                save=False, fname='', form='png'):
     """
     Function to plot the averaged spectra (those qualified as 'good' in the 
     QC step). This function is used
@@ -145,10 +153,17 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
         if i == len(ccs)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
     plt.tight_layout()
-    plt.show()
+
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
 
 
-def fig_av_cross(f, field, gooddays, ftype, ncomp, key='', **kwargs):
+def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
+                 save=False, fname='', form='png', **kwargs):
     """
     Function to plot the averaged cross-spectra (those qualified as 'good' in the 
     QC step). This function is used in the `obs_daily_spectra.py` script.
@@ -213,7 +228,7 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='', **kwargs):
     plt.show()
 
 
-def fig_coh_ph(coh, ph, direc):
+def fig_coh_ph(coh, ph, direc, save=False, fname='', form='png'):
     """
     Function to plot the coherence and phase between the rotated H and Z components, 
     used to characterize the tilt direction.
@@ -242,7 +257,12 @@ def fig_coh_ph(coh, ph, direc):
         ax1.set_xlabel('Angle from H1')
         ax2.set_xlabel('Angle from H1')
         plt.tight_layout()
-        plt.show()
+        # Save or show figure
+        if save:
+            plt.savefig(save + fname + '.' + form,
+                        dpi=300, bbox_inches='tight', format=form)
+        else:
+            plt.show()
     else:
         plt.figure()
         plt.subplot(121)
@@ -251,10 +271,16 @@ def fig_coh_ph(coh, ph, direc):
         plt.subplot(122)
         plt.plot(direc, ph*180./np.pi, c=colors[0])
         plt.tight_layout()
-        plt.show()
+        # Save or show figure
+        if save:
+            plt.savefig(save + fname + '.' + form,
+                        dpi=300, bbox_inches='tight', format=form)
+        else:
+            plt.show()
 
 
-def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
+def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey='',
+           save=False, fname='', form='png'):
     """
     Function to plot the transfer functions available.
 
@@ -334,10 +360,16 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
 
     ax.set_xlabel('Frequency (Hz)')
     plt.tight_layout()
-    plt.show()
+
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
 
 
-def fig_event_raw(evstream, fmin, fmax):
+def fig_event_raw(evstream, fmin, fmax, save=False, fname='', form='png'):
     """
     Function to plot the raw (although bandpassed) seismograms.
 
@@ -393,10 +425,16 @@ def fig_event_raw(evstream, fmin, fmax):
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
-    plt.show()
+
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()
 
 
-def fig_event_corrected(evstream, TF_list):
+def fig_event_corrected(evstream, TF_list, save=False, fname='', form='png'):
     """
     Function to plot the corrected vertical component seismograms.
 
@@ -477,4 +515,10 @@ def fig_event_corrected(evstream, TF_list):
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
-    plt.show()
+    
+    # Save or show figure
+    if save:
+        plt.savefig(save + fname + '.' + form,
+                    dpi=300, bbox_inches='tight', format=form)
+    else:
+        plt.show()

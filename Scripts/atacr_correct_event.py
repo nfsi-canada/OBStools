@@ -22,80 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Program atacr_correct_event.py
-------------------------------
-
-Calculates transfer functions using the noise windows flagged as "good", for either
-a single day (from `obs_daily_spectra.py`) or for those averaged over several days
-(from `obs_clean_spectra.py`), if available. The transfer functions are stored to disk.
-
-Station selection is specified by a network and 
-station code. The data base is provided as a 
-`StDb` dictionary.
-
-Usage
------
-
-.. code-block::
-
-    $ atacr_correct_event.py -h
-    Usage: atacr_correct_event.py [options] <station database>
-
-    Script used to extract transfer functions between various components, and use
-    them to clean vertical component of OBS data for selected events. The noise
-    data can be those obtained from the daily spectra (i.e., from
-    `obs_daily_spectra.py`) or those obtained from the averaged noise spectra
-    (i.e., from `obs_clean_spectra.py`). Flags are available to specify the source
-    of data to use as well as the time range for given events. The stations are
-    processed one by one and the data are stored to disk.
-
-    Options:
-      -h, --help        show this help message and exit
-      --keys=STKEYS     Specify a comma separated list of station keys for which
-                        to perform the analysis. These must be contained within
-                        the station database. Partial keys will be used to match
-                        against those in the dictionary. For instance, providing
-                        IU will match with all stations in the IU network.
-                        [Default processes all stations in the database]
-      -O, --overwrite   Force the overwriting of pre-existing data. [Default
-                        False]
-
-      Parameter Settings:
-        Miscellaneous default values and settings
-
-        --skip-daily    Skip daily spectral averages in application of transfer
-                        functions. [Default False]
-        --skip-clean    Skip cleaned spectral averages in application of transfer
-                        functions. [Default False]
-        --fmin=FMIN     Low frequency corner (in Hz) for plotting the raw (un-
-                        corrected) seismograms. Filter is a 2nd order, zero phase
-                        butterworth filter. [Default 1./150.]
-        --fmax=FMAX     High frequency corner (in Hz) for plotting the raw (un-
-                        corrected) seismograms. Filter is a 2nd order, zero phase
-                        butterworth filter. [Default 1./10.]
-
-      Figure Settings:
-        Flags for plotting figures
-
-        --figRaw        Plot raw seismogram figure. [Default does not plot figure]
-        --figClean      Plot cleaned vertical seismogram figure. [Default does not
-                        plot figure]
-
-      Time Search Settings:
-        Time settings associated with searching for specific event-related
-        seismograms
-
-        --start=STARTT  Specify a UTCDateTime compatible string representing the
-                        start day for the event search. This will override any
-                        station start times. [Default start date of each station
-                        in database]
-        --end=ENDT      Specify a UTCDateTime compatible string representing the
-                        start time for the event search. This will override any
-                        station end times. [Default end date of each station in
-                        database]
-
-"""
 
 # Import modules and functions
 import os
@@ -143,6 +69,13 @@ def main():
         eventpath = 'EVENTS/' + stkey + '/'
         if not os.path.isdir(eventpath):
             raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
+
+        # Path where plots will be saved
+        plotpath = eventpath + 'PLOTS/'
+        if opts.saveplot and not os.path.isdir(plotpath):
+            os.makedirs(plotpath)
+        else:
+            plotpath = False
 
         # Get catalogue search start time
         if opts.startT is None:
@@ -228,7 +161,9 @@ def main():
                 continue
 
             if opts.fig_event_raw:
-                plot.fig_event_raw(eventstream, fmin=opts.fmin, fmax=opts.fmax)
+                fname = stkey + '.' + evstamp + 'raw'
+                plot.fig_event_raw(eventstream, fmin=opts.fmin, fmax=opts.fmax,
+                    save=plotpath, fname=fname, form=opts.form)
 
             # Cycle through corresponding TF files
             for transfile in trans_files:
@@ -268,8 +203,10 @@ def main():
 
                             correct = eventstream.correct
                             if opts.fig_plot_corrected:
+                                fname = stkey + '.' + evstamp + 'sta_corrected'
                                 plot.fig_event_corrected(
-                                    eventstream, tfaverage.tf_list)
+                                    eventstream, tfaverage.tf_list,
+                                    save=plotpath, fname=fname, form=opts.form)
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -293,8 +230,10 @@ def main():
 
                             correct = eventstream.correct
                             if opts.fig_plot_corrected:
+                                fname = stkey + '.' + evstamp + 'day_corrected'
                                 plot.fig_event_corrected(
-                                    eventstream, tfaverage.tf_list)
+                                    eventstream, tfaverage.tf_list,
+                                    save=plotpath, fname=fname, form=opts.form)
 
 
 if __name__ == "__main__":

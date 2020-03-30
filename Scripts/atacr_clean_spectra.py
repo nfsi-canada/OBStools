@@ -22,79 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Program atacr_clean_spectra.py
-----------------------------
-
-Extracts daily spectra calculated from `obs_daily_spectra.py` and 
-flags days for which the daily averages are outliers from the PSD properties. 
-Further averages the spectra over the whole period specified by `--start`
-and `--end`.
-
-Station selection is specified by a network and 
-station code. The data base is provided as a 
-`StDb` dictionary.
-
-Usage
------
-
-.. code-block::
-
-    $ atacr_clean_spectra.py -h
-    Usage: atacr_clean_spectra.py [options] <station database>
-
-    Script used to extract daily spectra calculated from `obs_daily_spectra.py`
-    and flag days for outlier PSDs and calculate spectral averages of the
-    corresponding Fourier transforms over the entire time period specified. The
-    stations are processed one by one and the data are stored to disk.
-
-    Options:
-      -h, --help         show this help message and exit
-      --keys=STKEYS      Specify a comma separated list of station keys for which
-                         to perform the analysis. These must be contained within
-                         the station database. Partial keys will be used to match
-                         against those in the dictionary. For instance, providing
-                         IU will match with all stations in the IU network.
-                         [Default processes all stations in the database]
-      -O, --overwrite    Force the overwriting of pre-existing data. [Default
-                         False]
-
-      Parameter Settings:
-        Miscellaneous default values and settings
-
-        --freq-band=PD   Specify comma-separated frequency limits (float, in Hz)
-                         over which to calculate spectral features used in
-                         flagging the days/windows. [Default 0.004,2.0]
-        --tolerance=TOL  Specify parameter for tolerance threshold. If spectrum >
-                         std*tol, window is flagged as bad. [Default 1.5]
-        --alpha=ALPHA    Confidence level for f-test, for iterative flagging of
-                         windows. [Default 0.05, or 95% confidence]
-
-      Figure Settings:
-        Flags for plotting figures
-
-        --figQC          Plot Quality-Control figure. [Default does not plot
-                         figure]
-        --debug          Plot intermediate steps for debugging. [Default does not
-                         plot figure]
-        --figAverage     Plot daily average figure. [Default does not plot figure]
-        --figCoh         Plot Coherence and Phase figure. [Default does not plot
-                         figure]
-        --figCross       Plot cross-spectra figure. [Default does not plot figure]
-
-      Time Search Settings:
-        Time settings associated with searching for day-long seismograms
-
-        --start=STARTT   Specify a UTCDateTime compatible string representing the
-                         start day for the data search. This will override any
-                         station start times. [Default start date of each station
-                         in database]
-        --end=ENDT       Specify a UTCDateTime compatible string representing the
-                         start time for the event search. This will override any
-                         station end times. [Default end date of each station in
-                         database]
-
-"""
 
 # Import modules and functions
 import os
@@ -144,6 +71,13 @@ def main():
         if not os.path.isdir(avstpath):
             print("Path to "+avstpath+" doesn`t exist - creating it")
             os.makedirs(avstpath)
+
+        # Path where plots will be saved
+        plotpath = avstpath + 'PLOTS/'
+        if opts.saveplot and not os.path.isdir(plotpath):
+            os.makedirs(plotpath)
+        else:
+            plotpath = False
 
         # Get catalogue search start time
         if opts.startT is None:
@@ -374,22 +308,30 @@ def main():
 
         # Quality control to identify outliers
         stanoise.QC_sta_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha,
-                                fig_QC=opts.fig_QC, debug=opts.debug)
+                                fig_QC=opts.fig_QC, debug=opts.debug,
+                                save=plotpath, form=opts.form)
 
         # Average spectra for good days
         stanoise.average_sta_spectra(
-            fig_average=opts.fig_average, debug=opts.debug)
+            fig_average=opts.fig_average,
+            save=plotpath, form=opts.form)
 
         if opts.fig_av_cross:
+            fname = stkey + '.' + 'av_cross'
             plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
-                              'Coherence', ncomp, key=stkey, lw=0.5)
+                              'Coherence', ncomp, key=stkey, lw=0.5,
+                              save=plotpath, fname=fname, form=opts.form)
             plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
-                              'Admittance', ncomp, key=stkey, lw=0.5)
+                              'Admittance', ncomp, key=stkey, lw=0.5,
+                              save=plotpath, fname=fname, form=opts.form)
             plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
-                              'Phase', ncomp, key=stkey, marker=',', lw=0)
+                              'Phase', ncomp, key=stkey, marker=',', lw=0,
+                              save=plotpath, fname=fname, form=opts.form)
 
         if opts.fig_coh_ph and stanoise.direc:
-            plot.fig_coh_ph(coh_all, ph_all, stanoise.direc)
+            fname = stkey + '.' + 'coh_ph'
+            plot.fig_coh_ph(coh_all, ph_all, stanoise.direc,
+                save=plotpath, fname=fname, form=opts.form)
 
         # Save to file
         stanoise.save(fileavst)
