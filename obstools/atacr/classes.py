@@ -550,8 +550,7 @@ class DayNoise(object):
         self.QC = True
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False,
-                              fig_coh_ph=False, debug=False, save=False,
-                              form='png'):
+                              fig_coh_ph=False, save=False, form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
         method will attempt to calculate the azimuth of maximum coherence 
@@ -569,9 +568,6 @@ class DayNoise(object):
         fig_coh_ph : boolean
             Whether or not to produce a figure showing the maximum coherence 
             between H and Z
-        debug : boolean
-            Whether or not to plot intermediate steps in the QC procedure for
-            debugging
 
         Attributes
         ----------
@@ -1197,8 +1193,7 @@ class StaNoise(object):
             plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key,
                 save=save, fname=fname, form=form)
 
-    def average_sta_spectra(self, fig_average=False, debug=False,
-                            save=False, form='png'):
+    def average_sta_spectra(self, fig_average=False, save=False, form='png'):
         r"""
         Method to average the daily station spectra for good windows.
 
@@ -1207,9 +1202,6 @@ class StaNoise(object):
         fig_average : boolean
             Whether or not to produce a figure showing the average daily 
             spectra
-        debug : boolean
-            Whether or not to plot intermediate steps in the QC procedure 
-            for debugging
 
         Attributes
         ----------
