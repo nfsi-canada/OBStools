@@ -309,27 +309,29 @@ def main():
         # Quality control to identify outliers
         stanoise.QC_sta_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha,
                                 fig_QC=opts.fig_QC, debug=opts.debug,
-                                save=opts.saveplot, form=opts.form)
+                                save=plotpath, form=opts.form)
 
         # Average spectra for good days
         stanoise.average_sta_spectra(
-            fig_average=opts.fig_average, debug=opts.debug,
-            save=opts.saveplot, form=opts.form)
+            fig_average=opts.fig_average,
+            save=plotpath, form=opts.form)
 
         if opts.fig_av_cross:
+            fname = stkey + '.' + 'av_cross'
             plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
                               'Coherence', ncomp, key=stkey, lw=0.5,
-                              save=opts.saveplot, form=opts.form)
+                              save=plotpath, fname=fname, form=opts.form)
             plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
                               'Admittance', ncomp, key=stkey, lw=0.5,
-                              save=opts.saveplot, form=opts.form)
+                              save=plotpath, fname=fname, form=opts.form)
             plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
                               'Phase', ncomp, key=stkey, marker=',', lw=0,
-                              save=opts.saveplot, form=opts.form)
+                              save=plotpath, fname=fname, form=opts.form)
 
         if opts.fig_coh_ph and stanoise.direc:
+            fname = stkey + '.' + 'coh_ph'
             plot.fig_coh_ph(coh_all, ph_all, stanoise.direc,
-                save=opts.saveplot, form=opts.form)
+                save=plotpath, fname=fname, form=opts.form)
 
         # Save to file
         stanoise.save(fileavst)
