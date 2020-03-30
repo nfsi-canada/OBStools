@@ -546,7 +546,7 @@ from method
 </div>
 <dl class="method">
 <dt id="obstools.atacr.classes.DayNoise.QC_daily_spectra">
-<code class="sig-name descname">QC_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">QC_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=1.5, alpha=0.05, smooth=True, fig_QC=False, debug=False, save=False, form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to determine daily time windows for which the spectra are
 anomalous and should be discarded in the calculation of the
 transfer functions.</p>
@@ -599,7 +599,7 @@ figure</p>
 
 <dl class="method">
 <dt id="obstools.atacr.classes.DayNoise.average_daily_spectra">
-<code class="sig-name descname">average_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">calc_rotation=True</em>, <em class="sig-param">fig_average=False</em>, <em class="sig-param">fig_coh_ph=False</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">average_daily_spectra</code><span class="sig-paren">(</span><em class="sig-param">calc_rotation=True</em>, <em class="sig-param">fig_average=False</em>, <em class="sig-param">fig_coh_ph=False</em>, <em class="sig-param">save=False</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to average the daily spectra for good windows. By default, the
 method will attempt to calculate the azimuth of maximum coherence
 between horizontal components and the vertical component (for maximum
@@ -613,8 +613,6 @@ function calculations.</p>
 spectra</p></li>
 <li><p><strong>fig_coh_ph</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the maximum coherence
 between H and Z</p></li>
-<li><p><strong>debug</strong> (<em>boolean</em>) – Whether or not to plot intermediate steps in the QC procedure for
-debugging</p></li>
 </ul>
 </dd>
 </dl>
@@ -957,7 +955,7 @@ been called.</p>
 
 <dl class="method">
 <dt id="obstools.atacr.classes.StaNoise.QC_sta_spectra">
-<code class="sig-name descname">QC_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">QC_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">pd=[0.004, 0.2], tol=2.0, alpha=0.05, fig_QC=False, debug=False, save=False, form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to determine the days (for given time window) for which the
 spectra are anomalous and should be discarded in the calculation of
 the long-term transfer functions.</p>
@@ -1001,16 +999,12 @@ debugging</p></li>
 
 <dl class="method">
 <dt id="obstools.atacr.classes.StaNoise.average_sta_spectra">
-<code class="sig-name descname">average_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">fig_average=False</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">average_sta_spectra</code><span class="sig-paren">(</span><em class="sig-param">fig_average=False</em>, <em class="sig-param">save=False</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to average the daily station spectra for good windows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
-spectra</p></li>
-<li><p><strong>debug</strong> (<em>boolean</em>) – Whether or not to plot intermediate steps in the QC procedure
-for debugging</p></li>
-</ul>
+<dd class="field-odd"><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
+spectra</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -2064,7 +2058,7 @@ of a boxcar function with the PSD</p>
 of the analysis at various final and intermediate steps.</p>
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_QC">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_QC</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">gooddays</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key=''</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_QC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_QC</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">gooddays</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key=''</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_QC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the Quality-Control step of the analysis. This function is used
 in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cite> scripts.</p>
 <dl class="field-list simple">
@@ -2082,7 +2076,7 @@ in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cit
 
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_average">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_average</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">bad</em>, <em class="sig-param">gooddays</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key=''</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_average" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_average</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">power</em>, <em class="sig-param">bad</em>, <em class="sig-param">gooddays</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key=''</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_average" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the averaged spectra (those qualified as ‘good’ in the
 QC step). This function is used
 in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cite> scripts.</p>
@@ -2102,7 +2096,7 @@ in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cit
 
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_av_cross">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_av_cross</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">field</em>, <em class="sig-param">gooddays</em>, <em class="sig-param">ftype</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key=''</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_av_cross" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_av_cross</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">field</em>, <em class="sig-param">gooddays</em>, <em class="sig-param">ftype</em>, <em class="sig-param">ncomp</em>, <em class="sig-param">key=''</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_av_cross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the averaged cross-spectra (those qualified as ‘good’ in the
 QC step). This function is used in the <cite>obs_daily_spectra.py</cite> script.</p>
 <dl class="field-list simple">
@@ -2121,7 +2115,7 @@ QC step). This function is used in the <cite>obs_daily_spectra.py</cite> script.
 
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_coh_ph">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_coh_ph</code><span class="sig-paren">(</span><em class="sig-param">coh</em>, <em class="sig-param">ph</em>, <em class="sig-param">direc</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_coh_ph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_coh_ph</code><span class="sig-paren">(</span><em class="sig-param">coh</em>, <em class="sig-param">ph</em>, <em class="sig-param">direc</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_coh_ph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the coherence and phase between the rotated H and Z components,
 used to characterize the tilt direction.</p>
 <dl class="field-list simple">
@@ -2137,7 +2131,7 @@ used to characterize the tilt direction.</p>
 
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_TF">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_TF</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">day_trfs</em>, <em class="sig-param">day_list</em>, <em class="sig-param">sta_trfs</em>, <em class="sig-param">sta_list</em>, <em class="sig-param">skey=''</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_TF" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_TF</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">day_trfs</em>, <em class="sig-param">day_list</em>, <em class="sig-param">sta_trfs</em>, <em class="sig-param">sta_list</em>, <em class="sig-param">skey=''</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_TF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2153,7 +2147,7 @@ used to characterize the tilt direction.</p>
 
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_event_raw">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_event_raw</code><span class="sig-paren">(</span><em class="sig-param">evstream</em>, <em class="sig-param">fmin</em>, <em class="sig-param">fmax</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_event_raw" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_event_raw</code><span class="sig-paren">(</span><em class="sig-param">evstream</em>, <em class="sig-param">fmin</em>, <em class="sig-param">fmax</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_event_raw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the raw (although bandpassed) seismograms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2168,7 +2162,7 @@ used to characterize the tilt direction.</p>
 
 <dl class="function">
 <dt id="obstools.atacr.plot.fig_event_corrected">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_event_corrected</code><span class="sig-paren">(</span><em class="sig-param">evstream</em>, <em class="sig-param">TF_list</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_event_corrected" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_event_corrected</code><span class="sig-paren">(</span><em class="sig-param">evstream</em>, <em class="sig-param">TF_list</em>, <em class="sig-param">save=False</em>, <em class="sig-param">fname=''</em>, <em class="sig-param">form='png'</em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_event_corrected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to plot the corrected vertical component seismograms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
