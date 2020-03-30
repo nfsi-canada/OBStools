@@ -230,9 +230,10 @@ def main():
                 statransfer.save(filename)
 
         if opts.fig_TF:
+            fname = stkey + '.' + 'transfer_functions'
             plot.fig_TF(f, day_transfer_functions, daynoise.tf_list,
                         sta_transfer_functions, stanoise.tf_list, skey=stkey,
-                        save=plotpath, form=opts.form)
+                        save=plotpath, fname=fname, form=opts.form)
 
 
 if __name__ == "__main__":
