@@ -248,6 +248,7 @@ class DayNoise(object):
         self.fs = self.trZ.stats.sampling_rate
         self.year = self.trZ.stats.starttime.year
         self.julday = self.trZ.stats.starttime.julday
+        self.tkey = self.year + '.' + self.julday
 
         # Get number of components for the available, non-empty traces
         ncomp = np.sum(1 for tr in
@@ -323,9 +324,6 @@ class DayNoise(object):
 
         """
 
-        # Time key
-        tkey = self.year + '.' + self.julday
-
         # Points in window
         ws = int(self.window/self.dt)
 
@@ -387,7 +385,7 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = save + '.' + self.key + '.' + tkey + \
+                    title = save + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
                     plt.savefig(title + form,
                                 dpi=300, bbox_inches='tight', format=form)
@@ -411,7 +409,7 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = save + '.' + self.key + '.' + tkey + \
+                    title = save + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
                     plt.savefig(title + form,
                                 dpi=300, bbox_inches='tight', format=form)
@@ -545,7 +543,7 @@ class DayNoise(object):
 
         if fig_QC:
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-            fname = self.key + '.' + tkey + '.' + 'QC'
+            fname = self.key + '.' + self.tkey + '.' + 'QC'
             plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key,
                         save=save, fname=fname, form=form)
 
@@ -614,9 +612,6 @@ class DayNoise(object):
             print("Warning: processing daynoise object for " +
                   "QC_daily_spectra using default values")
             self.QC_daily_spectra()
-
-        # Time key
-        tkey = self.year + '.' + self.julday
 
         # Points in window
         ws = int(self.window/self.dt)
@@ -707,7 +702,7 @@ class DayNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
-            fname = self.key + '.' + tkey + '.' + 'average'
+            fname = self.key + '.' + self.tkey + '.' + 'average'
             plot.fig_average(f, self.power, bad, self.goodwins,
                              self.ncomp, key=self.key, save=save,
                              fname=fname, form=form)
@@ -720,7 +715,7 @@ class DayNoise(object):
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
             if fig_coh_ph:
-                fname = self.key + '.' + tkey + '.' + 'coh_ph'
+                fname = self.key + '.' + self.tkey + '.' + 'coh_ph'
                 plot.fig_coh_ph(coh, ph, direc, save=save,
                                 fname=fname, form=form)
         else:
