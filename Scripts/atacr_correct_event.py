@@ -70,6 +70,13 @@ def main():
         if not os.path.isdir(eventpath):
             raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
 
+        # Path where plots will be saved
+        plotpath = eventpath + 'PLOTS/'
+        if opts.saveplot and not os.path.isdir(plotpath):
+            os.makedirs(plotpath)
+        else:
+            plotpath = False
+
         # Get catalogue search start time
         if opts.startT is None:
             tstart = sta.startdate
@@ -154,8 +161,9 @@ def main():
                 continue
 
             if opts.fig_event_raw:
+                fname = stkey + '.' + evstamp + 'raw'
                 plot.fig_event_raw(eventstream, fmin=opts.fmin, fmax=opts.fmax,
-                    save=opts.saveplot, form=opts.form)
+                    save=plotpath, fname=fname, form=opts.form)
 
             # Cycle through corresponding TF files
             for transfile in trans_files:
@@ -195,9 +203,10 @@ def main():
 
                             correct = eventstream.correct
                             if opts.fig_plot_corrected:
+                                fname = stkey + '.' + evstamp + 'sta_corrected'
                                 plot.fig_event_corrected(
                                     eventstream, tfaverage.tf_list,
-                                    save=opts.saveplot, form=opts.form)
+                                    save=plotpath, fname=fname, form=opts.form)
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -221,9 +230,10 @@ def main():
 
                             correct = eventstream.correct
                             if opts.fig_plot_corrected:
+                                fname = stkey + '.' + evstamp + 'day_corrected'
                                 plot.fig_event_corrected(
                                     eventstream, tfaverage.tf_list,
-                                    save=opts.saveplot, form=opts.form)
+                                    save=plotpath, fname=fname, form=opts.form)
 
 
 if __name__ == "__main__":
