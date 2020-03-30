@@ -22,73 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Program atacr_transfer_functions.py
------------------------------------
-
-Calculates transfer functions using the noise windows flagged as "good", for either
-a single day (from `obs_daily_spectra.py`) or for those averaged over several days
-(from `obs_clean_spectra.py`), if available. The transfer functions are stored to disk.
-
-Station selection is specified by a network and 
-station code. The data base is provided as a 
-`StDb` dictionary.
-
-Usage
------
-
-.. code-block::
-
-    $ atacr_transfer_functions.py -h
-    Usage: atacr_transfer_functions.py [options] <station database>
-
-    Script used to calculate transfer functions between various components, to be
-    used in cleaning vertical component of OBS data. The noise data can be those
-    obtained from the daily spectra (i.e., from `obs_daily_spectra.py`) or those
-    obtained from the averaged noise spectra (i.e., from `obs_clean_spectra.py`).
-    Flags are available to specify the source of data to use as well as the time
-    range over which to calculate the transfer functions. The stations are
-    processed one by one and the data are stored to disk.
-
-    Options:
-      -h, --help        show this help message and exit
-      --keys=STKEYS     Specify a comma separated list of station keys for which
-                        to perform the analysis. These must be contained within
-                        the station database. Partial keys will be used to match
-                        against those in the dictionary. For instance, providing
-                        IU will match with all stations in the IU network.
-                        [Default processes all stations in the database]
-      -O, --overwrite   Force the overwriting of pre-existing data. [Default
-                        False]
-
-      Parameter Settings:
-        Miscellaneous default values and settings
-
-        --skip-daily    Skip daily spectral averages in construction of transfer
-                        functions. [Default False]
-        --skip-clean    Skip cleaned spectral averages in construction of transfer
-                        functions. Defaults to True if data cannot be found in
-                        default directory. [Default False]
-
-      Figure Settings:
-        Flags for plotting figures
-
-        --figTF         Plot transfer function figure. [Default does not plot
-                        figure]
-
-      Time Search Settings:
-        Time settings associated with searching for day-long seismograms
-
-        --start=STARTT  Specify a UTCDateTime compatible string representing the
-                        start day for the data search. This will override any
-                        station start times. [Default start date of each station
-                        in database]
-        --end=ENDT      Specify a UTCDateTime compatible string representing the
-                        start time for the event search. This will override any
-                        station end times. [Default end date of each station in
-                        database]
-
-"""
 
 # Import modules and functions
 import os
@@ -291,7 +224,8 @@ def main():
 
         if opts.fig_TF:
             plot.fig_TF(f, day_transfer_functions, daynoise.tf_list,
-                        sta_transfer_functions, stanoise.tf_list, skey=stkey)
+                        sta_transfer_functions, stanoise.tf_list, skey=stkey,
+                        save=opts.saveplot, form=opts.form)
 
 
 if __name__ == "__main__":
