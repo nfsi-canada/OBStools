@@ -71,9 +71,10 @@ def main():
             raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
 
         # Path where plots will be saved
-        plotpath = eventpath + 'PLOTS/'
-        if opts.saveplot and not os.path.isdir(plotpath):
-            os.makedirs(plotpath)
+        if opts.saveplot: 
+            plotpath = eventpath + 'PLOTS/'
+            if not os.path.isdir(plotpath):
+                os.makedirs(plotpath)
         else:
             plotpath = False
 

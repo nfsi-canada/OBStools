@@ -71,9 +71,10 @@ def main():
             os.makedirs(specpath)
 
         # Path where plots will be saved
-        plotpath = specpath + 'PLOTS/'
-        if opts.saveplot and not os.path.isdir(plotpath):
-            os.makedirs(plotpath)
+        if opts.saveplot:
+            plotpath = specpath + 'PLOTS/'
+            if not os.path.isdir(plotpath):
+                os.makedirs(plotpath)
         else:
             plotpath = False
 

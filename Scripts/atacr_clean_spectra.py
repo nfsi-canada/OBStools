@@ -73,9 +73,10 @@ def main():
             os.makedirs(avstpath)
 
         # Path where plots will be saved
-        plotpath = avstpath + 'PLOTS/'
-        if opts.saveplot and not os.path.isdir(plotpath):
-            os.makedirs(plotpath)
+        if opts.saveplot: 
+            plotpath = avstpath + 'PLOTS/'
+            if not os.path.isdir(plotpath):
+                os.makedirs(plotpath)
         else:
             plotpath = False
 
