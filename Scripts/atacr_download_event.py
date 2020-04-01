@@ -206,10 +206,10 @@ def main():
                 t2 = t1 + window
 
                 # Time stamp
-                tstamp = str(time.year).zfill(4)+'.' +
-                str(time.julday).zfill(3)+'.'
-                tstamp = tstamp + str(time.hour).zfill(2) +
-                '.'+str(time.minute).zfill(2)
+                tstamp = str(time.year).zfill(4)+'.' + \
+                    str(time.julday).zfill(3)+'.'
+                tstamp = tstamp + str(time.hour).zfill(2) + \
+                    '.'+str(time.minute).zfill(2)
 
                 # Define file names (to check if files already exist)
                 filename = eventpath + tstamp + '.event.pkl'

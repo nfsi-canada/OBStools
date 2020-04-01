@@ -287,8 +287,8 @@ def main():
                         t2 += dt
                         continue
 
-                channels = sta.channel.upper()+'1,'+sta.channel.upper() +
-                '2,'+sta.channel.upper()+'Z'
+                channels = sta.channel.upper()+'1,'+sta.channel.upper() + \
+                    '2,'+sta.channel.upper()+'Z'
 
                 # Get waveforms from client
                 try:
