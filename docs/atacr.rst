@@ -352,6 +352,11 @@ Usage
                            figure]
         --figCoh           Plot Coherence and Phase figure. [Default does not plot
                            figure]
+        --save-fig         Set this option if you wish to save the figure(s).
+                           [Default does not save figure]
+        --format=FORM      Specify format of figure. Can be any one of the
+                           validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                           [Default 'png']
 
       Time Search Settings:
         Time settings associated with searching for day-long seismograms
@@ -425,6 +430,11 @@ Usage
         --figCoh         Plot Coherence and Phase figure. [Default does not plot
                          figure]
         --figCross       Plot cross-spectra figure. [Default does not plot figure]
+        --save-fig       Set this option if you wish to save the figure(s).
+                         [Default does not save figure]
+        --format=FORM    Specify format of figure. Can be any one of the
+                         validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                         [Default 'png']
 
       Time Search Settings:
         Time settings associated with searching for day-long seismograms
@@ -492,6 +502,11 @@ Usage
 
         --figTF         Plot transfer function figure. [Default does not plot
                         figure]
+        --save-fig      Set this option if you wish to save the figure(s).
+                        [Default does not save figure]
+        --format=FORM   Specify format of figure. Can be any one of the
+                        validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                        [Default 'png']
 
       Time Search Settings:
         Time settings associated with searching for day-long seismograms
@@ -666,7 +681,12 @@ Usage
         --figRaw        Plot raw seismogram figure. [Default does not plot figure]
         --figClean      Plot cleaned vertical seismogram figure. [Default does not
                         plot figure]
-
+        --save-fig      Set this option if you wish to save the figure(s).
+                        [Default does not save figure]
+        --format=FORM   Specify format of figure. Can be any one of the
+                        validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                        [Default 'png']
+                    
       Time Search Settings:
         Time settings associated with searching for specific event-related
         seismograms
