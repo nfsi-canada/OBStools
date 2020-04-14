@@ -10,7 +10,7 @@ the ``StDb`` package for querying and building a station database and
 can be used through command-line scripts.
 
 [![Build Status](https://travis-ci.org/nfsi-canada/OBStools.svg?branch=master)](https://travis-ci.org/nfsi-canada/OBStools)
-[![codecov](https://codecov.io/gh/paudetseis/OBStools/branch/master/graph/badge.svg)](https://codecov.io/gh/paudetseis/OBStools)
+[![codecov](https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg)](https://codecov.io/gh/nfsi-canada/OBStools)
 
 Installation, API documentation, scripts and tutorials are described at https://nfsi-canada.github.io/OBStools/
 
