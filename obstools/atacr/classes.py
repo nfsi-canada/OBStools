@@ -1773,6 +1773,7 @@ class EventStream(object):
         self.fs = sampling_rate
         self.dt = 1./sampling_rate
         self.ncomp = ncomp
+        self.correct = False
 
         # Build list of available transfer functions for future use
         if self.ncomp == 2:
