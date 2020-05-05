@@ -32,5 +32,5 @@ setup(
         'Programming Language :: Python :: 3.7'],
     install_requires=['numpy', 'obspy', 'stdb'],
     python_requires='>=3.6',
-    packages=['obstools'],
+    packages=['obstools','obstools.atacr'],
     scripts=scripts)
