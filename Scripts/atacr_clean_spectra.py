@@ -59,7 +59,6 @@ def main():
 
         # Extract station information from dictionary
         sta = db[stkey]
-
         # Path where spectra are located
         specpath = 'SPECTRA/' + stkey + '/'
         if not os.path.isdir(specpath):
@@ -73,7 +72,7 @@ def main():
             os.makedirs(avstpath)
 
         # Path where plots will be saved
-        if opts.saveplot: 
+        if opts.saveplot:
             plotpath = avstpath + 'PLOTS/'
             if not os.path.isdir(plotpath):
                 os.makedirs(plotpath)
@@ -320,16 +319,16 @@ def main():
         if opts.fig_av_cross:
             fname = stkey + '.' + 'av_cross'
             plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
-                              'Coherence', ncomp, key=stkey, lw=0.5,
+                              'Coherence', stanoise.ncomp, key=stkey, lw=0.5,
                               save=plotpath, fname=fname, form=opts.form)
             plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
-                              'Admittance', ncomp, key=stkey, lw=0.5,
+                              'Admittance', stanoise.ncomp, key=stkey, lw=0.5,
                               save=plotpath, fname=fname, form=opts.form)
             plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
-                              'Phase', ncomp, key=stkey, marker=',', lw=0,
+                              'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0,
                               save=plotpath, fname=fname, form=opts.form)
 
-        if opts.fig_coh_ph and stanoise.direc:
+        if opts.fig_coh_ph and stanoise.direc.any():
             fname = stkey + '.' + 'coh_ph'
             plot.fig_coh_ph(coh_all, ph_all, stanoise.direc,
                 save=plotpath, fname=fname, form=opts.form)
