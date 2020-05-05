@@ -1731,7 +1731,7 @@ class EventStream(object):
 
     def __init__(self, sta=None, sth=None, stp=None, tstamp=None, lat=None,
                  lon=None, time=None, window=None, sampling_rate=None,
-                 ncomp=None):
+                 ncomp=None,correct=False):
 
         if sta == 'demo' or sta == 'Demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
@@ -1753,6 +1753,7 @@ class EventStream(object):
             window = evstream.window
             sampling_rate = evstream.fs
             ncomp = evstream.ncomp
+            correct = evstream.correct
 
         if any(value == None for value in [sta, sth, stp, tstamp, lat, lon,
                                            time, window, sampling_rate,
