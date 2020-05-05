@@ -5,6 +5,7 @@ os:
 env:
   - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
+  - PYTHON_VERSION=3.8
 jobs:
   include:
     - env: PYTHON_VERSION=3.7 DOCS=1
