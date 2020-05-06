@@ -59,6 +59,7 @@ def main():
 
         # Extract station information from dictionary
         sta = db[stkey]
+        
         # Path where spectra are located
         specpath = 'SPECTRA/' + stkey + '/'
         if not os.path.isdir(specpath):
