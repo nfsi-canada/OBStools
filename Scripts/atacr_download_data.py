@@ -30,7 +30,7 @@ import pickle
 import glob
 import stdb
 from obspy.clients.fdsn import Client
-from obstools.atacr import utils, options
+from obstools.atacr import utils, arguments
 
 # Main function
 
@@ -38,19 +38,19 @@ from obstools.atacr import utils, options
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_daylong_options()
+    args = arguments.get_daylong_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=indb)
+    db = stdb.io.load_db(fname=args.indb)
 
     # Construct station key loop
     allkeys = db.keys()
     sorted(allkeys)
 
     # Extract key subset
-    if len(opts.stkeys) > 0:
+    if len(args.stkeys) > 0:
         stkeys = []
-        for skey in opts.stkeys:
+        for skey in args.stkeys:
             stkeys.extend([s for s in allkeys if skey in s])
     else:
         stkeys = db.keys()
@@ -70,23 +70,23 @@ def main():
             os.makedirs(datapath)
 
         # Establish client
-        if len(opts.UserAuth) == 0:
-            client = Client(opts.Server)
+        if len(args.UserAuth) == 0:
+            client = Client(args.Server)
         else:
             client = Client(
-                opts.Server, user=opts.UserAuth[0], password=opts.UserAuth[1])
+                args.Server, user=args.UserAuth[0], password=args.UserAuth[1])
 
         # Get catalogue search start time
-        if opts.startT is None:
+        if args.startT is None:
             tstart = sta.startdate
         else:
-            tstart = opts.startT
+            tstart = args.startT
 
         # Get catalogue search end time
-        if opts.endT is None:
+        if args.endT is None:
             tend = sta.startdate
         else:
-            tend = opts.endT
+            tend = args.endT
 
         if tstart > sta.enddate or tend < sta.startdate:
             continue
@@ -142,7 +142,7 @@ def main():
             print("* Downloading day-long data for key "+stkey +
                   " and day "+str(t1.year)+"."+str(t1.julday))
             print("*")
-            print("* Channels selected: "+str(opts.channels)+' and vertical')
+            print("* Channels selected: "+str(args.channels)+' and vertical')
 
             # Define file names (to check if files already exist)
             # Horizontal 1 channel
@@ -154,11 +154,11 @@ def main():
             # Pressure channel
             fileP = datapath + tstamp + '.' + sta.channel + 'H.SAC'
 
-            if "P" not in opts.channels:
+            if "P" not in args.channels:
 
                 # If data files exist, continue
                 if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2):
-                    if not opts.ovr:
+                    if not args.ovr:
                         print(
                             "*   "+tstamp +
                             "*SAC                                 ")
@@ -209,11 +209,11 @@ def main():
                     t2 += dt
                     continue
 
-            elif "H" not in opts.channels:
+            elif "H" not in args.channels:
 
                 # If data files exist, continue
                 if glob.glob(fileZ) and glob.glob(fileP):
-                    if not opts.ovr:
+                    if not args.ovr:
                         print("*   "+tstamp +
                               "*SAC                                 ")
                         print("*   -> Files already exist, " +
@@ -278,7 +278,7 @@ def main():
                 # If data files exist, continue
                 if (glob.glob(fileZ) and glob.glob(file1) and
                         glob.glob(file2) and glob.glob(fileP)):
-                    if not opts.ovr:
+                    if not args.ovr:
                         print("*   "+tstamp +
                               "*SAC                                 ")
                         print("*   -> Files already exist, " +
@@ -343,25 +343,25 @@ def main():
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
-            sth.remove_response(pre_filt=opts.pre_filt, output='DISP')
-            if "P" in opts.channels:
+            sth.remove_response(pre_filt=args.pre_filt, output='DISP')
+            if "P" in args.channels:
                 print("*   -> Removing responses - Pressure data")
-                stp.remove_response(pre_filt=opts.pre_filt)
+                stp.remove_response(pre_filt=args.pre_filt)
 
             # Detrend, filter - seismic data
             sth.detrend('demean')
             sth.detrend('linear')
-            sth.filter('lowpass', freq=0.5*opts.new_sampling_rate,
+            sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
                        corners=2, zerophase=True)
-            sth.resample(opts.new_sampling_rate)
+            sth.resample(args.new_sampling_rate)
 
-            if "P" in opts.channels:
+            if "P" in args.channels:
                 # Detrend, filter - pressure data
                 stp.detrend('demean')
                 stp.detrend('linear')
-                stp.filter('lowpass', freq=0.5*opts.new_sampling_rate,
+                stp.filter('lowpass', freq=0.5*args.new_sampling_rate,
                            corners=2, zerophase=True)
-                stp.resample(opts.new_sampling_rate)
+                stp.resample(args.new_sampling_rate)
 
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
@@ -370,7 +370,7 @@ def main():
             trZ.write(fileZ, format='sac')
 
             # Extract traces - H
-            if "H" in opts.channels:
+            if "H" in args.channels:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
@@ -381,7 +381,7 @@ def main():
                 tr2.write(file2, format='sac')
 
             # Extract traces - P
-            if "P" in opts.channels:
+            if "P" in args.channels:
                 trP = stp[0]
                 trP = utils.update_stats(
                     trP, sta.latitude, sta.longitude, sta.elevation, 'P')

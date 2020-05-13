@@ -33,8 +33,8 @@ from obspy.clients.fdsn import Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
 from obspy.core import Stream
-from obstools.atacr import utils, options
-from obstools.atacr.classes import EventStream
+from obstools.atacr import utils, arguments
+from obstools.atacr import EventStream
 
 # Main function
 
@@ -42,19 +42,19 @@ from obstools.atacr.classes import EventStream
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_event_options()
+    args = arguments.get_event_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=indb)
+    db = stdb.io.load_db(fname=args.indb)
 
     # Construct station key loop
     allkeys = db.keys()
     sorted(allkeys)
 
     # Extract key subset
-    if len(opts.stkeys) > 0:
+    if len(args.stkeys) > 0:
         stkeys = []
-        for skey in opts.stkeys:
+        for skey in args.stkeys:
             stkeys.extend([s for s in allkeys if skey in s])
     else:
         stkeys = db.keys()
@@ -73,23 +73,23 @@ def main():
             os.makedirs(eventpath)
 
         # Establish client
-        if len(opts.UserAuth) == 0:
-            client = Client(opts.Server)
+        if len(args.UserAuth) == 0:
+            client = Client(args.Server)
         else:
             client = Client(
-                opts.Server, user=opts.UserAuth[0], password=opts.UserAuth[1])
+                args.Server, user=args.UserAuth[0], password=args.UserAuth[1])
 
         # Get catalogue search start time
-        if opts.startT is None:
+        if args.startT is None:
             tstart = sta.startdate
         else:
-            tstart = opts.startT
+            tstart = args.startT
 
         # Get catalogue search end time
-        if opts.endT is None:
+        if args.endT is None:
             tend = sta.enddate
         else:
-            tend = opts.endT
+            tend = args.endT
         if tstart > sta.enddate or tend < sta.startdate:
             continue
 
@@ -127,20 +127,20 @@ def main():
             tstart.strftime("%Y-%m-%d %H:%M:%S")))
         print("|   End:   {0:19s}                  |".format(
             tend.strftime("%Y-%m-%d %H:%M:%S")))
-        if opts.maxmag is None:
+        if args.maxmag is None:
             print("|   Mag:   >{0:3.1f}                                 " +
                   "|".format(
-                      opts.minmag))
+                      args.minmag))
         else:
             print(
                 "|   Mag:   {0:3.1f} - {1:3.1f}                         " +
-                "   |".format(opts.minmag, opts.maxmag))
+                "   |".format(args.minmag, args.maxmag))
         print("| ...                                           |")
 
         # Get catalogue using deployment start and end
         cat = client.get_events(
             starttime=tstart, endtime=tend,
-            minmagnitude=opts.minmag, maxmagnitude=opts.maxmag)
+            minmagnitude=args.minmag, maxmagnitude=args.maxmag)
 
         # Total number of events in Catalogue
         nevK = 0
@@ -151,7 +151,7 @@ def main():
         ievs = range(0, nevtT)
 
         # Select order of processing
-        if opts.reverse:
+        if args.reverse:
             ievs = range(0, nevtT)
         else:
             ievs = range(nevtT-1, -1, -1)
@@ -177,11 +177,11 @@ def main():
                 mag = -9.
 
             # If distance between 85 and 120 deg:
-            if (gac > opts.mindist and gac < opts.maxdist):
+            if (gac > args.mindist and gac < args.maxdist):
 
                 # Display Event Info
                 nevK = nevK + 1
-                if opts.reverse:
+                if args.reverse:
                     inum = iev + 1
                 else:
                     inum = nevtT - iev + 1
@@ -216,17 +216,17 @@ def main():
 
                 print()
                 print("* Channels selected: " +
-                      str(opts.channels)+' and vertical')
+                      str(args.channels)+' and vertical')
 
                 # If data file exists, continue
                 if glob.glob(filename):
-                    if not opts.ovr:
+                    if not args.ovr:
                         print("*")
                         print("*   "+filename)
                         print("*   -> File already exists, continuing")
                         continue
 
-                if "P" not in opts.channels:
+                if "P" not in args.channels:
 
                     # Number of channels
                     ncomp = 3
@@ -268,7 +268,7 @@ def main():
                         print(np.abs(llZ - ll))
                         continue
 
-                elif "H" not in opts.channels:
+                elif "H" not in args.channels:
 
                     # Number of channels
                     ncomp = 2
@@ -374,32 +374,32 @@ def main():
 
                 # Remove responses
                 print("*   -> Removing responses - Seismic data")
-                sth.remove_response(pre_filt=opts.pre_filt, output='DISP')
-                if "P" in opts.channels:
+                sth.remove_response(pre_filt=args.pre_filt, output='DISP')
+                if "P" in args.channels:
                     print("*   -> Removing responses - Pressure data")
-                    stp.remove_response(pre_filt=opts.pre_filt)
+                    stp.remove_response(pre_filt=args.pre_filt)
 
                 # Detrend, filter - seismic data
                 sth.detrend('demean')
                 sth.detrend('linear')
-                sth.filter('lowpass', freq=0.5*opts.new_sampling_rate,
+                sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
                            corners=2, zerophase=True)
-                sth.resample(opts.new_sampling_rate)
+                sth.resample(args.new_sampling_rate)
 
-                if "P" in opts.channels:
+                if "P" in args.channels:
                     # Detrend, filter - pressure data
                     stp.detrend('demean')
                     stp.detrend('linear')
                     stp.filter('lowpass', freq=0.5 *
-                               opts.new_sampling_rate, corners=2,
+                               args.new_sampling_rate, corners=2,
                                zerophase=True)
-                    stp.resample(opts.new_sampling_rate)
+                    stp.resample(args.new_sampling_rate)
                 else:
                     stp = Stream()
 
                 eventstream = EventStream(
                     sta, sth, stp, tstamp, lat, lon, time, window,
-                    opts.new_sampling_rate, ncomp)
+                    args.new_sampling_rate, ncomp)
 
                 eventstream.save(filename)
 
