@@ -29,26 +29,25 @@ import numpy as np
 import pickle
 import stdb
 from obstools.atacr.classes import DayNoise
-from obstools.atacr import utils, options
+from obstools.atacr import utils, arguments
 
 
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_dailyspec_options()
-    print(opts)
+    args = arguments.get_dailyspec_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=indb)
+    db = stdb.io.load_db(fname=args.indb)
 
     # Construct station key loop
     allkeys = db.keys()
     sorted(allkeys)
 
     # Extract key subset
-    if len(opts.stkeys) > 0:
+    if len(args.stkeys) > 0:
         stkeys = []
-        for skey in opts.stkeys:
+        for skey in args.stkeys:
             stkeys.extend([s for s in allkeys if skey in s])
     else:
         stkeys = db.keys()
@@ -71,7 +70,7 @@ def main():
             os.makedirs(specpath)
 
         # Path where plots will be saved
-        if opts.saveplot:
+        if args.saveplot:
             plotpath = specpath + 'PLOTS/'
             if not os.path.isdir(plotpath):
                 os.makedirs(plotpath)
@@ -79,16 +78,16 @@ def main():
             plotpath = False
 
         # Get catalogue search start time
-        if opts.startT is None:
+        if args.startT is None:
             tstart = sta.startdate
         else:
-            tstart = opts.startT
+            tstart = args.startT
 
         # Get catalogue search end time
-        if opts.endT is None:
+        if args.endT is None:
             tend = sta.enddate
         else:
-            tend = opts.endT
+            tend = args.endT
 
         if tstart > sta.enddate or tend < sta.startdate:
             continue
@@ -126,11 +125,11 @@ def main():
         trN1, trN2, trNZ, trNP = utils.get_data(datapath, tstart, tend)
 
         # Window size
-        window = opts.window
-        overlap = opts.overlap
+        window = args.window
+        overlap = args.overlap
 
         # minimum numer of windows
-        minwin = opts.minwin
+        minwin = args.minwin
 
         # Time axis
         taxis = np.arange(0., window, trNZ[0].stats.delta)
@@ -150,7 +149,7 @@ def main():
             filename = specpath + tstamp + 'spectra.pkl'
 
             if os.path.exists(filename):
-                if not opts.ovr:
+                if not args.ovr:
                     print("*   -> file "+filename+" exists - continuing")
                     continue
 
@@ -159,9 +158,9 @@ def main():
 
             # Quality control to identify outliers
             daynoise.QC_daily_spectra(
-                pd=opts.pd, tol=opts.tol, alpha=opts.alpha,
-                smooth=opts.smooth, fig_QC=opts.fig_QC,
-                save=plotpath, form=opts.form, debug=opts.debug)
+                pd=args.pd, tol=args.tol, alpha=args.alpha,
+                smooth=args.smooth, fig_QC=args.fig_QC,
+                save=plotpath, form=args.form, debug=args.debug)
 
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
@@ -174,10 +173,10 @@ def main():
 
             # Average spectra for good windows
             daynoise.average_daily_spectra(
-                calc_rotation=opts.calc_rotation,
-                fig_average=opts.fig_average,
-                fig_coh_ph=opts.fig_coh_ph,
-                save=plotpath, form=opts.form)
+                calc_rotation=args.calc_rotation,
+                fig_average=args.fig_average,
+                fig_coh_ph=args.fig_coh_ph,
+                save=plotpath, form=args.form)
 
             # Save to file
             daynoise.save(filename)
