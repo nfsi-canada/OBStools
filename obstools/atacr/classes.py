@@ -30,6 +30,7 @@ from obspy.core import Stream, Trace, read
 from obstools.atacr import utils, plot
 from pkg_resources import resource_filename
 from pathlib import Path
+np.seterr(all='ignore')
 
 
 class Power(object):
