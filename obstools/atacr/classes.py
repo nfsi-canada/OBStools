@@ -217,8 +217,9 @@ class DayNoise(object):
         # Load example data if initializing empty object
         if tr1 == 'demo' or tr1 == 'Demo':
             print("Uploading demo data - March 04, 2012, station 7D.M08A")
-            fn = 'examples/data/2012.064*.SAC'
-            st = read(resource_filename('obstools', fn))
+            exmpl_path = Path(resource_filename('obstools', 'examples'))
+            fn = exmpl_path / 'data' / '2012.064*.SAC'
+            st = read(str(fn))
             # st = read(os.path.join(os.path.dirname(__file__),
             #                        "../examples/data", "2012.064*.SAC"))
             tr1 = st.select(component='1')[0]
@@ -1742,11 +1743,6 @@ class EventStream(object):
             fn = 'examples/event/2012.069.07.09.event.pkl'
             evstream = pickle.load(open(resource_filename('obstools', fn),
                 'rb'))
-            # evstream = pickle.load(open(os.path.join(
-            #     os.path.dirname(__file__),
-            #     "../examples/event",
-            #     "2012.069.07.09.event.pkl"),
-            #     'rb'))
             sta = evstream.sta
             key = evstream.key
             sth = evstream.sth
