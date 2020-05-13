@@ -42,7 +42,7 @@ def get_daylong_arguments():
     """
 
     parser = ArgumentParser(
-        usage="Usage: %prog [options] <station database>",
+        usage="%(prog)s [options] <Station Database>",
         description="Script used " +
         "to download and pre-process up to four-component " +
         "(H1, H2, Z and P), day-long seismograms to use in " +
@@ -50,12 +50,16 @@ def get_daylong_arguments():
         "Data are requested from the internet using the client " +
         "services framework for a given date range. The stations " +
         "are processed one by one and the data are stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
 
     # General Settings
     parser.add_argument(
         "--keys",
         action="store",
-        type="string",
+        type=str,
         dest="stkeys",
         default="",
         help="Specify a comma-separated list of station keys " +
@@ -68,7 +72,7 @@ def get_daylong_arguments():
     parser.add_argument(
         "-C", "--channels",
         action="store",
-        type="string",
+        type=str,
         dest="channels",
         default="",
         help="Specify a comma-separated list of channels for " +
@@ -115,7 +119,7 @@ def get_daylong_arguments():
     # # Database Settings
     # DataGroup = parser.add_argument_group(parser, title="Local Data Settings", description="Settings associated with defining " \
     #     "and using a local data base of pre-downloaded day-long SAC files.")
-    # DataGroup.add_argument("--local-data", action="store", type="string", dest="localdata", default=None, \
+    # DataGroup.add_argument("--local-data", action="store", type=str, dest="localdata", default=None, \
     #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
     #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
     #     "the data using the Client interface")
@@ -130,14 +134,14 @@ def get_daylong_arguments():
     FreqGroup.add_argument(
         "--sampling-rate",
         action="store",
-        type="float",
+        type=float,
         dest="new_sampling_rate",
         default=5.,
         help="Specify new sampling rate (float, in Hz). [Default 5.]")
     FreqGroup.add_argument(
         "--pre-filt",
         action="store",
-        type="string",
+        type=str,
         dest="pre_filt",
         default=None,
         help="Specify four comma-separated corner frequencies " +
@@ -152,7 +156,7 @@ def get_daylong_arguments():
     DaysGroup.add_argument(
         "--start",
         action="store",
-        type="string",
+        type=str,
         dest="startT",
         default="",
         help="Specify a UTCDateTime compatible string representing " +
@@ -162,7 +166,7 @@ def get_daylong_arguments():
     DaysGroup.add_argument(
         "--end",
         action="store",
-        type="string",
+        type=str,
         dest="endT",
         default="",
         help="Specify a UTCDateTime compatible string representing " +
@@ -259,7 +263,7 @@ def get_event_arguments():
     """
 
     parser = ArgumentParser(
-        usage="Usage: %prog [options] <station database>",
+        usage="%(prog)s [options] <Station Database>",
         description="Script used " +
         "to download and pre-process four-component " +
         "(H1, H2, Z and P), two-hour-long seismograms for " +
@@ -268,12 +272,16 @@ def get_event_arguments():
         "the client services framework for a given date range. " +
         "The stations are processed one by one and the data are " +
         "stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
 
     # General Settings
     parser.add_argument(
         "--keys",
         action="store",
-        type="string",
+        type=str,
         dest="stkeys",
         default="",
         help="Specify a comma separated list of station keys " +
@@ -286,7 +294,7 @@ def get_event_arguments():
     parser.add_argument(
         "-C", "--channels",
         action="store",
-        type="string",
+        type=str,
         dest="channels",
         default="",
         help="Specify a comma-separated list of channels for " +
@@ -332,7 +340,7 @@ def get_event_arguments():
     # # Database Settings
     # DataGroup = parser.add_argument_group(parser, title="Local Data Settings", description="Settings associated with defining " \
     #     "and using a local data base of pre-downloaded day-long SAC files.")
-    # DataGroup.add_argument("--local-data", action="store", type="string", dest="localdata", default=None, \
+    # DataGroup.add_argument("--local-data", action="store", type=str, dest="localdata", default=None, \
     #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
     #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
     #     "the data using the Client interface")
@@ -347,7 +355,7 @@ def get_event_arguments():
     FreqGroup.add_argument(
         "--sampling-rate",
         action="store",
-        type="float",
+        type=float,
         dest="new_sampling_rate",
         default=5.,
         help="Specify new sampling rate (float, in Hz). " +
@@ -355,7 +363,7 @@ def get_event_arguments():
     FreqGroup.add_argument(
         "--pre-filt",
         action="store",
-        type="string",
+        type=str,
         dest="pre_filt",
         default=None,
         help="Specify four comma-separated corner " +
@@ -371,7 +379,7 @@ def get_event_arguments():
     EventGroup.add_argument(
         "--start",
         action="store",
-        type="string",
+        type=str,
         dest="startT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -382,7 +390,7 @@ def get_event_arguments():
     EventGroup.add_argument(
         "--end",
         action="store",
-        type="string",
+        type=str,
         dest="endT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -402,7 +410,7 @@ def get_event_arguments():
     EventGroup.add_argument(
         "--min-mag",
         action="store",
-        type="float",
+        type=float,
         dest="minmag",
         default=5.5,
         help="Specify the minimum magnitude of event " +
@@ -410,7 +418,7 @@ def get_event_arguments():
     EventGroup.add_argument(
         "--max-mag",
         action="store",
-        type="float",
+        type=float,
         dest="maxmag",
         default=None,
         help="Specify the maximum magnitude of event " +
@@ -425,7 +433,7 @@ def get_event_arguments():
     GeomGroup.add_argument(
         "--min-dist",
         action="store",
-        type="float",
+        type=float,
         dest="mindist",
         default=30.,
         help="Specify the minimum great circle distance " +
@@ -434,7 +442,7 @@ def get_event_arguments():
     GeomGroup.add_argument(
         "--max-dist",
         action="store",
-        type="float",
+        type=float,
         dest="maxdist",
         default=120.,
         help="Specify the maximum great circle distance " +
@@ -531,7 +539,7 @@ def get_dailyspec_arguments():
     """
 
     parser = ArgumentParser(
-        usage="Usage: %prog [options] <station database>",
+        usage="%(prog)s [options] <Station Database>",
         description="Script used "
         "to extract shorter windows from the day-long " +
         "seismograms, calculate the power-spectral " +
@@ -541,12 +549,16 @@ def get_dailyspec_arguments():
         "one by one and the data are stored to disk. The " +
         "program will look for data saved in the previous " +
         "steps and use all available components.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
 
     # General Settings
     parser.add_argument(
         "--keys",
         action="store",
-        type="string",
+        type=str,
         dest="stkeys",
         default="",
         help="Specify a comma separated list of station keys " +
@@ -572,7 +584,7 @@ def get_dailyspec_arguments():
     DaysGroup.add_argument(
         "--start",
         action="store",
-        type="string",
+        type=str,
         dest="startT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -582,7 +594,7 @@ def get_dailyspec_arguments():
     DaysGroup.add_argument(
         "--end",
         action="store",
-        type="string",
+        type=str,
         dest="endT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -598,7 +610,7 @@ def get_dailyspec_arguments():
     ConstGroup.add_argument(
         "--window",
         action="store",
-        type="float",
+        type=float,
         dest="window",
         default=7200.,
         help="Specify window length in seconds. " +
@@ -608,7 +620,7 @@ def get_dailyspec_arguments():
     ConstGroup.add_argument(
         "--overlap",
         action="store",
-        type="float",
+        type=float,
         dest="overlap",
         default=0.3,
         help="Specify fraction of overlap between windows. " +
@@ -616,7 +628,7 @@ def get_dailyspec_arguments():
     ConstGroup.add_argument(
         "--minwin",
         action="store",
-        type="int",
+        type=int,
         dest="minwin",
         default=10,
         help="Specify minimum number of 'good' windows " +
@@ -625,7 +637,7 @@ def get_dailyspec_arguments():
     ConstGroup.add_argument(
         "--freq-band",
         action="store",
-        type="string",
+        type=str,
         dest="pd",
         default=None,
         help="Specify comma-separated frequency limits " +
@@ -635,7 +647,7 @@ def get_dailyspec_arguments():
     ConstGroup.add_argument(
         "--tolerance",
         action="store",
-        type="float",
+        type=float,
         dest="tol",
         default=2.0,
         help="Specify parameter for tolerance threshold. " +
@@ -644,7 +656,7 @@ def get_dailyspec_arguments():
     ConstGroup.add_argument(
         "--alpha",
         action="store",
-        type="float",
+        type=float,
         dest="alpha",
         default=0.05,
         help="Specify confidence level for f-test, " +
@@ -774,7 +786,7 @@ def get_cleanspec_arguments():
     """
 
     parser = ArgumentParser(
-        usage="Usage: %prog [options] <station database>",
+        usage="%(prog)s [options] <Station Database>",
         description="Script used "
         "to extract daily spectra calculated from " +
         "`obs_daily_spectra.py` and flag days for outlier " +
@@ -782,12 +794,16 @@ def get_cleanspec_arguments():
         "corresponding Fourier transforms over the entire " +
         "time period specified. The stations are processed " +
         "one by one and the data are stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
 
     # General Settings
     parser.add_argument(
         "--keys",
         action="store",
-        type="string",
+        type=str,
         dest="stkeys",
         default="",
         help="Specify a comma separated list of station " +
@@ -813,7 +829,7 @@ def get_cleanspec_arguments():
     DaysGroup.add_argument(
         "--start",
         action="store",
-        type="string",
+        type=str,
         dest="startT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -823,7 +839,7 @@ def get_cleanspec_arguments():
     DaysGroup.add_argument(
         "--end",
         action="store",
-        type="string",
+        type=str,
         dest="endT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -839,7 +855,7 @@ def get_cleanspec_arguments():
     ConstGroup.add_argument(
         "--freq-band",
         action="store",
-        type="string",
+        type=str,
         dest="pd",
         default=None,
         help="Specify comma-separated frequency limits " +
@@ -849,7 +865,7 @@ def get_cleanspec_arguments():
     ConstGroup.add_argument(
         "--tolerance",
         action="store",
-        type="float",
+        type=float,
         dest="tol",
         default=1.5,
         help="Specify parameter for tolerance threshold. " +
@@ -858,7 +874,7 @@ def get_cleanspec_arguments():
     ConstGroup.add_argument(
         "--alpha",
         action="store",
-        type="float",
+        type=float,
         dest="alpha",
         default=0.05,
         help="Confidence level for f-test, for iterative " +
@@ -973,7 +989,7 @@ def get_transfer_arguments():
     """
 
     parser = ArgumentParser(
-        usage="Usage: %prog [options] <station database>",
+        usage="%(prog)s [options] <Station Database>",
         description="Script used "
         "to calculate transfer functions between various " +
         "components, to be used in cleaning vertical " +
@@ -986,12 +1002,16 @@ def get_transfer_arguments():
         "the time range over which to calculate the " +
         "transfer functions. The stations are processed " +
         "one by one and the data are stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
 
     # General Settings
     parser.add_argument(
         "--keys",
         action="store",
-        type="string",
+        type=str,
         dest="stkeys",
         default="",
         help="Specify a comma separated list of station " +
@@ -1017,7 +1037,7 @@ def get_transfer_arguments():
     DaysGroup.add_argument(
         "--start",
         action="store",
-        type="string",
+        type=str,
         dest="startT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -1027,7 +1047,7 @@ def get_transfer_arguments():
     DaysGroup.add_argument(
         "--end",
         action="store",
-        type="string",
+        type=str,
         dest="endT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -1132,7 +1152,7 @@ def get_correct_arguments():
     """
 
     parser = ArgumentParser(
-        usage="Usage: %prog [options] <station database>",
+        usage="%(prog)s [options] <Station Database>",
         description="Script used "
         "to extract transfer functions between various " +
         "components, and use them to clean vertical " +
@@ -1145,12 +1165,16 @@ def get_correct_arguments():
         "well as the time range for given events. "
         "The stations are processed one by one and the " +
         "data are stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
 
     # General Settings
     parser.add_argument(
         "--keys",
         action="store",
-        type="string",
+        type=str,
         dest="stkeys",
         default="",
         help="Specify a comma separated list of station " +
@@ -1176,7 +1200,7 @@ def get_correct_arguments():
     DaysGroup.add_argument(
         "--start",
         action="store",
-        type="string",
+        type=str,
         dest="startT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -1186,7 +1210,7 @@ def get_correct_arguments():
     DaysGroup.add_argument(
         "--end",
         action="store",
-        type="string",
+        type=str,
         dest="endT",
         default="",
         help="Specify a UTCDateTime compatible string " +
@@ -1217,7 +1241,7 @@ def get_correct_arguments():
     ConstGroup.add_argument(
         "--fmin",
         action="store",
-        type="float",
+        type=float,
         dest="fmin",
         default="0.006666666666666667",
         help="Low frequency corner (in Hz) for " +
@@ -1227,7 +1251,7 @@ def get_correct_arguments():
     ConstGroup.add_argument(
         "--fmax",
         action="store",
-        type="float",
+        type=float,
         dest="fmax",
         default="0.1",
         help="High frequency corner (in Hz) for " +
