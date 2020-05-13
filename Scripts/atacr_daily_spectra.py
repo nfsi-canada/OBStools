@@ -28,7 +28,7 @@ import os
 import numpy as np
 import pickle
 import stdb
-from obstools.atacr.classes import DayNoise
+from obstools.atacr import DayNoise
 from obstools.atacr import utils, arguments
 
 

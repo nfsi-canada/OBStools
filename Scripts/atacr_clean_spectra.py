@@ -29,7 +29,7 @@ import sys
 import numpy as np
 import pickle
 import stdb
-from obstools.atacr.classes import StaNoise, Power, Cross, Rotation
+from obstools.atacr import StaNoise, Power, Cross, Rotation
 from obstools.atacr import utils, arguments, plot
 
 

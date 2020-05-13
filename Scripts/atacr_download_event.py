@@ -34,7 +34,7 @@ from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
 from obspy.core import Stream
 from obstools.atacr import utils, arguments
-from obstools.atacr.classes import EventStream
+from obstools.atacr import EventStream
 
 # Main function
 
