@@ -29,6 +29,7 @@ import pickle
 from obspy.core import Stream, Trace, read
 from obstools.atacr import utils, plot
 from pkg_resources import resource_filename
+from pathlib import Path
 
 
 class Power(object):
@@ -220,8 +221,6 @@ class DayNoise(object):
             exmpl_path = Path(resource_filename('obstools', 'examples'))
             fn = exmpl_path / 'data' / '2012.064*.SAC'
             st = read(str(fn))
-            # st = read(os.path.join(os.path.dirname(__file__),
-            #                        "../examples/data", "2012.064*.SAC"))
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
@@ -254,8 +253,8 @@ class DayNoise(object):
         self.tkey = str(self.year) + '.' + str(self.julday)
 
         # Get number of components for the available, non-empty traces
-        ncomp = np.sum(1 for tr in
-                       Stream(traces=[tr1, tr2, trZ, trP]) if np.any(tr.data))
+        ncomp = np.sum([1 for tr in
+                       Stream(traces=[tr1, tr2, trZ, trP]) if np.any(tr.data)])
         self.ncomp = ncomp
 
         # Build list of available transfer functions based on the number of
@@ -838,11 +837,10 @@ class StaNoise(object):
     def __init__(self, daylist=None):
 
         def _load_dn(day):
-            fn = 'examples/data/2012.'+day+'*.SAC'
-            st = read(resource_filename('obstools', fn))
-            # st = read(os.path.join(os.path.dirname(__file__),
-            #                        "../examples/data",
-            #                        "2012."+day+"*.SAC"))
+            exmpl_path = Path(resource_filename('obstools', 'examples'))
+            fn = '2012.'+day+'*.SAC'
+            fn = exmpl_path / 'data' / fn
+            st = read(str(fn))
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
@@ -1740,9 +1738,10 @@ class EventStream(object):
         if sta == 'demo' or sta == 'Demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
                   "station 7D.M08A")
-            fn = 'examples/event/2012.069.07.09.event.pkl'
-            evstream = pickle.load(open(resource_filename('obstools', fn),
-                'rb'))
+            exmpl_path = Path(resource_filename('obstools', 'examples'))
+            fn = '2012.069.07.09.event.pkl'
+            fn = exmpl_path / 'event' / fn
+            evstream = pickle.load(open(fn, 'rb'))
             sta = evstream.sta
             key = evstream.key
             sth = evstream.sth
