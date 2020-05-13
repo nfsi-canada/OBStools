@@ -87,7 +87,7 @@ def main():
             os.makedirs(tfpath)
 
         # Path where plots will be saved
-        if opts.saveplot: 
+        if opts.saveplot:
             plotpath = tfpath + 'PLOTS/'
             if not os.path.isdir(plotpath):
                 os.makedirs(plotpath)
@@ -174,10 +174,10 @@ def main():
                 file.close()
 
                 # Load spectra into TFNoise object
-                daytransfer = TFNoise(
-                    daynoise.f, daynoise.power,
-                    daynoise.cross, daynoise.rotation,
-                    daynoise.tf_list)
+                daytransfer = TFNoise(daynoise)
+                    # daynoise.f, daynoise.power,
+                    # daynoise.cross, daynoise.rotation,
+                    # daynoise.tf_list)
 
                 # Calculate the transfer functions
                 daytransfer.transfer_func()
@@ -214,9 +214,9 @@ def main():
                 # Load spectra into TFNoise object - no Rotation object
                 # for station averages
                 rotation = Rotation(None, None, None)
-                statransfer = TFNoise(
-                    stanoise.f, stanoise.power,
-                    stanoise.cross, rotation, stanoise.tf_list)
+                statransfer = TFNoise(stanoise)
+                    # stanoise.f, stanoise.power,
+                    # stanoise.cross, rotation, stanoise.tf_list)
 
                 # Calculate the transfer functions
                 statransfer.transfer_func()

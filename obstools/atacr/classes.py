@@ -102,7 +102,7 @@ class Rotation(object):
     tilt : float
         Angle (azimuth) of tilt axis
     coh_value : float
-        Maximum coherence 
+        Maximum coherence
     phase_value : float
         Phase at maximum coherence
     direc : :class:`~numpy.ndarray`
@@ -128,15 +128,15 @@ class DayNoise(object):
     r"""
     A DayNoise object contains attributes that associate
     three-component raw (or deconvolved) traces, metadata information
-    and window parameters. The available methods carry out the quality 
-    control steps and the average daily spectra for windows flagged as 
-    "good". 
+    and window parameters. The available methods carry out the quality
+    control steps and the average daily spectra for windows flagged as
+    "good".
 
     Note
     ----
-    The object is initialized with :class:`~obspy.core.Trace` objects for 
-    H1, H2, HZ and P components. Traces can be empty if data are not 
-    available. Upon saving, those traces are discarded to save disk space. 
+    The object is initialized with :class:`~obspy.core.Trace` objects for
+    H1, H2, HZ and P components. Traces can be empty if data are not
+    available. Upon saving, those traces are discarded to save disk space.
 
     Attributes
     ----------
@@ -153,32 +153,32 @@ class DayNoise(object):
     fs : float
         Sampling frequency (in Hz). Obtained from ``trZ`` object
     year : str
-        Year for current object (obtained from UTCDateTime). Obtained from 
+        Year for current object (obtained from UTCDateTime). Obtained from
         ``trZ`` object
     julday : str
-        Julian day for current object (obtained from UTCDateTime). Obtained 
+        Julian day for current object (obtained from UTCDateTime). Obtained
         from ``trZ`` object
     ncomp : int
-        Number of available components (either 2, 3 or 4). Obtained from 
+        Number of available components (either 2, 3 or 4). Obtained from
         non-empty ``Trace`` objects
     tf_list : Dict
-        Dictionary of possible transfer functions given the available 
-        components. 
-    goodwins : list 
-        List of booleans representing whether a window is good (True) or 
-        not (False). 
-        This attribute is returned from the method 
+        Dictionary of possible transfer functions given the available
+        components.
+    goodwins : list
+        List of booleans representing whether a window is good (True) or
+        not (False).
+        This attribute is returned from the method
         :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
     power : :class:`~obstools.atacr.classes.Power`
         Container for daily spectral power for all available components
     cross : :class:`~obstools.atacr.classes.Cross`
         Container for daily cross spectral power for all available components
     rotation : :class:`~obstools.atacr.classes.Rotation`
-        Container for daily rotated (cross) spectral power for all available 
+        Container for daily rotated (cross) spectral power for all available
         components
     f : :class:`~numpy.ndarray`
-        Frequency axis for corresponding time sampling parameters. Determined 
-        from method 
+        Frequency axis for corresponding time sampling parameters. Determined
+        from method
         :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
     Examples
@@ -192,7 +192,7 @@ class DayNoise(object):
 
     Now check its main attributes
 
-    >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep="\n") 
+    >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep="\n")
     7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
     7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
     7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
@@ -248,7 +248,7 @@ class DayNoise(object):
         self.fs = self.trZ.stats.sampling_rate
         self.year = self.trZ.stats.starttime.year
         self.julday = self.trZ.stats.starttime.julday
-        self.tkey = self.year + '.' + self.julday
+        self.tkey = str(self.year) + '.' + str(self.julday)
 
         # Get number of components for the available, non-empty traces
         ncomp = np.sum(1 for tr in
@@ -274,38 +274,38 @@ class DayNoise(object):
                          smooth=True, fig_QC=False, debug=False, save=False,
                          form='png'):
         """
-        Method to determine daily time windows for which the spectra are 
+        Method to determine daily time windows for which the spectra are
         anomalous and should be discarded in the calculation of the
-        transfer functions. 
+        transfer functions.
 
         Parameters
         ----------
         pd : list
             Frequency corners of passband for calculating the spectra
         tol : float
-            Tolerance threshold. If spectrum > std*tol, window is flagged as 
+            Tolerance threshold. If spectrum > std*tol, window is flagged as
             bad
         alpha : float
             Confidence interval for f-test
         smooth : boolean
             Determines if the smoothed (True) or raw (False) spectra are used
         fig_QC : boolean
-            Whether or not to produce a figure showing the results of the 
+            Whether or not to produce a figure showing the results of the
             quality control
         debug : boolean
-            Whether or not to plot intermediate steps in the QC procedure 
+            Whether or not to plot intermediate steps in the QC procedure
             for debugging
 
         Attributes
         ----------
-        goodwins : list 
-            List of booleans representing whether a window is good (True) 
+        goodwins : list
+            List of booleans representing whether a window is good (True)
             or not (False)
 
         Examples
         --------
 
-        Perform QC on DayNoise object using default values and plot final 
+        Perform QC on DayNoise object using default values and plot final
         figure
 
         >>> from obstools.atacr import DayNoise
@@ -553,9 +553,9 @@ class DayNoise(object):
                               fig_coh_ph=False, save=False, form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
-        method will attempt to calculate the azimuth of maximum coherence 
-        between horizontal components and the vertical component (for maximum 
-        tilt direction), and use the rotated horizontals in the transfer 
+        method will attempt to calculate the azimuth of maximum coherence
+        between horizontal components and the vertical component (for maximum
+        tilt direction), and use the rotated horizontals in the transfer
         function calculations.
 
         Parameters
@@ -563,15 +563,15 @@ class DayNoise(object):
         calc_rotation : boolean
             Whether or not to calculate the tilt direction
         fig_average : boolean
-            Whether or not to produce a figure showing the average daily 
+            Whether or not to produce a figure showing the average daily
             spectra
         fig_coh_ph : boolean
-            Whether or not to produce a figure showing the maximum coherence 
+            Whether or not to produce a figure showing the maximum coherence
             between H and Z
 
         Attributes
         ----------
-        f : :class:`~numpy.ndarray` 
+        f : :class:`~numpy.ndarray`
             Positive frequency axis for corresponding window parameters
         power : :class:`~obstools.atacr.classes.Power`
             Container for the Power spectra
@@ -598,8 +598,8 @@ class DayNoise(object):
         Print out available attributes of DayNoise object
 
         >>> daynoise.__dict__.keys()
-        dict_keys(['tr1', 'tr2', 'trZ', 'trP', 'window', 'overlap', 'key', 
-        'dt', 'npts', 'fs', 'year', 'julday', 'ncomp', 'tf_list', 'QC', 'av', 
+        dict_keys(['tr1', 'tr2', 'trZ', 'trP', 'window', 'overlap', 'key',
+        'dt', 'npts', 'fs', 'year', 'julday', 'ncomp', 'tf_list', 'QC', 'av',
         'goodwins', 'f', 'power', 'cross', 'rotation'])
 
         """
@@ -726,7 +726,7 @@ class DayNoise(object):
         Parameters
         ----------
         filename : str
-            File name 
+            File name
 
         Examples
         --------
@@ -774,14 +774,14 @@ class StaNoise(object):
 
     Note
     ----
-    The object is initially a container for 
-    :class:`~obstools.atacr.classes.DayNoise` objects. Once the StaNoise 
-    object is initialized (using the method `init()` or by calling the 
-    `QC_sta_spectra` method), each individual spectral quantity is unpacked 
-    as an object attribute and the original `DayNoise` objects are removed 
-    from memory. In addition, all spectral quantities associated with the 
-    original `DayNoise` objects (now stored as attributes) are discarded as 
-    the object is saved to disk and new container objects are defined and 
+    The object is initially a container for
+    :class:`~obstools.atacr.classes.DayNoise` objects. Once the StaNoise
+    object is initialized (using the method `init()` or by calling the
+    `QC_sta_spectra` method), each individual spectral quantity is unpacked
+    as an object attribute and the original `DayNoise` objects are removed
+    from memory. In addition, all spectral quantities associated with the
+    original `DayNoise` objects (now stored as attributes) are discarded as
+    the object is saved to disk and new container objects are defined and
     saved.
 
     Attributes
@@ -790,8 +790,8 @@ class StaNoise(object):
         A list of :class:`~obstools.atacr.classes.DayNoise` objects to process
         and produce a station average
     initialized : bool
-        Whether or not the object has been initialized - `False` unless one 
-        of the methods have been called. When `True`, the `daylist` attribute 
+        Whether or not the object has been initialized - `False` unless one
+        of the methods have been called. When `True`, the `daylist` attribute
         is deleted from memory
 
     Examples
@@ -902,17 +902,17 @@ class StaNoise(object):
 
     def init(self):
         """
-        Method to initialize the `StaNoise` object. This method is used to 
-        unpack the spectral quantities from the original 
-        :class:`~obstools.atacr.classes.DayNoise` objects and allow the 
-        methods to proceed. The original 
-        :class:`~obstools.atacr.classes.DayNoise` objects are deleted from 
-        memory during this process. 
+        Method to initialize the `StaNoise` object. This method is used to
+        unpack the spectral quantities from the original
+        :class:`~obstools.atacr.classes.DayNoise` objects and allow the
+        methods to proceed. The original
+        :class:`~obstools.atacr.classes.DayNoise` objects are deleted from
+        memory during this process.
 
         Note
         ----
-        If the original :class:`~obstools.atacr.classes.DayNoise` objects 
-        have not been processed using their QC and averaging methods, these 
+        If the original :class:`~obstools.atacr.classes.DayNoise` objects
+        have not been processed using their QC and averaging methods, these
         will be called first before unpacking into the object attributes.
 
         Attributes
@@ -920,38 +920,38 @@ class StaNoise(object):
         f : :class:`~numpy.ndarray`
             Frequency axis for corresponding time sampling parameters
         nwins : int
-            Number of good windows from the 
+            Number of good windows from the
             :class:`~obstools.atacr.classes.DayNoise` object
         key : str
             Station key for current object
         ncomp : int
             Number of available components (either 2, 3 or 4)
         tf_list : Dict
-            Dictionary of possible transfer functions given the available 
-            components. 
+            Dictionary of possible transfer functions given the available
+            components.
         c11 : `numpy.ndarray`
-            Power spectra for component `H1`. Other identical attributes 
+            Power spectra for component `H1`. Other identical attributes
             are available for
-            the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z, 
+            the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
             2P, ZZ, ZP, PP, HH, HZ, HP]
         direc : `numpy.ndarray`
             Array of azimuths used in determining the tilt direction
         tilt : float
-            Tilt direction from maximum coherence between rotated `H1` and 
+            Tilt direction from maximum coherence between rotated `H1` and
             `HZ` components
         QC : bool
-            Whether or not the method 
+            Whether or not the method
             :func:`~obstools.atacr.classes.StaNoise.QC_sta_spectra` has
             been called.
         av : bool
-            Whether or not the method 
+            Whether or not the method
             :func:`~obstools.atacr.classes.StaNoise.average_sta_spectra` has
             been called.
 
         Examples
         --------
 
-        Initialize demo data 
+        Initialize demo data
 
         >>> from obstools.atacr import StaNoise
         >>> stanoise = StaNoise('demo')
@@ -965,10 +965,10 @@ class StaNoise(object):
         AttributeError                            Traceback (most recent call last)
         <ipython-input-4-a292a91450a9> in <module>
         ----> 1 stanoise.daylist
-        AttributeError: 'StaNoise' object has no attribute 'daylist'      
+        AttributeError: 'StaNoise' object has no attribute 'daylist'
         >>> stanoise.__dict__.keys()
-        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P', 
-        'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f', 'nwins', 
+        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P',
+        'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f', 'nwins',
         'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
@@ -1028,21 +1028,21 @@ class StaNoise(object):
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05,
                        fig_QC=False, debug=False, save=False, form='png'):
         """
-        Method to determine the days (for given time window) for which the 
-        spectra are anomalous and should be discarded in the calculation of 
-        the long-term transfer functions. 
+        Method to determine the days (for given time window) for which the
+        spectra are anomalous and should be discarded in the calculation of
+        the long-term transfer functions.
 
         Parameters
         ----------
         pd : list
             Frequency corners of passband for calculating the spectra
         tol : float
-            Tolerance threshold. If spectrum > std*tol, window is flagged as 
+            Tolerance threshold. If spectrum > std*tol, window is flagged as
             bad
         alpha : float
             Confidence interval for f-test
         fig_QC : boolean
-            Whether or not to produce a figure showing the results of the 
+            Whether or not to produce a figure showing the results of the
             quality control
         debug : boolean
             Whether or not to plot intermediate steps in the QC procedure for
@@ -1050,8 +1050,8 @@ class StaNoise(object):
 
         Attributes
         ----------
-        gooddays : list 
-            List of booleans representing whether a day is good (True) or not 
+        gooddays : list
+            List of booleans representing whether a day is good (True) or not
             (False)
 
         Examples
@@ -1200,7 +1200,7 @@ class StaNoise(object):
         Parameters
         ----------
         fig_average : boolean
-            Whether or not to produce a figure showing the average daily 
+            Whether or not to produce a figure showing the average daily
             spectra
 
         Attributes
@@ -1214,7 +1214,7 @@ class StaNoise(object):
 
         Examples
         --------
-        Average daily spectra for good days using default values and produce 
+        Average daily spectra for good days using default values and produce
         final figure
 
         >>> obstools.atacr import StaNoise
@@ -1324,7 +1324,7 @@ class StaNoise(object):
         Parameters
         ----------
         filename : str
-            File name 
+            File name
 
         Examples
         --------
@@ -1372,38 +1372,38 @@ class StaNoise(object):
 
 class TFNoise(object):
     """
-    A TFNoise object contains attributes that store the transfer function 
-    information from multiple components (and component combinations). 
+    A TFNoise object contains attributes that store the transfer function
+    information from multiple components (and component combinations).
 
     Note
     ----
-    The object is initialized with either a processed 
-    :class:`~obstools.atacr.classes.DayNoise` or 
-    :class:`~obstools.atacr.classes.StaNoise` object. Each individual 
-    spectral quantity is unpacked as an object attribute, but all of them 
+    The object is initialized with either a processed
+    :class:`~obstools.atacr.classes.DayNoise` or
+    :class:`~obstools.atacr.classes.StaNoise` object. Each individual
+    spectral quantity is unpacked as an object attribute, but all of them
     are discarded as the object is saved to disk and new container objects
-    are defined and saved. 
+    are defined and saved.
 
     Attributes
     ----------
     f : :class:`~numpy.ndarray`
         Frequency axis for corresponding time sampling parameters
     c11 : `numpy.ndarray`
-        Power spectra for component `H1`. Other identical attributes are 
-        available for the power, cross and rotated spectra: 
+        Power spectra for component `H1`. Other identical attributes are
+        available for the power, cross and rotated spectra:
         [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]
     tilt : float
-        Tile direction from maximum coherence between rotated `H1` and 
+        Tile direction from maximum coherence between rotated `H1` and
         `HZ` components
     tf_list : Dict
-        Dictionary of possible transfer functions given the available 
-        components. 
+        Dictionary of possible transfer functions given the available
+        components.
 
     Examples
     --------
 
-    Initialize a TFNoise object with a DayNoise object. The DayNoise 
-    object must be processed for QC and averaging, otherwise the TFNoise 
+    Initialize a TFNoise object with a DayNoise object. The DayNoise
+    object must be processed for QC and averaging, otherwise the TFNoise
     object will not initialize.
 
     >>> from obstools.atacr import DayNoise, TFNoise
@@ -1475,8 +1475,8 @@ class TFNoise(object):
 
     def transfer_func(self):
         """
-        Method to calculate transfer functions between multiple 
-        components (and component combinations) from the averaged 
+        Method to calculate transfer functions between multiple
+        components (and component combinations) from the averaged
         (daily or station-averaged) noise spectra.
 
         Attributes
@@ -1597,7 +1597,7 @@ class TFNoise(object):
         Parameters
         ----------
         filename : str
-            File name 
+            File name
 
         Examples
         --------
@@ -1658,15 +1658,15 @@ class TFNoise(object):
 
 class EventStream(object):
     """
-    An EventStream object contains attributes that store station-event 
-    metadata and methods for applying the transfer functions to the various 
+    An EventStream object contains attributes that store station-event
+    metadata and methods for applying the transfer functions to the various
     components and produce corrected/cleaned vertical components.
 
     Note
     ----
-    An ``EventStream`` object is defined as the data 
-    (:class:`~obspy.core.Stream` object) are read from file or downloaded 
-    from an ``obspy`` Client. Based on the available components, a list of 
+    An ``EventStream`` object is defined as the data
+    (:class:`~obspy.core.Stream` object) are read from file or downloaded
+    from an ``obspy`` Client. Based on the available components, a list of
     possible corrections is determined automatically.
 
     Attributes
@@ -1676,10 +1676,10 @@ class EventStream(object):
     key : str
         Station key for current object
     sth : :class:`~obspy.core.Stream`
-        Stream containing three-component seismic data (traces are empty if 
+        Stream containing three-component seismic data (traces are empty if
         data are not available)
     stp : :class:`~obspy.core.Stream`
-        Stream containing pressure data (trace is empty if data are not 
+        Stream containing pressure data (trace is empty if data are not
         available)
     tstamp : str
         Time stamp for event
@@ -1700,11 +1700,11 @@ class EventStream(object):
     ncomp : int
         Number of available components (either 2, 3 or 4)
     ev_list : Dict
-        Dictionary of possible transfer functions given the available 
+        Dictionary of possible transfer functions given the available
         components. This is determined during initialization.
     correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
-        Container Dictionary for all possible corrections from the transfer 
-        functions. This is calculated from the method 
+        Container Dictionary for all possible corrections from the transfer
+        functions. This is calculated from the method
         :func:`~obstools.atacr.classes.EventStream.correct_data`
 
     Examples
@@ -1716,7 +1716,7 @@ class EventStream(object):
     >>> evstream = EventStream('demo')
     Uploading demo earthquake data - March 09, 2012, station 7D.M08A
     >>> evstream.__dict__.keys()
-    dict_keys(['sta', 'key', 'sth', 'stp', 'tstamp', 'evlat', 'evlon', 'evtime', 
+    dict_keys(['sta', 'key', 'sth', 'stp', 'tstamp', 'evlat', 'evlon', 'evtime',
     'window', 'fs', 'dt', 'ncomp', 'ev_list'])
 
     Plot the raw traces
@@ -1731,7 +1731,7 @@ class EventStream(object):
 
     def __init__(self, sta=None, sth=None, stp=None, tstamp=None, lat=None,
                  lon=None, time=None, window=None, sampling_rate=None,
-                 ncomp=None):
+                 ncomp=None,correct=False):
 
         if sta == 'demo' or sta == 'Demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
@@ -1753,6 +1753,7 @@ class EventStream(object):
             window = evstream.window
             sampling_rate = evstream.fs
             ncomp = evstream.ncomp
+            correct = evstream.correct
 
         if any(value == None for value in [sta, sth, stp, tstamp, lat, lon,
                                            time, window, sampling_rate,
@@ -1773,6 +1774,7 @@ class EventStream(object):
         self.fs = sampling_rate
         self.dt = 1./sampling_rate
         self.ncomp = ncomp
+        self.correct = False
 
         # Build list of available transfer functions for future use
         if self.ncomp == 2:
@@ -1795,29 +1797,29 @@ class EventStream(object):
 
     def correct_data(self, tfnoise):
         """
-        Method to apply transfer functions between multiple components (and 
-        component combinations) to produce corrected/cleaned vertical 
+        Method to apply transfer functions between multiple components (and
+        component combinations) to produce corrected/cleaned vertical
         components.
 
         Parameters
         ----------
         tfnoise : :class:`~obstools.atacr.classes.TFNoise`
-            Object that contains the noise transfer functions used in the 
+            Object that contains the noise transfer functions used in the
             correction
 
         Attributes
         ----------
         correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
-            Container Dictionary for all possible corrections from the 
+            Container Dictionary for all possible corrections from the
             transfer functions
 
         Examples
         --------
 
-        Let's carry through the correction of the vertical component for a 
-        single day of noise, say corresponding to the noise recorded on March 
-        04, 2012. In practice, the DayNoise object should correspond to the 
-        same day at that of the recorded earthquake to avoid bias in the 
+        Let's carry through the correction of the vertical component for a
+        single day of noise, say corresponding to the noise recorded on March
+        04, 2012. In practice, the DayNoise object should correspond to the
+        same day at that of the recorded earthquake to avoid bias in the
         correction.
 
         >>> from obstools.atacr import DayNoise, TFNoise, EventStream
@@ -2006,13 +2008,13 @@ class EventStream(object):
         Parameters
         ----------
         filename : str
-            File name 
+            File name
 
         Examples
         --------
 
-        Following from the example outlined in method 
-        :func:`~obstools.atacr.classes.EventStream.correct_data`, we simply 
+        Following from the example outlined in method
+        :func:`~obstools.atacr.classes.EventStream.correct_data`, we simply
         save the final object
 
         >>> evstream.save('evstream_demo.pkl')
