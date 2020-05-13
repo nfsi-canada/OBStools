@@ -30,25 +30,25 @@ from obspy import UTCDateTime
 import pickle
 import stdb
 from obstools.atacr.classes import StaNoise, Power, Cross, Rotation, TFNoise
-from obstools.atacr import utils, plot, options
+from obstools.atacr import utils, plot, arguments
 
 
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_correct_options()
+    args = arguments.get_correct_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=indb)
+    db = stdb.io.load_db(fname=args.indb)
 
     # Construct station key loop
     allkeys = db.keys()
     sorted(allkeys)
 
     # Extract key subset
-    if len(opts.stkeys) > 0:
+    if len(args.stkeys) > 0:
         stkeys = []
-        for skey in opts.stkeys:
+        for skey in args.stkeys:
             stkeys.extend([s for s in allkeys if skey in s])
     else:
         stkeys = db.keys()
@@ -71,7 +71,7 @@ def main():
             raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
 
         # Path where plots will be saved
-        if opts.saveplot: 
+        if args.saveplot: 
             plotpath = eventpath + 'PLOTS/'
             if not os.path.isdir(plotpath):
                 os.makedirs(plotpath)
@@ -79,16 +79,16 @@ def main():
             plotpath = False
 
         # Get catalogue search start time
-        if opts.startT is None:
+        if args.startT is None:
             tstart = sta.startdate
         else:
-            tstart = opts.startT
+            tstart = args.startT
 
         # Get catalogue search end time
-        if opts.endT is None:
+        if args.endT is None:
             tend = sta.enddate
         else:
-            tend = opts.endT
+            tend = args.endT
 
         if tstart > sta.enddate or tend < sta.startdate:
             continue
@@ -161,10 +161,10 @@ def main():
             else:
                 continue
 
-            if opts.fig_event_raw:
+            if args.fig_event_raw:
                 fname = stkey + '.' + evstamp + 'raw'
-                plot.fig_event_raw(eventstream, fmin=opts.fmin, fmax=opts.fmax,
-                    save=plotpath, fname=fname, form=opts.form)
+                plot.fig_event_raw(eventstream, fmin=args.fmin, fmax=args.fmax,
+                    save=plotpath, fname=fname, form=args.form)
 
             # Cycle through corresponding TF files
             for transfile in trans_files:
@@ -177,7 +177,7 @@ def main():
 
                 # This case refers to the "cleaned" spectral averages
                 if len(tfprefix) > 9:
-                    if not opts.skip_clean:
+                    if not args.skip_clean:
                         yr1 = tfprefix.split('-')[0].split('.')[0]
                         jd1 = tfprefix.split('-')[0].split('.')[1]
                         yr2 = tfprefix.split('-')[1].split('.')[0]
@@ -203,15 +203,15 @@ def main():
                             eventstream.correct_data(tfaverage)
 
                             correct = eventstream.correct
-                            if opts.fig_plot_corrected:
+                            if args.fig_plot_corrected:
                                 fname = stkey + '.' + evstamp + 'sta_corrected'
                                 plot.fig_event_corrected(
                                     eventstream, tfaverage.tf_list,
-                                    save=plotpath, fname=fname, form=opts.form)
+                                    save=plotpath, fname=fname, form=args.form)
 
                 # This case refers to the "daily" spectral averages
                 else:
-                    if not opts.skip_daily:
+                    if not args.skip_daily:
                         if tfprefix == evstamp:
                             print(transpath+transfile +
                                   " file found - applying transfer functions")
@@ -230,11 +230,11 @@ def main():
                             eventstream.correct_data(tfaverage)
 
                             correct = eventstream.correct
-                            if opts.fig_plot_corrected:
+                            if args.fig_plot_corrected:
                                 fname = stkey + '.' + evstamp + 'day_corrected'
                                 plot.fig_event_corrected(
                                     eventstream, tfaverage.tf_list,
-                                    save=plotpath, fname=fname, form=opts.form)
+                                    save=plotpath, fname=fname, form=args.form)
 
 
 if __name__ == "__main__":
