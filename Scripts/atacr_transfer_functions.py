@@ -31,25 +31,25 @@ from obspy import UTCDateTime
 import pickle
 import stdb
 from obstools.atacr.classes import StaNoise, Power, Cross, Rotation, TFNoise
-from obstools.atacr import utils, plot, options
+from obstools.atacr import utils, plot, arguments
 
 
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_transfer_options()
+    args = arguments.get_transfer_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=indb)
+    db = stdb.io.load_db(fname=args.indb)
 
     # Construct station key loop
     allkeys = db.keys()
     sorted(allkeys)
 
     # Extract key subset
-    if len(opts.stkeys) > 0:
+    if len(args.stkeys) > 0:
         stkeys = []
-        for skey in opts.stkeys:
+        for skey in args.stkeys:
             stkeys.extend([s for s in allkeys if skey in s])
     else:
         stkeys = db.keys()
@@ -61,22 +61,22 @@ def main():
         # Extract station information from dictionary
         sta = db[stkey]
 
-        if not opts.skip_daily:
+        if not args.skip_daily:
             # Path where spectra are located
             specpath = 'SPECTRA/' + stkey + '/'
             if not os.path.isdir(specpath):
                 raise(Exception(
                     "Path to "+specpath+" doesn't exist - aborting"))
 
-        if not opts.skip_clean:
+        if not args.skip_clean:
             # Path where average spectra will be saved
             avstpath = 'AVG_STA/' + stkey + '/'
             if not os.path.isdir(avstpath):
                 print("Path to "+avstpath +
                       " doesn't exist - skipping cleaned station spectra")
-                opts.skip_clean = True
+                args.skip_clean = True
 
-        if opts.skip_daily and opts.skip_clean:
+        if args.skip_daily and args.skip_clean:
             print("skipping both daily and clean spectra")
             continue
 
@@ -87,7 +87,7 @@ def main():
             os.makedirs(tfpath)
 
         # Path where plots will be saved
-        if opts.saveplot:
+        if args.saveplot:
             plotpath = tfpath + 'PLOTS/'
             if not os.path.isdir(plotpath):
                 os.makedirs(plotpath)
@@ -95,16 +95,16 @@ def main():
             plotpath = False
 
         # Get catalogue search start time
-        if opts.startT is None:
+        if args.startT is None:
             tstart = sta.startdate
         else:
-            tstart = opts.startT
+            tstart = args.startT
 
         # Get catalogue search end time
-        if opts.endT is None:
+        if args.endT is None:
             tend = sta.enddate
         else:
-            tend = opts.endT
+            tend = args.endT
 
         if tstart > sta.enddate or tend < sta.startdate:
             continue
@@ -146,10 +146,10 @@ def main():
 
         # Find all files in directories
         spectra_files = os.listdir(specpath)
-        if not opts.skip_clean:
+        if not args.skip_clean:
             average_files = os.listdir(avstpath)
 
-        if not opts.skip_daily:
+        if not args.skip_daily:
 
             day_transfer_functions = []
 
@@ -191,7 +191,7 @@ def main():
                 # Save daily transfer functions to file
                 daytransfer.save(filename)
 
-        if not opts.skip_clean:
+        if not args.skip_clean:
 
             # Cycle through available files
             for fileavst in average_files:
@@ -230,11 +230,11 @@ def main():
                 # Save average transfer functions to file
                 statransfer.save(filename)
 
-        if opts.fig_TF:
+        if args.fig_TF:
             fname = stkey + '.' + 'transfer_functions'
             plot.fig_TF(f, day_transfer_functions, daynoise.tf_list,
                         sta_transfer_functions, stanoise.tf_list, skey=stkey,
-                        save=plotpath, fname=fname, form=opts.form)
+                        save=plotpath, fname=fname, form=args.form)
 
 
 if __name__ == "__main__":
