@@ -33,7 +33,7 @@ from obspy import UTCDateTime
 from numpy import nan
 
 
-def get_daylong_options():
+def get_daylong_arguments():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -250,7 +250,7 @@ def get_daylong_options():
     return args
 
 
-def get_event_options():
+def get_event_arguments():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -522,7 +522,7 @@ def get_event_options():
     return args
 
 
-def get_dailyspec_options():
+def get_dailyspec_arguments():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -765,7 +765,7 @@ def get_dailyspec_options():
     return args
 
 
-def get_cleanspec_options():
+def get_cleanspec_arguments():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -964,7 +964,7 @@ def get_cleanspec_options():
     return args
 
 
-def get_transfer_options():
+def get_transfer_arguments():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -1123,7 +1123,7 @@ def get_transfer_options():
     return args
 
 
-def get_correct_options():
+def get_correct_arguments():
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
