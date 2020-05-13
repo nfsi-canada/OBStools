@@ -28,6 +28,7 @@ import numpy as np
 import pickle
 from obspy.core import Stream, Trace, read
 from obstools.atacr import utils, plot
+from pkg_resources import resource_filename
 
 
 class Power(object):
@@ -216,9 +217,10 @@ class DayNoise(object):
         # Load example data if initializing empty object
         if tr1 == 'demo' or tr1 == 'Demo':
             print("Uploading demo data - March 04, 2012, station 7D.M08A")
-            import os
-            st = read(os.path.join(os.path.dirname(__file__),
-                                   "../examples/data", "2012.064*.SAC"))
+            fn = 'examples/data/2012.064*.SAC'
+            st = read(resource_filename('obstools', fn))
+            # st = read(os.path.join(os.path.dirname(__file__),
+            #                        "../examples/data", "2012.064*.SAC"))
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
@@ -835,10 +837,11 @@ class StaNoise(object):
     def __init__(self, daylist=None):
 
         def _load_dn(day):
-            import os
-            st = read(os.path.join(os.path.dirname(__file__),
-                                   "../examples/data",
-                                   "2012."+day+"*.SAC"))
+            fn = 'examples/data/2012.'+day+'*.SAC'
+            st = read(resource_filename('obstools', fn))
+            # st = read(os.path.join(os.path.dirname(__file__),
+            #                        "../examples/data",
+            #                        "2012."+day+"*.SAC"))
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
@@ -1191,7 +1194,7 @@ class StaNoise(object):
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
             fname = self.key + '.' + 'QC'
             plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key,
-                save=save, fname=fname, form=form)
+                        save=save, fname=fname, form=form)
 
     def average_sta_spectra(self, fig_average=False, save=False, form='png'):
         r"""
@@ -1506,7 +1509,7 @@ class TFNoise(object):
         Uploading demo data - March 01 to 04, 2012, station 7D.M08A
         >>> stanoise.QC_sta_spectra()
         >>> stanoise.average_sta_spectra()
-        >>> tfnoise = TFNoise(daynoise)
+        >>> tfnoise = TFNoise(stanoise)
         >>> tfnoise.transfer_func()
         >>> tfnoise.transfunc.keys()
         dict_keys(['ZP', 'Z1', 'Z2-1', 'ZP-21'])
@@ -1731,17 +1734,19 @@ class EventStream(object):
 
     def __init__(self, sta=None, sth=None, stp=None, tstamp=None, lat=None,
                  lon=None, time=None, window=None, sampling_rate=None,
-                 ncomp=None,correct=False):
+                 ncomp=None, correct=False):
 
         if sta == 'demo' or sta == 'Demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
                   "station 7D.M08A")
-            import os
-            evstream = pickle.load(open(os.path.join(
-                os.path.dirname(__file__),
-                "../examples/event",
-                "2012.069.07.09.event.pkl"),
+            fn = 'examples/event/2012.069.07.09.event.pkl'
+            evstream = pickle.load(open(resource_filename('obstools', fn),
                 'rb'))
+            # evstream = pickle.load(open(os.path.join(
+            #     os.path.dirname(__file__),
+            #     "../examples/event",
+            #     "2012.069.07.09.event.pkl"),
+            #     'rb'))
             sta = evstream.sta
             key = evstream.key
             sth = evstream.sth
