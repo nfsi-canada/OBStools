@@ -30,25 +30,25 @@ import numpy as np
 import pickle
 import stdb
 from obstools.atacr.classes import StaNoise, Power, Cross, Rotation
-from obstools.atacr import utils, options, plot
+from obstools.atacr import utils, arguments, plot
 
 
 def main():
 
     # Run Input Parser
-    (opts, indb) = options.get_cleanspec_options()
+    args = arguments.get_cleanspec_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=indb)
+    db = stdb.io.load_db(fname=args.indb)
 
     # Construct station key loop
     allkeys = db.keys()
     sorted(allkeys)
 
     # Extract key subset
-    if len(opts.stkeys) > 0:
+    if len(args.stkeys) > 0:
         stkeys = []
-        for skey in opts.stkeys:
+        for skey in args.stkeys:
             stkeys.extend([s for s in allkeys if skey in s])
     else:
         stkeys = db.keys()
@@ -73,7 +73,7 @@ def main():
             os.makedirs(avstpath)
 
         # Path where plots will be saved
-        if opts.saveplot:
+        if args.saveplot:
             plotpath = avstpath + 'PLOTS/'
             if not os.path.isdir(plotpath):
                 os.makedirs(plotpath)
@@ -81,16 +81,16 @@ def main():
             plotpath = False
 
         # Get catalogue search start time
-        if opts.startT is None:
+        if args.startT is None:
             tstart = sta.startdate
         else:
-            tstart = opts.startT
+            tstart = args.startT
 
         # Get catalogue search end time
-        if opts.endT is None:
+        if args.endT is None:
             tend = sta.enddate
         else:
-            tend = opts.endT
+            tend = args.endT
 
         if tstart > sta.enddate or tend < sta.startdate:
             continue
@@ -130,7 +130,7 @@ def main():
         fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
 
         if os.path.exists(fileavst):
-            if not opts.ovr:
+            if not args.ovr:
                 print("*   -> file "+fileavst+" exists - continuing")
                 continue
 
@@ -308,31 +308,31 @@ def main():
                    ad_2Z_all, ad_2P_all, ad_ZP_all)
 
         # Quality control to identify outliers
-        stanoise.QC_sta_spectra(pd=opts.pd, tol=opts.tol, alpha=opts.alpha,
-                                fig_QC=opts.fig_QC, debug=opts.debug,
-                                save=plotpath, form=opts.form)
+        stanoise.QC_sta_spectra(pd=args.pd, tol=args.tol, alpha=args.alpha,
+                                fig_QC=args.fig_QC, debug=args.debug,
+                                save=plotpath, form=args.form)
 
         # Average spectra for good days
         stanoise.average_sta_spectra(
-            fig_average=opts.fig_average,
-            save=plotpath, form=opts.form)
+            fig_average=args.fig_average,
+            save=plotpath, form=args.form)
 
-        if opts.fig_av_cross:
+        if args.fig_av_cross:
             fname = stkey + '.' + 'av_cross'
             plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
                               'Coherence', stanoise.ncomp, key=stkey, lw=0.5,
-                              save=plotpath, fname=fname, form=opts.form)
+                              save=plotpath, fname=fname, form=args.form)
             plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
                               'Admittance', stanoise.ncomp, key=stkey, lw=0.5,
-                              save=plotpath, fname=fname, form=opts.form)
+                              save=plotpath, fname=fname, form=args.form)
             plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
                               'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0,
-                              save=plotpath, fname=fname, form=opts.form)
+                              save=plotpath, fname=fname, form=args.form)
 
-        if opts.fig_coh_ph and stanoise.direc.any():
+        if args.fig_coh_ph and stanoise.direc.any():
             fname = stkey + '.' + 'coh_ph'
             plot.fig_coh_ph(coh_all, ph_all, stanoise.direc,
-                save=plotpath, fname=fname, form=opts.form)
+                save=plotpath, fname=fname, form=args.form)
 
         # Save to file
         stanoise.save(fileavst)
