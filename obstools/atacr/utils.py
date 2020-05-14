@@ -171,34 +171,34 @@ def get_event(eventpath, tstart, tend):
         tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
         # Cycle through directory and load files
-        for file in os.listdir(datapath):
+        for file in os.listdir(eventpath):
             if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
-                tr = read(datapath + file)
+                tr = read(eventpath + file)
                 tr1.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
-                tr = read(datapath + file)
+                tr = read(eventpath + file)
                 tr2.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
-                tr = read(datapath + file)
+                tr = read(eventpath + file)
                 trZ.append(tr[0])
             elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
-                tr = read(datapath + file)
+                tr = read(eventpath + file)
                 trP.append(tr[0])
 
         # Increase increment
         t1 += 3600.*24.
 
     # Fill with empty traces if components are not found
-    ntr = len(trNZ)
-    if not trN1 and not trN2:
+    ntr = len(trZ)
+    if not tr1 and not tr2:
         for i in range(ntr):
-            trN1.append(Trace())
-            trN2.append(Trace())
-    elif not trNP:
+            tr1.append(Trace())
+            tr2.append(Trace())
+    elif not trP:
         for i in range(ntr):
-            trNP.append(Trace())
+            trP.append(Trace())
 
-    return trN1, trN2, trNZ, trNP
+    return tr1, tr2, trZ, trP
 
 
 def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
