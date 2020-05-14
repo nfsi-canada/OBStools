@@ -24,13 +24,12 @@
 
 
 # Import modules and functions
-import os
 import numpy as np
 from obspy import UTCDateTime
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
-from obstools.atacr import utils, plot, arguments
+from obstools.atacr import utils, plotting, arguments
 from pathlib import Path
 
 
@@ -158,8 +157,8 @@ def main():
             # Cycle through available files
             for filespec in spectra_files:
 
-                year = str(filespec).split('.')[0]
-                jday = str(filespec).split('.')[1]
+                year = filespec.name.split('.')[0]
+                jday = filespec.name.split('.')[1]
 
                 print()
                 print(
@@ -171,7 +170,7 @@ def main():
                 filename = tfpath / (tstamp + 'transfunc.pkl')
 
                 # Load file
-                file = open((specpath / filespec), 'rb')
+                file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()
 
@@ -195,7 +194,7 @@ def main():
             # Cycle through available files
             for fileavst in average_files:
 
-                name = str(fileavst).split('avg_sta')
+                name = fileavst.name.split('avg_sta')
 
                 print()
                 print(
@@ -206,7 +205,7 @@ def main():
                 filename = tfpath / (name[0] + 'transfunc.pkl')
 
                 # Load file
-                file = open((avstpath / fileavst), 'rb')
+                file = open(fileavst, 'rb')
                 stanoise = pickle.load(file)
                 file.close()
 
@@ -229,9 +228,15 @@ def main():
 
         if args.fig_TF:
             fname = stkey + '.' + 'transfer_functions'
-            plot.fig_TF(f, day_transfer_functions, daynoise.tf_list,
-                        sta_transfer_functions, stanoise.tf_list, skey=stkey,
-                        save=plotpath, fname=fname, form=args.form)
+            plot = plotting.fig_TF(f, day_transfer_functions, daynoise.tf_list,
+                        sta_transfer_functions, stanoise.tf_list, skey=stkey)
+
+            if plotpath:
+                plot.savefig(plotpath / (fname + '.' + args.form),
+                            dpi=300, bbox_inches='tight', format=args.form)
+            else:
+                plot.show()
+
 
 
 if __name__ == "__main__":

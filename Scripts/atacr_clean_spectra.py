@@ -29,7 +29,7 @@ import numpy as np
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation
-from obstools.atacr import utils, arguments, plot
+from obstools.atacr import utils, arguments, plotting
 from pathlib import Path
 
 
@@ -128,7 +128,7 @@ def main():
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
         fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
-        if ofileavst.exists():
+        if fileavst.exists():
             if not args.ovr:
                 print("*   -> file "+str(fileavst)+" exists - continuing")
                 continue
@@ -171,7 +171,7 @@ def main():
             filespec = specpath / (tstamp + 'spectra.pkl')
 
             # Load file if it exists
-            if os.path.exists(filespec):
+            if filespec.exists():
                 print()
                 print(
                     "*******************************************" +
@@ -318,20 +318,38 @@ def main():
 
         if args.fig_av_cross:
             fname = stkey + '.' + 'av_cross'
-            plot.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
-                              'Coherence', stanoise.ncomp, key=stkey, lw=0.5,
-                              save=plotpath, fname=fname, form=args.form)
-            plot.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
-                              'Admittance', stanoise.ncomp, key=stkey, lw=0.5,
-                              save=plotpath, fname=fname, form=args.form)
-            plot.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
-                              'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0,
-                              save=plotpath, fname=fname, form=args.form)
+            plot = plotting.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
+                              'Coherence', stanoise.ncomp, key=stkey, lw=0.5)
+            if plotpath:
+                plot.savefig(plotpath / (fname + '.' + args.form),
+                            dpi=300, bbox_inches='tight', format=args.form)
+            else:
+                plot.show()
+
+            plot = plotting.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
+                              'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
+            if plotpath:
+                plot.savefig(plotpath / (fname + '.' + args.form),
+                            dpi=300, bbox_inches='tight', format=args.form)
+            else:
+                plot.show()
+
+            plot = plotting.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
+                              'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
+            if plotpath:
+                plot.savefig(plotpath / (fname + '.' + args.form),
+                            dpi=300, bbox_inches='tight', format=args.form)
+            else:
+                plot.show()
 
         if args.fig_coh_ph and stanoise.direc.any():
             fname = stkey + '.' + 'coh_ph'
-            plot.fig_coh_ph(coh_all, ph_all, stanoise.direc,
-                save=plotpath, fname=fname, form=args.form)
+            plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.direc)
+            if plotpath:
+                plot.savefig(plotpath / (fname + '.' + args.form),
+                            dpi=300, bbox_inches='tight', format=args.form)
+            else:
+                plot.show()
 
         # Save to file
         stanoise.save(fileavst)
