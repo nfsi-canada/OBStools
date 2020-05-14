@@ -11,5 +11,5 @@ def test_obstools_modules():
     from obstools.atacr import utils
     import matplotlib
     matplotlib.use('Agg')
-    from obstools.atacr import plot
+    from obstools.atacr import plotting
     from obstools.atacr.classes import DayNoise, StaNoise, TFNoise, EventStream, Power, Cross, Rotation 
