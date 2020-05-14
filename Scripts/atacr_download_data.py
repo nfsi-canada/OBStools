@@ -27,10 +27,10 @@
 import numpy as np
 import os.path
 import pickle
-import glob
 import stdb
 from obspy.clients.fdsn import Client
 from obstools.atacr import utils, arguments
+from pathlib import Path
 
 # Main function
 
@@ -63,11 +63,11 @@ def main():
         sta = db[stkey]
 
         # Define path to see if it exists
-        datapath = 'DATA/' + stkey + '/'
-        if not os.path.isdir(datapath):
+        datapath = Path('DATA') / Path(stkey)
+        if not datapath.is_dir():
             print()
-            print('Path to '+datapath+' doesn`t exist - creating it')
-            os.makedirs(datapath)
+            print('Path to '+str(datapath)+' doesn`t exist - creating it')
+            datapath.mkdir()
 
         # Establish client
         if len(args.UserAuth) == 0:
@@ -146,18 +146,18 @@ def main():
 
             # Define file names (to check if files already exist)
             # Horizontal 1 channel
-            file1 = datapath + tstamp + '.' + sta.channel + '1.SAC'
+            file1 = datapath / (tstamp+'.'+sta.channel+'1.SAC')
             # Horizontal 2 channel
-            file2 = datapath + tstamp + '.' + sta.channel + '2.SAC'
+            file2 = datapath / (tstamp+'.'+sta.channel+'2.SAC')
             # Vertical channel
-            fileZ = datapath + tstamp + '.' + sta.channel + 'Z.SAC'
+            fileZ = datapath / (tstamp+'.'+sta.channel+'Z.SAC')
             # Pressure channel
-            fileP = datapath + tstamp + '.' + sta.channel + 'H.SAC'
+            fileP = datapath / (tstamp+'.'+sta.channel+'H.SAC')
 
             if "P" not in args.channels:
 
                 # If data files exist, continue
-                if glob.glob(fileZ) and glob.glob(file1) and glob.glob(file2):
+                if fileZ.exists() and file1.exists() and file2.exists():
                     if not args.ovr:
                         print(
                             "*   "+tstamp +
@@ -212,7 +212,7 @@ def main():
             elif "H" not in args.channels:
 
                 # If data files exist, continue
-                if glob.glob(fileZ) and glob.glob(fileP):
+                if fileZ.exists() and fileP.exists():
                     if not args.ovr:
                         print("*   "+tstamp +
                               "*SAC                                 ")
@@ -276,8 +276,8 @@ def main():
             else:
 
                 # If data files exist, continue
-                if (glob.glob(fileZ) and glob.glob(file1) and
-                        glob.glob(file2) and glob.glob(fileP)):
+                if (fileZ.exists() and file1.exists() and
+                        file2.exists() and fileP.exists()):
                     if not args.ovr:
                         print("*   "+tstamp +
                               "*SAC                                 ")

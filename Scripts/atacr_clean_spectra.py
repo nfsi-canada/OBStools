@@ -25,12 +25,12 @@
 
 # Import modules and functions
 import os
-import sys
 import numpy as np
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation
 from obstools.atacr import utils, arguments, plot
+from pathlib import Path
 
 
 def main():
@@ -61,22 +61,21 @@ def main():
         sta = db[stkey]
         
         # Path where spectra are located
-        specpath = 'SPECTRA/' + stkey + '/'
-        if not os.path.isdir(specpath):
-            print("Path to "+specpath+" doesn`t exist - aborting")
-            sys.exit()
+        specpath = Path('SPECTRA') / stkey
+        if not specpath.is_dir():
+            raise(Exception("Path to "+str(specpath)+" doesn`t exist - aborting"))
 
         # Path where average spectra will be saved
-        avstpath = 'AVG_STA/' + stkey + '/'
-        if not os.path.isdir(avstpath):
-            print("Path to "+avstpath+" doesn`t exist - creating it")
-            os.makedirs(avstpath)
+        avstpath = Path('AVG_STA') / stkey
+        if not avstpath.is_dir():
+            print("Path to "+str(avstpath)+" doesn`t exist - creating it")
+            avstpath.mkdir()
 
         # Path where plots will be saved
         if args.saveplot:
-            plotpath = avstpath + 'PLOTS/'
-            if not os.path.isdir(plotpath):
-                os.makedirs(plotpath)
+            plotpath = avstpath / 'PLOTS'
+            if plotpath.is_dir():
+                plotpath.mkdir()
         else:
             plotpath = False
 
@@ -127,11 +126,11 @@ def main():
         # Filename for output average spectra
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-        fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
+        fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
-        if os.path.exists(fileavst):
+        if ofileavst.exists():
             if not args.ovr:
-                print("*   -> file "+fileavst+" exists - continuing")
+                print("*   -> file "+str(fileavst)+" exists - continuing")
                 continue
 
         # Containers for power and cross spectra
@@ -169,7 +168,7 @@ def main():
             jday = str(t1.julday).zfill(3)
 
             tstamp = year+'.'+jday+'.'
-            filespec = specpath + tstamp + 'spectra.pkl'
+            filespec = specpath / (tstamp + 'spectra.pkl')
 
             # Load file if it exists
             if os.path.exists(filespec):
@@ -179,7 +178,7 @@ def main():
                     "*****************")
                 print('* Calculating noise spectra for key ' +
                       stkey+' and day '+year+'.'+jday)
-                print("*   -> file "+filespec+" found - loading")
+                print("*   -> file "+str(filespec)+" found - loading")
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()

@@ -27,7 +27,6 @@
 import numpy as np
 import os.path
 import pickle
-import glob
 import stdb
 from obspy.clients.fdsn import Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
@@ -35,6 +34,7 @@ from obspy.geodetics import kilometer2degrees as k2d
 from obspy.core import Stream
 from obstools.atacr import utils, arguments
 from obstools.atacr import EventStream
+from pathlib import Path
 
 # Main function
 
@@ -67,10 +67,10 @@ def main():
         sta = db[stkey]
 
         # Define path to see if it exists
-        eventpath = 'EVENTS/' + stkey + '/'
-        if not os.path.isdir(eventpath):
-            print('Path to '+eventpath+' doesn`t exist - creating it')
-            os.makedirs(eventpath)
+        eventpath = Path('EVENTS') / Path(stkey)
+        if not eventpath.is_dir():
+            print('Path to '+str(eventpath)+' doesn`t exist - creating it')
+            eventpath.mkdir()
 
         # Establish client
         if len(args.UserAuth) == 0:
@@ -212,17 +212,17 @@ def main():
                     '.'+str(time.minute).zfill(2)
 
                 # Define file names (to check if files already exist)
-                filename = eventpath + tstamp + '.event.pkl'
+                filename = eventpath / (tstamp+'.event.pkl')
 
                 print()
                 print("* Channels selected: " +
                       str(args.channels)+' and vertical')
 
                 # If data file exists, continue
-                if glob.glob(filename):
+                if filename.exists():
                     if not args.ovr:
                         print("*")
-                        print("*   "+filename)
+                        print("*   "+str(filename))
                         print("*   -> File already exists, continuing")
                         continue
 

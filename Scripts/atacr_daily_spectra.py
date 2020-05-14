@@ -30,6 +30,7 @@ import pickle
 import stdb
 from obstools.atacr import DayNoise
 from obstools.atacr import utils, arguments
+from pathlib import Path
 
 
 def main():
@@ -60,20 +61,20 @@ def main():
         sta = db[stkey]
 
         # Path where data are located
-        datapath = 'DATA/' + stkey + '/'
+        datapath = Path('DATA') / stkey
 
         # Path where spectra will be saved
-        specpath = 'SPECTRA/' + stkey + '/'
-        if not os.path.isdir(specpath):
+        specpath = Path('SPECTRA') / stkey
+        if not specpath.is_dir():
             print()
-            print("Path to "+specpath+" doesn`t exist - creating it")
-            os.makedirs(specpath)
+            print("Path to "+str(specpath)+" doesn`t exist - creating it")
+            specpath.mkdir()
 
         # Path where plots will be saved
         if args.saveplot:
-            plotpath = specpath + 'PLOTS/'
-            if not os.path.isdir(plotpath):
-                os.makedirs(plotpath)
+            plotpath = specpath / 'PLOTS'
+            if not plotpath.is_dir():
+                plotpath.mkdir()
         else:
             plotpath = False
 
@@ -146,11 +147,11 @@ def main():
             print("* Calculating noise spectra for key " +
                   stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'
-            filename = specpath + tstamp + 'spectra.pkl'
+            filename = specpath / (tstamp+'spectra.pkl')
 
-            if os.path.exists(filename):
+            if filename.exists():
                 if not args.ovr:
-                    print("*   -> file "+filename+" exists - continuing")
+                    print("*   -> file "+str(filename)+" exists - continuing")
                     continue
 
             # Initialize instance of DayNoise

@@ -31,6 +31,7 @@ import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, arguments
+from pathlib import Path
 
 
 def main():
@@ -61,20 +62,20 @@ def main():
         sta = db[stkey]
 
         # Path where transfer functions will be located
-        transpath = 'TF_STA/' + stkey + '/'
-        if not os.path.isdir(transpath):
-            raise(Exception("Path to "+transpath+" doesn`t exist - aborting"))
+        transpath = Path('TF_STA') / stkey
+        if not transpath.is_dir():
+            raise(Exception("Path to "+str(transpath)+" doesn`t exist - aborting"))
 
         # Path where event data are located
-        eventpath = 'EVENTS/' + stkey + '/'
-        if not os.path.isdir(eventpath):
-            raise(Exception("Path to "+eventpath+" doesn`t exist - aborting"))
+        eventpath = Path('EVENTS') / stkey
+        if not eventpath.is_dir():
+            raise(Exception("Path to "+str(eventpath)+" doesn`t exist - aborting"))
 
         # Path where plots will be saved
         if args.saveplot: 
-            plotpath = eventpath + 'PLOTS/'
-            if not os.path.isdir(plotpath):
-                os.makedirs(plotpath)
+            plotpath = eventpath / 'PLOTS'
+            if not plotpath.is_dir():
+                plotpath.mkdir()
         else:
             plotpath = False
 
@@ -124,16 +125,18 @@ def main():
         print("|-----------------------------------------------|")
 
         # Find all files in directories
-        event_files = os.listdir(eventpath)
-        trans_files = os.listdir(transpath)
+        p = eventpath.glob('*.*')
+        event_files = files = [x for x in p if x.is_file()]
+        p = transpath.glob('*.*')
+        trans_files = files = [x for x in p if x.is_file()]
 
         # Check if folders contain anything
         if not event_files:
-            raise(Exception("There are no events in folder " + eventpath))
+            raise(Exception("There are no events in folder " + str(eventpath)))
 
         if not trans_files:
             raise(Exception("There are no transfer functions in folder " +
-                            transpath))
+                            str(transpath)))
 
         # Cycle through available files
         for eventfile in event_files:
@@ -142,7 +145,7 @@ def main():
             if eventfile[0] == '.':
                 continue
 
-            evprefix = eventfile.split('.')
+            evprefix = str(eventfile).split('.')
             evstamp = evprefix[0]+'.'+evprefix[1]+'.'
 
             evDateTime = UTCDateTime(evprefix[0]+'-'+evprefix[1])
@@ -150,11 +153,11 @@ def main():
 
                 # Load event file
                 try:
-                    file = open(eventpath+eventfile, 'rb')
+                    file = open((eventpath / eventfile), 'rb')
                     eventstream = pickle.load(file)
                     file.close()
                 except:
-                    print("File "+eventpath+eventfile +
+                    print("File "+str(eventpath)+str(eventfile) +
                           " exists but cannot be loaded")
                     continue
 
@@ -173,7 +176,7 @@ def main():
                 if transfile[0] == '.':
                     continue
 
-                tfprefix = transfile.split('transfunc')[0]
+                tfprefix = str(transfile).split('transfunc')[0]
 
                 # This case refers to the "cleaned" spectral averages
                 if len(tfprefix) > 9:
@@ -186,15 +189,15 @@ def main():
                         date2 = UTCDateTime(yr2+'-'+jd2)
                         dateev = UTCDateTime(evprefix[0]+'-'+evprefix[1])
                         if dateev >= date1 and dateev <= date2:
-                            print(transpath+transfile +
+                            print(str(transpath)+str(transfile) +
                                   " file found - applying transfer functions")
 
                             try:
-                                file = open(transpath+transfile, 'rb')
+                                file = open((transpath / transfile), 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
                             except:
-                                print("File "+transpath+transfile +
+                                print("File "+str(transpath)+str(transfile) +
                                       " exists but cannot be loaded")
                                 continue
 
@@ -213,15 +216,15 @@ def main():
                 else:
                     if not args.skip_daily:
                         if tfprefix == evstamp:
-                            print(transpath+transfile +
+                            print(str(transpath)+str(transfile) +
                                   " file found - applying transfer functions")
 
                             try:
-                                file = open(transpath+transfile, 'rb')
+                                file = open((transpath / transfile), 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
                             except:
-                                print("File "+transpath+transfile +
+                                print("File "+str(transpath)+str(transfile) +
                                       " exists but cannot be loaded")
                                 continue
 
