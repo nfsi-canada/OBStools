@@ -25,13 +25,13 @@
 
 # Import modules and functions
 import os
-import sys
 import numpy as np
 from obspy import UTCDateTime
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plot, arguments
+from pathlib import Path
 
 
 def main():
@@ -63,16 +63,16 @@ def main():
 
         if not args.skip_daily:
             # Path where spectra are located
-            specpath = 'SPECTRA/' + stkey + '/'
-            if not os.path.isdir(specpath):
+            specpath = Path('SPECTRA') / stkey
+            if not specpath.is_dir():
                 raise(Exception(
-                    "Path to "+specpath+" doesn't exist - aborting"))
+                    "Path to "+str(specpath)+" doesn't exist - aborting"))
 
         if not args.skip_clean:
             # Path where average spectra will be saved
-            avstpath = 'AVG_STA/' + stkey + '/'
-            if not os.path.isdir(avstpath):
-                print("Path to "+avstpath +
+            avstpath = Path('AVG_STA') / stkey
+            if not avstpath.is_dir():
+                print("Path to "+str(avstpath) +
                       " doesn't exist - skipping cleaned station spectra")
                 args.skip_clean = True
 
@@ -81,16 +81,16 @@ def main():
             continue
 
         # Path where transfer functions will be located
-        tfpath = 'TF_STA/' + stkey + '/'
-        if not os.path.isdir(tfpath):
-            print("Path to "+tfpath+" doesn't exist - creating it")
-            os.makedirs(tfpath)
+        tfpath = Path('TF_STA') / stkey
+        if not tfpath.is_dir():
+            print("Path to "+str(tfpath)+" doesn't exist - creating it")
+            tfpath.mkdir()
 
         # Path where plots will be saved
         if args.saveplot:
-            plotpath = tfpath + 'PLOTS/'
-            if not os.path.isdir(plotpath):
-                os.makedirs(plotpath)
+            plotpath = tfpath / 'PLOTS'
+            if not plotpath.is_dir():
+                plotpath.mkdir()
         else:
             plotpath = False
 
@@ -142,12 +142,14 @@ def main():
         # Filename for output transfer functions
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-        fileavst = avstpath + dstart + dend + 'avg_sta.pkl'
+        fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
         # Find all files in directories
-        spectra_files = os.listdir(specpath)
+        p = specpath.glob('*spectra.pkl')
+        spectra_files = [x for x in p if x.is_file()]
         if not args.skip_clean:
-            average_files = os.listdir(avstpath)
+            p = avstpath.glob('*avg_sta.pkl')
+            average_files = [x for x in p if x.is_file()]
 
         if not args.skip_daily:
 
@@ -156,8 +158,8 @@ def main():
             # Cycle through available files
             for filespec in spectra_files:
 
-                year = filespec.split('.')[0]
-                jday = filespec.split('.')[1]
+                year = str(filespec).split('.')[0]
+                jday = str(filespec).split('.')[1]
 
                 print()
                 print(
@@ -166,18 +168,15 @@ def main():
                 print("* Calculating transfer functions for key " +
                       stkey+" and day "+year+"."+jday)
                 tstamp = year+'.'+jday+'.'
-                filename = tfpath + tstamp + 'transfunc.pkl'
+                filename = tfpath / (tstamp + 'transfunc.pkl')
 
                 # Load file
-                file = open(specpath+filespec, 'rb')
+                file = open((specpath / filespec), 'rb')
                 daynoise = pickle.load(file)
                 file.close()
 
                 # Load spectra into TFNoise object
                 daytransfer = TFNoise(daynoise)
-                    # daynoise.f, daynoise.power,
-                    # daynoise.cross, daynoise.rotation,
-                    # daynoise.tf_list)
 
                 # Calculate the transfer functions
                 daytransfer.transfer_func()
@@ -196,7 +195,7 @@ def main():
             # Cycle through available files
             for fileavst in average_files:
 
-                name = fileavst.split('avg_sta')
+                name = str(fileavst).split('avg_sta')
 
                 print()
                 print(
@@ -204,10 +203,10 @@ def main():
                     "***************")
                 print("* Calculating transfer functions for key " +
                       stkey+" and range "+name[0])
-                filename = tfpath + name[0] + 'transfunc.pkl'
+                filename = tfpath / (name[0] + 'transfunc.pkl')
 
                 # Load file
-                file = open(avstpath+fileavst, 'rb')
+                file = open((avstpath / fileavst), 'rb')
                 stanoise = pickle.load(file)
                 file.close()
 
@@ -215,8 +214,6 @@ def main():
                 # for station averages
                 rotation = Rotation(None, None, None)
                 statransfer = TFNoise(stanoise)
-                    # stanoise.f, stanoise.power,
-                    # stanoise.cross, rotation, stanoise.tf_list)
 
                 # Calculate the transfer functions
                 statransfer.transfer_func()
