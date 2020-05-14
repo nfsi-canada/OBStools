@@ -112,7 +112,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.utils">Utility functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plot">Plotting functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-functions">Plotting functions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
@@ -2052,129 +2052,8 @@ of a boxcar function with the PSD</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-obstools.atacr.plot">
-<span id="plotting-functions"></span><h3>Plotting functions<a class="headerlink" href="#module-obstools.atacr.plot" title="Permalink to this headline">¶</a></h3>
-<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">plot</span></code> contains several functions for plotting the results
-of the analysis at various final and intermediate steps.</p>
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_QC">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_QC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">power</span></em>, <em class="sig-param"><span class="n">gooddays</span></em>, <em class="sig-param"><span class="n">ncomp</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_QC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the Quality-Control step of the analysis. This function is used
-in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cite> scripts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
-<li><p><strong>power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code>) – Container for the Power spectra</p></li>
-<li><p><strong>gooddays</strong> (<em>List</em>) – List of booleans representing whether a window is good (True) or not (False)</p></li>
-<li><p><strong>ncomp</strong> (<em>int</em>) – Number of components used in analysis (can be 2, 3 or 4)</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – String corresponding to the station key under analysis</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_average">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">power</span></em>, <em class="sig-param"><span class="n">bad</span></em>, <em class="sig-param"><span class="n">gooddays</span></em>, <em class="sig-param"><span class="n">ncomp</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_average" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the averaged spectra (those qualified as ‘good’ in the
-QC step). This function is used
-in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cite> scripts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
-<li><p><strong>power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code>) – Container for the Power spectra</p></li>
-<li><p><strong>bad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code>) – Container for the <em>bad</em> Power spectra</p></li>
-<li><p><strong>gooddays</strong> (<em>List</em>) – List of booleans representing whether a window is good (True) or not (False)</p></li>
-<li><p><strong>ncomp</strong> (<em>int</em>) – Number of components used in analysis (can be 2, 3 or 4)</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – String corresponding to the station key under analysis</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_av_cross">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_av_cross</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">gooddays</span></em>, <em class="sig-param"><span class="n">ftype</span></em>, <em class="sig-param"><span class="n">ncomp</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_av_cross" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the averaged cross-spectra (those qualified as ‘good’ in the
-QC step). This function is used in the <cite>obs_daily_spectra.py</cite> script.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
-<li><p><strong>field</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code>) – Container for the Power spectra</p></li>
-<li><p><strong>gooddays</strong> (<em>List</em>) – List of booleans representing whether a window is good (True) or not (False)</p></li>
-<li><p><strong>ftype</strong> (<em>str</em>) – Type of plot to be displayed. If ftype is Admittance, plot is loglog. Otherwise semilogx</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – String corresponding to the station key under analysis</p></li>
-<li><p><strong>**kwargs</strong> (<em>None</em>) – Keyword arguments to modify plot</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_coh_ph">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_coh_ph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coh</span></em>, <em class="sig-param"><span class="n">ph</span></em>, <em class="sig-param"><span class="n">direc</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_coh_ph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the coherence and phase between the rotated H and Z components,
-used to characterize the tilt direction.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>coh</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Coherence between rotated H and Z components</p></li>
-<li><p><strong>ph</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase between rotated H and Z components</p></li>
-<li><p><strong>direc</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Directions considered in maximizing coherence between H and Z</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_TF">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_TF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">day_trfs</span></em>, <em class="sig-param"><span class="n">day_list</span></em>, <em class="sig-param"><span class="n">sta_trfs</span></em>, <em class="sig-param"><span class="n">sta_list</span></em>, <em class="sig-param"><span class="n">skey</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_TF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the transfer functions available.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
-<li><p><strong>day_trfs</strong> (<em>Dict</em>) – Dictionary containing the transfer functions for the daily averages</p></li>
-<li><p><strong>sta_trfs</strong> (<em>Dict</em>) – Dictionary containing the transfer functions for the station averages</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – String corresponding to the station key under analysis</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_event_raw">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_event_raw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">evstream</span></em>, <em class="sig-param"><span class="n">fmin</span></em>, <em class="sig-param"><span class="n">fmax</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_event_raw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the raw (although bandpassed) seismograms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>evstream</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code>) – Container for the event stream data</p></li>
-<li><p><strong>fmin</strong> (<em>float</em>) – Low frequency corner (in Hz)</p></li>
-<li><p><strong>fmax</strong> (<em>float</em>) – High frequency corner (in Hz)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="obstools.atacr.plot.fig_event_corrected">
-<code class="sig-prename descclassname">obstools.atacr.plot.</code><code class="sig-name descname">fig_event_corrected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">evstream</span></em>, <em class="sig-param"><span class="n">TF_list</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plot.fig_event_corrected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to plot the corrected vertical component seismograms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>evstream</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code>) – Container for the event stream data</p></li>
-<li><p><strong>Tf_list</strong> (<em>list</em>) – List of Dictionary elements of transfer functions used
-for plotting the corrected vertical component.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="plotting-functions">
+<h3>Plotting functions<a class="headerlink" href="#plotting-functions" title="Permalink to this headline">¶</a></h3>
 </div>
 </div>
 <div class="section" id="scripts">
