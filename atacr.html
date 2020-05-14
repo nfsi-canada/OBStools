@@ -1222,7 +1222,7 @@ components (and component combinations) from the averaged
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">daynoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span> <span class="o">=</span> <span class="n">TFNoise</span><span class="p">(</span><span class="n">stanoise</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfer_func</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">transfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;ZP&#39;, &#39;Z1&#39;, &#39;Z2-1&#39;, &#39;ZP-21&#39;])</span>
