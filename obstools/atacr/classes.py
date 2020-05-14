@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from obspy.core import Stream, Trace, read
-from obstools.atacr import utils, plot
+from obstools.atacr import utils, plotting
 from pkg_resources import resource_filename
 from pathlib import Path
 np.seterr(all='ignore')
@@ -530,7 +530,9 @@ class DayNoise(object):
                 moveon = True
                 if fig_QC:
                     power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-                    plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
+                    plot = plotting.fig_QC(f, power, goodwins, 
+                        self.ncomp, key=self.key)
+                    plot.show()
                 return
 
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
@@ -547,8 +549,14 @@ class DayNoise(object):
         if fig_QC:
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
             fname = self.key + '.' + self.tkey + '.' + 'QC'
-            plot.fig_QC(f, power, goodwins, self.ncomp, key=self.key,
-                        save=save, fname=fname, form=form)
+            plot = plotting.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
+
+            # Save or show figure
+            if save:
+                plot.savefig(save + fname + '.' + form,
+                            dpi=300, bbox_inches='tight', format=form)
+            else:
+                plot.show()
 
         self.QC = True
 
@@ -702,9 +710,14 @@ class DayNoise(object):
 
         if fig_average:
             fname = self.key + '.' + self.tkey + '.' + 'average'
-            plot.fig_average(f, self.power, bad, self.goodwins,
-                             self.ncomp, key=self.key, save=save,
-                             fname=fname, form=form)
+            plot = plotting.fig_average(f, self.power, bad, self.goodwins,
+                             self.ncomp, key=self.key)
+            if save:
+                plot.savefig(save + fname + '.' + form,
+                            dpi=300, bbox_inches='tight', format=form)
+            else:
+                plot.show()
+
 
         if calc_rotation and self.ncomp >= 3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
@@ -715,8 +728,16 @@ class DayNoise(object):
 
             if fig_coh_ph:
                 fname = self.key + '.' + self.tkey + '.' + 'coh_ph'
-                plot.fig_coh_ph(coh, ph, direc, save=save,
-                                fname=fname, form=form)
+                plot = plotting.fig_coh_ph(coh, ph, direc)
+
+                # Save or show figure
+                if save:
+                    plot.savefig(save + fname + '.' + form,
+                                dpi=300, bbox_inches='tight', format=form)
+                else:
+                    plot.show()
+
+
         else:
             self.rotation = Rotation()
 
@@ -1174,8 +1195,9 @@ class StaNoise(object):
                 moveon = True
                 if fig_QC:
                     power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-                    plot.fig_QC(self.f, power, gooddays,
+                    plot = plotting.fig_QC(self.f, power, gooddays,
                                 self.ncomp, key=self.key)
+                    plot.show()
                 return
 
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
@@ -1193,8 +1215,14 @@ class StaNoise(object):
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
             fname = self.key + '.' + 'QC'
-            plot.fig_QC(self.f, power, gooddays, self.ncomp, key=self.key,
-                        save=save, fname=fname, form=form)
+            plot = plotting.fig_QC(self.f, power, gooddays, 
+                self.ncomp, key=self.key)
+            if save:
+                plot.savefig(save + fname + '.' + form,
+                            dpi=300, bbox_inches='tight', format=form)
+            else:
+                plot.show()
+
 
     def average_sta_spectra(self, fig_average=False, save=False, form='png'):
         r"""
@@ -1314,9 +1342,13 @@ class StaNoise(object):
 
         if fig_average:
             fname = self.key + '.' + 'average'
-            plot.fig_average(self.f, self.power, bad,
-                             self.gooddays, self.ncomp, key=self.key,
-                             save=save, fname=fname, form=form)
+            plot = plotting.fig_average(self.f, self.power, bad,
+                             self.gooddays, self.ncomp, key=self.key)
+            if save:
+                plot.savefig(save + fname + '.' + form,
+                            dpi=300, bbox_inches='tight', format=form)
+            else:
+                plot.show()
 
         self.av = True
 

@@ -24,13 +24,12 @@
 
 
 # Import modules and functions
-import os
 import numpy as np
 from obspy import UTCDateTime
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
-from obstools.atacr import utils, plot, arguments
+from obstools.atacr import utils, plotting, arguments
 from pathlib import Path
 
 
@@ -72,7 +71,7 @@ def main():
             raise(Exception("Path to "+str(eventpath)+" doesn`t exist - aborting"))
 
         # Path where plots will be saved
-        if args.saveplot: 
+        if args.saveplot:
             plotpath = eventpath / 'PLOTS'
             if not plotpath.is_dir():
                 plotpath.mkdir()
@@ -142,10 +141,10 @@ def main():
         for eventfile in event_files:
 
             # Skip hidden files and folders
-            if eventfile[0] == '.':
+            if eventfile.name[0] == '.':
                 continue
 
-            evprefix = str(eventfile).split('.')
+            evprefix = eventfile.name.split('.')
             evstamp = evprefix[0]+'.'+evprefix[1]+'.'
 
             evDateTime = UTCDateTime(evprefix[0]+'-'+evprefix[1])
@@ -153,11 +152,11 @@ def main():
 
                 # Load event file
                 try:
-                    file = open((eventpath / eventfile), 'rb')
+                    file = open(eventfile, 'rb')
                     eventstream = pickle.load(file)
                     file.close()
                 except:
-                    print("File "+str(eventpath)+str(eventfile) +
+                    print("File "+str(eventfile) +
                           " exists but cannot be loaded")
                     continue
 
@@ -166,17 +165,23 @@ def main():
 
             if args.fig_event_raw:
                 fname = stkey + '.' + evstamp + 'raw'
-                plot.fig_event_raw(eventstream, fmin=args.fmin, fmax=args.fmax,
-                    save=plotpath, fname=fname, form=args.form)
+                plot = plotting.fig_event_raw(eventstream,
+                                              fmin=args.fmin, fmax=args.fmax)
+
+                if plotpath:
+                    plot.savefig(plotpath / (fname + '.' + args.form),
+                                dpi=300, bbox_inches='tight', format=args.form)
+                else:
+                    plot.show()
 
             # Cycle through corresponding TF files
             for transfile in trans_files:
 
                 # Skip hidden files and folders
-                if transfile[0] == '.':
+                if transfile.name[0] == '.':
                     continue
 
-                tfprefix = str(transfile).split('transfunc')[0]
+                tfprefix = transfile.name.split('transfunc')[0]
 
                 # This case refers to the "cleaned" spectral averages
                 if len(tfprefix) > 9:
@@ -189,15 +194,15 @@ def main():
                         date2 = UTCDateTime(yr2+'-'+jd2)
                         dateev = UTCDateTime(evprefix[0]+'-'+evprefix[1])
                         if dateev >= date1 and dateev <= date2:
-                            print(str(transpath)+str(transfile) +
+                            print(str(transfile) +
                                   " file found - applying transfer functions")
 
                             try:
-                                file = open((transpath / transfile), 'rb')
+                                file = open(transfile, 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
                             except:
-                                print("File "+str(transpath)+str(transfile) +
+                                print("File "+str(transfile) +
                                       " exists but cannot be loaded")
                                 continue
 
@@ -208,23 +213,30 @@ def main():
                             correct = eventstream.correct
                             if args.fig_plot_corrected:
                                 fname = stkey + '.' + evstamp + 'sta_corrected'
-                                plot.fig_event_corrected(
-                                    eventstream, tfaverage.tf_list,
-                                    save=plotpath, fname=fname, form=args.form)
+                                plot = plotting.fig_event_corrected(
+                                    eventstream, tfaverage.tf_list)
+                                # Save or show figure
+                                if plotpath:
+                                    plot.savefig(
+                                        plotpath / (fname + '.' + args.form),
+                                        dpi=300, bbox_inches='tight',
+                                        format=args.form)
+                                else:
+                                    plot.show()
 
                 # This case refers to the "daily" spectral averages
                 else:
                     if not args.skip_daily:
                         if tfprefix == evstamp:
-                            print(str(transpath)+str(transfile) +
+                            print(str(transfile) +
                                   " file found - applying transfer functions")
 
                             try:
-                                file = open((transpath / transfile), 'rb')
+                                file = open(transfile, 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
                             except:
-                                print("File "+str(transpath)+str(transfile) +
+                                print("File "+str(transfile) +
                                       " exists but cannot be loaded")
                                 continue
 
@@ -235,9 +247,16 @@ def main():
                             correct = eventstream.correct
                             if args.fig_plot_corrected:
                                 fname = stkey + '.' + evstamp + 'day_corrected'
-                                plot.fig_event_corrected(
-                                    eventstream, tfaverage.tf_list,
-                                    save=plotpath, fname=fname, form=args.form)
+                                plot = plotting.fig_event_corrected(
+                                    eventstream, tfaverage.tf_list)
+                                # Save or show figure
+                                if plotpath:
+                                    plot.savefig(
+                                        plotpath / (fname + '.' + args.form),
+                                        dpi=300, bbox_inches='tight',
+                                        format=args.form)
+                                else:
+                                    plot.show()
 
 
 if __name__ == "__main__":

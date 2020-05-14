@@ -104,18 +104,20 @@ def get_data(datapath, tstart, tend):
         tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
         # Cycle through directory and load files
-        for file in os.listdir(datapath):
-            if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
-                tr = read(datapath + file)
+        p = datapath.glob('*.*')
+        files = [x for x in p if x.is_file()]
+        for file in files:
+            if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
+                tr = read(str(file))
                 trN1.append(tr[0])
-            elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
-                tr = read(datapath + file)
+            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
+                tr = read(str(file))
                 trN2.append(tr[0])
-            elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
-                tr = read(datapath + file)
+            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
+                tr = read(str(file))
                 trNZ.append(tr[0])
-            elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
-                tr = read(datapath + file)
+            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
+                tr = read(str(file))
                 trNP.append(tr[0])
 
         # Increase increment
@@ -171,18 +173,20 @@ def get_event(eventpath, tstart, tend):
         tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
         # Cycle through directory and load files
-        for file in os.listdir(eventpath):
-            if fnmatch.fnmatch(file, '*' + tstamp + '*1.SAC'):
-                tr = read(eventpath + file)
+        p = eventpath.glob('*.*')
+        files = [x for x in p if x.is_file()]
+        for file in files:
+            if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
+                tr = read(str(file))
                 tr1.append(tr[0])
-            elif fnmatch.fnmatch(file, '*' + tstamp + '*2.SAC'):
-                tr = read(eventpath + file)
+            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
+                tr = read(str(file))
                 tr2.append(tr[0])
-            elif fnmatch.fnmatch(file, '*' + tstamp + '*Z.SAC'):
-                tr = read(eventpath + file)
+            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
+                tr = read(str(file))
                 trZ.append(tr[0])
-            elif fnmatch.fnmatch(file, '*' + tstamp + '*H.SAC'):
-                tr = read(eventpath + file)
+            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
+                tr = read(str(file))
                 trP.append(tr[0])
 
         # Increase increment
