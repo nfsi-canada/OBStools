@@ -33,7 +33,7 @@ from obspy import UTCDateTime
 from numpy import nan
 
 
-def get_daylong_arguments():
+def get_daylong_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -173,7 +173,7 @@ def get_daylong_arguments():
         "the start time for the event search. This will override any " +
         "station end times [Default end date for each station in database]")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check inputs
     if not exist(args.indb):
@@ -254,7 +254,7 @@ def get_daylong_arguments():
     return args
 
 
-def get_event_arguments():
+def get_event_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -449,7 +449,7 @@ def get_event_arguments():
         "(degrees) between the station and event. " +
         "[Default 120]")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check inputs
     if not exist(args.indb):
@@ -530,7 +530,7 @@ def get_event_arguments():
     return args
 
 
-def get_dailyspec_arguments():
+def get_dailyspec_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -726,7 +726,7 @@ def get_dailyspec_arguments():
         help="Specify format of figure. Can be any one of the valid" +
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check inputs
     if not exist(args.indb):
@@ -777,7 +777,7 @@ def get_dailyspec_arguments():
     return args
 
 
-def get_cleanspec_arguments():
+def get_cleanspec_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -935,7 +935,7 @@ def get_cleanspec_arguments():
         help="Specify format of figure. Can be any one of the valid" +
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check inputs
     if not exist(args.indb):
@@ -980,7 +980,7 @@ def get_cleanspec_arguments():
     return args
 
 
-def get_transfer_arguments():
+def get_transfer_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -1104,7 +1104,7 @@ def get_transfer_arguments():
         help="Specify format of figure. Can be any one of the valid" +
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check inputs
     if not exist(args.indb):
@@ -1143,7 +1143,7 @@ def get_transfer_arguments():
     return args
 
 
-def get_correct_arguments():
+def get_correct_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
@@ -1293,7 +1293,7 @@ def get_correct_arguments():
         help="Specify format of figure. Can be any one of the valid" +
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check inputs
     if not exist(args.indb):
