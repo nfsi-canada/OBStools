@@ -1193,12 +1193,12 @@ class StaNoise(object):
                 self.gooddays = gooddays
                 self.QC = True
                 moveon = True
-                if fig_QC:
-                    power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-                    plot = plotting.fig_QC(self.f, power, gooddays,
-                                self.ncomp, key=self.key)
-                    plot.show()
-                return
+                # if fig_QC:
+                #     power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
+                #     plot = plotting.fig_QC(self.f, power, gooddays,
+                #                 self.ncomp, key=self.key)
+                #     plot.show()
+                # return
 
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
 

@@ -213,7 +213,6 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
 
     plt.tight_layout()
-    plt.show()
 
     return plt
 
