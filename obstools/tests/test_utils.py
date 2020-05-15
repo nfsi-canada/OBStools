@@ -15,6 +15,7 @@ def test_get_data():
     assert trN2 is not None
     assert trNZ is not None
     assert trNP is not None
+    return trN1, trN2, trNZ, trNP
 
 def test_get_event():
     eventpath = exmpl_path / 'event'

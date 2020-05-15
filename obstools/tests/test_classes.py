@@ -38,9 +38,11 @@ def test_tfnoise_day_demo():
     daynoise = test_day_average()
     tfnoise_day = TFNoise(daynoise)
     tfnoise_day.transfer_func()
+    return tfnoise_day
 
 def test_tfnoise_sta_demo():
     stanoise = test_sta_average()
-    tfnoise_day = TFNoise(stanoise)
-    tfnoise_day.transfer_func()
+    tfnoise_sta = TFNoise(stanoise)
+    tfnoise_sta.transfer_func()
+    return tfnoise_sta
 
