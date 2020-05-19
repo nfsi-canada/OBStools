@@ -68,13 +68,13 @@ def main():
         avstpath = Path('AVG_STA') / stkey
         if not avstpath.is_dir():
             print("Path to "+str(avstpath)+" doesn`t exist - creating it")
-            avstpath.mkdir()
+            avstpath.mkdir(parents=True)
 
         # Path where plots will be saved
         if args.saveplot:
             plotpath = avstpath / 'PLOTS'
             if plotpath.is_dir():
-                plotpath.mkdir()
+                plotpath.mkdir(parents=True)
         else:
             plotpath = False
 

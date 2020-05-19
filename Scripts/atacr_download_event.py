@@ -70,7 +70,7 @@ def main():
         eventpath = Path('EVENTS') / Path(stkey)
         if not eventpath.is_dir():
             print('Path to '+str(eventpath)+' doesn`t exist - creating it')
-            eventpath.mkdir()
+            eventpath.mkdir(parents=True)
 
         # Establish client
         if len(args.UserAuth) == 0:

@@ -74,7 +74,7 @@ def main():
         if args.saveplot:
             plotpath = eventpath / 'PLOTS'
             if not plotpath.is_dir():
-                plotpath.mkdir()
+                plotpath.mkdir(parents=True)
         else:
             plotpath = False
 
@@ -125,9 +125,9 @@ def main():
 
         # Find all files in directories
         p = eventpath.glob('*.*')
-        event_files = files = [x for x in p if x.is_file()]
+        event_files = [x for x in p if x.is_file()]
         p = transpath.glob('*.*')
-        trans_files = files = [x for x in p if x.is_file()]
+        trans_files = [x for x in p if x.is_file()]
 
         # Check if folders contain anything
         if not event_files:

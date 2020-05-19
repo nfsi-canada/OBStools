@@ -67,7 +67,7 @@ def main():
         if not datapath.is_dir():
             print()
             print('Path to '+str(datapath)+' doesn`t exist - creating it')
-            datapath.mkdir()
+            datapath.mkdir(parents=True)
 
         # Establish client
         if len(args.UserAuth) == 0:

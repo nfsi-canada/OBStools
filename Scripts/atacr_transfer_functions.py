@@ -83,13 +83,13 @@ def main():
         tfpath = Path('TF_STA') / stkey
         if not tfpath.is_dir():
             print("Path to "+str(tfpath)+" doesn't exist - creating it")
-            tfpath.mkdir()
+            tfpath.mkdir(parents=True)
 
         # Path where plots will be saved
         if args.saveplot:
             plotpath = tfpath / 'PLOTS'
             if not plotpath.is_dir():
-                plotpath.mkdir()
+                plotpath.mkdir(parents=True)
         else:
             plotpath = False
 
