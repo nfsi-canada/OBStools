@@ -15,7 +15,7 @@ def find_version(*paths):
     raise RuntimeError("Unable to find version string.")
 
 
-scripts = [str(x) for x in Path('Scripts').iterdir() if x.is_dir()]
+scripts = [str(x) for x in Path('Scripts').iterdir() if x.is_file()]
 
 setup(
     name='obstools',
