@@ -68,13 +68,13 @@ def main():
         if not specpath.is_dir():
             print()
             print("Path to "+str(specpath)+" doesn`t exist - creating it")
-            specpath.mkdir()
+            specpath.mkdir(parents=True)
 
         # Path where plots will be saved
         if args.saveplot:
             plotpath = specpath / 'PLOTS'
             if not plotpath.is_dir():
-                plotpath.mkdir()
+                plotpath.mkdir(parents=True)
         else:
             plotpath = False
 
