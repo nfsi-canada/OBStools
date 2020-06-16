@@ -14,6 +14,8 @@ can be used through command-line scripts.
 
 Installation, API documentation, scripts and tutorials are described at https://nfsi-canada.github.io/OBStools/
 
+Authors: [`Pascal Audet`](https://www.uogeophysics.com/authors/admin/) (Developer and Maintainer) & [`Helen Janiszewski`](https://helenjaniszewski.squarespace.com) & (Developer of Matlab version)
+
 <!-- #### Citing
 
 If you use `OBStools` in your work, please cite the 
