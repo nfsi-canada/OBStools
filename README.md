@@ -9,6 +9,7 @@ vertical component noise from tilt and compliance effects. The code uses
 the ``StDb`` package for querying and building a station database and
 can be used through command-line scripts.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3905412.svg)](https://doi.org/10.5281/zenodo.3905412)
 [![Build Status](https://travis-ci.org/nfsi-canada/OBStools.svg?branch=master)](https://travis-ci.org/nfsi-canada/OBStools)
 [![codecov](https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg)](https://codecov.io/gh/nfsi-canada/OBStools)
 
