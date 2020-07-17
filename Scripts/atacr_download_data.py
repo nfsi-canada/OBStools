@@ -367,7 +367,7 @@ def main():
             trZ = sth.select(component='Z')[0]
             trZ = utils.update_stats(
                 trZ, sta.latitude, sta.longitude, sta.elevation, 'Z')
-            trZ.write(fileZ.name, format='SAC')
+            trZ.write(str(fileZ), format='SAC')
 
             # Extract traces - H
             if "H" in args.channels:
@@ -377,15 +377,15 @@ def main():
                     tr1, sta.latitude, sta.longitude, sta.elevation, '1')
                 tr2 = utils.update_stats(
                     tr2, sta.latitude, sta.longitude, sta.elevation, '2')
-                tr1.write(file1.name, format='SAC')
-                tr2.write(file2.name, format='SAC')
+                tr1.write(str(file1), format='SAC')
+                tr2.write(str(file2), format='SAC')
 
             # Extract traces - P
             if "P" in args.channels:
                 trP = stp[0]
                 trP = utils.update_stats(
                     trP, sta.latitude, sta.longitude, sta.elevation, 'P')
-                trP.write(fileP.name, format='SAC')
+                trP.write(str(fileP), format='SAC')
 
             t1 += dt
             t2 += dt
