@@ -134,10 +134,10 @@ def get_data(datapath, tstart, tend):
             trNP.append(Trace())
 
     # Check that all sampling rates are equal - otherwise resample
-    if trNZ[0].stats.sampling_rate != trNP.stats.sampling_rate:
+    if trNZ[0].stats.sampling_rate != trNP[0].stats.sampling_rate:
 
         # These checks assume that all seismic data have the same sampling
-        if trNZ[0].stats.sampling_rate < trNP.stats.sampling_rate:
+        if trNZ[0].stats.sampling_rate < trNP[0].stats.sampling_rate:
             trNP.resample(trNZ[0].stats.sampling_rate, no_filter=False)
         else:
             trNZ.resample(trNP[0].stats.sampling_rate, no_filter=False)
@@ -216,16 +216,16 @@ def get_event(eventpath, tstart, tend):
             trP.append(Trace())
 
     # Check that all sampling rates are equal - otherwise resample
-    if trZ[0].stats.sampling_rate != trP.stats.sampling_rate:
+    if trZ[0].stats.sampling_rate != trP[0].stats.sampling_rate:
 
         # These checks assume that all seismic data have the same sampling
-        if trZ[0].stats.sampling_rate < trP.stats.sampling_rate:
-            trP.resample(trNZ[0].stats.sampling_rate, no_filter=False)
+        if trZ[0].stats.sampling_rate < trP[0].stats.sampling_rate:
+            trP.resample(trZ[0].stats.sampling_rate, no_filter=False)
         else:
             trZ.resample(trP[0].stats.sampling_rate, no_filter=False)
             if tr1:
                 tr1.resample(trP[0].stats.sampling_rate, no_filter=False)
-            if trN2:
+            if tr2:
                 tr2.resample(trP[0].stats.sampling_rate, no_filter=False)
 
     return tr1, tr2, trZ, trP
