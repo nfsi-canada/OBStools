@@ -369,7 +369,7 @@ class DayNoise(object):
                 if save:
                     title = save + '.' + self.key + '.' + tkey + \
                         '.specgram_Z.P.'
-                    plt.savefig(title + form,
+                    plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
                 else:
                     plt.show()
@@ -390,7 +390,7 @@ class DayNoise(object):
                 if save:
                     title = save + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
-                    plt.savefig(title + form,
+                    plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
                 else:
                     plt.show()
@@ -414,7 +414,7 @@ class DayNoise(object):
                 if save:
                     title = save + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
-                    plt.savefig(title + form,
+                    plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
                 else:
                     plt.show()
@@ -530,7 +530,7 @@ class DayNoise(object):
                 moveon = True
                 if fig_QC:
                     power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-                    plot = plotting.fig_QC(f, power, goodwins, 
+                    plot = plotting.fig_QC(f, power, goodwins,
                         self.ncomp, key=self.key)
                     plot.show()
                 return
@@ -553,7 +553,7 @@ class DayNoise(object):
 
             # Save or show figure
             if save:
-                plot.savefig(save + fname + '.' + form,
+                plot.savefig(str(save) + fname + '.' + form,
                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
@@ -713,7 +713,7 @@ class DayNoise(object):
             plot = plotting.fig_average(f, self.power, bad, self.goodwins,
                              self.ncomp, key=self.key)
             if save:
-                plot.savefig(save + fname + '.' + form,
+                plot.savefig(str(save) + '/' + fname + '.' + form,
                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
@@ -732,7 +732,7 @@ class DayNoise(object):
 
                 # Save or show figure
                 if save:
-                    plot.savefig(save + fname + '.' + form,
+                    plot.savefig(str(save) + '/' + fname + '.' + form,
                                 dpi=300, bbox_inches='tight', format=form)
                 else:
                     plot.show()
@@ -785,7 +785,7 @@ class DayNoise(object):
         del self.trZ
         del self.trP
 
-        file = open(filename, 'wb')
+        file = open(str(filename), 'wb')
         pickle.dump(self, file)
         file.close()
 
@@ -1215,10 +1215,10 @@ class StaNoise(object):
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
             fname = self.key + '.' + 'QC'
-            plot = plotting.fig_QC(self.f, power, gooddays, 
+            plot = plotting.fig_QC(self.f, power, gooddays,
                 self.ncomp, key=self.key)
             if save:
-                plot.savefig(save + fname + '.' + form,
+                plot.savefig(str(save) + '/' + fname + '.' + form,
                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
@@ -1345,7 +1345,7 @@ class StaNoise(object):
             plot = plotting.fig_average(self.f, self.power, bad,
                              self.gooddays, self.ncomp, key=self.key)
             if save:
-                plot.savefig(save + fname + '.' + form,
+                plot.savefig(str(save) + '/' + fname + '.' + form,
                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()

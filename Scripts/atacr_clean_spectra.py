@@ -58,7 +58,7 @@ def main():
 
         # Extract station information from dictionary
         sta = db[stkey]
-        
+
         # Path where spectra are located
         specpath = Path('SPECTRA') / stkey
         if not specpath.is_dir():
@@ -73,7 +73,7 @@ def main():
         # Path where plots will be saved
         if args.saveplot:
             plotpath = avstpath / 'PLOTS'
-            if plotpath.is_dir():
+            if not plotpath.is_dir():
                 plotpath.mkdir(parents=True)
         else:
             plotpath = False
@@ -316,27 +316,29 @@ def main():
             save=plotpath, form=args.form)
 
         if args.fig_av_cross:
-            fname = stkey + '.' + 'av_cross'
+            fname = stkey + '.' + 'av_coherence'
             plot = plotting.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
                               'Coherence', stanoise.ncomp, key=stkey, lw=0.5)
-            if plotpath:
-                plot.savefig(plotpath / (fname + '.' + args.form),
+            if plotpath.is_dir():
+                plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
+            fname = stkey + '.' + 'av_admittance'
             plot = plotting.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
                               'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
-            if plotpath:
-                plot.savefig(plotpath / (fname + '.' + args.form),
+            if plotpath.is_dir():
+                plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
+            fname = stkey + '.' + 'av_phase'
             plot = plotting.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
                               'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
-            if plotpath:
-                plot.savefig(plotpath / (fname + '.' + args.form),
+            if plotpath.is_dir():
+                plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
@@ -345,7 +347,7 @@ def main():
             fname = stkey + '.' + 'coh_ph'
             plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.direc)
             if plotpath:
-                plot.savefig(plotpath / (fname + '.' + args.form),
+                plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()

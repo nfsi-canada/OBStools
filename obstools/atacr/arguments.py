@@ -245,7 +245,7 @@ def get_daylong_arguments(argv=None):
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
     else:
-        args.pre_filt = [float(args.pre_filt.split(','))]
+        args.pre_filt = [float(val) for val in args.pre_filt.split(',')]
         args.pre_filt = sorted(args.pre_filt)
         if (len(args.pre_filt)) != 4:
             raise(Exception(
@@ -520,7 +520,7 @@ def get_event_arguments(argv=None):
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
     else:
-        args.pre_filt = [float(args.pre_filt.split(','))]
+        args.pre_filt = [float(val) for val in args.pre_filt.split(',')]
         args.pre_filt = sorted(args.pre_filt)
         if (len(args.pre_filt)) != 4:
             raise(Exception(
@@ -767,7 +767,7 @@ def get_dailyspec_arguments(argv=None):
     if args.pd is None:
         args.pd = [0.004, 2.0]
     else:
-        args.pd = [float(args.pd.split(','))]
+        args.pd = [float(val) for val in args.pd.split(',')]
         args.pd = sorted(args.pd)
         if (len(args.pd)) != 2:
             raise(Exception(
@@ -970,7 +970,7 @@ def get_cleanspec_arguments(argv=None):
     if args.pd is None:
         args.pd = [0.004, 2.0]
     else:
-        args.pd = [float(args.pd.split(','))]
+        args.pd = [float(val) for val in args.pd.split(',')]
         args.pd = sorted(args.pd)
         if (len(args.pd)) != 2:
             raise(Exception(

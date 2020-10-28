@@ -29,6 +29,7 @@ import os.path
 import pickle
 import stdb
 from obspy.clients.fdsn import Client
+from obspy import Stream
 from obstools.atacr import utils, arguments
 from pathlib import Path
 
@@ -182,6 +183,14 @@ def main():
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
+
+                    # Detrend, filter - seismic data
+                    sth.detrend('demean')
+                    sth.detrend('linear')
+                    sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                               corners=2, zerophase=True)
+                    sth.resample(args.new_sampling_rate)
+
                 except:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
@@ -234,6 +243,14 @@ def main():
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
+
+                    # Detrend, filter - seismic data
+                    sth.detrend('demean')
+                    sth.detrend('linear')
+                    sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                               corners=2, zerophase=True)
+                    sth.resample(args.new_sampling_rate)
+
                 except:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
@@ -247,6 +264,21 @@ def main():
                         location=sta.location[0], channel='??H',
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
+                    if len(stp) > 1:
+                        print("WARNING: There are more than one ??H trace")
+                        print("     -> Keeping the highest sampling rate")
+                        if stp[0].stats.sampling_rate > stp[1].stats.sampling_rate:
+                            stp = Stream(traces=stp[0])
+                        else:
+                            stp = Stream(traces=stp[1])
+
+                    # Detrend, filter - pressure data
+                    stp.detrend('demean')
+                    stp.detrend('linear')
+                    stp.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                               corners=2, zerophase=True)
+                    stp.resample(args.new_sampling_rate)
+
                 except:
                     print(" Error: Unable to download ??H component - " +
                           "continuing")
@@ -300,6 +332,14 @@ def main():
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
+
+                    # Detrend, filter - seismic data
+                    sth.detrend('demean')
+                    sth.detrend('linear')
+                    sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                               corners=2, zerophase=True)
+                    sth.resample(args.new_sampling_rate)
+
                 except:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
@@ -313,6 +353,21 @@ def main():
                         location=sta.location[0], channel='??H',
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
+                    if len(stp) > 1:
+                        print("WARNING: There are more than one ??H trace\n")
+                        print("     -> Keeping the highest sampling rate")
+                        if stp[0].stats.sampling_rate > stp[1].stats.sampling_rate:
+                            stp = Stream(traces=stp[0])
+                        else:
+                            stp = Stream(traces=stp[1])
+
+                    # Detrend, filter - pressure data
+                    stp.detrend('demean')
+                    stp.detrend('linear')
+                    stp.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                               corners=2, zerophase=True)
+                    stp.resample(args.new_sampling_rate)
+
                 except:
                     print(" Error: Unable to download ??H component - " +
                           "continuing")
@@ -347,21 +402,6 @@ def main():
             if "P" in args.channels:
                 print("*   -> Removing responses - Pressure data")
                 stp.remove_response(pre_filt=args.pre_filt)
-
-            # Detrend, filter - seismic data
-            sth.detrend('demean')
-            sth.detrend('linear')
-            sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                       corners=2, zerophase=True)
-            sth.resample(args.new_sampling_rate)
-
-            if "P" in args.channels:
-                # Detrend, filter - pressure data
-                stp.detrend('demean')
-                stp.detrend('linear')
-                stp.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                           corners=2, zerophase=True)
-                stp.resample(args.new_sampling_rate)
 
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
