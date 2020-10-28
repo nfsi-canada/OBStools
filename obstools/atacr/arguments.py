@@ -139,6 +139,14 @@ def get_daylong_arguments(argv=None):
         default=5.,
         help="Specify new sampling rate (float, in Hz). [Default 5.]")
     FreqGroup.add_argument(
+        "--units",
+        action="store",
+        type=str,
+        dest="units",
+        default="DISP",
+        help="Choose the output seismogram units. Options are: " +
+        "'DISP', 'VEL', 'ACC'. [Default 'DISP']")
+    FreqGroup.add_argument(
         "--pre-filt",
         action="store",
         type=str,
@@ -242,6 +250,10 @@ def get_daylong_arguments(argv=None):
         raise(Exception(
             "Error: Type of --sampling-rate is not a float"))
 
+    if args.units not in ['DISP', 'VEL', 'ACC']:
+        raise(Exception(
+            "Error: invalid --units argument. Choose among " +
+            "'DISP', 'VEL', or 'ACC'"))
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
     else:

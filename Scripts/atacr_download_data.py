@@ -266,7 +266,7 @@ def main():
                     print("*      ...done")
                     if len(stp) > 1:
                         print("WARNING: There are more than one ??H trace")
-                        print("     -> Keeping the highest sampling rate")
+                        print("*   -> Keeping the highest sampling rate")
                         if stp[0].stats.sampling_rate > stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
@@ -354,8 +354,8 @@ def main():
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
                     if len(stp) > 1:
-                        print("WARNING: There are more than one ??H trace\n")
-                        print("     -> Keeping the highest sampling rate")
+                        print("WARNING: There are more than one ??H trace")
+                        print("*   -> Keeping the highest sampling rate")
                         if stp[0].stats.sampling_rate > stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
@@ -398,7 +398,7 @@ def main():
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
-            sth.remove_response(pre_filt=args.pre_filt, output='DISP')
+            sth.remove_response(pre_filt=args.pre_filt, output=args.units)
             if "P" in args.channels:
                 print("*   -> Removing responses - Pressure data")
                 stp.remove_response(pre_filt=args.pre_filt)
