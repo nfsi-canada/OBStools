@@ -87,7 +87,7 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
 
 def fig_average(f, power, bad, gooddays, ncomp, key=''):
     """
-    Function to plot the averaged spectra (those qualified as 'good' in the 
+    Function to plot the averaged spectra (those qualified as 'good' in the
     QC step). This function is used
     in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
 
@@ -153,7 +153,7 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
 def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
                  save=False, fname='', form='png', **kwargs):
     """
-    Function to plot the averaged cross-spectra (those qualified as 'good' in the 
+    Function to plot the averaged cross-spectra (those qualified as 'good' in the
     QC step). This function is used in the `obs_daily_spectra.py` script.
 
     Parameters
@@ -219,7 +219,7 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
 
 def fig_coh_ph(coh, ph, direc):
     """
-    Function to plot the coherence and phase between the rotated H and Z components, 
+    Function to plot the coherence and phase between the rotated H and Z components,
     used to characterize the tilt direction.
 
     Parameters
@@ -246,7 +246,7 @@ def fig_coh_ph(coh, ph, direc):
         ax1.set_xlabel('Angle from H1')
         ax2.set_xlabel('Angle from H1')
         plt.tight_layout()
-        
+
     else:
         plt.figure()
         plt.subplot(121)
@@ -343,6 +343,100 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     return plt
 
 
+def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
+    """
+    Function to plot the transfer functions available.
+
+    Parameters
+    ----------
+    f : :mod:`~numpy.ndarray`
+        Frequency axis (in Hz)
+    day_comps : Dict
+        Dictionary containing the compliance functions for the daily averages
+    sta_comps : Dict
+        Dictionary containing the compliance functions for the station averages
+    key : str
+        String corresponding to the station key under analysis
+
+    """
+
+    import matplotlib.ticker as mtick
+
+    # Define all possible combinations
+    comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
+
+    # Get max number of subplot
+    nkeys_day = sum(day_list[key] for key in comp_list)
+    nkeys_sta = sum(sta_list[key] for key in comp_list)
+    ncomps = max(nkeys_day, nkeys_sta)
+
+    if ncomps == 1:
+        fig = plt.figure(figsize=(6, 1.75))
+    else:
+        fig = plt.figure(figsize=(6, 1.33333333*ncomps))
+
+    for j, key in enumerate(comp_list):
+
+        if not day_list[key] and not sta_list[key]:
+            continue
+
+        ax = fig.add_subplot(ncomps, 2, j*2+1)
+
+        if day_list[key]:
+            for i in range(len(day_comps)):
+                ax.loglog(
+                    f, np.abs(day_comps[i][key][0]), 'gray', lw=0.5)
+        if sta_list[key]:
+            ax.loglog(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
+
+        if key == 'ZP':
+            ax.set_ylim(1.e-20, 1.e0)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Compliance: ZP',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZP-21':
+            ax.set_ylim(1.e-20, 1.e0)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Compliance: ZP-21',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZP-H':
+            ax.set_ylim(1.e-20, 1.e0)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Compliance: ZP-H',
+                         fontdict={'fontsize': 8})
+
+        ax = fig.add_subplot(ncomps, 2, j*2+2)
+
+        if day_list[key]:
+            for i in range(len(day_comps)):
+                ax.semilogx(
+                    f, np.abs(day_comps[i][key][1]), 'gray', lw=0.5)
+        if sta_list[key]:
+            ax.semilogx(f, np.abs(sta_comps[key][1]), 'k', lw=0.5)
+
+        if key == 'ZP':
+            ax.set_ylim(0., 1.)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Coherence: ZP',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZP-21':
+            ax.set_ylim(0., 1.)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Coherence: ZP-21',
+                         fontdict={'fontsize': 8})
+        elif key == 'ZP-H':
+            ax.set_ylim(0., 1.)
+            ax.set_xlim(1.e-4, 2.5)
+            ax.set_title(skey+' Coherence: ZP-H',
+                         fontdict={'fontsize': 8})
+
+
+    ax.set_xlabel('Frequency (Hz)')
+    plt.tight_layout()
+
+    return plt
+
+
 def fig_event_raw(evstream, fmin, fmax):
     """
     Function to plot the raw (although bandpassed) seismograms.
@@ -412,7 +506,7 @@ def fig_event_corrected(evstream, TF_list):
     evstream : :class:`~obtsools.classes.EventStream`
         Container for the event stream data
     Tf_list : list
-        List of Dictionary elements of transfer functions used 
+        List of Dictionary elements of transfer functions used
         for plotting the corrected vertical component.
 
     """
@@ -486,4 +580,3 @@ def fig_event_corrected(evstream, TF_list):
     plt.tight_layout()
 
     return plt
-    

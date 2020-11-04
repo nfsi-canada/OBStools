@@ -1428,7 +1428,7 @@ class TFNoise(object):
         available for the power, cross and rotated spectra:
         [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]
     tilt : float
-        Tile direction from maximum coherence between rotated `H1` and
+        Tilt direction from maximum coherence between rotated `H1` and
         `HZ` components
     tf_list : Dict
         Dictionary of possible transfer functions given the available
