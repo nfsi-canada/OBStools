@@ -319,7 +319,8 @@ def main():
             fname = stkey + '.' + 'av_coherence'
             plot = plotting.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
                               'Coherence', stanoise.ncomp, key=stkey, lw=0.5)
-            if plotpath.is_dir():
+            # if plotpath.is_dir():
+            if plotpath:
                 plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
@@ -328,7 +329,8 @@ def main():
             fname = stkey + '.' + 'av_admittance'
             plot = plotting.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
                               'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
-            if plotpath.is_dir():
+#            if plotpath.is_dir():
+            if plotpath:
                 plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
@@ -337,7 +339,8 @@ def main():
             fname = stkey + '.' + 'av_phase'
             plot = plotting.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
                               'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
-            if plotpath.is_dir():
+#            if plotpath.is_dir():
+            if plotpath:
                 plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
