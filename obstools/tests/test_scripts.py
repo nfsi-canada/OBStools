@@ -165,11 +165,9 @@ def test_StaNoise():
                ad_2Z_all, ad_2P_all, ad_ZP_all)
 
     stanoise.QC_sta_spectra(pd=args.pd, tol=args.tol, alpha=args.alpha,
-                            fig_QC=True, debug=False,
-                            save='tmp', form='png')
+                            fig_QC=True, debug=False)
 
-    stanoise.average_sta_spectra(fig_average=True,
-                                 save='tmp', form='png')
+    stanoise.average_sta_spectra(fig_average=True)
 
     plot = plotting.fig_av_cross(stanoise.f, coh,
                                  stanoise.gooddays,
