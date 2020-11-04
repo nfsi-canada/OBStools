@@ -1,4 +1,6 @@
 from obstools.atacr import DayNoise, StaNoise, TFNoise, EventStream
+from obstools.comply import Comply
+from . import get_meta
 
 def test_daynoise_demo():
     return DayNoise('demo')
@@ -46,3 +48,16 @@ def test_tfnoise_sta_demo():
     tfnoise_sta.transfer_func()
     return tfnoise_sta
 
+def test_comply_day_demo():
+    daynoise = test_day_average()
+    sta = get_meta.get_stdb()
+    comply_day = Comply(objnoise=daynoise, sta=sta)
+    comply_day.calculate_compliance()
+    return comply_day
+
+def test_comply_sta_demo():
+    stanoise = test_sta_average()
+    sta = get_meta.get_stdb()
+    comply_sta = Comply(objnoise=stanoise, sta=sta)
+    comply_sta.calculate_compliance()
+    return comply_sta
