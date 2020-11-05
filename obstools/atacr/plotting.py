@@ -384,33 +384,38 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
 
         if day_list[key]:
             for i in range(len(day_comps)):
-                ax.loglog(
-                    f, np.abs(day_comps[i][key][0]), 'gray', lw=0.5)
+                ax.plot(
+                    f, np.abs(day_comps[i][key][0]), 'gray',
+                    alpha=0.3, lw=0.5)
         if sta_list[key]:
-            ax.loglog(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
+            ax.plot(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_ylim(1.e-20, 1.e0)
-            ax.set_xlim(1.e-4, 2.5)
+            ax.set_ylim(0., 3.e-10)
+            ax.set_xlim(0.005, 0.02)
             ax.set_title(skey+' Compliance: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_ylim(1.e-20, 1.e0)
-            ax.set_xlim(1.e-4, 2.5)
+            ax.set_ylim(0., 3.e-10)
+            ax.set_xlim(0.005, 0.02)
             ax.set_title(skey+' Compliance: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_ylim(1.e-20, 1.e0)
-            ax.set_xlim(1.e-4, 2.5)
+            ax.set_ylim(0., 3.e-10)
+            ax.set_xlim(0.005, 0.02)
             ax.set_title(skey+' Compliance: ZP-H',
                          fontdict={'fontsize': 8})
+
+        ax.axvline(0.005, ls='--', c='k', lw=0.75)
+        ax.axvline(0.02, ls='--', c='k', lw=0.75)
 
         ax = fig.add_subplot(ncomps, 2, j*2+2)
 
         if day_list[key]:
             for i in range(len(day_comps)):
                 ax.semilogx(
-                    f, np.abs(day_comps[i][key][1]), 'gray', lw=0.5)
+                    f, np.abs(day_comps[i][key][1]), 'gray',
+                    alpha=0.3, lw=0.5)
         if sta_list[key]:
             ax.semilogx(f, np.abs(sta_comps[key][1]), 'k', lw=0.5)
 
@@ -430,6 +435,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
             ax.set_title(skey+' Coherence: ZP-H',
                          fontdict={'fontsize': 8})
 
+        ax.axvline(0.005, ls='--', c='k', lw=0.75)
+        ax.axvline(0.02, ls='--', c='k', lw=0.75)
 
     ax.set_xlabel('Frequency (Hz)')
     plt.tight_layout()

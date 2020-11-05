@@ -326,34 +326,45 @@ def main():
                 year = filespec.name.split('.')[0]
                 jday = filespec.name.split('.')[1]
 
-                print()
-                print(
-                    "*********************************************" +
-                    "***************")
-                print("* Calculating transfer functions for key " +
-                      stkey+" and day "+year+"."+jday)
                 tstamp = year+'.'+jday+'.'
-                filename = complpath / (tstamp + 'transfunc.pkl')
+                filename = complpath / (tstamp + 'compliance.pkl')
+                if filename.exists():
+                    if not args.ovr:
+                        print("*   -> file " + str(filename) +
+                              " exists - continuing")
+                        daycomply = pickle.load(open(filename, 'rb'))
+                        f = daycomply.f
+                        # Append to list of transfer functions
+                        day_comply_functions.append(daycomply.complyfunc)
+                        continue
 
-                # Load file
-                file = open(filespec, 'rb')
-                daynoise = pickle.load(file)
-                file.close()
+                else:
+                    print()
+                    print(
+                        "*********************************************" +
+                        "***************")
+                    print("* Calculating compliance functions for key " +
+                          stkey+" and day "+year+"."+jday)
 
-                # Load spectra into TFNoise object
-                daycomply = Comply(objnoise=daynoise, sta=sta)
+                    # Load file
+                    file = open(filespec, 'rb')
+                    daynoise = pickle.load(file)
+                    file.close()
 
-                # Calculate the transfer functions
-                daycomply.calculate_compliance()
+                    # Load spectra into TFNoise object
+                    daycomply = Comply(objnoise=daynoise, sta=sta)
 
-                # Store the frequency axis
-                f = daycomply.f
+                    # Calculate the transfer functions
+                    daycomply.calculate_compliance()
 
-                # Append to list of transfer functions
-                day_comply_functions.append(daycomply.complyfunc)
+                    # Store the frequency axis
+                    f = daycomply.f
 
-                # Save daily transfer functions to file
-                daycomply.save(filename)
+                    # Append to list of transfer functions
+                    day_comply_functions.append(daycomply.complyfunc)
+
+                    # Save daily transfer functions to file
+                    daycomply.save(filename)
 
         if not args.skip_clean:
 
@@ -362,41 +373,53 @@ def main():
 
                 name = fileavst.name.split('avg_sta')
 
-                print()
-                print(
-                    "*********************************************" +
-                    "***************")
-                print("* Calculating transfer functions for key " +
-                      stkey+" and range "+name[0])
-                filename = complpath / (name[0] + 'transfunc.pkl')
+                filename = complpath / (name[0] + 'compliance.pkl')
 
-                # Load file
-                file = open(fileavst, 'rb')
-                stanoise = pickle.load(file)
-                file.close()
+                if filename.exists():
+                    if not args.ovr:
+                        print("*   -> file " + str(filename) +
+                              " exists - continuing")
+                        stacomply = pickle.load(open(filename, 'rb'))
+                        f = stacomply.f
+                        # Extract the transfer functions
+                        sta_comply_functions = stacomply.complyfunc
+                        continue
 
-                # Load spectra into TFNoise object - no Rotation object
-                # for station averages
-                rotation = Rotation(None, None, None)
-                stacomply = Comply(objnoise=stanoise, sta=sta)
+                else:
 
-                # Calculate the transfer functions
-                stacomply.calculate_compliance()
+                    print()
+                    print(
+                        "*********************************************" +
+                        "***************")
+                    print("* Calculating compliance functions for key " +
+                          stkey+" and range "+name[0])
+                    # Load file
+                    file = open(fileavst, 'rb')
+                    stanoise = pickle.load(file)
+                    file.close()
 
-                # Store the frequency axis
-                f = stacomply.f
+                    # Load spectra into TFNoise object - no Rotation object
+                    # for station averages
+                    rotation = Rotation(None, None, None)
+                    stacomply = Comply(objnoise=stanoise, sta=sta)
 
-                # Extract the transfer functions
-                sta_comply_functions = stacomply.complyfunc
+                    # Calculate the transfer functions
+                    stacomply.calculate_compliance()
 
-                # Save average transfer functions to file
-                stacomply.save(filename)
+                    # Store the frequency axis
+                    f = stacomply.f
+
+                    # Extract the transfer functions
+                    sta_comply_functions = stacomply.complyfunc
+
+                    # Save average transfer functions to file
+                    stacomply.save(filename)
 
         if args.fig:
             fname = stkey + '.' + 'compliance'
             plot = plotting.fig_comply(
-                f, day_comply_functions, daynoise.tf_list,
-                sta_comply_functions, stanoise.tf_list, skey=stkey)
+                f, day_comply_functions, daycomply.tf_list,
+                sta_comply_functions, stacomply.tf_list, skey=stkey)
 
             if plotpath:
                 plot.savefig(plotpath / (fname + '.' + args.form),
