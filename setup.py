@@ -32,7 +32,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8'],
-    install_requires=['numpy', 'obspy', 'stdb'],
+    install_requires=['numpy', 'obspy', 'stdb', 'pandas'],
     python_requires='>=3.6',
     packages=['obstools'],
     scripts=scripts)
