@@ -35,4 +35,5 @@ can be used through command-line scripts.
    :caption: Modules
 
    atacr
+   comply
 

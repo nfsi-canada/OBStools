@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Comply &mdash; Home 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ATaCR" href="atacr.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Home
+          
+
+          
+            
+            <img src="_static/obstools_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Quick Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="links.html">GitHub Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="links.html#references">References</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="obstools.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obstools.html#installation">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="atacr.html">ATaCR</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Comply</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compliance">Compliance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#base-classes">Base Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Comply</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comply-calculate-py"><code class="docutils literal notranslate"><span class="pre">comply_calculate.py</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compliance-calculation">4. Compliance calculation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Home</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Comply</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/comply.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="comply">
+<h1>Comply<a class="headerlink" href="#comply" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">comply</span></code> is a module for the calculation of compliance and coherence
+functions from OBS stations. These functions can be used to retrieve shear-wave
+velocity structure in the shallow subsurface. The compliance and coherence functions
+use either <a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> or <a class="reference internal" href="atacr.html#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a>
+objects as input. If horizontal components are available in these objects, tilt
+is removed prior to compliance and coherence calculations. For more details on the
+theory and applications, we refer the interested reader to the following papers:</p>
+<ul class="simple">
+<li><p>Crawford, W.C., S. Webb, S.C, and Hildebrand, J. (1991). Sea-floor compliance
+observed by long-period pressure and displacement measurements, J. Geophys. Res.,
+96(B10), 16,151–16,160.</p></li>
+<li><p>Doran, A., and Laske, G. (2019). Seismic structure of marine sediments and upper
+oceanic crust surrounding Hawaii, J. Geophys. Res., 124, 2038-2056,
+<a class="reference external" href="https://doi.org/10.1029/2018JB016548">https://doi.org/10.1029/2018JB016548</a>.</p></li>
+<li><p>Zha, Y., and Webb, S.C. (2016). Crustal shear velocity structure in the Southern Lau
+Basin constrained by seafloor compliance, J. Geophys.  Res., 121, 3220-3237,
+<a class="reference external" href="https://doi.org/10.1002/2015JB012688">https://doi.org/10.1002/2015JB012688</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="compliance">
+<h2>Compliance<a class="headerlink" href="#compliance" title="Permalink to this headline">¶</a></h2>
+<p><strong>Compliance</strong></p>
+<p>Compliance is defined as the spectral ratio between pressure and vertical
+displacement data. Compliance arises from seafloor deformation due
+to infragravity wave effects, which propagate through the deep
+oceans with periods longer than 30 seconds. The normalized compliance
+<span class="math notranslate nohighlight">\(\eta(\omega)\)</span> is defined as</p>
+<div class="math notranslate nohighlight">
+\[\eta(\omega) = k(omega)\frac{u_z(omega)}{p(\omega)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\omega\)</span> is the angular frequency, <span class="math notranslate nohighlight">\(k\)</span> is the wavenumber,
+<span class="math notranslate nohighlight">\(u_z\)</span> is the vertical displacement spectrum and <span class="math notranslate nohighlight">\(p\)</span> is the
+pressure spectrum. The wavenumber <span class="math notranslate nohighlight">\(k\)</span> is obtained by solving the
+dispersion relation</p>
+<div class="math notranslate nohighlight">
+\[\omega = gk(omega)\tanh(k(\omega)H)\]</div>
+<p>where <span class="math notranslate nohighlight">\(g\)</span> is the gravitational acceleration and <span class="math notranslate nohighlight">\(H\)</span> is
+the seafloor depth (positive downward).</p>
+<p>Tilting of the OBS sensor due to seafloor currents can obfuscate the
+coherence between vertical and pressure components in the infra-gravity band.
+Tilt noise is therefore removed from the vertical component data prior
+to calculating compliance.</p>
+</div>
+<div class="section" id="api-documentation">
+<h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="base-classes">
+<h3>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this headline">¶</a></h3>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">comply</span></code> defines the following base classe:</p>
+<ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code></p></li>
+</ul>
+<p>The class <code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code> contains attributes
+and methods for the calculation of the compliance and coherence functions
+from noise traces. A <cite>Comply</cite> object works with
+either one of <a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> and
+<a class="reference internal" href="atacr.html#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> objects to calculate all possible
+compliance and coherence functions across all available components.
+These transfer functions are saved as attributes of the object in a Dictionary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the examples below, the SAC data were obtained and pre-processed
+using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>. See the
+script and tutorial for details.</p>
+</div>
+<div class="section" id="id1">
+<h4>Comply<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+</div>
+<div class="section" id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>There is only one Python scripts that accompanies <code class="docutils literal notranslate"><span class="pre">~obstools.comply</span></code>. This script can be used
+in bash scripts to automate data processing. Please see the <code class="xref py py-mod docutils literal notranslate"><span class="pre">atacr</span></code>
+module and scripts to prepare the data for use in the following script.
+This script is called:</p>
+<ul class="simple">
+<li><p>comply_calculate.py</p></li>
+</ul>
+<div class="section" id="comply-calculate-py">
+<h3><code class="docutils literal notranslate"><span class="pre">comply_calculate.py</span></code><a class="headerlink" href="#comply-calculate-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="description">
+<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
+<p>Calculates compliance and coherence functions using the noise windows flagged as <em>good</em>, for either
+a single day (from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code>) or for those averaged over several days
+(from <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.
+Station selection is specified by a network and station code. The database is
+provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
+</div>
+<div class="section" id="usage">
+<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ comply_calculate.py -h
+usage: comply_calculate.py [options] &lt;Station Database&gt;
+
+Script used to calculate compliance functions between various components. The noise data can be those obtained
+from the daily spectra (i.e., from `atacr_daily_spectra.py`) or those obtained from the averaged noise spectra
+(i.e., from `atacr_clean_spectra.py`). Flags are available to specify the source of data to use as well as the
+time range over which to calculate the transfer functions. The stations are processed one by one and the data
+are stored to disk.
+
+positional arguments:
+  indb                  Station Database to process from.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --keys STKEYS         Specify a comma separated list of station keys for which to perform the analysis.
+                        These must be contained within the station database. Partial keys will be used to
+                        match against those in the dictionary. For instance, providing IU will match with all
+                        stations in the IU network. [Default processes all stations in the database]
+  -O, --overwrite       Force the overwriting of pre-existing data. [Default False]
+  --save-format SAVEFORMAT
+                        Specify the format of the output files. Options are: &#39;pkl&#39; or &#39;csv&#39;. [Default &#39;pkl&#39;]
+
+Time Search Settings:
+  Time settings associated with searching for day-long seismograms
+
+  --start STARTT        Specify a UTCDateTime compatible string representing the start day for the data
+                        search. This will override any station start times. [Default start date of each
+                        station in database]
+  --end ENDT            Specify a UTCDateTime compatible string representing the start time for the data
+                        search. This will override any station end times. [Default end date of each station in
+                        database]
+
+Parameter Settings:
+  Miscellaneous default values and settings
+
+  --skip-daily          Skip daily spectral averages in construction of compliance and coherence functions.
+                        [Default False]
+  --skip-clean          Skip cleaned spectral averages in construction of compliance and coherence functions.
+                        Defaults to True if data cannot be found in default directory. [Default False]
+
+Figure Settings:
+  Flags for plotting figures
+
+  --fig                 Plot compliance and coherence functions figure. [Default does not plot figure]
+  --save-fig            Set this option if you wish to save the figure(s). [Default does not save figure]
+  --format FORM         Specify format of figure. Can be any one of the validmatplotlib formats: &#39;png&#39;, &#39;jpg&#39;,
+                        &#39;eps&#39;, &#39;pdf&#39;. [Default &#39;png&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here we build on the steps already carried out in the <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> tutorial. Specifically,
+steps <code class="docutils literal notranslate"><span class="pre">0</span></code> through <code class="docutils literal notranslate"><span class="pre">3</span></code> should be done prior to performing the following step.</p>
+</div>
+<div class="section" id="compliance-calculation">
+<h3>4. Compliance calculation<a class="headerlink" href="#compliance-calculation" title="Permalink to this headline">¶</a></h3>
+<p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the compliance and coherence
+functions across all available components can be calculated. By default the software
+will calculate the ones for which the spectral averages are available.</p>
+<p>If no horizontal components are available (i.e., only <code class="docutils literal notranslate"><span class="pre">?HZ</span></code> and <code class="docutils literal notranslate"><span class="pre">?XH?</span></code> components are available),
+the only compliance function possible is:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
+</ul>
+<p>If horizontal components are available, the
+following compliance functions are possible:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP-21</span></code></p></li>
+</ul>
+<p>If you are using a <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> object to calculate the compliance functions,
+the following may also be possible (if all components are available):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ZP-H</span></code></p></li>
+</ul>
+<p>In this example we calculate all available compliance functions for all available data.
+In this case we do not need to specify any option and type in a terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ comply_calculate.py M08A.pkl
+
+Path to COMPL_STA/7D.M08A doesn&#39;t exist - creating it
+
+
+|===============================================|
+|===============================================|
+|                       M08A                    |
+|===============================================|
+|===============================================|
+|  Station: 7D.M08A                             |
+|      Channel: BH; Locations: --               |
+|      Lon: -124.90; Lat:  44.12                |
+|      Start time: 2011-10-20 00:00:00          |
+|      End time:   2012-07-18 23:59:59          |
+|-----------------------------------------------|
+
+************************************************************
+* Calculating compliance functions for key 7D.M08A and day 2012.069
+
+************************************************************
+* Calculating compliance functions for key 7D.M08A and day 2012.088
+
+    ...
+
+**********************************************************************
+* Calculating compliance functions for key 7D.M08A and range 2011.293-2012.200.
+</pre></div>
+</div>
+<p>Note how the <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are read randomly from disk, followed by the
+<code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> object. The result is a <code class="docutils literal notranslate"><span class="pre">Comply</span></code> object that is saved to a newly
+created folder called <code class="docutils literal notranslate"><span class="pre">COMP_STA/7D.M08A/</span></code>. Once the objects are saved to file,
+you should  use the option <code class="docutils literal notranslate"><span class="pre">-O</span></code> to overwrite any file on disk.</p>
+<p>We can produce a Figure by re-running the previous command with the options
+<code class="docutils literal notranslate"><span class="pre">--fig</span></code>. We also specify the low-frequency limit to be 0.02 Hz with the option
+<code class="docutils literal notranslate"><span class="pre">--f0=0.02</span></code>, which we select based on the observed
+non-physical kink in the compliance curves (you can see it by ignoring the
+argument <code class="docutils literal notranslate"><span class="pre">--f0</span></code>)</p>
+<div class="figure align-center">
+<img alt="_images/Figure_comply.png" src="_images/Figure_comply.png" />
+</div>
+<p>Figure 1: Coherence and compliance functions for the component combinations of interest,
+as indicated in the title of each subplot. This example is for the month of March 2012
+for station M08A. The daily compliance functions are shown in grey and the average
+calculated for the whole month is shown in black.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="atacr.html" class="btn btn-neutral float-left" title="ATaCR" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Pascal Audet, Helen Janiszewski
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
