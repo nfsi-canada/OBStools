@@ -80,9 +80,6 @@ These transfer functions are saved as attributes of the object in a Dictionary.
     using the accompanying scripts ``atacr_download_data.py``. See the 
     script and tutorial for details.
 
-Comply
-------
-
 .. autoclass:: obstools.comply.classes.Camply
    :members:
 
@@ -92,9 +89,6 @@ Scripts
 There is only one Python scripts that accompanies ``~obstools.comply``. This script can be used
 in bash scripts to automate data processing. Please see the :mod:`~obstools.atacr` 
 module and scripts to prepare the data for use in the following script.
-This script is called:
-
-- comply_calculate.py
 
 ``comply_calculate.py``
 ++++++++++++++++++++++++++++++++++
