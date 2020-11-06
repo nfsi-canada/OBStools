@@ -29,8 +29,8 @@ np.seterr(all='ignore')
 
 class Comply(object):
     """
-    A Comply object contains attributes that store the transfer function
-    information from multiple components (and component combinations).
+    A Comply object contains attributes that calculate and store the
+    compliance and coherence functions for the available channels.
 
     Note
     ----
@@ -38,58 +38,26 @@ class Comply(object):
     :class:`~obstools.atacr.classes.DayNoise` or
     :class:`~obstools.atacr.classes.StaNoise` object. Each individual
     spectral quantity is unpacked as an object attribute, but all of them
-    are discarded as the object is saved to disk and new container objects
-    are defined and saved.
+    are discarded as the object is saved to disk.
 
     Attributes
     ----------
+    sta : :class:`~stdb.StdbElement`
+        An instance of an stdb object
     f : :class:`~numpy.ndarray`
         Frequency axis for corresponding time sampling parameters
     c11 : `numpy.ndarray`
         Power spectra for component `H1`. Other identical attributes are
         available for the power, cross and rotated spectra:
         [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]
-    tilt : float
-        Tilt direction from maximum coherence between rotated `H1` and
-        `HZ` components
     tf_list : Dict
-        Dictionary of possible transfer functions given the available
+        Dictionary of possible transfer functions from the available
+        components (obtained from the
+        :class:`~obstools.atacr.classes.DayNoise` or the
+        :class:`~obstools.atacr.classes.StaNoise` noise objects)
+    complyfunc : Dict
+        Dictionary of compliance and coherence functions given the available
         components.
-
-
-    Examples
-    --------
-
-    Initialize a TFNoise object with a DayNoise object. The DayNoise
-    object must be processed for QC and averaging, otherwise the TFNoise
-    object will not initialize.
-
-    >>> from obstools.atacr import DayNoise, TFNoise
-    >>> daynoise = DayNoise('demo')
-    Uploading demo data - March 04, 2012, station 7D.M08A
-    >>> tfnoise = TFNoise(daynoise)
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/Users/pascalaudet/Softwares/Python/Projects/dev/OBStools/obstools/atacr/classes.py", line 1215, in __init__
-    Exception: Error: Noise object has not been processed (QC and averaging) - aborting
-
-    Now re-initialized with a processed DayNoise object
-
-    >>> from obstools.atacr import DayNoise, TFNoise
-    >>> daynoise = DayNoise('demo')
-    Uploading demo data - March 04, 2012, station 7D.M08A
-    >>> daynoise.QC_daily_spectra()
-    >>> daynoise.average_daily_spectra()
-    >>> tfnoise = TFNoise(daynoise)
-
-    Initialize a TFNoise object with a processed StaNoise object
-
-    >>> from obstools.atacr import StaNoise, TFNoise
-    >>> stanoise = StaNoise('demo')
-    Uploading demo data - March 01 to 04, 2012, station 7D.M08A
-    >>> stanoise.QC_sta_spectra()
-    >>> stanoise.average_sta_spectra()
-    >>> tfnoise = TFNoise(stanoise)
 
     """
 
@@ -138,46 +106,57 @@ class Comply(object):
 
     def calculate_compliance(self):
         """
-        Method to calculate transfer functions between multiple
-        components (and component combinations) from the averaged
-        (daily or station-averaged) noise spectra.
+        Method to calculate compliance and coherence functions from the
+        averaged (daily or station-averaged) noise spectra.
 
         Attributes
         ----------
-        transfunc : :class:`~obstools.atacr.classes.TFNoise.TfDict`
-            Container Dictionary for all possible transfer functions
+        complyfunc : Dict
+            Container Dictionary for all possible compliance and
+            coherence functions
 
         Examples
         --------
 
-        Calculate transfer functions for a DayNoise object
+        Calculate compliance and coherence functions for a DayNoise object
 
-        >>> from obstools.atacr import DayNoise, TFNoise
+        >>> from obstools.atacr import DayNoise
+        >>> from obstools.comply import Comply
         >>> daynoise = DayNoise('demo')
         Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra()
-        >>> tfnoise = TFNoise(daynoise)
-        >>> tfnoise.transfer_func()
-        >>> tfnoise.transfunc.keys()
-        dict_keys(['ZP', 'Z1', 'Z2-1', 'ZP-21', 'ZH', 'ZP-H'])
+        >>> daycomply = Comply(objnoise=daynoise, sta=sta)
+        >>> daycomply.calculate_compliance()
+        >>> tfnoise.complyfunc.keys()
+        dict_keys(['ZP', 'ZP-21', 'ZP-H'])
 
-        Calculate transfer functions for a StaNoise object
+        Calculate compliance and coherence functions for a StaNoise object
 
-        >>> from obstools.atacr import StaNoise, TFNoise
+        >>> from obstools.atacr import StaNoise
+        >>> from obstools.comply import Comply
         >>> stanoise = StaNoise('demo')
         Uploading demo data - March 01 to 04, 2012, station 7D.M08A
         >>> stanoise.QC_sta_spectra()
         >>> stanoise.average_sta_spectra()
-        >>> tfnoise = TFNoise(stanoise)
-        >>> tfnoise.transfer_func()
-        >>> tfnoise.transfunc.keys()
-        dict_keys(['ZP', 'Z1', 'Z2-1', 'ZP-21'])
+        >>> stacomply = Comply(objnoise=stanoise, sta=sta)
+        >>> stacomply.calculate_compliance()
+        >>> stacomply.complyfunc.keys()
+        dict_keys(['ZP', 'ZP-21'])
 
         """
 
-        # Approximate wavenumber from dispersion relation
         def wavenumber(omega, H):
+            """
+            Function to approximate wavenumber from dispersion relation
+
+            H is depth below the seafloor, in meters
+            omega is a vector of positive angular frequencies
+
+            Stephen G. Mosher, 2020
+
+            """
+
             import numpy.polynomial as poly
 
             g = 9.79329
@@ -204,10 +183,9 @@ class Comply(object):
 
             k = np.zeros(len(omega))
 
-
             for i, om in enumerate(omega):
 
-                if i==0:
+                if i == 0:
                     k[i] = 0.
                 else:
 
@@ -231,11 +209,14 @@ class Comply(object):
 
             return k
 
-        # Calculate wavenumber
+        # Calculate wavenumber - careful here, elevation is negative
         k = wavenumber(2.*np.pi*self.f, -1.*self.sta.elevation*1.e3)
 
+        # Initialize empty dictionary
         complyfunc = self.ComplyDict()
 
+        # Cycle through all available transfer functions in the objnoise
+        # object
         for key, value in self.tf_list.items():
 
             if key == 'ZP':
@@ -303,8 +284,7 @@ class Comply(object):
 
             self.complyfunc = complyfunc
 
-
-    def save(self, filename):
+    def save(self, filename, form='pkl'):
         """
         Method to save the object to file using `~Pickle`.
 
@@ -317,23 +297,71 @@ class Comply(object):
         --------
 
         Following from the example outlined in method
-        :func:`~obstools.atacr.classes.EventStream.correct_data`, we simply
+        :func:`~obstools.comply.classes.Comply.calculate_compliance`, we simply
         save the final object
 
-        >>> evstream.save('evstream_demo.pkl')
+        >>> daycomply.save('daycomply_demo.pkl')
 
         Check that object has been saved
 
         >>> import glob
-        >>> glob.glob("./evstream_demo.pkl")
-        ['./evstream_demo.pkl']
+        >>> glob.glob("./daycomply_demo.pkl")
+        ['./daycomply_demo.pkl']
 
         """
 
         if not self.complyfunc:
             print("Warning: saving before having calculated the compliance " +
-                  "functions")
+                  "and coherence functions")
 
-        file = open(filename, 'wb')
-        pickle.dump(self, file)
-        file.close()
+        if form == 'pkl':
+
+            # Remove traces to save disk space
+            del self.c11
+            del self.c22
+            del self.cZZ
+            del self.cPP
+            del self.cHH
+            del self.cHZ
+            del self.cHP
+            del self.c12
+            del self.c1Z
+            del self.c1P
+            del self.c2Z
+            del self.c2P
+            del self.cZP
+
+            file = open(filename.parent / (filename.name + '.' + form), 'wb')
+            pickle.dump(self, file)
+            file.close()
+
+        elif form == 'csv':
+
+            import pandas as pd
+
+            if 'ZP-H' in self.complyfunc:
+                df = pd.DataFrame(
+                    {'Frequency': self.f,
+                     'Compliance ZP': self.complyfunc['ZP'][0],
+                     'Coherence ZP': self.complyfunc['ZP'][1],
+                     'Compliance ZP-21': self.complyfunc['ZP-21'][0],
+                     'Coherence ZP-21': self.complyfunc['ZP-21'][1],
+                     'Compliance ZP-H': self.complyfunc['ZP-H'][0],
+                     'Coherence ZP-H': self.complyfunc['ZP-H'][1]})
+            elif 'ZP-21' in self.complyfunc:
+                df = pd.DataFrame(
+                    {'Frequency': self.f,
+                     'Compliance ZP': self.complyfunc['ZP'][0],
+                     'Coherence ZP': self.complyfunc['ZP'][1],
+                     'Compliance ZP-21': self.complyfunc['ZP-21'][0],
+                     'Coherence ZP-21': self.complyfunc['ZP-21'][1]})
+            else:
+                df = pd.DataFrame(
+                    {'Frequency': self.f,
+                     'Compliance ZP': self.complyfunc['ZP'][0],
+                     'Coherence ZP': self.complyfunc['ZP'][1]})
+
+            df.to_csv(filename.parent / (filename.name +
+                      '.' + form), index=False)
+
+        return
