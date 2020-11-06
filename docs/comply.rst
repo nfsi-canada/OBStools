@@ -37,7 +37,7 @@ oceans with periods longer than 30 seconds. The normalized compliance
 
 .. math::
 
-   \eta(\omega) = k(omega)\frac{u_z(omega)}{p(\omega)}
+   \eta(\omega) = k(\omega)\frac{u_z(\omega)}{p(\omega)}
 
 where :math:`\omega` is the angular frequency, :math:`k` is the wavenumber,
 :math:`u_z` is the vertical displacement spectrum and :math:`p` is the 
@@ -46,7 +46,7 @@ dispersion relation
 
 .. math::
 
-   \omega = gk(omega)\tanh(k(\omega)H)
+   \omega = gk(\omega)\tanh(k(\omega)H)
 
 where :math:`g` is the gravitational acceleration and :math:`H` is
 the seafloor depth (positive downward). 
