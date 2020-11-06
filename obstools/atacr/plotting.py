@@ -343,7 +343,7 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     return plt
 
 
-def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
+def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
     """
     Function to plot the transfer functions available.
 
@@ -361,6 +361,13 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
     """
 
     import matplotlib.ticker as mtick
+
+    # Get station information
+    sta_key = sta.network + '.' + sta.station
+    sta_H = -1.*sta.elevation*1.e3
+
+    # Calculate theoretical frequency limit for infra-gravity waves
+    f_c = np.sqrt(9.81/np.pi/sta_H)/2.
 
     # Define all possible combinations
     comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
@@ -384,30 +391,28 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
 
         if day_list[key]:
             for i in range(len(day_comps)):
-                ax.plot(
-                    f, np.abs(day_comps[i][key][0]), 'gray',
-                    alpha=0.3, lw=0.5)
+                compliance = np.abs(day_comps[i][key][0])
+                ax.plot(f, compliance, 'gray', alpha=0.3, lw=0.5)
+                ax.set_xlim(f_0, f_c)
+                ytop = np.max(compliance[(f>f_0) & (f<f_c)])
+                ybot = np.min(compliance[(f>f_0) & (f<f_c)])
+                ax.set_ylim(ybot, ytop)
+
         if sta_list[key]:
             ax.plot(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_ylim(0., 3.e-10)
-            ax.set_xlim(0.005, 0.02)
-            ax.set_title(skey+' Compliance: ZP',
+            ax.set_title(sta_key+' Compliance: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_ylim(0., 3.e-10)
-            ax.set_xlim(0.005, 0.02)
-            ax.set_title(skey+' Compliance: ZP-21',
+            ax.set_title(sta_key+' Compliance: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_ylim(0., 3.e-10)
-            ax.set_xlim(0.005, 0.02)
-            ax.set_title(skey+' Compliance: ZP-H',
+            ax.set_title(sta_key+' Compliance: ZP-H',
                          fontdict={'fontsize': 8})
 
-        ax.axvline(0.005, ls='--', c='k', lw=0.75)
-        ax.axvline(0.02, ls='--', c='k', lw=0.75)
+        ax.axvline(f_0, ls='--', c='k', lw=0.75)
+        ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
         ax = fig.add_subplot(ncomps, 2, j*2+2)
 
@@ -420,25 +425,22 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=''):
             ax.semilogx(f, np.abs(sta_comps[key][1]), 'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_ylim(0., 1.)
-            ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Coherence: ZP',
+            ax.set_title(sta_key+' Coherence: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_ylim(0., 1.)
-            ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Coherence: ZP-21',
+            ax.set_title(sta_key+' Coherence: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_ylim(0., 1.)
-            ax.set_xlim(1.e-4, 2.5)
-            ax.set_title(skey+' Coherence: ZP-H',
+            ax.set_title(sta_key+' Coherence: ZP-H',
                          fontdict={'fontsize': 8})
 
-        ax.axvline(0.005, ls='--', c='k', lw=0.75)
-        ax.axvline(0.02, ls='--', c='k', lw=0.75)
+        ax.axvline(f_0, ls='--', c='k', lw=0.75)
+        ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
-    ax.set_xlabel('Frequency (Hz)')
+    axes = plt.gcf().get_axes()
+    axes[-2].set_xlabel('Frequency (Hz)')
+    axes[-1].set_xlabel('Frequency (Hz)')
+
     plt.tight_layout()
 
     return plt

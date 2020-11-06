@@ -84,6 +84,14 @@ def get_comply_arguments(argv=None):
         default=False,
         help="Force the overwriting of pre-existing data. " +
         "[Default False]")
+    parser.add_argument(
+        "--save-format",
+        action="store",
+        type=str,
+        dest="saveformat",
+        default="pkl",
+        help="Specify the format of the output files. Options are: " +
+        "'pkl' or 'csv'. [Default 'pkl']")
 
     # Event Selection Criteria
     DaysGroup = parser.add_argument_group(
@@ -122,14 +130,14 @@ def get_comply_arguments(argv=None):
         dest="skip_daily",
         default=False,
         help="Skip daily spectral averages in construction " +
-        "of transfer functions. [Default False]")
+        "of compliance and coherence functions. [Default False]")
     ConstGroup.add_argument(
         "--skip-clean",
         action="store_true",
         dest="skip_clean",
         default=False,
         help="Skip cleaned spectral averages in " +
-        "construction of transfer functions. Defaults " +
+        "construction of compliance and coherence functions. Defaults " +
         "to True if data cannot be found in default " +
         "directory. [Default False]")
 
@@ -138,11 +146,19 @@ def get_comply_arguments(argv=None):
         title='Figure Settings',
         description="Flags for plotting figures")
     FigureGroup.add_argument(
+        "--f0",
+        action="store",
+        type=float,
+        dest="f0",
+        default=0.005,
+        help="Set the low-frequency limit (in Hz) to plot " +
+        "the compliance functions. [Default is 0.005 Hz]")
+    FigureGroup.add_argument(
         "--fig",
         action="store_true",
         dest="fig",
         default=False,
-        help="Plot compliance function figure. " +
+        help="Plot compliance and coherence functions figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--save-fig",
@@ -195,6 +211,10 @@ def get_comply_arguments(argv=None):
     if args.skip_clean and args.skip_daily:
         parser.error(
             "Error: cannot skip both daily and clean averages")
+
+    if args.saveformat not in ['pkl', 'csv']:
+        parser.error(
+            "Error: Specify either 'pkl' or 'csv' for --save-format")
 
     return args
 
@@ -327,44 +347,46 @@ def main():
                 jday = filespec.name.split('.')[1]
 
                 tstamp = year+'.'+jday+'.'
-                filename = complpath / (tstamp + 'compliance.pkl')
-                if filename.exists():
+                filepkl = complpath / (tstamp + 'compliance.pkl')
+                filename = complpath / (tstamp + 'compliance')
+
+                if filepkl.exists():
                     if not args.ovr:
-                        print("*   -> file " + str(filename) +
-                              " exists - continuing")
-                        daycomply = pickle.load(open(filename, 'rb'))
+                        print("*   -> file " + str(filepkl) +
+                              " exists - loading")
+
+                        # Load Comply objects and append to list
+                        daycomply = pickle.load(open(filepkl, 'rb'))
                         f = daycomply.f
-                        # Append to list of transfer functions
                         day_comply_functions.append(daycomply.complyfunc)
                         continue
 
-                else:
-                    print()
-                    print(
-                        "*********************************************" +
-                        "***************")
-                    print("* Calculating compliance functions for key " +
-                          stkey+" and day "+year+"."+jday)
+                print()
+                print(
+                    "*********************************************" +
+                    "***************")
+                print("* Calculating compliance functions for key " +
+                      stkey+" and day "+year+"."+jday)
 
-                    # Load file
-                    file = open(filespec, 'rb')
-                    daynoise = pickle.load(file)
-                    file.close()
+                # Load file
+                file = open(filespec, 'rb')
+                daynoise = pickle.load(file)
+                file.close()
 
-                    # Load spectra into TFNoise object
-                    daycomply = Comply(objnoise=daynoise, sta=sta)
+                # Load spectra into TFNoise object
+                daycomply = Comply(objnoise=daynoise, sta=sta)
 
-                    # Calculate the transfer functions
-                    daycomply.calculate_compliance()
+                # Calculate the transfer functions
+                daycomply.calculate_compliance()
 
-                    # Store the frequency axis
-                    f = daycomply.f
+                # Store the frequency axis
+                f = daycomply.f
 
-                    # Append to list of transfer functions
-                    day_comply_functions.append(daycomply.complyfunc)
+                # Append to list of transfer functions
+                day_comply_functions.append(daycomply.complyfunc)
 
-                    # Save daily transfer functions to file
-                    daycomply.save(filename)
+                # Save daily transfer functions to file
+                daycomply.save(filename, form=args.saveformat)
 
         if not args.skip_clean:
 
@@ -373,53 +395,54 @@ def main():
 
                 name = fileavst.name.split('avg_sta')
 
-                filename = complpath / (name[0] + 'compliance.pkl')
+                filepkl = complpath / (name[0] + 'compliance.pkl')
+                filename = complpath / (name[0] + 'compliance')
 
-                if filename.exists():
+                if filepkl.exists():
                     if not args.ovr:
-                        print("*   -> file " + str(filename) +
+                        print("*   -> file " + str(filepkl) +
                               " exists - continuing")
-                        stacomply = pickle.load(open(filename, 'rb'))
+
+                        # Load Comply object and append to list
+                        stacomply = pickle.load(open(filepkl, 'rb'))
                         f = stacomply.f
-                        # Extract the transfer functions
                         sta_comply_functions = stacomply.complyfunc
                         continue
 
-                else:
+                print()
+                print(
+                    "*********************************************" +
+                    "***************")
+                print("* Calculating compliance functions for key " +
+                      stkey+" and range "+name[0])
+                # Load file
+                file = open(fileavst, 'rb')
+                stanoise = pickle.load(file)
+                file.close()
 
-                    print()
-                    print(
-                        "*********************************************" +
-                        "***************")
-                    print("* Calculating compliance functions for key " +
-                          stkey+" and range "+name[0])
-                    # Load file
-                    file = open(fileavst, 'rb')
-                    stanoise = pickle.load(file)
-                    file.close()
+                # Load spectra into TFNoise object - no Rotation object
+                # for station averages
+                rotation = Rotation(None, None, None)
+                stacomply = Comply(objnoise=stanoise, sta=sta)
 
-                    # Load spectra into TFNoise object - no Rotation object
-                    # for station averages
-                    rotation = Rotation(None, None, None)
-                    stacomply = Comply(objnoise=stanoise, sta=sta)
+                # Calculate the transfer functions
+                stacomply.calculate_compliance()
 
-                    # Calculate the transfer functions
-                    stacomply.calculate_compliance()
+                # Store the frequency axis
+                f = stacomply.f
 
-                    # Store the frequency axis
-                    f = stacomply.f
+                # Extract the transfer functions
+                sta_comply_functions = stacomply.complyfunc
 
-                    # Extract the transfer functions
-                    sta_comply_functions = stacomply.complyfunc
-
-                    # Save average transfer functions to file
-                    stacomply.save(filename)
+                # Save average transfer functions to file
+                stacomply.save(filename, form=args.saveformat)
 
         if args.fig:
             fname = stkey + '.' + 'compliance'
             plot = plotting.fig_comply(
                 f, day_comply_functions, daycomply.tf_list,
-                sta_comply_functions, stacomply.tf_list, skey=stkey)
+                sta_comply_functions, stacomply.tf_list, sta=sta,
+                f_0=args.f0)
 
             if plotpath:
                 plot.savefig(plotpath / (fname + '.' + args.form),
