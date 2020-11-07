@@ -27,10 +27,8 @@ theory and applications, we refer the interested reader to the following papers:
 Compliance
 **********
 
-**Compliance**
-
 Compliance is defined as the spectral ratio between pressure and vertical
-displacement data. Compliance arises from seafloor deformation due
+displacement data. Compliance arises from vertical seafloor deformation due
 to infragravity wave effects, which propagate through the deep 
 oceans with periods longer than 30 seconds. The normalized compliance
 :math:`\eta(\omega)` is defined as
@@ -59,16 +57,13 @@ to calculating compliance.
 API documentation
 *****************
 
-Base Classes
-++++++++++++
-
-:mod:`~obstools.comply` defines the following base classe:
+:mod:`~obstools.comply` defines the following class:
 
 - :class:`~obstools.comply.classes.Comply`
 
 The class :class:`~obstools.comply.classes.Comply` contains attributes
 and methods for the calculation of the compliance and coherence functions 
-from noise traces. A `Comply` object works with 
+from noise traces. A ``Comply`` object works with 
 either one of :class:`~obstools.atacr.classes.DayNoise` and 
 :class:`~obstools.atacr.classes.StaNoise` objects to calculate all possible
 compliance and coherence functions across all available components. 
@@ -163,8 +158,8 @@ Tutorial
     Here we build on the steps already carried out in the ``ATaCR`` tutorial. Specifically,
     steps ``0`` through ``3`` should be done prior to performing the following step.
 
-4. Compliance calculation
-++++++++++++++++++++++++++
+Compliance calculation
+++++++++++++++++++++++
 
 Once the ``StaNoise`` objects have been produced and saved to disk, the compliance and coherence 
 functions across all available components can be calculated. By default the software

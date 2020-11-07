@@ -101,10 +101,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Comply</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#compliance">Compliance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#base-classes">Base Classes</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#comply-calculate-py"><code class="docutils literal notranslate"><span class="pre">comply_calculate.py</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
@@ -114,7 +111,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#compliance-calculation">4. Compliance calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compliance-calculation">Compliance calculation</a></li>
 </ul>
 </li>
 </ul>
@@ -209,9 +206,8 @@ Basin constrained by seafloor compliance, J. Geophys.  Res., 121, 3220-3237,
 </div>
 <div class="section" id="compliance">
 <h2>Compliance<a class="headerlink" href="#compliance" title="Permalink to this headline">¶</a></h2>
-<p><strong>Compliance</strong></p>
 <p>Compliance is defined as the spectral ratio between pressure and vertical
-displacement data. Compliance arises from seafloor deformation due
+displacement data. Compliance arises from vertical seafloor deformation due
 to infragravity wave effects, which propagate through the deep
 oceans with periods longer than 30 seconds. The normalized compliance
 <span class="math notranslate nohighlight">\(\eta(\omega)\)</span> is defined as</p>
@@ -232,15 +228,13 @@ to calculating compliance.</p>
 </div>
 <div class="section" id="api-documentation">
 <h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="base-classes">
-<h3>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this headline">¶</a></h3>
-<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">comply</span></code> defines the following base classe:</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">comply</span></code> defines the following class:</p>
 <ul class="simple">
 <li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code></p></li>
 </ul>
 <p>The class <code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code> contains attributes
 and methods for the calculation of the compliance and coherence functions
-from noise traces. A <cite>Comply</cite> object works with
+from noise traces. A <code class="docutils literal notranslate"><span class="pre">Comply</span></code> object works with
 either one of <a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> and
 <a class="reference internal" href="atacr.html#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> objects to calculate all possible
 compliance and coherence functions across all available components.
@@ -250,7 +244,6 @@ These transfer functions are saved as attributes of the object in a Dictionary.<
 <p>In the examples below, the SAC data were obtained and pre-processed
 using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>. See the
 script and tutorial for details.</p>
-</div>
 </div>
 </div>
 <div class="section" id="scripts">
@@ -330,7 +323,7 @@ Figure Settings:
 steps <code class="docutils literal notranslate"><span class="pre">0</span></code> through <code class="docutils literal notranslate"><span class="pre">3</span></code> should be done prior to performing the following step.</p>
 </div>
 <div class="section" id="compliance-calculation">
-<h3>4. Compliance calculation<a class="headerlink" href="#compliance-calculation" title="Permalink to this headline">¶</a></h3>
+<h3>Compliance calculation<a class="headerlink" href="#compliance-calculation" title="Permalink to this headline">¶</a></h3>
 <p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the compliance and coherence
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available.</p>
