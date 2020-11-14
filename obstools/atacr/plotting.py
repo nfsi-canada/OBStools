@@ -361,6 +361,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
     """
 
     import matplotlib.ticker as mtick
+    import matplotlib.pyplot as plt
 
     # Get station information
     sta_key = sta.network + '.' + sta.station
@@ -388,6 +389,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
             continue
 
         ax = fig.add_subplot(ncomps, 2, j*2+1)
+        ax.tick_params(labelsize=8)
+        ax.yaxis.get_offset_text().set_fontsize(8)
 
         if day_list[key]:
             for i in range(len(day_comps)):
@@ -415,6 +418,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
         ax = fig.add_subplot(ncomps, 2, j*2+2)
+        ax.tick_params(labelsize=8)
 
         if day_list[key]:
             for i in range(len(day_comps)):
@@ -438,8 +442,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
     axes = plt.gcf().get_axes()
-    axes[-2].set_xlabel('Frequency (Hz)')
-    axes[-1].set_xlabel('Frequency (Hz)')
+    axes[-2].set_xlabel('Frequency (Hz)', fontsize=8)
+    axes[-1].set_xlabel('Frequency (Hz)', fontsize=8)
 
     plt.tight_layout()
 
