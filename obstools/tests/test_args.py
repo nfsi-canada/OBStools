@@ -36,7 +36,7 @@ def test_get_correct_arguments():
 #     db = get_meta.get_stdb()
 #     stkey = 'YH.LOBS3'
 
-#     outdir = tmp_path / args.saveloc 
+#     outdir = tmp_path / args.saveloc
 #     if not outdir.exists():
 #         outdir.mkdir()
 

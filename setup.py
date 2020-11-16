@@ -3,6 +3,7 @@ from os import listdir
 import re
 from numpy.distutils.core import setup
 from pathlib import Path
+from setuptools import find_packages
 
 
 def find_version(*paths):
@@ -34,5 +35,8 @@ setup(
         'Programming Language :: Python :: 3.8'],
     install_requires=['numpy', 'obspy', 'stdb', 'pandas'],
     python_requires='>=3.6',
-    packages=['obstools'],
+    packages=setuptools.find_packages(),
+    include_package_data=True,
+    package_data={'': ['examples/meta/*.pkl', 'examples/event/*.pkl',
+                       'examples/data/*.SAC']},
     scripts=scripts)
