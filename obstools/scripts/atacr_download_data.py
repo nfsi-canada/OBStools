@@ -204,7 +204,7 @@ def get_daylong_arguments(argv=None):
         args.channels = ["H", "P"]
     for cha in args.channels:
         if cha not in ["H", "P"]:
-            parser.error("Error: Channel not recognized ", cha)
+            parser.error("Error: Channel not recognized " + str(cha))
 
     # construct start time
     if len(args.startT) > 0:
