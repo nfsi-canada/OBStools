@@ -367,7 +367,7 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = str(save.name) + '.' + self.key + '.' + tkey + \
+                    title = str(save.name) + '.' + self.key + '.' + self.tkey + \
                         '.specgram_Z.P.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -512,16 +512,21 @@ class DayNoise(object):
 
             penalty = np.sum(ubernorm, axis=0)
 
+            plt.figure(4)
+            for i in range(self.ncomp):
+                plt.plot(range(0, np.sum(goodwins)), detrend(
+                    ubernorm, type='constant')[i], 'o-')
             if debug:
-                plt.figure(4)
-                for i in range(self.ncomp):
-                    plt.plot(range(0, np.sum(goodwins)), detrend(
-                        ubernorm, type='constant')[i], 'o-')
                 plt.show()
-                plt.figure(5)
-                plt.plot(range(0, np.sum(goodwins)),
-                         np.sum(ubernorm, axis=0), 'o-')
+            else:
+                plt.close('all')
+            plt.figure(5)
+            plt.plot(range(0, np.sum(goodwins)),
+                     np.sum(ubernorm, axis=0), 'o-')
+            if debug:
                 plt.show()
+            else:
+                plt.close('all')
 
             kill = penalty > tol*np.std(penalty)
             if np.sum(kill) == 0:

@@ -196,7 +196,7 @@ def test_TFNoise(tmp_path):
         skey='7D.M08A')
     plot.close()
 
-    eventstream = test_classes.test_evstream_demo()
+    eventstream = test_classes.test_evstream_demo(tmp_path)
 
     plot = plotting.fig_event_raw(
         eventstream, fmin=args.fmin, fmax=args.fmax)
@@ -208,7 +208,7 @@ def test_TFNoise(tmp_path):
         eventstream, tfnoise_day.tf_list)
     plot.close()
 
-    eventstream = test_classes.test_evstream_demo()
+    eventstream = test_classes.test_evstream_demo(tmp_path)
     eventstream.correct_data(tfnoise_sta)
     plot = plotting.fig_event_corrected(
         eventstream, tfnoise_sta.tf_list)

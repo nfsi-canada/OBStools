@@ -11,15 +11,15 @@ def test_day_QC(tmp_path):
     daynoise.QC_daily_spectra(fig_QC=True, save=tmp_path)
     return daynoise
 
-def test_day_ncomp_opts():
+def test_day_ncomp_opts(tmp_path):
     daynoise = test_daynoise_demo()
     daynoise.ncomp = 3
-    daynoise.QC_daily_spectra()
+    daynoise.QC_daily_spectra(fig_QC=True, save=tmp_path)
     daynoise.ncomp = 2
-    daynoise.QC_daily_spectra()
+    daynoise.QC_daily_spectra(fig_QC=True, save=tmp_path, smooth=False)
 
 def test_day_average(tmp_path):
-    daynoise = test_day_QC(tmp_path)
+    daynoise = test_daynoise_demo()
     daynoise.average_daily_spectra(fig_average=True, fig_coh_ph=True,
         save=tmp_path)
     return daynoise
@@ -42,21 +42,20 @@ def test_sta_QC(tmp_path):
     stanoise.QC_sta_spectra(fig_QC=True, save=tmp_path)
     return stanoise
 
-def test_sta_ncomp_opts():
+def test_sta_ncomp_opts(tmp_path):
     stanoise = test_stanoise_demo()
     stanoise.ncomp = 3
-    stanoise.QC_sta_spectra()
-
-    with pytest.raises(Exception):
-        assert stanoise.QC_sta_spectra()
-
+    stanoise.QC_sta_spectra(fig_QC=True, save=tmp_path)
     stanoise = test_stanoise_demo()
     stanoise.ncomp = 2
     stanoise.initialized = None
-    stanoise.QC_sta_spectra()
+    stanoise.QC_sta_spectra(fig_QC=True, save=tmp_path)
 
 def test_sta_average(tmp_path):
-    stanoise = test_sta_QC(tmp_path)
+    stanoise = test_stanoise_demo()
+    with pytest.raises(Exception):
+        assert stanoise.QC_sta_spectra()
+
     stanoise.average_sta_spectra(fig_average=True, save=tmp_path)
     return stanoise
 
@@ -67,6 +66,16 @@ def test_sta_operations():
     sn += dn1
     sn.append(dn2)
     sn.extend([dn1, dn2])
+    with pytest.raises(TypeError):
+        assert sn.append([dn1, dn2])
+    sn.extend(sn)
+    with pytest.raises(TypeError):
+        assert sn.extend([float])
+    with pytest.raises(TypeError):
+        assert sn.extend({})
+    sn = StaNoise(daylist=[dn1])
+    with pytest.raises(Exception):
+        assert sn.init()
 
 def test_sta_save(tmp_path):
     stanoise = test_stanoise_demo()
@@ -77,13 +86,23 @@ def test_sta_save(tmp_path):
     stanoise.average_sta_spectra()
     stanoise.save(d)
 
-def test_evstream_demo():
-    return EventStream('demo')
+def test_evstream_demo(tmp_path):
+    eventstream = EventStream('demo')
+    d = tmp_path / "tmp"
+    eventstream.save(d)
+    return eventstream
 
 def test_tfnoise_day_demo(tmp_path):
-    daynoise = test_day_average(tmp_path)
+    daynoise = test_daynoise_demo()
+    with pytest.raises(TypeError):
+        assert TFNoise([])
+    with pytest.raises(Exception):
+        TFNoise(objnoise=daynoise)
+    daynoise.average_daily_spectra()
     tfnoise_day = TFNoise(daynoise)
     tfnoise_day.transfer_func()
+    d = tmp_path / "tmp"
+    tfnoise_day.save(d)
     return tfnoise_day
 
 def test_tfnoise_sta_demo(tmp_path):
