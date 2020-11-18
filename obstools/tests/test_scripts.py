@@ -181,11 +181,11 @@ def test_StaNoise():
     return stanoise
 
 
-def test_TFNoise():
+def test_TFNoise(tmp_path):
 
     args = test_args.test_get_correct_arguments()
-    tfnoise_day = test_classes.test_tfnoise_day_demo()
-    tfnoise_sta = test_classes.test_tfnoise_sta_demo()
+    tfnoise_day = test_classes.test_tfnoise_day_demo(tmp_path)
+    tfnoise_sta = test_classes.test_tfnoise_sta_demo(tmp_path)
     f = tfnoise_day.f
 
     plot = plotting.fig_TF(

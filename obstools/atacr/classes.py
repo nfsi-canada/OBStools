@@ -367,7 +367,7 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = save + '.' + self.key + '.' + tkey + \
+                    title = str(save.name) + '.' + self.key + '.' + tkey + \
                         '.specgram_Z.P.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -388,7 +388,7 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = save + '.' + self.key + '.' + self.tkey + \
+                    title = str(save.name) + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -412,7 +412,7 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = save + '.' + self.key + '.' + self.tkey + \
+                    title = str(save.name) + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -463,37 +463,36 @@ class DayNoise(object):
             dsl_psdP = sl_psdP[ff, :] - np.mean(sl_psdP[ff, :], axis=0)
             dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
 
+        if self.ncomp == 2:
+            plt.figure(2)
+            plt.subplot(2, 1, 1)
+            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+            plt.subplot(2, 1, 2)
+            plt.semilogx(f, sl_psdP, 'k', lw=0.5)
+            plt.tight_layout()
+        elif self.ncomp == 3:
+            plt.figure(2)
+            plt.subplot(3, 1, 1)
+            plt.semilogx(f, sl_psd1, 'r', lw=0.5)
+            plt.subplot(3, 1, 2)
+            plt.semilogx(f, sl_psd2, 'b', lw=0.5)
+            plt.subplot(3, 1, 3)
+            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+            plt.tight_layout()
+        else:
+            plt.figure(2)
+            plt.subplot(4, 1, 1)
+            plt.semilogx(f, sl_psd1, 'r', lw=0.5)
+            plt.subplot(4, 1, 2)
+            plt.semilogx(f, sl_psd2, 'b', lw=0.5)
+            plt.subplot(4, 1, 3)
+            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+            plt.subplot(4, 1, 4)
+            plt.semilogx(f, sl_psdP, 'k', lw=0.5)
+            plt.tight_layout()
         if debug:
-            if self.ncomp == 2:
-                plt.figure(2)
-                plt.subplot(2, 1, 1)
-                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-                plt.subplot(2, 1, 2)
-                plt.semilogx(f, sl_psdP, 'k', lw=0.5)
-                plt.tight_layout()
-                plt.show()
-            elif self.ncomp == 3:
-                plt.figure(2)
-                plt.subplot(3, 1, 1)
-                plt.semilogx(f, sl_psd1, 'r', lw=0.5)
-                plt.subplot(3, 1, 2)
-                plt.semilogx(f, sl_psd2, 'b', lw=0.5)
-                plt.subplot(3, 1, 3)
-                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-                plt.tight_layout()
-                plt.show()
-            else:
-                plt.figure(2)
-                plt.subplot(4, 1, 1)
-                plt.semilogx(f, sl_psd1, 'r', lw=0.5)
-                plt.subplot(4, 1, 2)
-                plt.semilogx(f, sl_psd2, 'b', lw=0.5)
-                plt.subplot(4, 1, 3)
-                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-                plt.subplot(4, 1, 4)
-                plt.semilogx(f, sl_psdP, 'k', lw=0.5)
-                plt.tight_layout()
-                plt.show()
+            plt.show()
+
 
         # Cycle through to kill high-std-norm windows
         moveon = False
@@ -553,7 +552,7 @@ class DayNoise(object):
 
             # Save or show figure
             if save:
-                plot.savefig(str(save) + fname + '.' + form,
+                plot.savefig(str(save) + '/' + fname + '.' + form,
                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
@@ -874,6 +873,8 @@ class StaNoise(object):
 
         self.daylist = []
         self.initialized = False
+        self.QC = False
+        self.av = False
 
         if isinstance(daylist, DayNoise):
             daylist = [daylist]
@@ -915,9 +916,9 @@ class StaNoise(object):
                 if not isinstance(_i, DayNoise):
                     msg = 'Extend only accepts a list of Daynoise objects.'
                     raise TypeError(msg)
-            self.grids.extend(daynoise_list)
+            self.daylist.extend(daynoise_list)
         elif isinstance(daynoise_list, StaNoise):
-            self.grids.extend(daynoise_list.daylist)
+            self.daylist.extend(daynoise_list.daylist)
         else:
             msg = 'Extend only supports a list of DayNoise objects as ' +\
                 'argument.'
@@ -1128,37 +1129,35 @@ class StaNoise(object):
             dsl_cPP = sl_cPP[ff, :] - np.mean(sl_cPP[ff, :], axis=0)
             dsls = [dsl_c11, dsl_c22, dsl_cZZ, dsl_cPP]
 
+        if self.ncomp == 2:
+            plt.figure(2)
+            plt.subplot(2, 1, 1)
+            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.subplot(2, 1, 2)
+            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+            plt.tight_layout()
+        elif self.ncomp == 3:
+            plt.figure(2)
+            plt.subplot(3, 1, 1)
+            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+            plt.subplot(3, 1, 2)
+            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+            plt.subplot(3, 1, 3)
+            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.tight_layout()
+        else:
+            plt.figure(2)
+            plt.subplot(4, 1, 1)
+            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+            plt.subplot(4, 1, 2)
+            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+            plt.subplot(4, 1, 3)
+            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.subplot(4, 1, 4)
+            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+            plt.tight_layout()
         if debug:
-            if self.ncomp == 2:
-                plt.figure(2)
-                plt.subplot(2, 1, 1)
-                plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
-                plt.subplot(2, 1, 2)
-                plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
-                plt.tight_layout()
-                plt.show()
-            elif self.ncomp == 3:
-                plt.figure(2)
-                plt.subplot(3, 1, 1)
-                plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
-                plt.subplot(3, 1, 2)
-                plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
-                plt.subplot(3, 1, 3)
-                plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
-                plt.tight_layout()
-                plt.show()
-            else:
-                plt.figure(2)
-                plt.subplot(4, 1, 1)
-                plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
-                plt.subplot(4, 1, 2)
-                plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
-                plt.subplot(4, 1, 3)
-                plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
-                plt.subplot(4, 1, 4)
-                plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
-                plt.tight_layout()
-                plt.show()
+            plt.show()
 
         # Cycle through to kill high-std-norm windows
         moveon = False

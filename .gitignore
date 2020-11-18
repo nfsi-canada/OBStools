@@ -8,6 +8,7 @@ __pycache__
 *~
 .ipynb_checkpoints
 .coverage
+test*.png
 
 *.egg-info
 build

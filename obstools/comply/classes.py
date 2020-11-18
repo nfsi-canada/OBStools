@@ -23,7 +23,7 @@
 
 import numpy as np
 import pickle
-from obstools.atacr import utils
+from obstools.atacr import utils, DayNoise, StaNoise
 np.seterr(all='ignore')
 
 
@@ -68,7 +68,7 @@ class Comply(object):
                 "Error: Initializing EventStream object with None values - " +
                 "aborting"))
 
-        if (not objnoise and not isinstance(objnoise, DayNoise) and
+        if (objnoise and not isinstance(objnoise, DayNoise) and
                 not isinstance(objnoise, StaNoise)):
             msg = "Error: A TFNoise object must be initialized with only " +\
                 "one of type DayNoise or StaNoise object"
