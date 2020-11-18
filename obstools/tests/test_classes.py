@@ -61,3 +61,36 @@ def test_comply_sta_demo():
     comply_sta = Comply(objnoise=stanoise, sta=sta)
     comply_sta.calculate_compliance()
     return comply_sta
+
+def test_comply_fail(tmp_path):
+    import pytest
+    import pickle
+    import os
+
+    with pytest.raises(Exception):
+        assert Comply()
+    sta = get_meta.get_stdb()
+    with pytest.raises(Exception):
+        assert Comply(sta=sta, objnoise=[])
+    objnoise = test_day_average()
+    objnoise.av = None
+    with pytest.raises(Exception):
+        assert Comply(sta=sta, objnoise=daynoise)
+
+    daynoise = test_day_average()
+    comply_day = Comply(objnoise=daynoise, sta=sta)
+    comply_day.calculate_compliance()
+    d = tmp_path / "tmp"
+    print(d)
+    comply_day.save(d, form='pkl')
+    dd = d.parent / (d.name + '.' + 'pkl')
+    print(dd.exists())
+    assert dd.exists()
+    d = tmp_path / "tmp"
+    comply_day.save(d, form='csv')
+    dd = d.parent / (d.name + '.' + 'csv')
+    print(dd.exists())
+    assert dd.exists()
+
+
+

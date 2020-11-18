@@ -28,14 +28,221 @@ import numpy as np
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation
-from obstools.atacr import utils, arguments, plotting
+from obstools.atacr import utils, plotting
 from pathlib import Path
+
+from argparse import ArgumentParser
+from os.path import exists as exist
+from obspy import UTCDateTime
+from numpy import nan
+
+def get_cleanspec_arguments(argv=None):
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    Calling options for the script `obs_clean_spectra.py` that accompany this package.
+
+    """
+
+    parser = ArgumentParser(
+        usage="%(prog)s [options] <Station Database>",
+        description="Script used "
+        "to extract daily spectra calculated from " +
+        "`obs_daily_spectra.py` and flag days for outlier " +
+        "PSDs and calculate spectral averages of the " +
+        "corresponding Fourier transforms over the entire " +
+        "time period specified. The stations are processed " +
+        "one by one and the data are stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
+
+    # General Settings
+    parser.add_argument(
+        "--keys",
+        action="store",
+        type=str,
+        dest="stkeys",
+        default="",
+        help="Specify a comma separated list of station " +
+        "keys for which to perform the analysis. These must " +
+        "be contained within the station database. Partial " +
+        "keys will be used to match against those in the " +
+        "dictionary. For instance, providing IU will match " +
+        "with all stations in the IU network. " +
+        "[Default processes all stations in the database]")
+    parser.add_argument(
+        "-O", "--overwrite",
+        action="store_true",
+        dest="ovr",
+        default=False,
+        help="Force the overwriting of pre-existing data. " +
+        "[Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = parser.add_argument_group(
+        title="Time Search Settings",
+        description="Time settings associated with " +
+        "searching for day-long seismograms")
+    DaysGroup.add_argument(
+        "--start",
+        action="store",
+        type=str,
+        dest="startT",
+        default="",
+        help="Specify a UTCDateTime compatible string " +
+        "representing the start day for the data search. " +
+        "This will override any station start times. " +
+        "[Default start date of each station in database]")
+    DaysGroup.add_argument(
+        "--end",
+        action="store",
+        type=str,
+        dest="endT",
+        default="",
+        help="Specify a UTCDateTime compatible string " +
+        "representing the start time for the data search. " +
+        "This will override any station end times. " +
+        "[Default end date of each station in database]")
+
+    # Constants Settings
+    ConstGroup = parser.add_argument_group(
+        title='Parameter Settings',
+        description="Miscellaneous default values " +
+        "and settings")
+    ConstGroup.add_argument(
+        "--freq-band",
+        action="store",
+        type=str,
+        dest="pd",
+        default=None,
+        help="Specify comma-separated frequency limits " +
+        "(float, in Hz) over which to calculate spectral " +
+        "features used in flagging the days/windows. " +
+        "[Default 0.004,2.0]")
+    ConstGroup.add_argument(
+        "--tolerance",
+        action="store",
+        type=float,
+        dest="tol",
+        default=1.5,
+        help="Specify parameter for tolerance threshold. " +
+        "If spectrum > std*tol, window is flagged as bad. " +
+        "[Default 1.5]")
+    ConstGroup.add_argument(
+        "--alpha",
+        action="store",
+        type=float,
+        dest="alpha",
+        default=0.05,
+        help="Confidence level for f-test, for iterative " +
+        "flagging of windows. [Default 0.05, or 95 percent confidence]")
+
+    # Constants Settings
+    FigureGroup = parser.add_argument_group(
+        title='Figure Settings',
+        description="Flags for plotting figures")
+    FigureGroup.add_argument(
+        "--figQC",
+        action="store_true",
+        dest="fig_QC",
+        default=False,
+        help="Plot Quality-Control figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--debug",
+        action="store_true",
+        dest="debug",
+        default=False,
+        help="Plot intermediate steps for debugging. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figAverage",
+        action="store_true",
+        dest="fig_average",
+        default=False,
+        help="Plot daily average figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figCoh",
+        action="store_true",
+        dest="fig_coh_ph",
+        default=False,
+        help="Plot Coherence and Phase figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figCross",
+        action="store_true",
+        dest="fig_av_cross",
+        default=False,
+        help="Plot cross-spectra figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--save-fig",
+        action="store_true",
+        dest="saveplot",
+        default=False,
+        help="Set this option if you wish to save the figure(s). [Default " +
+        "does not save figure]")
+    FigureGroup.add_argument(
+        "--format",
+        action="store",
+        type=str,
+        dest="form",
+        default="png",
+        help="Specify format of figure. Can be any one of the valid" +
+        "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
+
+    args = parser.parse_args(argv)
+
+    # Check inputs
+    if not exist(args.indb):
+        parser.error("Input file " + args.indb + " does not exist")
+
+    # create station key list
+    if len(args.stkeys) > 0:
+        args.stkeys = args.stkeys.split(',')
+
+    # construct start time
+    if len(args.startT) > 0:
+        try:
+            args.startT = UTCDateTime(args.startT)
+        except:
+            parser.error(
+                "Error: Cannot construct UTCDateTime from start time: " +
+                args.startT)
+    else:
+        args.startT = None
+
+    # construct end time
+    if len(args.endT) > 0:
+        try:
+            args.endT = UTCDateTime(args.endT)
+        except:
+            parser.error(
+                "Error: Cannot construct UTCDateTime from end time: " +
+                args.endT)
+    else:
+        args.endT = None
+
+    if args.pd is None:
+        args.pd = [0.004, 2.0]
+    else:
+        args.pd = [float(val) for val in args.pd.split(',')]
+        args.pd = sorted(args.pd)
+        if (len(args.pd)) != 2:
+            raise(Exception(
+                "Error: --freq-band should contain 2 " +
+                "comma-separated floats"))
+
+    return args
 
 
 def main():
 
     # Run Input Parser
-    args = arguments.get_cleanspec_arguments()
+    args = get_cleanspec_arguments()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)

@@ -16,7 +16,7 @@ def find_version(*paths):
     raise RuntimeError("Unable to find version string.")
 
 
-scripts = [str(x) for x in Path('Scripts').iterdir() if x.is_file()]
+# scripts = [str(x) for x in Path('Scripts').iterdir() if x.is_file()]
 
 setup(
     name='obstools',
@@ -39,4 +39,13 @@ setup(
     include_package_data=True,
     package_data={'': ['examples/meta/*.pkl', 'examples/event/*.pkl',
                        'examples/data/*.SAC']},
-    scripts=scripts)
+    #    scripts=scripts)
+    entry_points={
+        'console_scripts':
+        ['atacr_download_data=obstools.scripts.atacr_download_data:main',
+         'atacr_download_event=obstools.scripts.atacr_download_event:main',
+         'atacr_daily_spectra=obstools.scripts.atacr_daily_spectra:main',
+         'atacr_clean_spectra=obstools.scripts.atacr_clean_spectra:main',
+         'atacr_transfer_functions=obstools.scripts.atacr_transfer_functions:main',
+         'atacr_correct_event=obstools.scripts.atacr_correct_event:main',
+         'comply_calculate=obstools.scripts.comply_calculate:main']})

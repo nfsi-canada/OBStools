@@ -1,5 +1,4 @@
 import numpy as np
-from obstools.atacr import arguments
 from pkg_resources import resource_filename
 from pathlib import Path
 
@@ -8,27 +7,38 @@ dbfile = resource_filename('obstools',
                            'examples/meta/M08A.pkl')
 
 def test_get_daylong_arguments():
-    args = arguments.get_daylong_arguments([dbfile])
+    from obstools.scripts import atacr_download_data as atacr
+    args = atacr.get_daylong_arguments([dbfile])
     return args
 
 def test_get_event_arguments():
-    args = arguments.get_event_arguments([dbfile])
+    from obstools.scripts import atacr_download_event as atacr
+    args = atacr.get_event_arguments([dbfile])
     return args
 
 def test_get_dailyspec_arguments():
-    args = arguments.get_dailyspec_arguments([dbfile])
+    from obstools.scripts import atacr_daily_spectra as atacr
+    args = atacr.get_dailyspec_arguments([dbfile])
     return args
 
 def test_get_cleanspec_arguments():
-    args = arguments.get_cleanspec_arguments([dbfile])
+    from obstools.scripts import atacr_clean_spectra as atacr
+    args = atacr.get_cleanspec_arguments([dbfile])
     return args
 
 def test_get_transfer_arguments():
-    args = arguments.get_transfer_arguments([dbfile])
+    from obstools.scripts import atacr_transfer_functions as atacr
+    args = atacr.get_transfer_arguments([dbfile])
     return args
 
 def test_get_correct_arguments():
-    args = arguments.get_correct_arguments([dbfile])
+    from obstools.scripts import atacr_correct_event as atacr
+    args = atacr.get_correct_arguments([dbfile])
+    return args
+
+def test_get_comply():
+    from obstools.scripts import comply_calculate as comply
+    args = comply.get_comply_arguments([dbfile])
     return args
 
 # def test_dirs(tmp_path):

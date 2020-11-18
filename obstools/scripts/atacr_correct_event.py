@@ -29,14 +29,206 @@ from obspy import UTCDateTime
 import pickle
 import stdb
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
-from obstools.atacr import utils, plotting, arguments
+from obstools.atacr import utils, plotting
 from pathlib import Path
+
+from argparse import ArgumentParser
+from os.path import exists as exist
+from numpy import nan
+
+def get_correct_arguments(argv=None):
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    Calling options for the script `obs_correct_event.py` that accompany this package.
+
+    """
+
+    parser = ArgumentParser(
+        usage="%(prog)s [options] <Station Database>",
+        description="Script used "
+        "to extract transfer functions between various " +
+        "components, and use them to clean vertical " +
+        "component of OBS data for selected events. The " +
+        "noise data can be those obtained from the daily " +
+        "spectra (i.e., from `obs_daily_spectra.py`) "
+        "or those obtained from the averaged noise spectra " +
+        "(i.e., from `obs_clean_spectra.py`). Flags are " +
+        "available to specify the source of data to use as " +
+        "well as the time range for given events. "
+        "The stations are processed one by one and the " +
+        "data are stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
+
+    # General Settings
+    parser.add_argument(
+        "--keys",
+        action="store",
+        type=str,
+        dest="stkeys",
+        default="",
+        help="Specify a comma separated list of station " +
+        "keys for which to perform the analysis. These must be "
+        "contained within the station database. Partial keys " +
+        "will be used to match against those in the "
+        "dictionary. For instance, providing IU will match with " +
+        "all stations in the IU network. [Default processes "
+        "all stations in the database]")
+    parser.add_argument(
+        "-O", "--overwrite",
+        action="store_true",
+        dest="ovr",
+        default=False,
+        help="Force the overwriting of pre-existing data. " +
+        "[Default False]")
+
+    # Event Selection Criteria
+    DaysGroup = parser.add_argument_group(
+        title="Time Search Settings",
+        description="Time settings associated with " +
+        "searching for specific event-related seismograms")
+    DaysGroup.add_argument(
+        "--start",
+        action="store",
+        type=str,
+        dest="startT",
+        default="",
+        help="Specify a UTCDateTime compatible string " +
+        "representing the start day for the event search. "
+        "This will override any station start times. " +
+        "[Default start date of each station in database]")
+    DaysGroup.add_argument(
+        "--end",
+        action="store",
+        type=str,
+        dest="endT",
+        default="",
+        help="Specify a UTCDateTime compatible string " +
+        "representing the start time for the event search. "
+        "This will override any station end times. [Default " +
+        "end date of each station in database]")
+
+    # Constants Settings
+    ConstGroup = parser.add_argument_group(
+        title='Parameter Settings',
+        description="Miscellaneous default " +
+        "values and settings")
+    ConstGroup.add_argument(
+        "--skip-daily",
+        action="store_true",
+        dest="skip_daily",
+        default=False,
+        help="Skip daily spectral averages in application " +
+        "of transfer functions. [Default False]")
+    ConstGroup.add_argument(
+        "--skip-clean",
+        action="store_true",
+        dest="skip_clean",
+        default=False,
+        help="Skip cleaned spectral averages in " +
+        "application of transfer functions. " +
+        "[Default False]")
+    ConstGroup.add_argument(
+        "--fmin",
+        action="store",
+        type=float,
+        dest="fmin",
+        default="0.006666666666666667",
+        help="Low frequency corner (in Hz) for " +
+        "plotting the raw (un-corrected) seismograms. "
+        "Filter is a 2nd order, zero phase butterworth " +
+        "filter. [Default 1./150.]")
+    ConstGroup.add_argument(
+        "--fmax",
+        action="store",
+        type=float,
+        dest="fmax",
+        default="0.1",
+        help="High frequency corner (in Hz) for " +
+        "plotting the raw (un-corrected) seismograms. "
+        "Filter is a 2nd order, zero phase butterworth " +
+        "filter. [Default 1./10.]")
+
+    # Constants Settings
+    FigureGroup = parser.add_argument_group(
+        title='Figure Settings',
+        description="Flags for plotting figures")
+    FigureGroup.add_argument(
+        "--figRaw",
+        action="store_true",
+        dest="fig_event_raw",
+        default=False,
+        help="Plot raw seismogram figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figClean",
+        action="store_true",
+        dest="fig_plot_corrected",
+        default=False,
+        help="Plot cleaned vertical seismogram figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--save-fig",
+        action="store_true",
+        dest="saveplot",
+        default=False,
+        help="Set this option if you wish to save the figure(s). [Default " +
+        "does not save figure]")
+    FigureGroup.add_argument(
+        "--format",
+        action="store",
+        type=str,
+        dest="form",
+        default="png",
+        help="Specify format of figure. Can be any one of the valid" +
+        "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
+
+    args = parser.parse_args(argv)
+
+    # Check inputs
+    if not exist(args.indb):
+        parser.error("Input file " + args.indb + " does not exist")
+
+    # create station key list
+    if len(args.stkeys) > 0:
+        args.stkeys = args.stkeys.split(',')
+
+    # construct start time
+    if len(args.startT) > 0:
+        try:
+            args.startT = UTCDateTime(args.startT)
+        except:
+            parser.error(
+                "Error: Cannot construct UTCDateTime from " +
+                "start time: " + args.startT)
+    else:
+        args.startT = None
+
+    # construct end time
+    if len(args.endT) > 0:
+        try:
+            args.endT = UTCDateTime(args.endT)
+        except:
+            parser.error(
+                "Error: Cannot construct UTCDateTime from " +
+                "end time: " + args.endT)
+    else:
+        args.endT = None
+
+    if args.skip_clean and args.skip_daily:
+        parser.error(
+            "Error: cannot skip both daily and clean averages")
+
+    return args
 
 
 def main():
 
     # Run Input Parser
-    args = arguments.get_correct_arguments()
+    args = get_correct_arguments()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)

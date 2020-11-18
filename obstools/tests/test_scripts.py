@@ -4,7 +4,7 @@ from pkg_resources import resource_filename
 from obspy.clients.fdsn import Client
 from obstools.atacr import DayNoise, StaNoise, TFNoise
 from obstools.atacr import EventStream, Power, Cross, Rotation
-from obstools.atacr import utils, plotting, arguments
+from obstools.atacr import utils, plotting
 from . import test_utils, test_args, test_classes
 
 

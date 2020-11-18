@@ -31,18 +31,296 @@ import stdb
 from obspy.clients.fdsn import Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
-from obspy.core import Stream
-from obstools.atacr import utils, arguments
-from obstools.atacr import EventStream
+from obspy.core import Stream, UTCDateTime
+from obstools.atacr import utils, EventStream
 from pathlib import Path
 
+from argparse import ArgumentParser
+from os.path import exists as exist
+from numpy import nan
+
 # Main function
+
+def get_event_arguments(argv=None):
+    """
+    Get Options from :class:`~optparse.OptionParser` objects.
+
+    Calling options for the script `obs_download_event.py` that accompany this package.
+
+    """
+
+    parser = ArgumentParser(
+        usage="%(prog)s [options] <Station Database>",
+        description="Script used " +
+        "to download and pre-process four-component " +
+        "(H1, H2, Z and P), two-hour-long seismograms for " +
+        "individual events on which to apply the de-noising " +
+        "algorithms. Data are requested from the internet using " +
+        "the client services framework for a given date range. " +
+        "The stations are processed one by one and the data are " +
+        "stored to disk.")
+    parser.add_argument(
+        "indb",
+        help="Station Database to process from.",
+        type=str)
+
+    # General Settings
+    parser.add_argument(
+        "--keys",
+        action="store",
+        type=str,
+        dest="stkeys",
+        default="",
+        help="Specify a comma separated list of station keys " +
+        "for which to perform the analysis. These must be " +
+        "contained within the station database. Partial keys " +
+        "will be used to match against those in the "
+        "dictionary. For instance, providing IU will match with " +
+        "all stations in the IU network [Default processes " +
+        "all stations in the database]")
+    parser.add_argument(
+        "-C", "--channels",
+        action="store",
+        type=str,
+        dest="channels",
+        default="",
+        help="Specify a comma-separated list of channels for " +
+        "which to perform the transfer function analysis. " +
+        "Possible options are H (for horizontal channels) or P " +
+        "(for pressure channel). Specifying H allows " +
+        "for tilt correction. Specifying P allows for compliance " +
+        "correction. [Default looks for both horizontal and " +
+        "pressure and allows for both tilt AND compliance corrections]")
+    parser.add_argument(
+        "-O", "--overwrite",
+        action="store_true",
+        dest="ovr",
+        default=False,
+        help="Force the overwriting of pre-existing data. " +
+        "[Default False]")
+
+    # Server Settings
+    ServerGroup = parser.add_argument_group(
+        title="Server Settings",
+        description="Settings associated with which "
+        "datacenter to log into.")
+    ServerGroup.add_argument(
+        "-S", "--Server",
+        action="store",
+        type=str,
+        dest="Server",
+        default="IRIS",
+        help="Specify the server to connect to. Options include: BGR, " +
+        "ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU, NCEDC, NEIP, " +
+        "NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. [Default IRIS]")
+    ServerGroup.add_argument(
+        "-U", "--User-Auth",
+        action="store",
+        type=str,
+        dest="UserAuth",
+        default="",
+        help="Enter your IRIS Authentification Username and Password " +
+        "(--User-Auth='username:authpassword') to access and download " +
+        "restricted data. [Default no user and password]")
+
+    """
+    # # Database Settings
+    # DataGroup = parser.add_argument_group(parser, title="Local Data Settings", description="Settings associated with defining " \
+    #     "and using a local data base of pre-downloaded day-long SAC files.")
+    # DataGroup.add_argument("--local-data", action="store", type=str, dest="localdata", default=None, \
+    #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
+    #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
+    #     "the data using the Client interface")
+    # DataGroup.add_argument("--no-data-zero", action="store_true", dest="ndval", default=False, \
+    #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
+    """
+
+    # Constants Settings
+    FreqGroup = parser.add_argument_group(
+        title='Frequency Settings',
+        description="Miscellaneous frequency settings")
+    FreqGroup.add_argument(
+        "--sampling-rate",
+        action="store",
+        type=float,
+        dest="new_sampling_rate",
+        default=5.,
+        help="Specify new sampling rate (float, in Hz). " +
+        "[Default 5.]")
+    FreqGroup.add_argument(
+        "--pre-filt",
+        action="store",
+        type=str,
+        dest="pre_filt",
+        default=None,
+        help="Specify four comma-separated corner " +
+        "frequencies (float, in Hz) for deconvolution " +
+        "pre-filter. [Default 0.001,0.005,45.,50.]")
+
+    # Event Selection Criteria
+    EventGroup = parser.add_argument_group(
+        title="Event Settings",
+        description="Settings associated with refining " +
+        "the events to include in matching station " +
+        "pairs")
+    EventGroup.add_argument(
+        "--start",
+        action="store",
+        type=str,
+        dest="startT",
+        default="",
+        help="Specify a UTCDateTime compatible string " +
+        "representing the start time for the event " +
+        "search. This will override any station start " +
+        "times. [Default start date of each station in " +
+        "database]")
+    EventGroup.add_argument(
+        "--end",
+        action="store",
+        type=str,
+        dest="endT",
+        default="",
+        help="Specify a UTCDateTime compatible string " +
+        "representing the start time for the event " +
+        "search. This will override any station end times " +
+        "[Default end date of each station in database]")
+    EventGroup.add_argument(
+        "--reverse-order", "-R",
+        action="store_true",
+        dest="reverse",
+        default=False,
+        help="Reverse order of events. Default behaviour " +
+        "starts at oldest event and works towards most " +
+        "recent. Specify reverse order and instead the " +
+        "program will start with the most recent events " +
+        "and work towards older")
+    EventGroup.add_argument(
+        "--min-mag",
+        action="store",
+        type=float,
+        dest="minmag",
+        default=5.5,
+        help="Specify the minimum magnitude of event " +
+        "for which to search. [Default 5.5]")
+    EventGroup.add_argument(
+        "--max-mag",
+        action="store",
+        type=float,
+        dest="maxmag",
+        default=None,
+        help="Specify the maximum magnitude of event " +
+        "for which to search. " +
+        "[Default None, i.e. no limit]")
+
+    # Geometry Settings
+    GeomGroup = parser.add_argument_group(
+        title="Geometry Settings",
+        description="Settings associatd with the " +
+        "event-station geometries")
+    GeomGroup.add_argument(
+        "--min-dist",
+        action="store",
+        type=float,
+        dest="mindist",
+        default=30.,
+        help="Specify the minimum great circle distance " +
+        "(degrees) between the station and event. " +
+        "[Default 30]")
+    GeomGroup.add_argument(
+        "--max-dist",
+        action="store",
+        type=float,
+        dest="maxdist",
+        default=120.,
+        help="Specify the maximum great circle distance " +
+        "(degrees) between the station and event. " +
+        "[Default 120]")
+
+    args = parser.parse_args(argv)
+
+    # Check inputs
+    if not exist(args.indb):
+        parser.error("Input file " + args.indb + " does not exist")
+
+    # create station key list
+    if len(args.stkeys) > 0:
+        args.stkeys = args.stkeys.split(',')
+
+    # create channel list
+    if len(args.channels) == 1:
+        args.channels = args.stkeys.split(',')
+    else:
+        args.channels = ["H", "P"]
+    for cha in args.channels:
+        if cha not in ["H", "P"]:
+            parser.error("Error: Channel not recognized ", cha)
+
+    # construct start time
+    if len(args.startT) > 0:
+        try:
+            args.startT = UTCDateTime(args.startT)
+        except:
+            parser.error(
+                "Error: Cannot construct UTCDateTime from start time: " +
+                args.startT)
+    else:
+        args.startT = None
+
+    # construct end time
+    if len(args.endT) > 0:
+        try:
+            args.endT = UTCDateTime(args.endT)
+        except:
+            parser.error(
+                "Error: Cannot construct UTCDateTime from end time: " +
+                args.endT)
+    else:
+        args.endT = None
+
+    # Parse User Authentification
+    if not len(args.UserAuth) == 0:
+        tt = args.UserAuth.split(':')
+        if not len(tt) == 2:
+            parser.error(
+                "Error: Incorrect Username and Password Strings for User " +
+                "Authentification")
+        else:
+            args.UserAuth = tt
+    else:
+        args.UserAuth = []
+
+    # # Parse Local Data directories
+    # if args.localdata is not None:
+    #     args.localdata = args.localdata.split(',')
+    # else:
+    #     args.localdata = []
+
+    # # Check NoData Value
+    # if args.ndval:
+    #     args.ndval = 0.0
+    # else:
+    #     args.ndval = nan
+
+    if not type(args.new_sampling_rate) is float:
+        raise(Exception("Error: Type of --sampling-rate is not a float"))
+
+    if args.pre_filt is None:
+        args.pre_filt = [0.001, 0.005, 45., 50.]
+    else:
+        args.pre_filt = [float(val) for val in args.pre_filt.split(',')]
+        args.pre_filt = sorted(args.pre_filt)
+        if (len(args.pre_filt)) != 4:
+            raise(Exception(
+                "Error: --pre-filt should contain 4 " +
+                "comma-separated floats"))
+
+    return args
 
 
 def main():
 
     # Run Input Parser
-    args = arguments.get_event_arguments()
+    args = get_event_arguments()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)
