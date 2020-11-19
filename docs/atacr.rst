@@ -116,8 +116,8 @@ that are used as attributes of the base classes.
 .. note::
 
     In the examples below, the SAC data were obtained and pre-processed
-    using the accompanying scripts ``atacr_download_data.py`` and 
-    ``atacr_download_event.py``. See the script and tutorial for details.
+    using the accompanying scripts ``atacr_download_data`` and 
+    ``atacr_download_event``. See the script and tutorial for details.
 
 DayNoise
 --------
@@ -185,20 +185,20 @@ event data, and perform tilt and compliance noise removal using either the defau
 program values or by refining parameters. All of them use a station database provided as a
 ``StDb`` dictionary. These scripts are:
 
-- atacr_download_data.py
+- atacr_download_data
 
-- atacr_download_event.py
+- atacr_download_event
 
-- atacr_daily_spectra.py
+- atacr_daily_spectra
 
-- atacr_clean_spectra.py
+- atacr_clean_spectra
 
-- atacr_transfer_functions.py
+- atacr_transfer_functions
 
-- atacr_correct_event.py
+- atacr_correct_event
 
-``atacr_download_data.py``
-++++++++++++++++++++++++++
+``atacr_download_data``
++++++++++++++++++++++++
 
 Description
 -----------
@@ -213,8 +213,8 @@ Usage
 
 .. code-block::
 
-    $ atacr_download_data.py -h
-    Usage: atacr_download_data.py [options] <station database>
+    $ atacr_download_data -h
+    Usage: atacr_download_data [options] <station database>
 
     Script used to download and pre-process up to four-component (H1, H2, Z and
     P), day-long seismograms to use in noise corrections of vertical component of
@@ -281,8 +281,8 @@ Usage
 
 
 
-``atacr_daily_spectra.py``
-++++++++++++++++++++++++++
+``atacr_daily_spectra``
++++++++++++++++++++++++
 
 Description
 -----------
@@ -297,8 +297,8 @@ Usage
 
 .. code-block::
 
-    $ atacr_daily_spectra.py -h
-    Usage: atacr_daily_spectra.py [options] <station database>
+    $ atacr_daily_spectra -h
+    Usage: atacr_daily_spectra [options] <station database>
 
     Script used to extract shorter windows from the day-long seismograms,
     calculate the power-spectral properties, flag windows for outlier PSDs and
@@ -372,13 +372,13 @@ Usage
 
 
 
-``atacr_clean_spectra.py``
-++++++++++++++++++++++++++
+``atacr_clean_spectra``
++++++++++++++++++++++++
 
 Description
 -----------
 
-Extracts daily spectra calculated from ``obs_daily_spectra.py`` and 
+Extracts daily spectra calculated from ``atacr_daily_spectra`` and 
 flags days for which the daily averages are outliers from the PSD properties. 
 Further averages the spectra over the whole period specified by ``--start``
 and ``--end``. Station selection is specified by a network and station code. 
@@ -389,10 +389,10 @@ Usage
 
 .. code-block::
 
-    $ atacr_clean_spectra.py -h
-    Usage: atacr_clean_spectra.py [options] <station database>
+    $ atacr_clean_spectra -h
+    Usage: atacr_clean_spectra [options] <station database>
 
-    Script used to extract daily spectra calculated from ``obs_daily_spectra.py``
+    Script used to extract daily spectra calculated from ``atacr_daily_spectra``
     and flag days for outlier PSDs and calculate spectral averages of the
     corresponding Fourier transforms over the entire time period specified. The
     stations are processed one by one and the data are stored to disk.
@@ -449,15 +449,15 @@ Usage
                          database]
 
 
-``atacr_transfer functions.py``
-+++++++++++++++++++++++++++++++
+``atacr_transfer functions``
+++++++++++++++++++++++++++++
 
 Description
 -----------
 
 Calculates transfer functions using the noise windows flagged as *good*, for either
-a single day (from ``obs_daily_spectra.py``) or for those averaged over several days
-(from ``obs_clean_spectra.py``), if available. The transfer functions are stored to disk.
+a single day (from ``atacr_daily_spectra``) or for those averaged over several days
+(from ``atacr_clean_spectra``), if available. The transfer functions are stored to disk.
 Station selection is specified by a network and station code. The database is 
 provided as a ``StDb`` dictionary.
 
@@ -466,13 +466,13 @@ Usage
 
 .. code-block::
 
-    $ atacr_transfer_functions.py -h
-    Usage: atacr_transfer_functions.py [options] <station database>
+    $ atacr_transfer_functions -h
+    Usage: atacr_transfer_functions [options] <station database>
 
     Script used to calculate transfer functions between various components, to be
     used in cleaning vertical component of OBS data. The noise data can be those
-    obtained from the daily spectra (i.e., from ``obs_daily_spectra.py``) or those
-    obtained from the averaged noise spectra (i.e., from ``obs_clean_spectra.py``).
+    obtained from the daily spectra (i.e., from ``atacr_daily_spectra``) or those
+    obtained from the averaged noise spectra (i.e., from ``atacr_clean_spectra``).
     Flags are available to specify the source of data to use as well as the time
     range over which to calculate the transfer functions. The stations are
     processed one by one and the data are stored to disk.
@@ -521,8 +521,8 @@ Usage
                         database]
 
 
-``atacr_download_event.py``
-+++++++++++++++++++++++++++
+``atacr_download_event``
+++++++++++++++++++++++++
 
 Description
 -----------
@@ -537,8 +537,8 @@ Usage
 
 .. code-block::
 
-    $ atacr_download_event.py -h
-    Usage: atacr_download_event.py [options] <station database>
+    $ atacr_download_event -h
+    Usage: atacr_download_event [options] <station database>
 
     Script used to download and pre-process up to four-component (H1, H2, Z and P), two-
     hour-long seismograms for individual events on which to apply the de-noising
@@ -622,15 +622,15 @@ Usage
                             0.001,0.005,45.,50.]
 
 
-``atacr_correct_event.py``
-++++++++++++++++++++++++++
+``atacr_correct_event``
++++++++++++++++++++++++
 
 Description
 -----------
 
 Calculates transfer functions using the noise windows flagged as *good*, for either
-a single day (from ``obs_daily_spectra.py``) or for those averaged over several days
-(from ``obs_clean_spectra.py``), if available. The transfer functions are stored to disk.
+a single day (from ``atacr_daily_spectra``) or for those averaged over several days
+(from ``atacr_clean_spectra``), if available. The transfer functions are stored to disk.
 Station selection is specified by a network and station code. The database is provided as a 
 ``StDb`` dictionary.
 
@@ -639,14 +639,14 @@ Usage
 
 .. code-block::
 
-    $ atacr_correct_event.py -h
-    Usage: atacr_correct_event.py [options] <station database>
+    $ atacr_correct_event -h
+    Usage: atacr_correct_event [options] <station database>
 
     Script used to extract transfer functions between various components, and use
     them to clean vertical component of OBS data for selected events. The noise
     data can be those obtained from the daily spectra (i.e., from
-    ``obs_daily_spectra.py``) or those obtained from the averaged noise spectra
-    (i.e., from ``obs_clean_spectra.py``). Flags are available to specify the source
+    ``atacr_daily_spectra``) or those obtained from the averaged noise spectra
+    (i.e., from ``atacr_clean_spectra``). Flags are available to specify the source
     of data to use as well as the time range for given events. The stations are
     processed one by one and the data are stored to disk.
 
@@ -766,7 +766,7 @@ To download all broadband seismic and pressure data, simply type in a terminal:
 
 .. code-block::
 
-    $ atacr_download_data.py --start=2012-03-01 --end=2012-04-01 M08A.pkl
+    $ atacr_download_data --start=2012-03-01 --end=2012-04-01 M08A.pkl
 
 An example log printed on the terminal will look like:
 
@@ -830,7 +830,7 @@ We can therefore type in a terminal:
 
 .. code-block:: 
 
-    $ atacr_daily_spectra.py M08A.pkl
+    $ atacr_daily_spectra M08A.pkl
 
     Path to SPECTRA/7D.M08A/ doesn`t exist - creating it
 
@@ -869,7 +869,7 @@ previous results (option ``-O``) and specify the date of interest:
 
 .. code-block:: 
 
-    $ atacr_daily_spectra.py -O --figQC --figAverage --start=2012-03-04 --end=2012-03-05 M08A.pkl > logfile
+    $ atacr_daily_spectra -O --figQC --figAverage --start=2012-03-04 --end=2012-03-05 M08A.pkl > logfile
 
 The script will produce several figures, including Figures 2 and 3 (separated 
 into 3a and 3b below). Several intermediate steps are also produces, which show
@@ -902,14 +902,14 @@ Now that we have processed daily spectra for all available components, it is
 possible to further average the spectra over multiple days to produce a cleaned
 station average. It is still possible to specify a date range over which to 
 average the spectra, thus giving flexibility in the production of the station
-averages. Parameter settings are similar to those used in ``atacr_daily_spectra.py``
+averages. Parameter settings are similar to those used in ``atacr_daily_spectra``
 but further include the option of plotting the averaged cross-spectral properties.
 To calcualte a single station average for the entire month of March 2012 (and 
 therefore using all available data) and plot the results, we can type in a terminal:
 
 .. code-block::
 
-    $ atacr_clean_spectra.py --figQC --figAverage --figCoh --figCross M08A.pkl
+    $ atacr_clean_spectra --figQC --figAverage --figCoh --figCross M08A.pkl
 
     Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
 
@@ -1027,7 +1027,7 @@ In this case we do not need to specify any option and type in a terminal:
 
 .. code-block::
 
-    $ atacr_transfer_functions.py M08A.pkl
+    $ atacr_transfer_functions M08A.pkl
 
     Path to TF_STA/7D.M08A/ doesn't exist - creating it
      
@@ -1074,13 +1074,13 @@ calculated for the whole month is shown in black.
 
 Now we need to download the earthquake data, for which we wish to 
 clean the vertical component using the transfer functions just calculated. 
-This script ``atacr_download_event.py`` is very similar to ``atacr_download_data.py``, 
+This script ``atacr_download_event`` is very similar to ``atacr_download_data``, 
 with the addition of the Event and Geometry Settings. 
 
 .. warning::
 
     Be careful with the Frequency Settings, as these values need to be exactly
-    the same as those used in ``atacr_download_data.py``, but won't be checked
+    the same as those used in ``atacr_download_data``, but won't be checked
     against. 
 
 To download the seismograms that recorded the March 9, 2012, magnitude 6.6 
@@ -1088,7 +1088,7 @@ Vanuatu earthquake (be conservative with the options), type in a terminal:
 
 .. code-block::
 
-    $ atacr_download_event.py --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
+    $ atacr_download_event --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
 
     Path to EVENTS/7D.M08A/ doesn`t exist - creating it
      
@@ -1143,7 +1143,7 @@ specify the ``--fig_Raw`` and ``--figClean`` options:
 
 .. code-block::
 
-    $ atacr_correct_event.py --figRaw --figClean M08A.pkl
+    $ atacr_correct_event --figRaw --figClean M08A.pkl
 
  
     |===============================================|
