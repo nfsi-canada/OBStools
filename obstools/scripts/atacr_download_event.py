@@ -318,10 +318,11 @@ def get_event_arguments(argv=None):
     return args
 
 
-def main():
+def main(args=None):
 
-    # Run Input Parser
-    args = get_event_arguments()
+    if args is None:
+        # Run Input Parser
+        args = get_daylong_arguments()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)
