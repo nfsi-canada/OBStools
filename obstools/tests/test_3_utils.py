@@ -61,7 +61,7 @@ def test_get_P_data_sr1(tmp_path):
         shutil.copy(filename, tmp_path)
     for filename in glob.glob(os.path.join(tmp_path, '*H.SAC')):
         stP = read(filename)
-        stP[0].resample(5.)
+        stP[0].resample(1.)
         stP[0].write(filename, format='SAC')
     tstart = UTCDateTime('2012-03-01')
     tend = UTCDateTime('2012-03-10')
@@ -74,7 +74,7 @@ def test_get_P_data_sr2(tmp_path):
         shutil.copy(filename, tmp_path)
     for filename in glob.glob(os.path.join(tmp_path, '*H.SAC')):
         stP = read(filename)
-        stP[0].resample(5.)
+        stP[0].resample(10.)
         stP[0].write(filename, format='SAC')
     tstart = UTCDateTime('2012-03-01')
     tend = UTCDateTime('2012-03-10')

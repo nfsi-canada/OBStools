@@ -1,9 +1,9 @@
+import setuptools
 import os.path
 from os import listdir
 import re
 from numpy.distutils.core import setup
 from pathlib import Path
-from setuptools import find_packages
 
 
 def find_version(*paths):
@@ -26,7 +26,7 @@ setup(
     author_email='pascal.audet@uottawa.ca',
     maintainer='Pascal Audet, Helen Janiszewski',
     maintainer_email='pascal.audet@uottawa.ca, hajanisz@hawaii.edu',
-    url='https://github.com/nfsi-canada/OBStools',
+    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.0.tar.gz',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',

@@ -657,7 +657,7 @@ def main(args=None):
             if "P" in args.channels:
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation, 'P')
+                    trP, sta.latitude, sta.longitude, sta.elevation, 'H')
                 trP.write(str(fileP), format='SAC')
 
             t1 += dt

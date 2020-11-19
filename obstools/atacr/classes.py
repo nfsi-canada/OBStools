@@ -1181,16 +1181,21 @@ class StaNoise(object):
 
             penalty = np.sum(ubernorm, axis=0)
 
+            plt.figure(4)
+            for i in range(self.ncomp):
+                plt.plot(range(0, np.sum(gooddays)), detrend(
+                    ubernorm, type='constant')[i], 'o-')
             if debug:
-                plt.figure(4)
-                for i in range(self.ncomp):
-                    plt.plot(range(0, np.sum(gooddays)), detrend(
-                        ubernorm, type='constant')[i], 'o-')
                 plt.show()
-                plt.figure(5)
-                plt.plot(range(0, np.sum(gooddays)),
-                         np.sum(ubernorm, axis=0), 'o-')
+            else:
+                plt.close(4)
+            plt.figure(5)
+            plt.plot(range(0, np.sum(gooddays)),
+                     np.sum(ubernorm, axis=0), 'o-')
+            if debug:
                 plt.show()
+            else:
+                plt.close(5)
 
             kill = penalty > tol*np.std(penalty)
             if np.sum(kill) == 0:

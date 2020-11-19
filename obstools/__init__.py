@@ -50,8 +50,8 @@ Installation
 Dependencies
 ++++++++++++
 
-The current version has been tested using **Python3.6 and 3.7** \
-Also, the following packages are required:
+The current version has been tested using **Python 3.6, 3.7 and 3.8** \
+The following package is required before install ``obstools``:
 
 - `stdb <https://github.com/paudetseis/StDb>`_
 
@@ -74,16 +74,21 @@ Activate the newly created environment:
 
    conda activate obs
 
-Install remaining dependencies using ``pip`` inside the ``obs`` environment:
+Installing from Pypi
+++++++++++++++++++++
+
+- Install dependencies:
 
 .. sourcecode:: bash
 
    pip install stdb
 
-Installing from Pypi
-++++++++++++++++++++
+- Install ``obstools``:
 
-*This option is not available at this time*
+..sourcecode:: bash
+
+   pip install obstools
+
 
 Installing from source
 ++++++++++++++++++++++
