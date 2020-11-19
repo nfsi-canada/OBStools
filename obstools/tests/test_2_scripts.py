@@ -24,6 +24,11 @@ def test_download_data_noP():
         '--start', '2012-03-08', '--end', '2012-03-10',
         '--channels', 'H'])
     atacr.main(args=args0)
+    args0 = atacr.get_daylong_arguments([
+        dbfile, '--keys', '7D.M08A',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--channels', 'H'])
+    atacr.main(args=args0)
 
 def test_download_data_noH():
     from obstools.scripts import atacr_download_data as atacr
@@ -32,13 +37,49 @@ def test_download_data_noH():
         '--start', '2012-03-08', '--end', '2012-03-10',
         '--channels', 'P'])
     atacr.main(args=args0)
+    args0 = atacr.get_daylong_arguments([
+        dbfile, '--keys', '7D.M08A',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--channels', 'P'])
+    atacr.main(args=args0)
 
 def test_download_event():
     from obstools.scripts import atacr_download_event as atacr
     args0 = atacr.get_event_arguments([
-        dbfile, '--keys', '7D.M08A', '-O',
+        dbfile, '--keys', '7D.M08A',
         '--start', '2012-03-09', '--end', '2012-03-10',
         '--min-mag', '6.3', '--max-mag', '6.7'])
+    atacr.main(args=args0)
+    atacr.main(args=args0)
+
+def test_download_event_noP():
+    from obstools.scripts import atacr_download_event as atacr
+    args0 = atacr.get_event_arguments([
+        dbfile, '--keys', '7D.M08A', '-O',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--min-mag', '6.3', '--max-mag', '6.7',
+        '--channels', 'H'])
+    atacr.main(args=args0)
+    args0 = atacr.get_event_arguments([
+        dbfile, '--keys', '7D.M08A',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--min-mag', '6.3', '--max-mag', '6.7',
+        '--channels', 'H'])
+    atacr.main(args=args0)
+
+def test_download_event_noH():
+    from obstools.scripts import atacr_download_event as atacr
+    args0 = atacr.get_event_arguments([
+        dbfile, '--keys', '7D.M08A', '-O',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--min-mag', '6.3', '--max-mag', '6.7',
+        '--channels', 'P'])
+    atacr.main(args=args0)
+    args0 = atacr.get_event_arguments([
+        dbfile, '--keys', '7D.M08A',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--min-mag', '6.3', '--max-mag', '6.7',
+        '--channels', 'P'])
     atacr.main(args=args0)
 
 def test_dailyspec():
@@ -61,6 +102,12 @@ def test_transfer():
 
 def test_correct():
     from obstools.scripts import atacr_correct_event as atacr
+    from obstools.scripts import atacr_download_event as event
+    args0 = event.get_event_arguments([
+        dbfile, '--keys', '7D.M08A', '-O',
+        '--start', '2012-03-09', '--end', '2012-03-10',
+        '--min-mag', '6.3', '--max-mag', '6.7'])
+    event.main(args=args0)
     args0 = atacr.get_correct_arguments([
         dbfile, '--keys', '7D.M08A', '-O', '--figRaw', '--figClean', '--save-fig'])
     atacr.main(args=args0)
