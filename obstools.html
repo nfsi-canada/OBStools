@@ -194,7 +194,7 @@ SOFTWARE.</p>
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>The current version has been tested using <strong>Python3.6 and 3.7</strong> Also, the following packages are required:</p>
+<p>The current version has been tested using <strong>Python 3.6, 3.7 and 3.8</strong> The following package is required before install <code class="docutils literal notranslate"><span class="pre">obstools</span></code>:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/paudetseis/StDb">stdb</a></p></li>
 </ul>
@@ -212,14 +212,22 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate obs
 </pre></div>
 </div>
-<p>Install remaining dependencies using <code class="docutils literal notranslate"><span class="pre">pip</span></code> inside the <code class="docutils literal notranslate"><span class="pre">obs</span></code> environment:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install stdb
-</pre></div>
-</div>
 </div>
 <div class="section" id="installing-from-pypi">
 <h2>Installing from Pypi<a class="headerlink" href="#installing-from-pypi" title="Permalink to this headline">¶</a></h2>
-<p><em>This option is not available at this time</em></p>
+<ul class="simple">
+<li><p>Install dependencies:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install stdb
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">obstools</span></code>:</p></li>
+</ul>
+<p>..sourcecode:: bash</p>
+<blockquote>
+<div><p>pip install obstools</p>
+</div></blockquote>
 </div>
 <div class="section" id="installing-from-source">
 <h2>Installing from source<a class="headerlink" href="#installing-from-source" title="Permalink to this headline">¶</a></h2>
