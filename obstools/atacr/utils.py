@@ -129,7 +129,7 @@ def get_data(datapath, tstart, tend):
         for i in range(ntr):
             trN1.append(Trace())
             trN2.append(Trace())
-    elif not trNP:
+    if not trNP:
         for i in range(ntr):
             trNP.append(Trace())
 
@@ -212,7 +212,7 @@ def get_event(eventpath, tstart, tend):
         for i in range(ntr):
             tr1.append(Trace())
             tr2.append(Trace())
-    elif not trP:
+    if not trP:
         for i in range(ntr):
             trP.append(Trace())
 
@@ -234,7 +234,7 @@ def get_event(eventpath, tstart, tend):
 
 
 def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
-    """ 
+    """
     Determines tilt direction from maximum coherence between rotated H1 and Z.
 
     Parameters
@@ -243,16 +243,16 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
         Fourier transform of corresponding H1, H2, HZ and HP components
     f : :class:`~numpy.ndarray`
         Frequency axis in Hz
-    goodwins : list 
-        List of booleans representing whether a window is good (True) or not (False). 
+    goodwins : list
+        List of booleans representing whether a window is good (True) or not (False).
         This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
-    tiltfreq : list 
+    tiltfreq : list
         Two floats representing the frequency band at which the tilt is calculated
 
     Returns
     -------
     cHH, cHZ, cHP : :class:`~numpy.ndarray`
-        Arrays of power and cross-spectral density functions of components HH (rotated H1 
+        Arrays of power and cross-spectral density functions of components HH (rotated H1
         in direction of maximum tilt), HZ, and HP
     coh : :class:`~numpy.ndarray`
         Coherence value between rotated H and Z components, as a function of directions (azimuths)
@@ -260,8 +260,8 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
         Phase value between rotated H and Z components, as a function of directions (azimuths)
     direc : :class:`~numpy.ndarray`
         Array of directions (azimuths) considered
-    tilt : float 
-        Direction (azimuth) of maximum coherence between rotated H1 and Z 
+    tilt : float
+        Direction (azimuth) of maximum coherence between rotated H1 and Z
     coh_value : float
         Coherence value at tilt direction
     phase_value : float
