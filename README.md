@@ -5,7 +5,8 @@
 
 OBStools is a package containing Python tools for processing broadband
 ocean-bottom seismic (OBS) data. Current functionalities include removing
-vertical component noise from tilt and compliance effects. The code uses 
+vertical component noise from tilt and compliance effects, and calculating
+seafloor compliance. The code uses 
 the ``StDb`` package for querying and building a station database and
 can be used through command-line scripts.
 
@@ -24,7 +25,7 @@ If you use `OBStools` in your work, please cite the
  -->
 #### Contributing
 
-All constructive contributions are welcome, e.g. bug reports, discussions or suggestions for new features. You can either [open an issue on GitHub](https://github.com/nfsi-canada/OBStools/issues) or make a pull request with your proposed changes. Before making a pull request, check if there is a corresponding issue opened and reference it in the pull request. If there isn't one, it is recommended to open one with your rationale for the change. New functionality or significant changes to the code that alter its behavior should come with corresponding tests and documentation. If you are new to contributing, you can open a work-in-progress pull request and have it iteratively reviewed.
+All constructive contributions are welcome, e.g. bug reports, discussions or suggestions for new features. You can either [open an issue on GitHub](https://github.com/nfsi-canada/OBStools/issues) or make a pull request with your proposed changes. Before making a pull request, check if there is a corresponding issue opened and reference it in the pull request. If there isn't one, it is recommended to open one with your rationale for the change. New functionality or significant changes to the code that alter its behavior should come with corresponding tests and documentation. If you are new to contributing, you can open a work-in-progress pull request and have it iteratively reviewed. 
 
 Examples of contributions include notebooks that describe published examples of OBS data
 processing. Suggestions for improvements (speed, accuracy, etc.) are also welcome.
