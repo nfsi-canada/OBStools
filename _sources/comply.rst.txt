@@ -72,7 +72,7 @@ These transfer functions are saved as attributes of the object in a Dictionary.
 .. note::
 
     In the examples below, the SAC data were obtained and pre-processed
-    using the accompanying scripts ``atacr_download_data.py``. See the 
+    using the accompanying scripts ``atacr_download_data``. See the 
     script and tutorial for details.
 
 .. autoclass:: obstools.comply.classes.Camply
@@ -85,15 +85,15 @@ There is only one Python scripts that accompanies ``~obstools.comply``. This scr
 in bash scripts to automate data processing. Please see the :mod:`~obstools.atacr` 
 module and scripts to prepare the data for use in the following script.
 
-``comply_calculate.py``
+``comply_calculate``
 ++++++++++++++++++++++++++++++++++
 
 Description
 -----------
 
 Calculates compliance and coherence functions using the noise windows flagged as *good*, for either
-a single day (from ``atacr_daily_spectra.py``) or for those averaged over several days
-(from ``atacr_clean_spectra.py``), if available. The transfer functions are stored to disk.
+a single day (from ``atacr_daily_spectra``) or for those averaged over several days
+(from ``atacr_clean_spectra``), if available. The transfer functions are stored to disk.
 Station selection is specified by a network and station code. The database is 
 provided as a ``StDb`` dictionary.
 
@@ -102,12 +102,12 @@ Usage
 
 .. code-block::
 
-    $ comply_calculate.py -h
-    usage: comply_calculate.py [options] <Station Database>
+    $ comply_calculate -h
+    usage: comply_calculate [options] <Station Database>
 
     Script used to calculate compliance functions between various components. The noise data can be those obtained
-    from the daily spectra (i.e., from `atacr_daily_spectra.py`) or those obtained from the averaged noise spectra
-    (i.e., from `atacr_clean_spectra.py`). Flags are available to specify the source of data to use as well as the
+    from the daily spectra (i.e., from `atacr_daily_spectra`) or those obtained from the averaged noise spectra
+    (i.e., from `atacr_clean_spectra`). Flags are available to specify the source of data to use as well as the
     time range over which to calculate the transfer functions. The stations are processed one by one and the data
     are stored to disk.
 
@@ -187,7 +187,7 @@ In this case we do not need to specify any option and type in a terminal:
 
 .. code-block::
 
-    $ comply_calculate.py M08A.pkl
+    $ comply_calculate M08A.pkl
 
     Path to COMPL_STA/7D.M08A doesn't exist - creating it
      

@@ -120,32 +120,32 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-download-data-py"><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-download-data"><code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-daily-spectra-py"><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-daily-spectra"><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id7">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id8">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-clean-spectra-py"><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-clean-spectra"><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id9">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id10">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-transfer-functions-py"><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-transfer-functions"><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id11">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id12">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-download-event-py"><code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-download-event"><code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id13">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id14">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#atacr-correct-event-py"><code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#atacr-correct-event"><code class="docutils literal notranslate"><span class="pre">atacr_correct_event</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id15">Description</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id16">Usage</a></li>
 </ul>
@@ -331,8 +331,8 @@ that are used as attributes of the base classes.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the examples below, the SAC data were obtained and pre-processed
-using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code> and
-<code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code>. See the script and tutorial for details.</p>
+using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code> and
+<code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code>. See the script and tutorial for details.</p>
 </div>
 <div class="section" id="daynoise">
 <h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline">¶</a></h4>
@@ -2083,15 +2083,15 @@ event data, and perform tilt and compliance noise removal using either the defau
 program values or by refining parameters. All of them use a station database provided as a
 <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary. These scripts are:</p>
 <ul class="simple">
-<li><p>atacr_download_data.py</p></li>
-<li><p>atacr_download_event.py</p></li>
-<li><p>atacr_daily_spectra.py</p></li>
-<li><p>atacr_clean_spectra.py</p></li>
-<li><p>atacr_transfer_functions.py</p></li>
-<li><p>atacr_correct_event.py</p></li>
+<li><p>atacr_download_data</p></li>
+<li><p>atacr_download_event</p></li>
+<li><p>atacr_daily_spectra</p></li>
+<li><p>atacr_clean_spectra</p></li>
+<li><p>atacr_transfer_functions</p></li>
+<li><p>atacr_correct_event</p></li>
 </ul>
-<div class="section" id="atacr-download-data-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code><a class="headerlink" href="#atacr-download-data-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atacr-download-data">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code><a class="headerlink" href="#atacr-download-data" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="description">
 <h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
 <p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
@@ -2101,8 +2101,8 @@ station code. The database is provided as a <code class="docutils literal notran
 </div>
 <div class="section" id="usage">
 <h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py -h
-Usage: atacr_download_data.py [options] &lt;station database&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data -h
+Usage: atacr_download_data [options] &lt;station database&gt;
 
 Script used to download and pre-process up to four-component (H1, H2, Z and
 P), day-long seismograms to use in noise corrections of vertical component of
@@ -2170,8 +2170,8 @@ Options:
 </div>
 </div>
 </div>
-<div class="section" id="atacr-daily-spectra-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code><a class="headerlink" href="#atacr-daily-spectra-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atacr-daily-spectra">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code><a class="headerlink" href="#atacr-daily-spectra" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id7">
 <h4>Description<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
 <p>Extracts two-hour-long windows from the day-long data, calculates
@@ -2181,8 +2181,8 @@ is provided as a <code class="docutils literal notranslate"><span class="pre">St
 </div>
 <div class="section" id="id8">
 <h4>Usage<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -h
-Usage: atacr_daily_spectra.py [options] &lt;station database&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra -h
+Usage: atacr_daily_spectra [options] &lt;station database&gt;
 
 Script used to extract shorter windows from the day-long seismograms,
 calculate the power-spectral properties, flag windows for outlier PSDs and
@@ -2257,11 +2257,11 @@ Options:
 </div>
 </div>
 </div>
-<div class="section" id="atacr-clean-spectra-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra.py</span></code><a class="headerlink" href="#atacr-clean-spectra-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atacr-clean-spectra">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code><a class="headerlink" href="#atacr-clean-spectra" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id9">
 <h4>Description<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
-<p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code> and
+<p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code> and
 flags days for which the daily averages are outliers from the PSD properties.
 Further averages the spectra over the whole period specified by <code class="docutils literal notranslate"><span class="pre">--start</span></code>
 and <code class="docutils literal notranslate"><span class="pre">--end</span></code>. Station selection is specified by a network and station code.
@@ -2269,10 +2269,10 @@ The database is provided as a <code class="docutils literal notranslate"><span c
 </div>
 <div class="section" id="id10">
 <h4>Usage<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py -h
-Usage: atacr_clean_spectra.py [options] &lt;station database&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra -h
+Usage: atacr_clean_spectra [options] &lt;station database&gt;
 
-Script used to extract daily spectra calculated from ``obs_daily_spectra.py``
+Script used to extract daily spectra calculated from ``atacr_daily_spectra``
 and flag days for outlier PSDs and calculate spectral averages of the
 corresponding Fourier transforms over the entire time period specified. The
 stations are processed one by one and the data are stored to disk.
@@ -2331,25 +2331,25 @@ Options:
 </div>
 </div>
 </div>
-<div class="section" id="atacr-transfer-functions-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions.py</span></code><a class="headerlink" href="#atacr-transfer-functions-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atacr-transfer-functions">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions</span></code><a class="headerlink" href="#atacr-transfer-functions" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id11">
 <h4>Description<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
-a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
-(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.
+a single day (from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code>) or for those averaged over several days
+(from <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code>), if available. The transfer functions are stored to disk.
 Station selection is specified by a network and station code. The database is
 provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id12">
 <h4>Usage<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions.py -h
-Usage: atacr_transfer_functions.py [options] &lt;station database&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions -h
+Usage: atacr_transfer_functions [options] &lt;station database&gt;
 
 Script used to calculate transfer functions between various components, to be
 used in cleaning vertical component of OBS data. The noise data can be those
-obtained from the daily spectra (i.e., from ``obs_daily_spectra.py``) or those
-obtained from the averaged noise spectra (i.e., from ``obs_clean_spectra.py``).
+obtained from the daily spectra (i.e., from ``atacr_daily_spectra``) or those
+obtained from the averaged noise spectra (i.e., from ``atacr_clean_spectra``).
 Flags are available to specify the source of data to use as well as the time
 range over which to calculate the transfer functions. The stations are
 processed one by one and the data are stored to disk.
@@ -2400,8 +2400,8 @@ Options:
 </div>
 </div>
 </div>
-<div class="section" id="atacr-download-event-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code><a class="headerlink" href="#atacr-download-event-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atacr-download-event">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code><a class="headerlink" href="#atacr-download-event" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id13">
 <h4>Description<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
 <p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
@@ -2411,8 +2411,8 @@ station code. The database is provided as a <code class="docutils literal notran
 </div>
 <div class="section" id="id14">
 <h4>Usage<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py -h
-Usage: atacr_download_event.py [options] &lt;station database&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event -h
+Usage: atacr_download_event [options] &lt;station database&gt;
 
 Script used to download and pre-process up to four-component (H1, H2, Z and P), two-
 hour-long seismograms for individual events on which to apply the de-noising
@@ -2498,26 +2498,26 @@ Options:
 </div>
 </div>
 </div>
-<div class="section" id="atacr-correct-event-py">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event.py</span></code><a class="headerlink" href="#atacr-correct-event-py" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="atacr-correct-event">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event</span></code><a class="headerlink" href="#atacr-correct-event" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id15">
 <h4>Description<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
-a single day (from <code class="docutils literal notranslate"><span class="pre">obs_daily_spectra.py</span></code>) or for those averaged over several days
-(from <code class="docutils literal notranslate"><span class="pre">obs_clean_spectra.py</span></code>), if available. The transfer functions are stored to disk.
+a single day (from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code>) or for those averaged over several days
+(from <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code>), if available. The transfer functions are stored to disk.
 Station selection is specified by a network and station code. The database is provided as a
 <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </div>
 <div class="section" id="id16">
 <h4>Usage<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py -h
-Usage: atacr_correct_event.py [options] &lt;station database&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event -h
+Usage: atacr_correct_event [options] &lt;station database&gt;
 
 Script used to extract transfer functions between various components, and use
 them to clean vertical component of OBS data for selected events. The noise
 data can be those obtained from the daily spectra (i.e., from
-``obs_daily_spectra.py``) or those obtained from the averaged noise spectra
-(i.e., from ``obs_clean_spectra.py``). Flags are available to specify the source
+``atacr_daily_spectra``) or those obtained from the averaged noise spectra
+(i.e., from ``atacr_clean_spectra``). Flags are available to specify the source
 of data to use as well as the time range for given events. The stations are
 processed one by one and the data are stored to disk.
 
@@ -2629,7 +2629,7 @@ to specify the dates for which data will will be downloaded.</p>
 <p>If you change your mind about the pre-processing options, you can always re-run the
 following line with the option <code class="docutils literal notranslate"><span class="pre">-O</span></code>, which will over-write the data saved to disk.</p>
 <p>To download all broadband seismic and pressure data, simply type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data.py --start=2012-03-01 --end=2012-04-01 M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data --start=2012-03-01 --end=2012-04-01 M08A.pkl
 </pre></div>
 </div>
 <p>An example log printed on the terminal will look like:</p>
@@ -2688,7 +2688,7 @@ ATaCR software and can be left un-changed. The Time Search Settings can be used
 to look at a subset of the available day-long data files. Here these options
 can be ignored since we wish to look at all the availble data that we just downloaded.
 We can therefore type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra M08A.pkl
 
 Path to SPECTRA/7D.M08A/ doesn`t exist - creating it
 
@@ -2725,7 +2725,7 @@ created folder called <code class="docutils literal notranslate"><span class="pr
 we can re-run the above script but now use the plotting options to look
 at one day of the month (March 04, 2012). In this case we need to over-write the
 previous results (option <code class="docutils literal notranslate"><span class="pre">-O</span></code>) and specify the date of interest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra.py -O --figQC --figAverage --start=2012-03-04 --end=2012-03-05 M08A.pkl &gt; logfile
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra -O --figQC --figAverage --start=2012-03-04 --end=2012-03-05 M08A.pkl &gt; logfile
 </pre></div>
 </div>
 <p>The script will produce several figures, including Figures 2 and 3 (separated
@@ -2755,11 +2755,11 @@ pass the quality control are colored red.</p>
 possible to further average the spectra over multiple days to produce a cleaned
 station average. It is still possible to specify a date range over which to
 average the spectra, thus giving flexibility in the production of the station
-averages. Parameter settings are similar to those used in <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra.py</span></code>
+averages. Parameter settings are similar to those used in <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code>
 but further include the option of plotting the averaged cross-spectral properties.
 To calcualte a single station average for the entire month of March 2012 (and
 therefore using all available data) and plot the results, we can type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra.py --figQC --figAverage --figCoh --figCross M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra --figQC --figAverage --figCoh --figCross M08A.pkl
 
 Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
 
@@ -2863,7 +2863,7 @@ the following may also be possible (if all components are available):</p>
 </ul>
 <p>In this example we calculate all available transfer functions for all available data.
 In this case we do not need to specify any option and type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions.py M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions M08A.pkl
 
 Path to TF_STA/7D.M08A/ doesn&#39;t exist - creating it
 
@@ -2908,17 +2908,17 @@ calculated for the whole month is shown in black.</p>
 <h3>5. Download earthquake data<a class="headerlink" href="#download-earthquake-data" title="Permalink to this headline">¶</a></h3>
 <p>Now we need to download the earthquake data, for which we wish to
 clean the vertical component using the transfer functions just calculated.
-This script <code class="docutils literal notranslate"><span class="pre">atacr_download_event.py</span></code> is very similar to <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>,
+This script <code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code> is very similar to <code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code>,
 with the addition of the Event and Geometry Settings.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Be careful with the Frequency Settings, as these values need to be exactly
-the same as those used in <code class="docutils literal notranslate"><span class="pre">atacr_download_data.py</span></code>, but won’t be checked
+the same as those used in <code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code>, but won’t be checked
 against.</p>
 </div>
 <p>To download the seismograms that recorded the March 9, 2012, magnitude 6.6
 Vanuatu earthquake (be conservative with the options), type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event.py --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
 
 Path to EVENTS/7D.M08A/ doesn`t exist - creating it
 
@@ -2970,7 +2970,7 @@ newly created folder <code class="docutils literal notranslate"><span class="pre
 to the raw earthquake seismograms to clean up the vertical component.
 Once again, the default settings can be used. To make the final Figures 11 and 12,
 specify the <code class="docutils literal notranslate"><span class="pre">--fig_Raw</span></code> and <code class="docutils literal notranslate"><span class="pre">--figClean</span></code> options:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event.py --figRaw --figClean M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event --figRaw --figClean M08A.pkl
 
 
 |===============================================|
