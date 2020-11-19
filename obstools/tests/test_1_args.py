@@ -115,6 +115,10 @@ def test_get_event_arguments():
     with pytest.raises(SystemExit):
         assert atacr.get_event_arguments([
             dbfile, '--max-dist', 'abcd'])
+    # pre-filt
+    with pytest.raises(Exception):
+        assert atacr.get_event_arguments([
+            dbfile, '--pre-filt', '0.1,0.2,0.3'])
     return args0
 
 

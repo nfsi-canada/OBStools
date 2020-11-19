@@ -490,6 +490,10 @@ def main(args=None):
 
                 # Define file names (to check if files already exist)
                 filename = eventpath / (tstamp+'.event.pkl')
+                file1 = eventpath / (tstamp+'.1.SAC')
+                file2 = eventpath / (tstamp+'.2.SAC')
+                fileZ = eventpath / (tstamp+'.Z.SAC')
+                fileP = eventpath / (tstamp+'.P.SAC')
 
                 print()
                 print("* Channels selected: " +
@@ -649,19 +653,33 @@ def main(args=None):
                         print(np.abs(llZ - ll))
                         continue
 
-                # Remove responses
-                print("*   -> Removing responses - Seismic data")
-                sth.remove_response(pre_filt=args.pre_filt, output='DISP')
-                if "P" in args.channels:
-                    print("*   -> Removing responses - Pressure data")
-                    stp.remove_response(pre_filt=args.pre_filt)
-
                 # Detrend, filter - seismic data
                 sth.detrend('demean')
                 sth.detrend('linear')
                 sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
                            corners=2, zerophase=True)
                 sth.resample(args.new_sampling_rate)
+
+                # Extract traces - Z
+                trZ = sth.select(component='Z')[0]
+                trZ = utils.update_stats(
+                    trZ, sta.latitude, sta.longitude, sta.elevation, 'Z')
+                trZ.write(str(fileZ), format='SAC')
+
+                # Extract traces - H
+                if "H" in args.channels:
+                    tr1 = sth.select(component='1')[0]
+                    tr2 = sth.select(component='2')[0]
+                    tr1 = utils.update_stats(
+                        tr1, sta.latitude, sta.longitude, sta.elevation, '1')
+                    tr2 = utils.update_stats(
+                        tr2, sta.latitude, sta.longitude, sta.elevation, '2')
+                    tr1.write(str(file1), format='SAC')
+                    tr2.write(str(file2), format='SAC')
+
+                # Remove responses
+                print("*   -> Removing responses - Seismic data")
+                sth.remove_response(pre_filt=args.pre_filt, output='DISP')
 
                 if "P" in args.channels:
                     # Detrend, filter - pressure data
@@ -671,8 +689,20 @@ def main(args=None):
                                args.new_sampling_rate, corners=2,
                                zerophase=True)
                     stp.resample(args.new_sampling_rate)
+
+                    # Remove responses
+                    print("*   -> Removing responses - Pressure data")
+                    stp.remove_response(pre_filt=args.pre_filt)
+
+                    trP = stp[0]
+                    trP = utils.update_stats(
+                        trP, sta.latitude, sta.longitude, sta.elevation, 'P')
+                    trP.write(str(fileP), format='SAC')
+
                 else:
                     stp = Stream()
+
+                # Write out SAC data
 
                 eventstream = EventStream(
                     sta, sth, stp, tstamp, lat, lon, time, window,

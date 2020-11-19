@@ -10,7 +10,7 @@ import os
 exmpl_path = Path(resource_filename('obstools','examples'))
 
 def test_get_data():
-    datapath = exmpl_path / 'data'
+    datapath = Path('DATA') / '7D.M08A'
     tstart = UTCDateTime('2012-03-01')
     tend = UTCDateTime('2012-03-10')
     trN1, trN2, trNZ, trNP = utils.get_data(datapath, tstart, tend)
@@ -21,7 +21,7 @@ def test_get_data():
     return trN1, trN2, trNZ, trNP
 
 def test_get_H_data(tmp_path):
-    datapath = exmpl_path / 'data'
+    datapath = Path('DATA') / '7D.M08A'
 
     # Test only H data
     for filename in glob.glob(os.path.join(datapath, '*1.SAC')):
@@ -39,7 +39,7 @@ def test_get_H_data(tmp_path):
     assert [len(tr.data) == 0 for tr in trNP]
 
 def test_get_P_data(tmp_path):
-    datapath = exmpl_path / 'data'
+    datapath = Path('DATA') / '7D.M08A'
 
     # Test only P data
     for filename in glob.glob(os.path.join(datapath, '*H.SAC')):
@@ -55,7 +55,7 @@ def test_get_P_data(tmp_path):
     assert len(trNP) > 0
 
 def test_get_P_data_sr1(tmp_path):
-    datapath = exmpl_path / 'data'
+    datapath = Path('DATA') / '7D.M08A'
 
     for filename in glob.glob(os.path.join(datapath, '*H.SAC')):
         shutil.copy(filename, tmp_path)
@@ -68,7 +68,7 @@ def test_get_P_data_sr1(tmp_path):
     trN1, trN2, trNZ, trNP = utils.get_data(tmp_path, tstart, tend)
 
 def test_get_P_data_sr2(tmp_path):
-    datapath = exmpl_path / 'data'
+    datapath = Path('DATA') / '7D.M08A'
 
     for filename in glob.glob(os.path.join(datapath, '*H.SAC')):
         shutil.copy(filename, tmp_path)
@@ -81,10 +81,10 @@ def test_get_P_data_sr2(tmp_path):
     trN1, trN2, trNZ, trNP = utils.get_data(tmp_path, tstart, tend)
 
 def test_get_event():
-    eventpath = exmpl_path / 'event'
+    datapath = Path('EVENTS') / '7D.M08A'
     tstart = UTCDateTime('2012-03-08')
     tend = UTCDateTime('2012-03-10')
-    tr1, tr2, trZ, trP = utils.get_event(eventpath, tstart, tend)
+    tr1, tr2, trZ, trP = utils.get_event(datapath, tstart, tend)
     assert len(tr1) > 0
     assert len(tr2) > 0
     assert len(trZ) > 0
@@ -92,7 +92,7 @@ def test_get_event():
     return tr1, tr2, trZ, trP
 
 def test_get_H_event(tmp_path):
-    datapath = exmpl_path / 'event'
+    datapath = Path('EVENTS') / '7D.M08A'
 
     # Test only H data
     for filename in glob.glob(os.path.join(datapath, '*1.SAC')):
@@ -110,7 +110,7 @@ def test_get_H_event(tmp_path):
     assert [len(tr.data) == 0 for tr in trP]
 
 def test_get_P_event(tmp_path):
-    datapath = exmpl_path / 'event'
+    datapath = Path('EVENTS') / '7D.M08A'
 
     # Test only P data
     for filename in glob.glob(os.path.join(datapath, '*H.SAC')):
@@ -127,7 +127,7 @@ def test_get_P_event(tmp_path):
 
 
 def test_get_P_event_sr1(tmp_path):
-    datapath = exmpl_path / 'event'
+    datapath = Path('EVENTS') / '7D.M08A'
 
     for filename in glob.glob(os.path.join(datapath, '*H.SAC')):
         shutil.copy(filename, tmp_path)
@@ -140,7 +140,7 @@ def test_get_P_event_sr1(tmp_path):
     tr1, tr2, trZ, trP = utils.get_event(tmp_path, tstart, tend)
 
 def test_get_P_event_sr2(tmp_path):
-    datapath = exmpl_path / 'event'
+    datapath = Path('EVENTS') / '7D.M08A'
 
     for filename in glob.glob(os.path.join(datapath, '*H.SAC')):
         shutil.copy(filename, tmp_path)

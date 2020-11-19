@@ -5,7 +5,6 @@ from obspy.clients.fdsn import Client
 from obstools.atacr import DayNoise, StaNoise, TFNoise
 from obstools.atacr import EventStream, Power, Cross, Rotation
 from obstools.atacr import utils, plotting
-from . import test_utils, test_args, test_classes
 
 dbfile = resource_filename('obstools',
                            'examples/meta/M08A.pkl')
@@ -16,12 +15,29 @@ def test_download_data():
         dbfile, '--keys', '7D.M08A',
         '--start', '2012-03-08', '--end', '2012-03-10'])
     atacr.main(args=args0)
+    atacr.main(args=args0)
+
+def test_download_data_noP():
+    from obstools.scripts import atacr_download_data as atacr
+    args0 = atacr.get_daylong_arguments([
+        dbfile, '--keys', '7D.M08A', '-O',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--channels', 'H'])
+    atacr.main(args=args0)
+
+def test_download_data_noH():
+    from obstools.scripts import atacr_download_data as atacr
+    args0 = atacr.get_daylong_arguments([
+        dbfile, '--keys', '7D.M08A', '-O',
+        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--channels', 'P'])
+    atacr.main(args=args0)
 
 def test_download_event():
     from obstools.scripts import atacr_download_event as atacr
     args0 = atacr.get_event_arguments([
         dbfile, '--keys', '7D.M08A', '-O',
-        '--start', '2012-03-08', '--end', '2012-03-10',
+        '--start', '2012-03-09', '--end', '2012-03-10',
         '--min-mag', '6.3', '--max-mag', '6.7'])
     atacr.main(args=args0)
 
