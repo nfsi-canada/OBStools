@@ -302,9 +302,6 @@ def get_event_arguments(argv=None):
     # else:
     #     args.ndval = nan
 
-    if not type(args.new_sampling_rate) is float:
-        raise(Exception("Error: Type of --sampling-rate is not a float"))
-
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
     else:

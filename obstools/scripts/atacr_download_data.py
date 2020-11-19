@@ -252,10 +252,6 @@ def get_daylong_arguments(argv=None):
     # else:
     #     args.ndval = nan
 
-    if not type(args.new_sampling_rate) is float:
-        raise(Exception(
-            "Error: Type of --sampling-rate is not a float"))
-
     if args.units not in ['DISP', 'VEL', 'ACC']:
         raise(Exception(
             "Error: invalid --units argument. Choose among " +

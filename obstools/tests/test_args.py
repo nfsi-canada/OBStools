@@ -45,7 +45,7 @@ def test_get_daylong_arguments():
         assert atacr.get_daylong_arguments([
             dbfile, '-U', 'abcd'])
     # sampling rate
-    with pytest.raises(Exception):
+    with pytest.raises(SystemExit):
         assert atacr.get_daylong_arguments([
             dbfile, '--sampling-rate', 'abcd'])
     # units
@@ -101,6 +101,20 @@ def test_get_event_arguments():
     with pytest.raises(SystemExit):
         assert atacr.get_event_arguments([
             dbfile, '--sampling-rate', 'abcd'])
+    # magnitudes
+    with pytest.raises(SystemExit):
+        assert atacr.get_event_arguments([
+            dbfile, '--min-mag', 'abcd'])
+    with pytest.raises(SystemExit):
+        assert atacr.get_event_arguments([
+            dbfile, '--max-mag', 'abcd'])
+    # distances
+    with pytest.raises(SystemExit):
+        assert atacr.get_event_arguments([
+            dbfile, '--min-dist', 'abcd'])
+    with pytest.raises(SystemExit):
+        assert atacr.get_event_arguments([
+            dbfile, '--max-dist', 'abcd'])
     return args0
 
 
