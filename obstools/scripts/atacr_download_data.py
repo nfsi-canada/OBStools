@@ -272,15 +272,11 @@ def get_daylong_arguments(argv=None):
     return args
 
 
-def main(args=None, tmp_path=None):
+def main(args=None):
 
     if args is None:
         # Run Input Parser
         args = get_daylong_arguments()
-
-    if tmp_path is None:
-        # Set current dir
-        tmp_path = Path.cwd()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)
@@ -305,7 +301,7 @@ def main(args=None, tmp_path=None):
         sta = db[stkey]
 
         # Define path to see if it exists
-        datapath = tmp_path / Path('DATA') / Path(stkey)
+        datapath = Path('DATA') / Path(stkey)
         if not datapath.is_dir():
             print()
             print('Path to '+str(datapath)+' doesn`t exist - creating it')

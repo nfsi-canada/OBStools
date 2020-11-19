@@ -20,7 +20,7 @@ def test_download_data():
 def test_download_event():
     from obstools.scripts import atacr_download_event as atacr
     args0 = atacr.get_event_arguments([
-        dbfile, '--keys', '7D.M08A',
+        dbfile, '--keys', '7D.M08A', '-O',
         '--start', '2012-03-08', '--end', '2012-03-10',
         '--min-mag', '6.3', '--max-mag', '6.7'])
     atacr.main(args=args0)
@@ -28,31 +28,31 @@ def test_download_event():
 def test_dailyspec():
     from obstools.scripts import atacr_daily_spectra as atacr
     args0 = atacr.get_dailyspec_arguments([
-        dbfile, '--keys', '7D.M08A', '--save-fig'])
+        dbfile, '--keys', '7D.M08A', '-O', '--save-fig'])
     atacr.main(args=args0)
 
 def test_cleanspec():
     from obstools.scripts import atacr_clean_spectra as atacr
     args0 = atacr.get_cleanspec_arguments([
-        dbfile, '--keys', '7D.M08A', '--save-fig', '--figCross', '--figCoh'])
+        dbfile, '--keys', '7D.M08A', '-O', '--save-fig', '--figCross', '--figCoh'])
     atacr.main(args=args0)
 
 def test_transfer():
     from obstools.scripts import atacr_transfer_functions as atacr
     args0 = atacr.get_transfer_arguments([
-        dbfile, '--keys', '7D.M08A', '--save-fig', '--figTF'])
+        dbfile, '--keys', '7D.M08A', '-O', '--save-fig', '--figTF'])
     atacr.main(args=args0)
 
 def test_correct():
     from obstools.scripts import atacr_correct_event as atacr
     args0 = atacr.get_correct_arguments([
-        dbfile, '--keys', '7D.M08A', '--figRaw', '--figClean', '--save-fig'])
+        dbfile, '--keys', '7D.M08A', '-O', '--figRaw', '--figClean', '--save-fig'])
     atacr.main(args=args0)
 
 def test_comply_calculate():
     from obstools.scripts import comply_calculate as comply
     args0 = comply.get_comply_arguments([
-        dbfile, '--keys', '7D.M08A', '--save-fig', '--fig'])
+        dbfile, '--keys', '7D.M08A', '-O', '--save-fig', '--fig'])
     comply.main(args=args0)
 
 # def test_DayNoise():

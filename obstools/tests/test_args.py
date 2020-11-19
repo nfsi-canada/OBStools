@@ -45,7 +45,7 @@ def test_get_daylong_arguments():
         assert atacr.get_daylong_arguments([
             dbfile, '-U', 'abcd'])
     # sampling rate
-    with pytest.raises(SystemExit):
+    with pytest.raises(Exception):
         assert atacr.get_daylong_arguments([
             dbfile, '--sampling-rate', 'abcd'])
     # units
