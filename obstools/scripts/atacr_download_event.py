@@ -247,13 +247,14 @@ def get_event_arguments(argv=None):
         args.stkeys = args.stkeys.split(',')
 
     # create channel list
-    if len(args.channels) == 1:
-        args.channels = args.stkeys.split(',')
+    if len(args.channels) > 0:
+        args.channels = args.channels.split(',')
     else:
-        args.channels = ["H", "P"]
+        args.channels = ['H', 'P']
+
     for cha in args.channels:
-        if cha not in ["H", "P"]:
-            parser.error("Error: Channel not recognized ", cha)
+        if cha not in ['H', 'P']:
+            parser.error("Error: Channel not recognized " + str(cha))
 
     # construct start time
     if len(args.startT) > 0:
