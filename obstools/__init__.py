@@ -85,7 +85,7 @@ Installing from Pypi
 
 - Install ``obstools``:
 
-..sourcecode:: bash
+.. sourcecode:: bash
 
    pip install obstools
 
