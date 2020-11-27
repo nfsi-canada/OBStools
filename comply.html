@@ -230,9 +230,9 @@ to calculating compliance.</p>
 <h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">comply</span></code> defines the following class:</p>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code></p></li>
+<li><p><a class="reference internal" href="#obstools.comply.classes.Comply" title="obstools.comply.classes.Comply"><code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code></a></p></li>
 </ul>
-<p>The class <code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code> contains attributes
+<p>The class <a class="reference internal" href="#obstools.comply.classes.Comply" title="obstools.comply.classes.Comply"><code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code></a> contains attributes
 and methods for the calculation of the compliance and coherence functions
 from noise traces. A <code class="docutils literal notranslate"><span class="pre">Comply</span></code> object works with
 either one of <a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> and
@@ -245,6 +245,162 @@ These transfer functions are saved as attributes of the object in a Dictionary.<
 using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code>. See the
 script and tutorial for details.</p>
 </div>
+<dl class="py class">
+<dt id="obstools.comply.classes.Comply">
+<em class="property">class </em><code class="sig-prename descclassname">obstools.comply.classes.</code><code class="sig-name descname">Comply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sta</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">objnoise</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Comply object contains attributes that calculate and store the
+compliance and coherence functions for the available channels.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The object is initialized with either a processed
+<a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> or
+<a class="reference internal" href="atacr.html#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> object. Each individual
+spectral quantity is unpacked as an object attribute, but all of them
+are discarded as the object is saved to disk.</p>
+</div>
+<dl class="py attribute">
+<dt id="obstools.comply.classes.Comply.sta">
+<code class="sig-name descname">sta</code><a class="headerlink" href="#obstools.comply.classes.Comply.sta" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of an stdb object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">StdbElement</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="obstools.comply.classes.Comply.f">
+<code class="sig-name descname">f</code><a class="headerlink" href="#obstools.comply.classes.Comply.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Frequency axis for corresponding time sampling parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="obstools.comply.classes.Comply.c11">
+<code class="sig-name descname">c11</code><a class="headerlink" href="#obstools.comply.classes.Comply.c11" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power spectra for component <cite>H1</cite>. Other identical attributes are
+available for the power, cross and rotated spectra:
+[11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="obstools.comply.classes.Comply.tf_list">
+<code class="sig-name descname">tf_list</code><a class="headerlink" href="#obstools.comply.classes.Comply.tf_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of possible transfer functions from the available
+components (obtained from the
+<a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> or the
+<a class="reference internal" href="atacr.html#obstools.atacr.classes.StaNoise" title="obstools.atacr.classes.StaNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaNoise</span></code></a> noise objects)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="obstools.comply.classes.Comply.complyfunc">
+<code class="sig-name descname">complyfunc</code><a class="headerlink" href="#obstools.comply.classes.Comply.complyfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of compliance and coherence functions given the available
+components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="obstools.comply.classes.Comply.ComplyDict">
+<em class="property">class </em><code class="sig-name descname">ComplyDict</code><a class="headerlink" href="#obstools.comply.classes.Comply.ComplyDict" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="obstools.comply.classes.Comply.ComplyDict.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.ComplyDict.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt id="obstools.comply.classes.Comply.calculate_compliance">
+<code class="sig-name descname">calculate_compliance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.calculate_compliance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate compliance and coherence functions from the
+averaged (daily or station-averaged) noise spectra.</p>
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">complyfunc</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container Dictionary for all possible compliance and
+coherence functions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>Calculate compliance and coherence functions for a DayNoise object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.comply</span> <span class="kn">import</span> <span class="n">Comply</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daycomply</span> <span class="o">=</span> <span class="n">Comply</span><span class="p">(</span><span class="n">objnoise</span><span class="o">=</span><span class="n">daynoise</span><span class="p">,</span> <span class="n">sta</span><span class="o">=</span><span class="n">sta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daycomply</span><span class="o">.</span><span class="n">calculate_compliance</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">complyfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;ZP&#39;, &#39;ZP-21&#39;, &#39;ZP-H&#39;])</span>
+</pre></div>
+</div>
+<p>Calculate compliance and coherence functions for a StaNoise object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.comply</span> <span class="kn">import</span> <span class="n">Comply</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+<span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span> <span class="o">=</span> <span class="n">Comply</span><span class="p">(</span><span class="n">objnoise</span><span class="o">=</span><span class="n">stanoise</span><span class="p">,</span> <span class="n">sta</span><span class="o">=</span><span class="n">sta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span><span class="o">.</span><span class="n">calculate_compliance</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span><span class="o">.</span><span class="n">complyfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;ZP&#39;, &#39;ZP-21&#39;])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="obstools.comply.classes.Comply.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">'pkl'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Following from the example outlined in method
+<a class="reference internal" href="#obstools.comply.classes.Comply.calculate_compliance" title="obstools.comply.classes.Comply.calculate_compliance"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_compliance()</span></code></a>, we simply
+save the final object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daycomply</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;daycomply_demo.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that object has been saved</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./daycomply_demo.pkl&quot;</span><span class="p">)</span>
+<span class="go">[&#39;./daycomply_demo.pkl&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="scripts">
 <h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
