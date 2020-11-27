@@ -75,7 +75,7 @@ These transfer functions are saved as attributes of the object in a Dictionary.
     using the accompanying scripts ``atacr_download_data``. See the 
     script and tutorial for details.
 
-.. autoclass:: obstools.comply.classes.Camply
+.. autoclass:: obstools.comply.classes.Comply
    :members:
 
 Scripts
