@@ -319,7 +319,7 @@ def main(args=None):
 
     if args is None:
         # Run Input Parser
-        args = get_daylong_arguments()
+        args = get_event_arguments()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)

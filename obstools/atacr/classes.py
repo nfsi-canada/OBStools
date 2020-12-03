@@ -31,7 +31,8 @@ from obstools.atacr import utils, plotting
 from pkg_resources import resource_filename
 from pathlib import Path
 np.seterr(all='ignore')
-
+import sys
+np.set_printoptions(threshold=sys.maxsize)
 
 class Power(object):
     """
@@ -422,18 +423,21 @@ class DayNoise(object):
         # Select bandpass frequencies
         ff = (f > pd[0]) & (f < pd[1])
 
+        if np.any([psd==0. for psd in [psd1, psd2, psdZ, psdP]]):
+            smooth = True
+
         if smooth:
             # Smooth out the log of the PSDs
             sl_psd1 = None
             sl_psd2 = None
             sl_psdZ = None
             sl_psdP = None
-            sl_psdZ = utils.smooth(np.log(psdZ), 50, axis=0)
+            sl_psdZ = utils.smooth(np.log(psdZ, where=(psdZ>0.)), 50, axis=0)
             if self.ncomp == 2 or self.ncomp == 4:
-                sl_psdP = utils.smooth(np.log(psdP), 50, axis=0)
+                sl_psdP = utils.smooth(np.log(psdP, where=(psdP>0.)), 50, axis=0)
             if self.ncomp == 3 or self.ncomp == 4:
-                sl_psd1 = utils.smooth(np.log(psd1), 50, axis=0)
-                sl_psd2 = utils.smooth(np.log(psd2), 50, axis=0)
+                sl_psd1 = utils.smooth(np.log(psd1, where=(psd1>0.)), 50, axis=0)
+                sl_psd2 = utils.smooth(np.log(psd2, where=(psd2>0.)), 50, axis=0)
 
         else:
             # Take the log of the PSDs
@@ -462,6 +466,10 @@ class DayNoise(object):
             dsl_psd2 = sl_psd2[ff, :] - np.mean(sl_psd2[ff, :], axis=0)
             dsl_psdP = sl_psdP[ff, :] - np.mean(sl_psdP[ff, :], axis=0)
             dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
+        # print('dlpsd1',dsl_psd1)
+        # print('dlpsd2',dsl_psd2)
+        # print('dlpsdZ',dsl_psdZ)
+        # print('dlpsdP',dsl_psdP)
 
         if self.ncomp == 2:
             plt.figure(2)

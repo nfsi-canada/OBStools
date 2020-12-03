@@ -234,7 +234,6 @@ def get_dailyspec_arguments(argv=None):
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
     args = parser.parse_args(argv)
-    print(args)
 
     # Check inputs
     if not exist(args.indb):
@@ -289,7 +288,7 @@ def main(args=None):
 
     if args is None:
         # Run Input Parser
-        args = get_daylong_arguments()
+        args = get_dailyspec_arguments()
 
     # Load Database
     db = stdb.io.load_db(fname=args.indb)
@@ -315,6 +314,10 @@ def main(args=None):
 
         # Path where data are located
         datapath = Path('DATA') / stkey
+        if not datapath.is_dir():
+            print()
+            print("Path to "+str(datapath)+" doesn`t exist - continuing")
+            continue
 
         # Path where spectra will be saved
         specpath = Path('SPECTRA') / stkey
