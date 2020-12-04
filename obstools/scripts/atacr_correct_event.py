@@ -232,20 +232,26 @@ def main(args=None):
         args = get_correct_arguments()
 
     # Load Database
-    db = stdb.io.load_db(fname=args.indb)
+    # stdb>0.1.3
+    try:
+        db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
-    # Construct station key loop
-    allkeys = db.keys()
-    sorted(allkeys)
+    # stdb=0.1.3
+    except:
+        db = stdb.io.load_db(fname=args.indb)
 
-    # Extract key subset
-    if len(args.stkeys) > 0:
-        stkeys = []
-        for skey in args.stkeys:
-            stkeys.extend([s for s in allkeys if skey in s])
-    else:
-        stkeys = db.keys()
-        sorted(stkeys)
+        # Construct station key loop
+        allkeys = db.keys()
+        sorted(allkeys)
+
+        # Extract key subset
+        if len(args.stkeys) > 0:
+            stkeys = []
+            for skey in args.stkeys:
+                stkeys.extend([s for s in allkeys if skey in s])
+        else:
+            stkeys = db.keys()
+            sorted(stkeys)
 
     # Loop over station keys
     for stkey in list(stkeys):

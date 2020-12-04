@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 
+import sys
 from scipy.signal import spectrogram, detrend
 from scipy.linalg import norm
 import matplotlib.pyplot as plt
@@ -31,8 +32,8 @@ from obstools.atacr import utils, plotting
 from pkg_resources import resource_filename
 from pathlib import Path
 np.seterr(all='ignore')
-import sys
 np.set_printoptions(threshold=sys.maxsize)
+
 
 class Power(object):
     """
@@ -255,8 +256,9 @@ class DayNoise(object):
         self.tkey = str(self.year) + '.' + str(self.julday)
 
         # Get number of components for the available, non-empty traces
-        ncomp = np.sum([1 for tr in
-                       Stream(traces=[tr1, tr2, trZ, trP]) if np.any(tr.data)])
+        ncomp = np.sum(
+            [1 for tr in
+             Stream(traces=[tr1, tr2, trZ, trP]) if np.any(tr.data)])
         self.ncomp = ncomp
 
         # Build list of available transfer functions based on the number of
@@ -368,7 +370,8 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = str(save.name) + '.' + self.key + '.' + self.tkey + \
+                    title = \
+                        str(save.name) + '.' + self.key + '.' + self.tkey + \
                         '.specgram_Z.P.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -389,7 +392,8 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = str(save.name) + '.' + self.key + '.' + self.tkey + \
+                    title = \
+                        str(save.name) + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -413,7 +417,8 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = str(save.name) + '.' + self.key + '.' + self.tkey + \
+                    title = \
+                        str(save.name) + '.' + self.key + '.' + self.tkey + \
                         '.specgram_H1.H2.Z.'
                     plt.savefig(str(title + form),
                                 dpi=300, bbox_inches='tight', format=form)
@@ -423,7 +428,8 @@ class DayNoise(object):
         # Select bandpass frequencies
         ff = (f > pd[0]) & (f < pd[1])
 
-        if np.any([psd==0. for psd in [psd1, psd2, psdZ, psdP]]):
+        if np.sum([(psd == 0.).any() for psd in
+                   [psd1, psd2, psdZ, psdP] if psd is not None]) > 0.:
             smooth = True
 
         if smooth:
@@ -432,12 +438,15 @@ class DayNoise(object):
             sl_psd2 = None
             sl_psdZ = None
             sl_psdP = None
-            sl_psdZ = utils.smooth(np.log(psdZ, where=(psdZ>0.)), 50, axis=0)
+            sl_psdZ = utils.smooth(np.log(psdZ, where=(psdZ > 0.)), 50, axis=0)
             if self.ncomp == 2 or self.ncomp == 4:
-                sl_psdP = utils.smooth(np.log(psdP, where=(psdP>0.)), 50, axis=0)
+                sl_psdP = utils.smooth(
+                    np.log(psdP, where=(psdP > 0.)), 50, axis=0)
             if self.ncomp == 3 or self.ncomp == 4:
-                sl_psd1 = utils.smooth(np.log(psd1, where=(psd1>0.)), 50, axis=0)
-                sl_psd2 = utils.smooth(np.log(psd2, where=(psd2>0.)), 50, axis=0)
+                sl_psd1 = utils.smooth(
+                    np.log(psd1, where=(psd1 > 0.)), 50, axis=0)
+                sl_psd2 = utils.smooth(
+                    np.log(psd2, where=(psd2 > 0.)), 50, axis=0)
 
         else:
             # Take the log of the PSDs
@@ -501,7 +510,6 @@ class DayNoise(object):
         if debug:
             plt.show()
 
-
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
@@ -543,7 +551,7 @@ class DayNoise(object):
                 if fig_QC:
                     power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
                     plot = plotting.fig_QC(f, power, goodwins,
-                        self.ncomp, key=self.key)
+                                           self.ncomp, key=self.key)
                     plot.show()
                 return
 
@@ -561,12 +569,13 @@ class DayNoise(object):
         if fig_QC:
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
             fname = self.key + '.' + self.tkey + '.' + 'QC'
-            plot = plotting.fig_QC(f, power, goodwins, self.ncomp, key=self.key)
+            plot = plotting.fig_QC(
+                f, power, goodwins, self.ncomp, key=self.key)
 
             # Save or show figure
             if save:
                 plot.savefig(str(save) + '/' + fname + '.' + form,
-                            dpi=300, bbox_inches='tight', format=form)
+                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
 
@@ -723,13 +732,12 @@ class DayNoise(object):
         if fig_average:
             fname = self.key + '.' + self.tkey + '.' + 'average'
             plot = plotting.fig_average(f, self.power, bad, self.goodwins,
-                             self.ncomp, key=self.key)
+                                        self.ncomp, key=self.key)
             if save:
                 plot.savefig(str(save) + '/' + fname + '.' + form,
-                            dpi=300, bbox_inches='tight', format=form)
+                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
-
 
         if calc_rotation and self.ncomp >= 3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
@@ -745,10 +753,9 @@ class DayNoise(object):
                 # Save or show figure
                 if save:
                     plot.savefig(str(save) + '/' + fname + '.' + form,
-                                dpi=300, bbox_inches='tight', format=form)
+                                 dpi=300, bbox_inches='tight', format=form)
                 else:
                     plot.show()
-
 
         else:
             self.rotation = Rotation()
@@ -1233,13 +1240,12 @@ class StaNoise(object):
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
             fname = self.key + '.' + 'QC'
             plot = plotting.fig_QC(self.f, power, gooddays,
-                self.ncomp, key=self.key)
+                                   self.ncomp, key=self.key)
             if save:
                 plot.savefig(str(save) + '/' + fname + '.' + form,
-                            dpi=300, bbox_inches='tight', format=form)
+                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
-
 
     def average_sta_spectra(self, fig_average=False, save=False, form='png'):
         r"""
@@ -1359,11 +1365,13 @@ class StaNoise(object):
 
         if fig_average:
             fname = self.key + '.' + 'average'
-            plot = plotting.fig_average(self.f, self.power, bad,
-                             self.gooddays, self.ncomp, key=self.key)
+            plot = \
+                plotting.fig_average(
+                    self.f, self.power, bad,
+                    self.gooddays, self.ncomp, key=self.key)
             if save:
                 plot.savefig(str(save) + '/' + fname + '.' + form,
-                            dpi=300, bbox_inches='tight', format=form)
+                             dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
 
