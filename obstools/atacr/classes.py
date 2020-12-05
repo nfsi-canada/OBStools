@@ -370,11 +370,12 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = \
-                        str(save.name) + '.' + self.key + '.' + self.tkey + \
-                        '.specgram_Z.P.'
-                    plt.savefig(str(title + form),
-                                dpi=300, bbox_inches='tight', format=form)
+                    fname = self.key + '.' + self.tkey + \
+                        '.specgram_Z.P.' + form
+                    if isinstance(save, Path):
+                        fname = save / fname
+                    plt.savefig(
+                        str(fname), dpi=300, bbox_inches='tight', format=form)
                 else:
                     plt.show()
 
@@ -392,11 +393,12 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = \
-                        str(save.name) + '.' + self.key + '.' + self.tkey + \
-                        '.specgram_H1.H2.Z.'
-                    plt.savefig(str(title + form),
-                                dpi=300, bbox_inches='tight', format=form)
+                    fname = self.key + '.' + self.tkey + \
+                        '.specgram_H1.H2.Z.' + form
+                    if isinstance(save, Path):
+                        fname = save / fname
+                    plt.savefig(
+                        str(fname), dpi=300, bbox_inches='tight', format=form)
                 else:
                     plt.show()
 
@@ -417,11 +419,12 @@ class DayNoise(object):
                 plt.xlabel('Seconds')
                 plt.tight_layout()
                 if save:
-                    title = \
-                        str(save.name) + '.' + self.key + '.' + self.tkey + \
-                        '.specgram_H1.H2.Z.'
-                    plt.savefig(str(title + form),
-                                dpi=300, bbox_inches='tight', format=form)
+                    fname = self.key + '.' + self.tkey + \
+                        '.specgram_H1.H2.Z.P.' + form
+                    if isinstance(save, Path):
+                        fname = save / fname
+                    plt.savefig(
+                        str(fname), dpi=300, bbox_inches='tight', format=form)
                 else:
                     plt.show()
 
@@ -558,14 +561,16 @@ class DayNoise(object):
 
         if fig_QC:
             power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-            fname = self.key + '.' + self.tkey + '.' + 'QC'
             plot = plotting.fig_QC(
                 f, power, goodwins, self.ncomp, key=self.key)
 
             # Save or show figure
             if save:
-                plot.savefig(str(save) + '/' + fname + '.' + form,
-                             dpi=300, bbox_inches='tight', format=form)
+                fname = self.key + '.' + self.tkey + '.' + 'QC' + form
+                if isinstance(save, Path):
+                    fname = save / fname
+                plot.savefig(
+                    str(fname), dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
 
@@ -720,12 +725,14 @@ class DayNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
-            fname = self.key + '.' + self.tkey + '.' + 'average'
             plot = plotting.fig_average(f, self.power, bad, self.goodwins,
                                         self.ncomp, key=self.key)
             if save:
-                plot.savefig(str(save) + '/' + fname + '.' + form,
-                             dpi=300, bbox_inches='tight', format=form)
+                fname = self.key + '.' + self.tkey + '.' + 'average.' + form
+                if isinstance(save, Path):
+                    fname = save / fname
+                plot.savefig(
+                    str(fname), dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
 
@@ -737,13 +744,15 @@ class DayNoise(object):
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
             if fig_coh_ph:
-                fname = self.key + '.' + self.tkey + '.' + 'coh_ph'
                 plot = plotting.fig_coh_ph(coh, ph, direc)
 
                 # Save or show figure
                 if save:
-                    plot.savefig(str(save) + '/' + fname + '.' + form,
-                                 dpi=300, bbox_inches='tight', format=form)
+                    fname = self.key + '.' + self.tkey + '.' + 'coh_ph.' + form
+                    if isinstance(save, Path):
+                        fname = save / fname
+                    plot.savefig(
+                        str(fname), dpi=300, bbox_inches='tight', format=form)
                 else:
                     plot.show()
 
@@ -1207,12 +1216,6 @@ class StaNoise(object):
                 self.gooddays = gooddays
                 self.QC = True
                 moveon = True
-                # if fig_QC:
-                #     power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-                #     plot = plotting.fig_QC(self.f, power, gooddays,
-                #                 self.ncomp, key=self.key)
-                #     plot.show()
-                # return
 
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
 
@@ -1228,12 +1231,14 @@ class StaNoise(object):
 
         if fig_QC:
             power = Power(sl_c11, sl_c22, sl_cZZ, sl_cPP)
-            fname = self.key + '.' + 'QC'
             plot = plotting.fig_QC(self.f, power, gooddays,
                                    self.ncomp, key=self.key)
             if save:
-                plot.savefig(str(save) + '/' + fname + '.' + form,
-                             dpi=300, bbox_inches='tight', format=form)
+                fname = self.key + '.' + 'QC.' + form
+                if isinstance(save, Path):
+                    fname = save / fname
+                plot.savefig(
+                    str(fname), dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
 
@@ -1354,14 +1359,15 @@ class StaNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
-            fname = self.key + '.' + 'average'
-            plot = \
-                plotting.fig_average(
-                    self.f, self.power, bad,
-                    self.gooddays, self.ncomp, key=self.key)
+            plot = plotting.fig_average(
+                self.f, self.power, bad,
+                self.gooddays, self.ncomp, key=self.key)
             if save:
-                plot.savefig(str(save) + '/' + fname + '.' + form,
-                             dpi=300, bbox_inches='tight', format=form)
+                fname = self.key + '.' + 'average.' + form
+                if isinstance(save, Path):
+                    fname = save / fname
+                plot.savefig(
+                    str(fname), dpi=300, bbox_inches='tight', format=form)
             else:
                 plot.show()
 
