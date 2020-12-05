@@ -36,6 +36,7 @@ from argparse import ArgumentParser
 from os.path import exists as exist
 from numpy import nan
 
+
 def get_correct_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
@@ -262,12 +263,14 @@ def main(args=None):
         # Path where transfer functions will be located
         transpath = Path('TF_STA') / stkey
         if not transpath.is_dir():
-            raise(Exception("Path to "+str(transpath)+" doesn`t exist - aborting"))
+            raise(Exception("Path to "+str(transpath) +
+                            " doesn`t exist - aborting"))
 
         # Path where event data are located
         eventpath = Path('EVENTS') / stkey
         if not eventpath.is_dir():
-            raise(Exception("Path to "+str(eventpath)+" doesn`t exist - aborting"))
+            raise(Exception("Path to "+str(eventpath) +
+                            " doesn`t exist - aborting"))
 
         # Path where plots will be saved
         if args.saveplot:
@@ -323,7 +326,7 @@ def main(args=None):
         print("|-----------------------------------------------|")
 
         # Find all files in directories
-        p = eventpath.glob('*.*')
+        p = eventpath.glob('*.pkl')
         event_files = [x for x in p if x.is_file()]
         p = transpath.glob('*.*')
         trans_files = [x for x in p if x.is_file()]
@@ -368,8 +371,9 @@ def main(args=None):
                                               fmin=args.fmin, fmax=args.fmax)
 
                 if plotpath:
-                    plot.savefig(plotpath / (fname + '.' + args.form),
-                                dpi=300, bbox_inches='tight', format=args.form)
+                    plot.savefig(
+                        plotpath / (fname + '.' + args.form),
+                        dpi=300, bbox_inches='tight', format=args.form)
                 else:
                     plot.show()
 

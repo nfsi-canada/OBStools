@@ -475,10 +475,6 @@ class DayNoise(object):
             dsl_psd2 = sl_psd2[ff, :] - np.mean(sl_psd2[ff, :], axis=0)
             dsl_psdP = sl_psdP[ff, :] - np.mean(sl_psdP[ff, :], axis=0)
             dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
-        # print('dlpsd1',dsl_psd1)
-        # print('dlpsd2',dsl_psd2)
-        # print('dlpsdZ',dsl_psdZ)
-        # print('dlpsdP',dsl_psdP)
 
         if self.ncomp == 2:
             plt.figure(2)
@@ -548,12 +544,6 @@ class DayNoise(object):
             if np.sum(kill) == 0:
                 self.goodwins = goodwins
                 moveon = True
-                if fig_QC:
-                    power = Power(sl_psd1, sl_psd2, sl_psdZ, sl_psdP)
-                    plot = plotting.fig_QC(f, power, goodwins,
-                                           self.ncomp, key=self.key)
-                    plot.show()
-                return
 
             trypenalty = penalty[np.argwhere(kill == False)].T[0]
 

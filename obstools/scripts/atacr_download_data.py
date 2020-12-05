@@ -28,7 +28,6 @@ import numpy as np
 import os.path
 import pickle
 import stdb
-import math
 from obspy.clients.fdsn import Client
 from obspy import Stream, UTCDateTime
 from obstools.atacr import utils
@@ -37,8 +36,6 @@ from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
 from numpy import nan
-
-# Main function
 
 
 def get_daylong_arguments(argv=None):
@@ -124,16 +121,30 @@ def get_daylong_arguments(argv=None):
         "restricted data. [Default no user and password]")
 
     """
-    # # Database Settings
-    # DataGroup = parser.add_argument_group(parser, title="Local Data Settings", description="Settings associated with defining " \
-    #     "and using a local data base of pre-downloaded day-long SAC files.")
-    # DataGroup.add_argument("--local-data", action="store", type=str, dest="localdata", default=None, \
-    #     help="Specify a comma separated list of paths containing day-long sac files of data already downloaded. " \
-    #     "If data exists for a seismogram is already present on disk, it is selected preferentially over downloading " \
-    #     "the data using the Client interface")
-    # DataGroup.add_argument("--no-data-zero", action="store_true", dest="ndval", default=False, \
-    #     help="Specify to force missing data to be set as zero, rather than default behaviour which sets to nan.")
-    """
+    # Database Settings
+    DataGroup = parser.add_argument_group(
+        title="Local Data Settings",
+        description="Settings associated with defining " +
+        "and using a local data base of pre-downloaded day-long SAC files.")
+    DataGroup.add_argument(
+        "--local-data",
+        action="store",
+        type=str,
+        dest="localdata",
+        default=None,
+        help="Specify a comma separated list of paths containing " +
+        "day-long sac files of data already downloaded. " +
+        "If data exists for a seismogram is already present on disk, " +
+        "it is selected preferentially over downloading " +
+        "the data using the Client interface")
+    DataGroup.add_argument(
+        "--no-data-zero",
+        action="store_true",
+        dest="ndval",
+        default=False,
+        help="Specify to force missing data to be set as zero, " +
+        "rather than default behaviour which sets to nan.")
+"""
 
     # Constants Settings
     FreqGroup = parser.add_argument_group(
@@ -268,100 +279,6 @@ def get_daylong_arguments(argv=None):
                 "Error: --pre-filt should contain 4 comma-separated floats"))
 
     return args
-
-
-def floor_decimal(n, decimals=0):
-    multiplier = 10 ** decimals
-    return math.floor(n * multiplier) / multiplier
-
-
-def traceshift(trace, tt):
-    """
-    Function to shift traces in time given travel time
-
-    """
-
-    # Define frequencies
-    nt = trace.stats.npts
-    dt = trace.stats.delta
-    freq = np.fft.fftfreq(nt, d=dt)
-
-    # Fourier transform
-    ftrace = np.fft.fft(trace.data)
-
-    # Shift
-    for i in range(len(freq)):
-        ftrace[i] = ftrace[i]*np.exp(-2.*np.pi*1j*freq[i]*tt)
-
-    # Back Fourier transform and return as trace
-    rtrace = trace.copy()
-    rtrace.data = np.real(np.fft.ifft(ftrace))
-
-    # Update start time
-    rtrace.stats.starttime -= tt
-
-    return rtrace
-
-
-def QC_streams(start, end, sth, stp=None):
-
-    if stp:
-        st = sth + stp
-    else:
-        st = sth
-
-    # Check start times
-    if not np.all([tr.stats.starttime == start for tr in st]):
-        print("* Start times are not all close to true start: ")
-        [print("*   "+tr.stats.channel+" " +
-               str(tr.stats.starttime)+" " +
-               str(tr.stats.endtime)) for tr in st]
-        print("*   True start: "+str(start))
-        print("* -> Shifting traces to true start")
-        delay = [tr.stats.starttime - start for tr in st]
-        st_shifted = Stream(
-            traces=[traceshift(tr, dt) for tr, dt in zip(st, delay)])
-        st = st_shifted.copy()
-
-    # # Check sampling rate
-    # sr = st[0].stats.sampling_rate
-    # sr_round = float(floor_decimal(sr, 0))
-    # if not sr == sr_round:
-    #     print("* Sampling rate is not an integer value: ", sr)
-    #     print("* -> Resampling")
-    #     st.resample(sr_round, no_filter=False)
-
-    # Try trimming
-    try:
-        st.trim(start, end, fill_value=0., pad=True)
-    except:
-        print("* Unable to trim")
-        print("* -> Skipping")
-        print("**************************************************")
-        return False, None, None
-
-    # Check final lengths - they should all be equal if start times
-    # and sampling rates are all equal and traces have been trimmed
-    sr = st[0].stats.sampling_rate
-    if not np.allclose([tr.stats.npts for tr in st[1:]], st[0].stats.npts):
-        print("* Lengths are incompatible: ")
-        [print("*     "+str(tr.stats.npts)) for tr in st]
-        print("* -> Skipping")
-        print("**************************************************")
-
-        return False, None, None
-
-    elif not np.allclose([st[0].stats.npts], int((end - start)*sr), atol=1):
-        print("* Length is too short: ")
-        print("*    "+str(st[0].stats.npts) +
-              " ~= "+str(int((end - start)*sr)))
-        print("* -> Skipping")
-        print("**************************************************")
-
-        return False, None, None
-
-    else:
-        return True, st.select(channel="?H?"), st.select(channel="??H")
 
 
 def main(args=None):
@@ -519,13 +436,6 @@ def main(args=None):
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
 
-                    # Detrend, filter - seismic data
-                    sth.detrend('demean')
-                    sth.detrend('linear')
-                    sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                               corners=2, zerophase=True)
-                    sth.resample(args.new_sampling_rate)
-
                 except:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
@@ -533,10 +443,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-                # Check streams
-                is_ok, sth, stp = QC_streams(t1, t2, sth)
-                if not is_ok:
-                    continue
+                st = sth
 
             elif "H" not in args.channels:
 
@@ -564,13 +471,6 @@ def main(args=None):
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
 
-                    # Detrend, filter - seismic data
-                    sth.detrend('demean')
-                    sth.detrend('linear')
-                    sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                               corners=2, zerophase=True)
-                    sth.resample(args.new_sampling_rate)
-
                 except:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
@@ -581,11 +481,11 @@ def main(args=None):
                     print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(
                         network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='??H',
+                        location=sta.location[0], channel='?DH',
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
                     if len(stp) > 1:
-                        print("WARNING: There are more than one ??H trace")
+                        print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
@@ -593,24 +493,14 @@ def main(args=None):
                         else:
                             stp = Stream(traces=stp[1])
 
-                    # Detrend, filter - pressure data
-                    stp.detrend('demean')
-                    stp.detrend('linear')
-                    stp.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                               corners=2, zerophase=True)
-                    stp.resample(args.new_sampling_rate)
-
                 except:
-                    print(" Error: Unable to download ??H component - " +
+                    print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     t1 += dt
                     t2 += dt
                     continue
 
-                # Check streams
-                is_ok, sth, stp = QC_streams(t1, t2, sth, stp=stp)
-                if not is_ok:
-                    continue
+                st = sth + stp
 
             else:
 
@@ -640,13 +530,6 @@ def main(args=None):
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
 
-                    # Detrend, filter - seismic data
-                    sth.detrend('demean')
-                    sth.detrend('linear')
-                    sth.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                               corners=2, zerophase=True)
-                    sth.resample(args.new_sampling_rate)
-
                 except:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
@@ -657,11 +540,11 @@ def main(args=None):
                     print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(
                         network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='??H',
+                        location=sta.location[0], channel='?DH',
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
                     if len(stp) > 1:
-                        print("WARNING: There are more than one ??H trace")
+                        print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
@@ -669,31 +552,33 @@ def main(args=None):
                         else:
                             stp = Stream(traces=stp[1])
 
-                    # Detrend, filter - pressure data
-                    stp.detrend('demean')
-                    stp.detrend('linear')
-                    stp.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                               corners=2, zerophase=True)
-                    stp.resample(args.new_sampling_rate)
-
                 except:
-                    print(" Error: Unable to download ??H component - " +
+                    print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     t1 += dt
                     t2 += dt
                     continue
 
-                # Check streams
-                is_ok, sth, stp = QC_streams(t1, t2, sth, stp=stp)
-                if not is_ok:
-                    continue
+                st = sth + stp
+
+            # Detrend, filter
+            st.detrend('demean')
+            st.detrend('linear')
+            st.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                corners=2, zerophase=True)
+            st.resample(args.new_sampling_rate)
+
+            # Check streams
+            is_ok, st = utils.QC_streams(t1, t2, st)
+            if not is_ok:
+                continue
+
+            sth = st.select(component='1') + st.select(component='2') + \
+                st.select(component='Z')
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
             sth.remove_response(pre_filt=args.pre_filt, output=args.units)
-            if "P" in args.channels:
-                print("*   -> Removing responses - Pressure data")
-                stp.remove_response(pre_filt=args.pre_filt)
 
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
@@ -714,9 +599,12 @@ def main(args=None):
 
             # Extract traces - P
             if "P" in args.channels:
+                stp = st.select(component='H')
+                print("*   -> Removing responses - Pressure data")
+                stp.remove_response(pre_filt=args.pre_filt)
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation, 'H')
+                    trP, sta.latitude, sta.longitude, sta.elevation, 'P')
                 trP.write(str(fileP), format='SAC')
 
             t1 += dt
