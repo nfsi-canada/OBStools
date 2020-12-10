@@ -404,8 +404,7 @@ def main(args=None):
             jday = str(trZ.stats.starttime.julday).zfill(3)
 
             print()
-            print(
-                "************************************************************")
+            print("*"*60)
             print("* Calculating noise spectra for key " +
                   stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'

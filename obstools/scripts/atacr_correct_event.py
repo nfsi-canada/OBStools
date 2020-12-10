@@ -85,6 +85,13 @@ def get_correct_arguments(argv=None):
         default=False,
         help="Force the overwriting of pre-existing data. " +
         "[Default False]")
+    parser.add_argument(
+        "-S", "--save",
+        action="store_true",
+        dest="save_correct",
+        default=False,
+        help="Save the corrected EvStream objects to disk. " +
+        "[Default False]")
 
     # Event Selection Criteria
     DaysGroup = parser.add_argument_group(
@@ -367,8 +374,9 @@ def main(args=None):
 
             if args.fig_event_raw:
                 fname = stkey + '.' + evstamp + 'raw'
-                plot = plotting.fig_event_raw(eventstream,
-                                              fmin=args.fmin, fmax=args.fmax)
+                plot = plotting.fig_event_raw(
+                    eventstream,
+                    fmin=args.fmin, fmax=args.fmax)
 
                 if plotpath:
                     plot.savefig(
@@ -413,7 +421,7 @@ def main(args=None):
                             # average files
                             eventstream.correct_data(tfaverage)
 
-                            correct = eventstream.correct
+                            correct_sta = eventstream.correct
                             if args.fig_plot_corrected:
                                 fname = stkey + '.' + evstamp + 'sta_corrected'
                                 plot = plotting.fig_event_corrected(
@@ -426,6 +434,13 @@ def main(args=None):
                                         format=args.form)
                                 else:
                                     plot.show()
+
+                            if args.save_correct:
+                                correctpath = eventpath / 'CORRECTED'
+                                if not correctpath.is_dir():
+                                    correctpath.mkdir(parents=True)
+                                file = correctpath / eventfile.stem
+                                eventstream.save(str(file) + '.day.pkl')
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -447,7 +462,7 @@ def main(args=None):
                             # average files
                             eventstream.correct_data(tfaverage)
 
-                            correct = eventstream.correct
+                            correct_day = eventstream.correct
                             if args.fig_plot_corrected:
                                 fname = stkey + '.' + evstamp + 'day_corrected'
                                 plot = plotting.fig_event_corrected(
@@ -461,6 +476,12 @@ def main(args=None):
                                 else:
                                     plot.show()
 
+                            if args.save_correct:
+                                correctpath = eventpath / 'CORRECTED'
+                                if not correctpath.is_dir():
+                                    correctpath.mkdir(parents=True)
+                                file = correctpath / eventfile.stem
+                                eventstream.save(str(file) + '.sta.pkl')
 
 if __name__ == "__main__":
 

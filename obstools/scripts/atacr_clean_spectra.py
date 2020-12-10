@@ -386,9 +386,7 @@ def main(args=None):
             # Load file if it exists
             if filespec.exists():
                 print()
-                print(
-                    "*******************************************" +
-                    "*****************")
+                print("*"*60)
                 print('* Calculating noise spectra for key ' +
                       stkey+' and day '+year+'.'+jday)
                 print("*   -> file "+str(filespec)+" found - loading")
@@ -543,7 +541,7 @@ def main(args=None):
             fname = stkey + '.' + 'av_admittance'
             plot = plotting.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
                               'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
-#            if plotpath.is_dir():
+
             if plotpath:
                 plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
@@ -553,14 +551,14 @@ def main(args=None):
             fname = stkey + '.' + 'av_phase'
             plot = plotting.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
                               'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
-#            if plotpath.is_dir():
+
             if plotpath:
                 plot.savefig(str(plotpath / (fname + '.' + args.form)),
                             dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
-        if args.fig_coh_ph and stanoise.direc.any():
+        if args.fig_coh_ph and stanoise.direc is not None:
             fname = stkey + '.' + 'coh_ph'
             plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.direc)
             if plotpath:

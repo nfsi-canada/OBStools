@@ -397,8 +397,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
                 compliance = np.abs(day_comps[i][key][0])
                 ax.plot(f, compliance, 'gray', alpha=0.3, lw=0.5)
                 ax.set_xlim(f_0, f_c)
-                ytop = np.max(compliance[(f>f_0) & (f<f_c)])
-                ybot = np.min(compliance[(f>f_0) & (f<f_c)])
+                ytop = np.max(compliance[(f > f_0) & (f < f_c)])
+                ybot = np.min(compliance[(f > f_0) & (f < f_c)])
                 ax.set_ylim(ybot, ytop)
 
         if sta_list[key]:
@@ -473,36 +473,41 @@ def fig_event_raw(evstream, fmin, fmax):
     sr = evstream.sth[0].stats.sampling_rate
     taxis = np.arange(0., 7200., 1./sr)
 
-    plt.figure(figsize=(6, 6))
+    fig = plt.figure(figsize=(6, 6))
 
-    plt.subplot(411)
-    plt.plot(taxis, evstream.sth[0].data, 'k', lw=0.5)
-    plt.title(evstream.key+' '+evstream.tstamp +
-              ': H1', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
-                               scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    ax = fig.add_subplot(4, 1, 1)
+    ax.plot(taxis, evstream.sth.select(component='Z')[0].data, 'k', lw=0.5)
+    ax.set_title(evstream.key+' '+evstream.tstamp +
+                 ': Z', fontdict={'fontsize': 8})
+    ax.ticklabel_format(axis='y', style='sci', useOffset=True,
+                        scilimits=(-3, 3))
+    ax.set_xlim((0., 7200.))
 
-    plt.subplot(412)
-    plt.plot(taxis, evstream.sth[1].data, 'k', lw=0.5)
-    plt.xlim((0., 7200.))
-    plt.title(evstream.tstamp+': H2', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
-                               scilimits=(-3, 3))
+    if len(evstream.sth) > 1:
+        ax = fig.add_subplot(4, 1, 2)
+        ax.plot(taxis, evstream.sth.select(component='1')[0].data, 'k', lw=0.5)
+        ax.set_xlim((0., 7200.))
+        ax.set_title(evstream.tstamp+': 1', fontdict={'fontsize': 8})
+        ax.ticklabel_format(axis='y', style='sci', useOffset=True,
+                            scilimits=(-3, 3))
 
-    plt.subplot(413)
-    plt.plot(taxis, evstream.sth[2].data, 'k', lw=0.5)
-    plt.xlim((0., 7200.))
-    plt.title(evstream.tstamp+': Z', fontdict={'fontsize': 8})
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
-                               scilimits=(-3, 3))
+        ax = fig.add_subplot(4, 1, 3)
+        ax.plot(taxis, evstream.sth.select(component='2')[0].data, 'k', lw=0.5)
+        ax.set_xlim((0., 7200.))
+        ax.set_title(evstream.tstamp+': 2', fontdict={'fontsize': 8})
+        ax.ticklabel_format(axis='y', style='sci', useOffset=True,
+                            scilimits=(-3, 3))
 
-    plt.subplot(414)
-    plt.plot(taxis, evstream.stp[0].data, 'k', lw=0.5)
-    plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
-                               scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
-    plt.title(evstream.tstamp+': P', fontdict={'fontsize': 8})
+    if evstream.stp:
+        if len(evstream.sth) > 1:
+            ax = fig.add_subplot(4, 1, 4)
+        else:
+            ax = fig.add_subplot(4, 1, 2)
+        ax.plot(taxis, evstream.stp[0].data, 'k', lw=0.5)
+        ax.ticklabel_format(axis='y', style='sci', useOffset=True,
+                            scilimits=(-3, 3))
+        ax.set_xlim((0., 7200.))
+        ax.set_title(evstream.tstamp+': P', fontdict={'fontsize': 8})
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
@@ -535,7 +540,8 @@ def fig_event_corrected(evstream, TF_list):
     plt.figure(figsize=(8, 8))
 
     plt.subplot(611)
-    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
+    plt.plot(
+        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
         plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
     plt.title(evstream.key+' '+evstream.tstamp +
@@ -545,7 +551,8 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(612)
-    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
+    plt.plot(
+        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
     if TF_list['Z2-1']:
         plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': Z2-1', fontdict={'fontsize': 8})
@@ -554,7 +561,8 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(613)
-    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
+    plt.plot(
+        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
     if TF_list['ZP-21']:
         plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP-21', fontdict={'fontsize': 8})
@@ -563,7 +571,8 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(614)
-    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
+    plt.plot(
+        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
     if TF_list['ZH']:
         plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZH', fontdict={'fontsize': 8})
@@ -572,7 +581,8 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(615)
-    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
+    plt.plot(
+        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
     if TF_list['ZP-H']:
         plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP-H', fontdict={'fontsize': 8})
@@ -581,7 +591,8 @@ def fig_event_corrected(evstream, TF_list):
     plt.xlim((0., 7200.))
 
     plt.subplot(616)
-    plt.plot(taxis, evstream.sth[2].data, 'lightgray', lw=0.5)
+    plt.plot(
+        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
     if TF_list['ZP']:
         plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
     plt.title(evstream.tstamp+': ZP', fontdict={'fontsize': 8})
