@@ -11,7 +11,7 @@ the ``StDb`` package for querying and building a station database and
 can be used through command-line scripts.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4281480.svg)](https://doi.org/10.5281/zenodo.4281480)
-[![Build Status](https://travis-ci.org/nfsi-canada/OBStools.svg?branch=master)](https://travis-ci.org/nfsi-canada/OBStools)
+![build](https://github.com/nfsi-canada/OBStools/workflows/Build/badge.svg)
 [![codecov](https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg)](https://codecov.io/gh/nfsi-canada/OBStools)
 
 Installation, API documentation, scripts and tutorials are described at https://nfsi-canada.github.io/OBStools/
