@@ -15,6 +15,7 @@ can be used through command-line scripts.
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4281480.svg
    :target: https://doi.org/10.5281/zenodo.4281480
 .. image:: https://github.com/nfsi-canada/OBStools/workflows/Build/badge.svg
+   :target: https://github.com/nfsi-canada/OBStools/actions
 .. image:: https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/nfsi-canada/OBStools
 
