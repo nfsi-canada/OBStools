@@ -50,13 +50,6 @@ jobs:
           pytest -v --cov=obstools ../obstools/tests/
           bash <(curl -s https://codecov.io/bash)
 
-  docs:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
-
-    steps:
       - name: Make docs
         shell: bash -l {0}
         run: |
