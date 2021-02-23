@@ -628,10 +628,9 @@ Usage
 Description
 -----------
 
-Calculates transfer functions using the noise windows flagged as *good*, for either
+Loads the transfer functions previously calculated and performs the noise corrections, for either
 a single day (from ``atacr_daily_spectra``) or for those averaged over several days
-(from ``atacr_clean_spectra``), if available. The transfer functions are stored to disk.
-Station selection is specified by a network and station code. The database is provided as a 
+(from ``atacr_clean_spectra``), if available. The database is provided as a 
 ``StDb`` dictionary.
 
 Usage
@@ -748,19 +747,19 @@ To check the station info for M08A, use the program ``ls_stdb.py``:
 ++++++++++++++++++++++
 
 We wish to download one month of data for the station M08A for March 2012. 
-The various options above allow us to select the additional channels to specify
+The various options above allow us to select the additional channels to use
 (e.g., ``-C H,P`` for both horizontal and pressure data - which is the default
 setting). Default frequency settings for data pre-processing match those of
-the Matlab ``ATaCR`` software and can therefore be ignore when calling the program.
+the Matlab ``ATaCR`` software and can therefore be ignored when calling the program.
 Since the file ``M08A.pkl`` contains only one station, it is not necessary to specify a
 key. This option would be useful if the database contained several stations
 and we were only interested in downloading data for M08A. In this case, we would
 specify ``--keys=M08A`` or ``--keys=7D.M08A``. 
 The only required options at this point are the ``--start`` and ``--end`` options
-to specify the dates for which data will will be downloaded.
+to specify the dates for which data will be downloaded.
 
 If you change your mind about the pre-processing options, you can always re-run the
-following line with the option ``-O``, which will over-write the data saved to disk.
+following line with the option ``-O``, which will overwrite the data saved to disk.
 
 To download all broadband seismic and pressure data, simply type in a terminal:
 
@@ -864,7 +863,7 @@ And so on until all available data have been processed. The software stores the
 ``obstools.atacr.classes.DayNoise`` objects to a newly
 created folder called ``SPECTRA/7D.M08A/``. To produce figures for visualization,
 we can re-run the above script but now use the plotting options to look
-at one day of the month (March 04, 2012). In this case we need to over-write the 
+at one day of the month (March 04, 2012). In this case we need to overwrite the 
 previous results (option ``-O``) and specify the date of interest:
 
 .. code-block:: 
@@ -904,7 +903,7 @@ station average. It is still possible to specify a date range over which to
 average the spectra, thus giving flexibility in the production of the station
 averages. Parameter settings are similar to those used in ``atacr_daily_spectra``
 but further include the option of plotting the averaged cross-spectral properties.
-To calcualte a single station average for the entire month of March 2012 (and 
+To calculate a single station average for the entire month of March 2012 (and 
 therefore using all available data) and plot the results, we can type in a terminal:
 
 .. code-block::
@@ -1139,7 +1138,7 @@ newly created folder ``EVENTS/7D.M08A/``.
 The final step in the analysis is the application of the transfer functions
 to the raw earthquake seismograms to clean up the vertical component. 
 Once again, the default settings can be used. To make the final Figures 11 and 12,
-specify the ``--fig_Raw`` and ``--figClean`` options:
+specify the ``--figRaw`` and ``--figClean`` options:
 
 .. code-block::
 
