@@ -515,15 +515,15 @@ def main(args=None):
                     '.'+str(time.minute).zfill(2)
 
                 # Define file names (to check if files already exist)
-                filepkl = eventpath / (tstamp+'.event.pkl')
+                filename = eventpath / (tstamp+'.event.pkl')
                 # Horizontal 1 channel
-                file1 = datapath / (tstamp+'.'+sta.channel+'1.SAC')
+                file1 = eventpath / (tstamp+'.'+sta.channel+'1.SAC')
                 # Horizontal 2 channel
-                file2 = datapath / (tstamp+'.'+sta.channel+'2.SAC')
+                file2 = eventpath / (tstamp+'.'+sta.channel+'2.SAC')
                 # Vertical channel
-                fileZ = datapath / (tstamp+'.'+sta.channel+'Z.SAC')
+                fileZ = eventpath / (tstamp+'.'+sta.channel+'Z.SAC')
                 # Pressure channel
-                fileP = datapath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
+                fileP = eventpath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
 
                 print()
                 print("* Channels selected: " +
