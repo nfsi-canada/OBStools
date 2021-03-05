@@ -214,7 +214,7 @@ Usage
 .. code-block::
 
     $ atacr_download_data -h
-    Usage: atacr_download_data [options] <station database>
+    usage: atacr_download_data [options] <indb>
 
     Script used to download and pre-process up to four-component (H1, H2, Z and
     P), day-long seismograms to use in noise corrections of vertical component of
@@ -222,63 +222,66 @@ Usage
     framework for a given date range. The stations are processed one by one and
     the data are stored to disk.
 
-    Options:
+    positional arguments:
+      indb                  Station Database to process from.
+
+    optional arguments:
       -h, --help            show this help message and exit
-      --keys=STKEYS         Specify a comma-separated list of station keys for
+      --keys STKEYS         Specify a comma-separated list of station keys for
                             which to perform the analysis. These must be contained
                             within the station database. Partial keys will be used
                             to match against those in the dictionary. For
                             instance, providing IU will match with all stations in
                             the IU network. [Default processes all stations in the
                             database]
-      -C CHANNELS, --channels=CHANNELS
+      -C CHANNELS, --channels CHANNELS
                             Specify a comma-separated list of channels for which
                             to perform the transfer function analysis. Possible
-                            options are H (for horizontal channels) or P (for
-                            pressure channel). Specifying H allows for tilt
-                            correction. Specifying P allows for compliance
+                            options are 'H' (for horizontal channels) or 'P' (for
+                            pressure channel). Specifying 'H' allows for tilt
+                            correction. Specifying 'P' allows for compliance
                             correction. [Default looks for both horizontal and
                             pressure and allows for both tilt AND compliance
                             corrections]
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
-      Server Settings:
-        Settings associated with which datacenter to log into.
+    Server Settings:
+      Settings associated with which datacenter to log into.
 
-        -S SERVER, --Server=SERVER
+      -S SERVER, --Server SERVER
                             Specify the server to connect to. Options include:
                             BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
                             NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
                             USP. [Default IRIS]
-        -U USERAUTH, --User-Auth=USERAUTH
+      -U USERAUTH, --User-Auth USERAUTH
                             Enter your IRIS Authentification Username and Password
                             (--User-Auth='username:authpassword') to access and
                             download restricted data. [Default no user and
                             password]
 
-      Time Search Settings:
-        Time settings associated with searching for day-long seismograms
+    Frequency Settings:
+      Miscellaneous frequency settings
 
-        --start=STARTT      Specify a UTCDateTime compatible string representing
-                            the start day for the data search. This will override
-                            any station start times. [Default start date for each
-                            station in database]
-        --end=ENDT          Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default end date for
-                            each station in database]
-
-      Frequency Settings:
-        Miscellaneous frequency settings
-
-        --sampling-rate=NEW_SAMPLING_RATE
+      --sampling-rate NEW_SAMPLING_RATE
                             Specify new sampling rate (float, in Hz). [Default 5.]
-        --pre-filt=PRE_FILT
-                            Specify four comma-separated corner frequencies
+      --units UNITS         Choose the output seismogram units. Options are:
+                            'DISP', 'VEL', 'ACC'. [Default 'DISP']
+      --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
                             (float, in Hz) for deconvolution pre-filter. [Default
                             0.001,0.005,45.,50.]
 
+    Time Search Settings:
+      Time settings associated with searching for day-long seismograms
+
+      --start STARTT        Specify a UTCDateTime compatible string representing
+                            the start day for the data search. This will override
+                            any station start times. [Default start date for each
+                            station in database]
+      --end ENDT            Specify a UTCDateTime compatible string representing
+                            the start time for the event search. This will
+                            override any station end times [Default end date for
+                            each station in database]
 
 
 ``atacr_daily_spectra``
@@ -298,7 +301,7 @@ Usage
 .. code-block::
 
     $ atacr_daily_spectra -h
-    Usage: atacr_daily_spectra [options] <station database>
+    usage: atacr_daily_spectra [options] <indb>
 
     Script used to extract shorter windows from the day-long seismograms,
     calculate the power-spectral properties, flag windows for outlier PSDs and
@@ -306,70 +309,71 @@ Usage
     are processed one by one and the data are stored to disk. The program will
     look for data saved in the previous steps and use all available components.
 
-    Options:
-      -h, --help           show this help message and exit
-      --keys=STKEYS        Specify a comma separated list of station keys for
-                           which to perform the analysis. These must be contained
-                           within the station database. Partial keys will be used
-                           to match against those in the dictionary. For instance,
-                           providing IU will match with all stations in the IU
-                           network. [Default processes all stations in the
-                           database]
-      -O, --overwrite      Force the overwriting of pre-existing data. [Default
-                           False]
+    positional arguments:
+      indb               Station Database to process from
 
-      Parameter Settings:
-        Miscellaneous default values and settings
+    optional arguments:
+      -h, --help         show this help message and exit
+      --keys STKEYS      Specify a comma separated list of station keys for which
+                         to perform the analysis. These must be contained within
+                         the station database. Partial keys will be used to match
+                         against those in the dictionary. For instance, providing
+                         IU will match with all stations in the IU network.
+                         [Default processes all stations in the database]
+      -O, --overwrite    Force the overwriting of pre-existing data. [Default
+                         False]
 
-        --window=WINDOW    Specify window length in seconds. Default value is
-                           highly recommended. Program may not be stable for large
-                           deviations from default value. [Default 7200. (or 2
-                           hours)]
-        --overlap=OVERLAP  Specify fraction of overlap between windows. [Default
-                           0.3 (or 30%)]
-        --minwin=MINWIN    Specify minimum number of 'good' windows in any given
-                           day to continue with analysis. [Default 10]
-        --freq-band=PD     Specify comma-separated frequency limits (float, in Hz)
-                           over which to calculate spectral features used in
-                           flagging the days/windows. [Default 0.004,2.0]
-        --tolerance=TOL    Specify parameter for tolerance threshold. If spectrum
-                           > std*tol, window is flagged as bad. [Default 1.5]
-        --alpha=ALPHA      Specify confidence level for f-test, for iterative
-                           flagging of windows. [Default 0.05, or 95% confidence]
-        --raw              Raw spectra will be used in calculating spectral
-                           features for flagging. [Default uses smoothed spectra]
-        --no-rotation      Do not rotate horizontal components to tilt direction.
-                           [Default calculates rotation]
+    Time Search Settings:
+      Time settings associated with searching for day-long seismograms
 
-      Figure Settings:
-        Flags for plotting figures
+      --start STARTT     Specify a UTCDateTime compatible string representing the
+                         start day for the data search. This will override any
+                         station start times. [Default start date of each station
+                         in database]
+      --end ENDT         Specify a UTCDateTime compatible string representing the
+                         start time for the data search. This will override any
+                         station end times. [Default end date of each station n
+                         database]
 
-        --figQC            Plot Quality-Control figure. [Default does not plot
-                           figure]
-        --debug            Plot intermediate steps for debugging. [Default does
-                           not plot figure]
-        --figAverage       Plot daily average figure. [Default does not plot
-                           figure]
-        --figCoh           Plot Coherence and Phase figure. [Default does not plot
-                           figure]
-        --save-fig         Set this option if you wish to save the figure(s).
-                           [Default does not save figure]
-        --format=FORM      Specify format of figure. Can be any one of the
-                           validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
-                           [Default 'png']
+    Parameter Settings:
+      Miscellaneous default values and settings
 
-      Time Search Settings:
-        Time settings associated with searching for day-long seismograms
+      --window WINDOW    Specify window length in seconds. Default value is highly
+                         recommended. Program may not be stable for large
+                         deviations from default value. [Default 7200. (or 2
+                         hours)]
+      --overlap OVERLAP  Specify fraction of overlap between windows. [Default 0.3
+                         (or 30 percent)]
+      --minwin MINWIN    Specify minimum number of 'good' windows in any given day
+                         to continue with analysis. [Default 10]
+      --freq-band PD     Specify comma-separated frequency limits (float, in Hz)
+                         over which to calculate spectral features used in
+                         flagging the bad windows. [Default 0.004,2.0]
+      --tolerance TOL    Specify parameter for tolerance threshold. If spectrum >
+                         std*tol, window is flagged as bad. [Default 2.0]
+      --alpha ALPHA      Specify confidence level for f-test, for iterative
+                         flagging of windows. [Default 0.05, or 95 percent
+                         confidence]
+      --raw              Raw spectra will be used in calculating spectral features
+                         for flagging. [Default uses smoothed spectra]
+      --no-rotation      Do not rotate horizontal components to tilt direction.
+                         [Default calculates rotation]
 
-        --start=STARTT     Specify a UTCDateTime compatible string representing
-                           the start day for the data search. This will override
-                           any station start times. [Default start date of each
-                           station in database]
-        --end=ENDT         Specify a UTCDateTime compatible string representing
-                           the start time for the data search. This will override
-                           any station end times. [Default end date of each
-                           station n database]
+    Figure Settings:
+      Flags for plotting figures
 
+      --figQC            Plot Quality-Control figure. [Default does not plot
+                         figure]
+      --debug            Plot intermediate steps for debugging. [Default does not
+                         plot figure]
+      --figAverage       Plot daily average figure. [Default does not plot figure]
+      --figCoh           Plot Coherence and Phase figure. [Default does not plot
+                         figure]
+      --save-fig         Set this option if you wish to save the figure(s).
+                         [Default does not save figure]
+      --format FORM      Specify format of figure. Can be any one of the
+                         validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                         [Default 'png']
 
 
 ``atacr_clean_spectra``
@@ -390,64 +394,64 @@ Usage
 .. code-block::
 
     $ atacr_clean_spectra -h
-    Usage: atacr_clean_spectra [options] <station database>
+    usage: atacr_clean_spectra [options] <indb>
 
-    Script used to extract daily spectra calculated from ``atacr_daily_spectra``
+    Script used to extract daily spectra calculated from `obs_daily_spectra.py`
     and flag days for outlier PSDs and calculate spectral averages of the
     corresponding Fourier transforms over the entire time period specified. The
     stations are processed one by one and the data are stored to disk.
 
-    Options:
-      -h, --help         show this help message and exit
-      --keys=STKEYS      Specify a comma separated list of station keys for which
-                         to perform the analysis. These must be contained within
-                         the station database. Partial keys will be used to match
-                         against those in the dictionary. For instance, providing
-                         IU will match with all stations in the IU network.
-                         [Default processes all stations in the database]
-      -O, --overwrite    Force the overwriting of pre-existing data. [Default
-                         False]
+    positional arguments:
+      indb             Station Database to process from.
 
-      Parameter Settings:
-        Miscellaneous default values and settings
+    optional arguments:
+      -h, --help       show this help message and exit
+      --keys STKEYS    Specify a comma separated list of station keys for which to
+                       perform the analysis. These must be contained within the
+                       station database. Partial keys will be used to match
+                       against those in the dictionary. For instance, providing IU
+                       will match with all stations in the IU network. [Default
+                       processes all stations in the database]
+      -O, --overwrite  Force the overwriting of pre-existing data. [Default False]
 
-        --freq-band=PD   Specify comma-separated frequency limits (float, in Hz)
-                         over which to calculate spectral features used in
-                         flagging the days/windows. [Default 0.004,2.0]
-        --tolerance=TOL  Specify parameter for tolerance threshold. If spectrum >
-                         std*tol, window is flagged as bad. [Default 1.5]
-        --alpha=ALPHA    Confidence level for f-test, for iterative flagging of
-                         windows. [Default 0.05, or 95% confidence]
+    Time Search Settings:
+      Time settings associated with searching for day-long seismograms
 
-      Figure Settings:
-        Flags for plotting figures
+      --start STARTT   Specify a UTCDateTime compatible string representing the
+                       start day for the data search. This will override any
+                       station start times. [Default start date of each station in
+                       database]
+      --end ENDT       Specify a UTCDateTime compatible string representing the
+                       start time for the data search. This will override any
+                       station end times. [Default end date of each station in
+                       database]
 
-        --figQC          Plot Quality-Control figure. [Default does not plot
-                         figure]
-        --debug          Plot intermediate steps for debugging. [Default does not
-                         plot figure]
-        --figAverage     Plot daily average figure. [Default does not plot figure]
-        --figCoh         Plot Coherence and Phase figure. [Default does not plot
-                         figure]
-        --figCross       Plot cross-spectra figure. [Default does not plot figure]
-        --save-fig       Set this option if you wish to save the figure(s).
-                         [Default does not save figure]
-        --format=FORM    Specify format of figure. Can be any one of the
-                         validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
-                         [Default 'png']
+    Parameter Settings:
+      Miscellaneous default values and settings
 
-      Time Search Settings:
-        Time settings associated with searching for day-long seismograms
+      --freq-band PD   Specify comma-separated frequency limits (float, in Hz)
+                       over which to calculate spectral features used in flagging
+                       the days/windows. [Default 0.004,2.0]
+      --tolerance TOL  Specify parameter for tolerance threshold. If spectrum >
+                       std*tol, window is flagged as bad. [Default 1.5]
+      --alpha ALPHA    Confidence level for f-test, for iterative flagging of
+                       windows. [Default 0.05, or 95 percent confidence]
 
-        --start=STARTT   Specify a UTCDateTime compatible string representing the
-                         start day for the data search. This will override any
-                         station start times. [Default start date of each station
-                         in database]
-        --end=ENDT       Specify a UTCDateTime compatible string representing the
-                         start time for the event search. This will override any
-                         station end times. [Default end date of each station in
-                         database]
+    Figure Settings:
+      Flags for plotting figures
 
+      --figQC          Plot Quality-Control figure. [Default does not plot figure]
+      --debug          Plot intermediate steps for debugging. [Default does not
+                       plot figure]
+      --figAverage     Plot daily average figure. [Default does not plot figure]
+      --figCoh         Plot Coherence and Phase figure. [Default does not plot
+                       figure]
+      --figCross       Plot cross-spectra figure. [Default does not plot figure]
+      --save-fig       Set this option if you wish to save the figure(s). [Default
+                       does not save figure]
+      --format FORM    Specify format of figure. Can be any one of the
+                       validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                       [Default 'png']
 
 ``atacr_transfer functions``
 ++++++++++++++++++++++++++++
@@ -467,59 +471,60 @@ Usage
 .. code-block::
 
     $ atacr_transfer_functions -h
-    Usage: atacr_transfer_functions [options] <station database>
+    usage: atacr_transfer_functions [options] <indb>
 
     Script used to calculate transfer functions between various components, to be
     used in cleaning vertical component of OBS data. The noise data can be those
-    obtained from the daily spectra (i.e., from ``atacr_daily_spectra``) or those
-    obtained from the averaged noise spectra (i.e., from ``atacr_clean_spectra``).
+    obtained from the daily spectra (i.e., from `obs_daily_spectra.py`) or those
+    obtained from the averaged noise spectra (i.e., from `obs_clean_spectra.py`).
     Flags are available to specify the source of data to use as well as the time
     range over which to calculate the transfer functions. The stations are
     processed one by one and the data are stored to disk.
 
-    Options:
-      -h, --help        show this help message and exit
-      --keys=STKEYS     Specify a comma separated list of station keys for which
-                        to perform the analysis. These must be contained within
-                        the station database. Partial keys will be used to match
-                        against those in the dictionary. For instance, providing
-                        IU will match with all stations in the IU network.
-                        [Default processes all stations in the database]
-      -O, --overwrite   Force the overwriting of pre-existing data. [Default
-                        False]
+    positional arguments:
+      indb             Station Database to process from.
 
-      Parameter Settings:
-        Miscellaneous default values and settings
+    optional arguments:
+      -h, --help       show this help message and exit
+      --keys STKEYS    Specify a comma separated list of station keys for which to
+                       perform the analysis. These must be contained within the
+                       station database. Partial keys will be used to match
+                       against those in the dictionary. For instance, providing IU
+                       will match with all stations in the IU network. [Default
+                       processes all stations in the database]
+      -O, --overwrite  Force the overwriting of pre-existing data. [Default False]
 
-        --skip-daily    Skip daily spectral averages in construction of transfer
-                        functions. [Default False]
-        --skip-clean    Skip cleaned spectral averages in construction of transfer
-                        functions. Defaults to True if data cannot be found in
-                        default directory. [Default False]
+    Time Search Settings:
+      Time settings associated with searching for day-long seismograms
 
-      Figure Settings:
-        Flags for plotting figures
+      --start STARTT   Specify a UTCDateTime compatible string representing the
+                       start day for the data search. This will override any
+                       station start times. [Default start date of each station in
+                       database]
+      --end ENDT       Specify a UTCDateTime compatible string representing the
+                       start time for the data search. This will override any
+                       station end times. [Default end date of each station in
+                       database]
 
-        --figTF         Plot transfer function figure. [Default does not plot
-                        figure]
-        --save-fig      Set this option if you wish to save the figure(s).
-                        [Default does not save figure]
-        --format=FORM   Specify format of figure. Can be any one of the
-                        validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
-                        [Default 'png']
+    Parameter Settings:
+      Miscellaneous default values and settings
 
-      Time Search Settings:
-        Time settings associated with searching for day-long seismograms
+      --skip-daily     Skip daily spectral averages in construction of transfer
+                       functions. [Default False]
+      --skip-clean     Skip cleaned spectral averages in construction of transfer
+                       functions. Defaults to True if data cannot be found in
+                       default directory. [Default False]
 
-        --start=STARTT  Specify a UTCDateTime compatible string representing the
-                        start day for the data search. This will override any
-                        station start times. [Default start date of each station
-                        in database]
-        --end=ENDT      Specify a UTCDateTime compatible string representing the
-                        start time for the event search. This will override any
-                        station end times. [Default end date of each station in
-                        database]
+    Figure Settings:
+      Flags for plotting figures
 
+      --figTF          Plot transfer function figure. [Default does not plot
+                       figure]
+      --save-fig       Set this option if you wish to save the figure(s). [Default
+                       does not save figure]
+      --format FORM    Specify format of figure. Can be any one of the
+                       validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                       [Default 'png']
 
 ``atacr_download_event``
 ++++++++++++++++++++++++
@@ -538,89 +543,91 @@ Usage
 .. code-block::
 
     $ atacr_download_event -h
-    Usage: atacr_download_event [options] <station database>
+    usage: atacr_download_event [options] <indb>
 
-    Script used to download and pre-process up to four-component (H1, H2, Z and P), two-
+    Script used to download and pre-process four-component (H1, H2, Z and P), two-
     hour-long seismograms for individual events on which to apply the de-noising
     algorithms. Data are requested from the internet using the client services
     framework for a given date range. The stations are processed one by one and
     the data are stored to disk.
 
-    Options:
+    positional arguments:
+      indb                  Station Database to process from.
+
+    optional arguments:
       -h, --help            show this help message and exit
-      --keys=STKEYS         Specify a comma separated list of station keys for
+      --keys STKEYS         Specify a comma separated list of station keys for
                             which to perform the analysis. These must be contained
                             within the station database. Partial keys will be used
                             to match against those in the dictionary. For
                             instance, providing IU will match with all stations in
                             the IU network [Default processes all stations in the
                             database]
-      -C CHANNELS, --channels=CHANNELS
+      -C CHANNELS, --channels CHANNELS
                             Specify a comma-separated list of channels for which
                             to perform the transfer function analysis. Possible
-                            options are H (for horizontal channels) or P (for
-                            pressure channel). Specifying H allows for tilt
-                            correction. Specifying P allows for compliance
+                            options are 'H' (for horizontal channels) or 'P' (for
+                            pressure channel). Specifying 'H' allows for tilt
+                            correction. Specifying 'P' allows for compliance
                             correction. [Default looks for both horizontal and
                             pressure and allows for both tilt AND compliance
                             corrections]
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
-      Server Settings:
-        Settings associated with which datacenter to log into.
+    Server Settings:
+      Settings associated with which datacenter to log into.
 
-        -S SERVER, --Server=SERVER
+      -S SERVER, --Server SERVER
                             Specify the server to connect to. Options include:
                             BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
                             NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
                             USP. [Default IRIS]
-        -U USERAUTH, --User-Auth=USERAUTH
+      -U USERAUTH, --User-Auth USERAUTH
                             Enter your IRIS Authentification Username and Password
                             (--User-Auth='username:authpassword') to access and
                             download restricted data. [Default no user and
                             password]
 
-      Event Settings:
-        Settings associated with refining the events to include in matching
-        station pairs
+    Frequency Settings:
+      Miscellaneous frequency settings
 
-        --start=STARTT      Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station start times. [Default start date
-                            of each station in database]
-        --end=ENDT          Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default end date of
-                            each station in database]
-        -R, --reverse-order
-                            Reverse order of events. Default behaviour starts at
-                            oldest event and works towards most recent. Specify
-                            reverse order and instead the program will start with
-                            the most recent events and work towards older
-        --min-mag=MINMAG    Specify the minimum magnitude of event for which to
-                            search. [Default 5.5]
-        --max-mag=MAXMAG    Specify the maximum magnitude of event for which to
-                            search. [Default None, i.e. no limit]
-
-      Geometry Settings:
-        Settings associatd with the event-station geometries
-
-        --min-dist=MINDIST  Specify the minimum great circle distance (degrees)
-                            between the station and event. [Default 30]
-        --max-dist=MAXDIST  Specify the maximum great circle distance (degrees)
-                            between the station and event. [Default 120]
-
-      Frequency Settings:
-        Miscellaneous frequency settings
-
-        --sampling-rate=NEW_SAMPLING_RATE
+      --sampling-rate NEW_SAMPLING_RATE
                             Specify new sampling rate (float, in Hz). [Default 5.]
-        --pre-filt=PRE_FILT
-                            Specify four comma-separated corner frequencies
+      --units UNITS         Choose the output seismogram units. Options are:
+                            'DISP', 'VEL', 'ACC'. [Default 'DISP']
+      --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
                             (float, in Hz) for deconvolution pre-filter. [Default
                             0.001,0.005,45.,50.]
 
+    Event Settings:
+      Settings associated with refining the events to include in matching
+      station pairs
+
+      --start STARTT        Specify a UTCDateTime compatible string representing
+                            the start time for the event search. This will
+                            override any station start times. [Default start date
+                            of each station in database]
+      --end ENDT            Specify a UTCDateTime compatible string representing
+                            the start time for the event search. This will
+                            override any station end times [Default end date of
+                            each station in database]
+      --reverse-order, -R   Reverse order of events. Default behaviour starts at
+                            oldest event and works towards most recent. Specify
+                            reverse order and instead the program will start with
+                            the most recent events and work towards older
+      --min-mag MINMAG      Specify the minimum magnitude of event for which to
+                            search. [Default 5.5]
+      --max-mag MAXMAG      Specify the maximum magnitude of event for which to
+                            search. [Default None, i.e. no limit]
+
+    Geometry Settings:
+      Settings associatd with the event-station geometries
+
+      --min-dist MINDIST    Specify the minimum great circle distance (degrees)
+                            between the station and event. [Default 30]
+      --max-dist MAXDIST    Specify the maximum great circle distance (degrees)
+                            between the station and event. [Default 120]
 
 ``atacr_correct_event``
 +++++++++++++++++++++++
@@ -639,66 +646,68 @@ Usage
 .. code-block::
 
     $ atacr_correct_event -h
-    Usage: atacr_correct_event [options] <station database>
+    usage: atacr_correct_event [options] <indb>
 
     Script used to extract transfer functions between various components, and use
     them to clean vertical component of OBS data for selected events. The noise
     data can be those obtained from the daily spectra (i.e., from
-    ``atacr_daily_spectra``) or those obtained from the averaged noise spectra
-    (i.e., from ``atacr_clean_spectra``). Flags are available to specify the source
+    `obs_daily_spectra.py`) or those obtained from the averaged noise spectra
+    (i.e., from `obs_clean_spectra.py`). Flags are available to specify the source
     of data to use as well as the time range for given events. The stations are
-    processed one by one and the data are stored to disk.
+    processed one by one and the data are stored to disk in a new 'CORRECTED'
+    folder.
 
-    Options:
-      -h, --help        show this help message and exit
-      --keys=STKEYS     Specify a comma separated list of station keys for which
-                        to perform the analysis. These must be contained within
-                        the station database. Partial keys will be used to match
-                        against those in the dictionary. For instance, providing
-                        IU will match with all stations in the IU network.
-                        [Default processes all stations in the database]
-      -O, --overwrite   Force the overwriting of pre-existing data. [Default
-                        False]
+    positional arguments:
+      indb             Station Database to process from.
 
-      Parameter Settings:
-        Miscellaneous default values and settings
+    optional arguments:
+      -h, --help       show this help message and exit
+      --keys STKEYS    Specify a comma separated list of station keys for which to
+                       perform the analysis. These must be contained within the
+                       station database. Partial keys will be used to match
+                       against those in the dictionary. For instance, providing IU
+                       will match with all stations in the IU network. [Default
+                       processes all stations in the database]
+      -O, --overwrite  Force the overwriting of pre-existing data. [Default False]
 
-        --skip-daily    Skip daily spectral averages in application of transfer
-                        functions. [Default False]
-        --skip-clean    Skip cleaned spectral averages in application of transfer
-                        functions. [Default False]
-        --fmin=FMIN     Low frequency corner (in Hz) for plotting the raw (un-
-                        corrected) seismograms. Filter is a 2nd order, zero phase
-                        butterworth filter. [Default 1./150.]
-        --fmax=FMAX     High frequency corner (in Hz) for plotting the raw (un-
-                        corrected) seismograms. Filter is a 2nd order, zero phase
-                        butterworth filter. [Default 1./10.]
+    Time Search Settings:
+      Time settings associated with searching for specific event-related
+      seismograms
 
-      Figure Settings:
-        Flags for plotting figures
+      --start STARTT   Specify a UTCDateTime compatible string representing the
+                       start day for the event search. This will override any
+                       station start times. [Default start date of each station in
+                       database]
+      --end ENDT       Specify a UTCDateTime compatible string representing the
+                       start time for the event search. This will override any
+                       station end times. [Default end date of each station in
+                       database]
 
-        --figRaw        Plot raw seismogram figure. [Default does not plot figure]
-        --figClean      Plot cleaned vertical seismogram figure. [Default does not
-                        plot figure]
-        --save-fig      Set this option if you wish to save the figure(s).
-                        [Default does not save figure]
-        --format=FORM   Specify format of figure. Can be any one of the
-                        validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
-                        [Default 'png']
-                    
-      Time Search Settings:
-        Time settings associated with searching for specific event-related
-        seismograms
+    Parameter Settings:
+      Miscellaneous default values and settings
 
-        --start=STARTT  Specify a UTCDateTime compatible string representing the
-                        start day for the event search. This will override any
-                        station start times. [Default start date of each station
-                        in database]
-        --end=ENDT      Specify a UTCDateTime compatible string representing the
-                        start time for the event search. This will override any
-                        station end times. [Default end date of each station in
-                        database]
+      --skip-daily     Skip daily spectral averages in application of transfer
+                       functions. [Default False]
+      --skip-clean     Skip cleaned spectral averages in application of transfer
+                       functions. [Default False]
+      --fmin FMIN      Low frequency corner (in Hz) for plotting the raw (un-
+                       corrected) seismograms. Filter is a 2nd order, zero phase
+                       butterworth filter. [Default 1./150.]
+      --fmax FMAX      High frequency corner (in Hz) for plotting the raw (un-
+                       corrected) seismograms. Filter is a 2nd order, zero phase
+                       butterworth filter. [Default 1./10.]
 
+    Figure Settings:
+      Flags for plotting figures
+
+      --figRaw         Plot raw seismogram figure. [Default does not plot figure]
+      --figClean       Plot cleaned vertical seismogram figure. [Default does not
+                       plot figure]
+      --save-fig       Set this option if you wish to save the figure(s). [Default
+                       does not save figure]
+      --format FORM    Specify format of figure. Can be any one of the
+                       validmatplotlib formats: 'png', 'jpg', 'eps', 'pdf'.
+                       [Default 'png']
 
 Tutorial
 ********
@@ -936,6 +945,21 @@ therefore using all available data) and plot the results, we can type in a termi
 
 And so on until all ``DayNoise`` objects are averaged into a ``StaNoise`` 
 object, which is saved to a newly created folder called ``AVG_STA/7D.M08A/``.
+
+.. note ::
+
+    If you don't specify the options ``--start`` and ``--end``, the object
+    will be saved with a filename that corresponds to the entire deployment time
+    of the station, but in fact the object contains the average spectra of all 
+    daily spectra available on disk, and *not necessarily* the average over the 
+    entire deployment time. We recommend using the ``--start`` and ``--end`` options
+    if you want to produce time-limited spectral averages (e.g., an average per week
+    or per month, etc.). For example:
+
+    .. code-block::
+
+        $ atacr_clean_spectra --start=2012-03-01 --end=2012-03-08 -O M08A.pkl
+
 Several figures are also produced, including Figures 4, 6-9.
 
 .. figure:: ../obstools/examples/figures/Figure_4.png
@@ -1137,8 +1161,9 @@ newly created folder ``EVENTS/7D.M08A/``.
 
 The final step in the analysis is the application of the transfer functions
 to the raw earthquake seismograms to clean up the vertical component. 
-Once again, the default settings can be used. To make the final Figures 11 and 12,
-specify the ``--figRaw`` and ``--figClean`` options:
+Once again, the default settings can be used. The corrected seismograms will
+be saved to disk in a new folder called ``EVENTS/7D.M08A/CORRECTED``. To make 
+the final Figures 11 and 12, specify the ``--figRaw`` and ``--figClean`` options:
 
 .. code-block::
 
@@ -1159,8 +1184,35 @@ specify the ``--figRaw`` and ``--figClean`` options:
     TF_STA/7D.M08A/2011.293-2012.200.transfunc.pkl file found - applying transfer functions
     TF_STA/7D.M08A/2012.069.transfunc.pkl file found - applying transfer functions
 
-Results are saved as ``EventStream`` objects that now contain the corrected
-vertical components.
+Results are saved both as updated ``EventStream`` objects and as ``.SAC`` files that 
+now contain the corrected vertical components. 
+
+.. note::
+
+    The ``EventStream`` object contains the corrected traces in the attribute 
+    ``correct``, which is a dictionary. If you wish to extract the corrected 
+    vertical seismogram obtained from the ``ZP`` transfer function, with a corresponding
+    key ``'ZP'``, you can do this by loading the ``.pkl`` file and typing: 
+
+    .. code-block::
+
+        >>> # First load the EventStream object
+        >>> import pickle as pkl
+        >>> evstream = pkl.load(open('2012.069.transfunc.pkl', 'rb'))
+        >>> # Extract the 'ZP' corrected seismogram
+        >>> corrected = evstream.correct['ZP']
+    
+    You can check which transfer functions should be available based on the number of
+    components in the ``EventStream`` object from the attribute:
+
+    .. code-block::
+
+        >>> print(evstream.ev_list)
+
+    Note that the corrected seismogram will only be available if the corresponding 
+    transfer function has been calculated previously and applied during the correction. 
+
+Figures 11 and 12 should look like:
 
 .. figure:: ../obstools/examples/figures/Figure_11.png
    :align: center
