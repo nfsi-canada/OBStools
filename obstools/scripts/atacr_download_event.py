@@ -50,7 +50,7 @@ def get_event_arguments(argv=None):
     """
 
     parser = ArgumentParser(
-        usage="%(prog)s [options] <Station Database>",
+        usage="%(prog)s [options] <indb>",
         description="Script used " +
         "to download and pre-process four-component " +
         "(H1, H2, Z and P), two-hour-long seismograms for " +
@@ -86,9 +86,9 @@ def get_event_arguments(argv=None):
         default="",
         help="Specify a comma-separated list of channels for " +
         "which to perform the transfer function analysis. " +
-        "Possible options are H (for horizontal channels) or P " +
-        "(for pressure channel). Specifying H allows " +
-        "for tilt correction. Specifying P allows for compliance " +
+        "Possible options are 'H' (for horizontal channels) or 'P' " +
+        "(for pressure channel). Specifying 'H' allows " +
+        "for tilt correction. Specifying 'P' allows for compliance " +
         "correction. [Default looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(

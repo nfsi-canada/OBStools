@@ -46,7 +46,7 @@ def get_dailyspec_arguments(argv=None):
     """
 
     parser = ArgumentParser(
-        usage="%(prog)s [options] <Station Database>",
+        usage="%(prog)s [options] <indb>",
         description="Script used "
         "to extract shorter windows from the day-long " +
         "seismograms, calculate the power-spectral " +
