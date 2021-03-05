@@ -45,7 +45,7 @@ def get_transfer_arguments(argv=None):
     """
 
     parser = ArgumentParser(
-        usage="%(prog)s [options] <Station Database>",
+        usage="%(prog)s [options] <indb>",
         description="Script used "
         "to calculate transfer functions between various " +
         "components, to be used in cleaning vertical " +

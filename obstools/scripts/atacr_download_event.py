@@ -50,7 +50,7 @@ def get_event_arguments(argv=None):
     """
 
     parser = ArgumentParser(
-        usage="%(prog)s [options] <Station Database>",
+        usage="%(prog)s [options] <indb>",
         description="Script used " +
         "to download and pre-process four-component " +
         "(H1, H2, Z and P), two-hour-long seismograms for " +
@@ -86,9 +86,9 @@ def get_event_arguments(argv=None):
         default="",
         help="Specify a comma-separated list of channels for " +
         "which to perform the transfer function analysis. " +
-        "Possible options are H (for horizontal channels) or P " +
-        "(for pressure channel). Specifying H allows " +
-        "for tilt correction. Specifying P allows for compliance " +
+        "Possible options are 'H' (for horizontal channels) or 'P' " +
+        "(for pressure channel). Specifying 'H' allows " +
+        "for tilt correction. Specifying 'P' allows for compliance " +
         "correction. [Default looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(
@@ -515,11 +515,15 @@ def main(args=None):
                     '.'+str(time.minute).zfill(2)
 
                 # Define file names (to check if files already exist)
-                filename = eventpath / (tstamp+'.event.pkl')
-                file1 = eventpath / (tstamp+'.1.SAC')
-                file2 = eventpath / (tstamp+'.2.SAC')
-                fileZ = eventpath / (tstamp+'.Z.SAC')
-                fileP = eventpath / (tstamp+'.P.SAC')
+                filename = eventpath / (tstamp+'.pkl')
+                # Horizontal 1 channel
+                file1 = eventpath / (tstamp+'.'+sta.channel+'1.SAC')
+                # Horizontal 2 channel
+                file2 = eventpath / (tstamp+'.'+sta.channel+'2.SAC')
+                # Vertical channel
+                fileZ = eventpath / (tstamp+'.'+sta.channel+'Z.SAC')
+                # Pressure channel
+                fileP = eventpath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
 
                 print()
                 print("* Channels selected: " +
@@ -594,6 +598,8 @@ def main(args=None):
                         if len(stp) > 1:
                             print("WARNING: There are more than one ?DH trace")
                             print("*   -> Keeping the highest sampling rate")
+                            print("*   -> Renaming channel to "+
+                                sta.channel[0]+"DH")
                             if stp[0].stats.sampling_rate > \
                                     stp[1].stats.sampling_rate:
                                 stp = Stream(traces=stp[0])
@@ -641,6 +647,8 @@ def main(args=None):
                         if len(stp) > 1:
                             print("WARNING: There are more than one ?DH trace")
                             print("*   -> Keeping the highest sampling rate")
+                            print("*   -> Renaming channel to "+
+                                sta.channel[0]+"DH")
                             if stp[0].stats.sampling_rate > \
                                     stp[1].stats.sampling_rate:
                                 stp = Stream(traces=stp[0])
@@ -678,7 +686,8 @@ def main(args=None):
                     trZ, sta.latitude, sta.longitude, sta.elevation, 'Z')
                 trZ.write(str(fileZ), format='SAC')
 
-                # Extract traces - H
+                # Extract traces and write out in SAC format
+                # Seismic channels
                 if "H" in args.channels:
                     tr1 = sth.select(component='1')[0]
                     tr2 = sth.select(component='2')[0]
@@ -689,6 +698,7 @@ def main(args=None):
                     tr1.write(str(file1), format='SAC')
                     tr2.write(str(file2), format='SAC')
 
+                # Pressure channel
                 if "P" in args.channels:
                     stp = st.select(component='H')
                     print("*   -> Removing responses - Pressure data")
@@ -701,8 +711,7 @@ def main(args=None):
                 else:
                     stp = Stream()
 
-                # Write out SAC data
-
+                # Write out EventStream object
                 eventstream = EventStream(
                     sta, sth, stp, tstamp, lat, lon, time, window,
                     args.new_sampling_rate, ncomp)

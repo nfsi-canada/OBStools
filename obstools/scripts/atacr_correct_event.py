@@ -46,7 +46,7 @@ def get_correct_arguments(argv=None):
     """
 
     parser = ArgumentParser(
-        usage="%(prog)s [options] <Station Database>",
+        usage="%(prog)s [options] <indb>",
         description="Script used "
         "to extract transfer functions between various " +
         "components, and use them to clean vertical " +
@@ -58,7 +58,7 @@ def get_correct_arguments(argv=None):
         "available to specify the source of data to use as " +
         "well as the time range for given events. "
         "The stations are processed one by one and the " +
-        "data are stored to disk.")
+        "data are stored to disk in a new 'CORRECTED' folder.")
     parser.add_argument(
         "indb",
         help="Station Database to process from.",
@@ -84,13 +84,6 @@ def get_correct_arguments(argv=None):
         dest="ovr",
         default=False,
         help="Force the overwriting of pre-existing data. " +
-        "[Default False]")
-    parser.add_argument(
-        "-S", "--save",
-        action="store_true",
-        dest="save_correct",
-        default=False,
-        help="Save the corrected EvStream objects to disk. " +
         "[Default False]")
 
     # Event Selection Criteria
@@ -435,12 +428,27 @@ def main(args=None):
                                 else:
                                     plot.show()
 
-                            if args.save_correct:
-                                correctpath = eventpath / 'CORRECTED'
-                                if not correctpath.is_dir():
-                                    correctpath.mkdir(parents=True)
-                                file = correctpath / eventfile.stem
-                                eventstream.save(str(file) + '.day.pkl')
+                            # Save corrected data to disk
+                            correctpath = eventpath / 'CORRECTED'
+                            if not correctpath.is_dir():
+                                correctpath.mkdir(parents=True)
+                            file = correctpath / eventfile.stem
+                            eventstream.save(str(file) + '.day.pkl')
+
+                            # Now save as SAC files
+                            for key, value in tfaverage.tf_list.items():
+                                if value and eventstream.ev_list[key]:
+                                    nameZ = '.sta.' + key + '.' 
+                                    nameZ += sta.channel+'Z.SAC'
+                                    fileZ = correctpath / (eventfile.stem + nameZ)
+                                    trZ = eventstream.sth.select(component='Z')[0].copy()
+                                    trZ.data = eventstream.correct[key]
+                                    trZ = utils.update_stats(trZ, 
+                                        sta.latitude, sta.longitude, 
+                                        sta.elevation, 'Z')
+                                    trZ.write(str(fileZ), format='SAC')
+
+
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -476,12 +484,26 @@ def main(args=None):
                                 else:
                                     plot.show()
 
-                            if args.save_correct:
-                                correctpath = eventpath / 'CORRECTED'
-                                if not correctpath.is_dir():
-                                    correctpath.mkdir(parents=True)
-                                file = correctpath / eventfile.stem
-                                eventstream.save(str(file) + '.sta.pkl')
+                            # Save corrected data to disk
+                            correctpath = eventpath / 'CORRECTED'
+                            if not correctpath.is_dir():
+                                correctpath.mkdir(parents=True)
+                            file = correctpath / eventfile.stem
+                            eventstream.save(str(file) + '.sta.pkl')
+
+                            # Now save as SAC files
+                            for key, value in tfaverage.tf_list.items():
+                                if value and eventstream.ev_list[key]:
+                                    nameZ = '.day.' + key + '.' 
+                                    nameZ += sta.channel+'Z.SAC'
+                                    fileZ = correctpath / (eventfile.stem + nameZ)
+                                    trZ = eventstream.sth.select(component='Z')[0].copy()
+                                    trZ.data = eventstream.correct[key]
+                                    trZ = utils.update_stats(trZ, 
+                                        sta.latitude, sta.longitude, 
+                                        sta.elevation, 'Z')
+                                    trZ.write(str(fileZ), format='SAC')
+
 
 if __name__ == "__main__":
 

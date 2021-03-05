@@ -26,7 +26,7 @@ setup(
     author_email='pascal.audet@uottawa.ca',
     maintainer='Pascal Audet, Helen Janiszewski',
     maintainer_email='pascal.audet@uottawa.ca, hajanisz@hawaii.edu',
-    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.1.tar.gz',
+    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.2.tar.gz',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',

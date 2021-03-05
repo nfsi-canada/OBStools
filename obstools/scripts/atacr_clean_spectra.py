@@ -45,7 +45,7 @@ def get_cleanspec_arguments(argv=None):
     """
 
     parser = ArgumentParser(
-        usage="%(prog)s [options] <Station Database>",
+        usage="%(prog)s [options] <indb>",
         description="Script used "
         "to extract daily spectra calculated from " +
         "`obs_daily_spectra.py` and flag days for outlier " +
