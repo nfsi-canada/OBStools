@@ -515,7 +515,7 @@ def main(args=None):
                     '.'+str(time.minute).zfill(2)
 
                 # Define file names (to check if files already exist)
-                filename = eventpath / (tstamp+'.event.pkl')
+                filename = eventpath / (tstamp+'.pkl')
                 # Horizontal 1 channel
                 file1 = eventpath / (tstamp+'.'+sta.channel+'1.SAC')
                 # Horizontal 2 channel

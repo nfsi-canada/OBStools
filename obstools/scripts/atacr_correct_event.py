@@ -442,6 +442,21 @@ def main(args=None):
                                 file = correctpath / eventfile.stem
                                 eventstream.save(str(file) + '.day.pkl')
 
+                                # Now save as SAC files
+                                for key, value in tfaverage.tf_list.items():
+                                    if value and eventstream.ev_list[key]:
+                                        nameZ = '.sta.' + key + '.' 
+                                        nameZ += sta.channel+'Z.SAC'
+                                        fileZ = correctpath / (eventfile.stem + nameZ)
+                                        trZ = eventstream.sth.select(component='Z')[0].copy()
+                                        trZ.data = eventstream.correct[key]
+                                        trZ = utils.update_stats(trZ, 
+                                            sta.latitude, sta.longitude, 
+                                            sta.elevation, 'Z')
+                                        trZ.write(str(fileZ), format='SAC')
+
+
+
                 # This case refers to the "daily" spectral averages
                 else:
                     if not args.skip_daily:
@@ -482,6 +497,20 @@ def main(args=None):
                                     correctpath.mkdir(parents=True)
                                 file = correctpath / eventfile.stem
                                 eventstream.save(str(file) + '.sta.pkl')
+
+                                # Now save as SAC files
+                                for key, value in tfaverage.tf_list.items():
+                                    if value and eventstream.ev_list[key]:
+                                        nameZ = '.day.' + key + '.' 
+                                        nameZ += sta.channel+'Z.SAC'
+                                        fileZ = correctpath / (eventfile.stem + nameZ)
+                                        trZ = eventstream.sth.select(component='Z')[0].copy()
+                                        trZ.data = eventstream.correct[key]
+                                        trZ = utils.update_stats(trZ, 
+                                            sta.latitude, sta.longitude, 
+                                            sta.elevation, 'Z')
+                                        trZ.write(str(fileZ), format='SAC')
+
 
 if __name__ == "__main__":
 

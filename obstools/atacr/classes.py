@@ -32,7 +32,7 @@ from obstools.atacr import utils, plotting
 from pkg_resources import resource_filename
 from pathlib import Path
 np.seterr(all='ignore')
-np.set_printoptions(threshold=sys.maxsize)
+#np.set_printoptions(threshold=sys.maxsize)
 
 
 class Power(object):
