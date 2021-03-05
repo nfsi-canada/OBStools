@@ -405,7 +405,7 @@ def main(args=None):
             # Vertical channel
             fileZ = datapath / (tstamp+'.'+sta.channel+'Z.SAC')
             # Pressure channel
-            fileP = datapath / (tstamp+'.'+sta.channel+'H.SAC')
+            fileP = datapath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
 
             if "P" not in args.channels:
 
@@ -487,6 +487,7 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
+                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
@@ -546,6 +547,7 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
+                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
