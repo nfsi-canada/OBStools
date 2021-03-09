@@ -2618,6 +2618,16 @@ M08A and send the prompt to a logfile</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A &gt; logfile
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are using a <em>Z shell</em> (as opposed to a <em>Bourne Shell</em> or
+other types of shells) on the terminal,
+this command above will fail due to the presence of the question marks for
+pattern matching. To find out, just type <cite>ps -p $$</cite>, which will return
+<cite>zsh</cite> under the <cite>CMD</cite> field if you are using a Z shell. In this case, just
+enclose the <cite>?H?</cite> in single or double quotes (e.g.,
+<cite>query_fdsn_stdb.py -N 7D -C “?H?”” -S M08A M08A &gt; logfile</cite>)</p>
+</div>
 <p>To check the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb.py</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb.py M08A.pkl
  Listing Station Pickle: M08A.pkl

@@ -733,6 +733,16 @@ M08A and send the prompt to a logfile
 
    $ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A > logfile
 
+.. note::
+
+    If you are using a *Z shell* (as opposed to a *Bourne Shell* or 
+    other types of shells) on the terminal,
+    this command above will fail due to the presence of the question marks for 
+    pattern matching. To find out, just type `ps -p $$`, which will return
+    `zsh` under the `CMD` field if you are using a Z shell. In this case, just
+    enclose the `?H?` in single or double quotes (e.g., 
+    `query_fdsn_stdb.py -N 7D -C "?H?"" -S M08A M08A > logfile`) 
+
 To check the station info for M08A, use the program ``ls_stdb.py``:
 
 .. code-block::
