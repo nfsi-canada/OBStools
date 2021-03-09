@@ -153,6 +153,7 @@ def update_stats(tr, stla, stlo, stel, cha):
     tr.stats.sac.stla = stla
     tr.stats.sac.stlo = stlo
     tr.stats.sac.stel = stel
+    tr.stats.sac.kcmpnm = cha
     tr.stats.channel = cha
 
     return tr

@@ -585,7 +585,8 @@ def main(args=None):
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation, 'Z')
+                trZ, sta.latitude, sta.longitude, sta.elevation, 
+                sta.channel+'Z')
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces - H
@@ -593,9 +594,11 @@ def main(args=None):
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation, '1')
+                    tr1, sta.latitude, sta.longitude, sta.elevation, 
+                    sta.channel+'1')
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation, '2')
+                    tr2, sta.latitude, sta.longitude, sta.elevation, 
+                    sta.channel+'2')
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
 
@@ -606,7 +609,8 @@ def main(args=None):
                 stp.remove_response(pre_filt=args.pre_filt)
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation, 'P')
+                    trP, sta.latitude, sta.longitude, sta.elevation, 
+                    sta.channel[0]+'P')
                 trP.write(str(fileP), format='SAC')
 
             t1 += dt
