@@ -47,6 +47,7 @@ jobs:
       - name: Tests
         shell: bash -l {0}
         run: |
+          export MPLBACKEND=Agg
           mkdir empty
           cd empty
           conda install pytest-cov
