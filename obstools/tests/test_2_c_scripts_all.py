@@ -26,7 +26,7 @@ def test_21_data_all():
     args0 = atacr.get_daylong_arguments([
         dbfile, '--keys', '7D.M08A',
         '--start', '2012-03-08', '--end', '2012-03-10',
-        '--sampling-rate', '0.5'])
+        '--sampling-rate', '1.0'])
     atacr.main(args=args0)
 def test_22_daily_all():
     from obstools.scripts import atacr_download_event as atacr
@@ -34,7 +34,7 @@ def test_22_daily_all():
         dbfile, '--keys', '7D.M08A',
         '--start', '2012-03-09', '--end', '2012-03-10',
         '--min-mag', '6.3', '--max-mag', '6.7',
-        '--sampling-rate', '0.5'])
+        '--sampling-rate', '1.0'])
     atacr.main(args=args0)
 def test_23_clean_all():
     from obstools.scripts import atacr_daily_spectra as atacr
