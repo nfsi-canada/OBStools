@@ -22,7 +22,7 @@
 
 
 import sys
-from scipy.signal import spectrogram, detrend
+from scipy.signal import spectrogram, stft, detrend
 from scipy.linalg import norm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -349,6 +349,8 @@ class DayNoise(object):
         psdP = None
         f, t, psdZ = spectrogram(
             self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+        self.f = f
+        print(f)
         if self.ncomp == 2 or self.ncomp == 4:
             f, t, psdP = spectrogram(
                 self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
@@ -640,20 +642,37 @@ class DayNoise(object):
         ws = int(self.window/self.dt)
 
         # Number of points in step
-        ss = int(self.window*(1.-self.overlap)/self.dt)
+        ss = int(self.window*self.overlap/self.dt)
+
+        # hanning window
+        hanning = np.hanning(2*ss)
+        wind = np.ones(ws)
+        wind[0:ss] = hanning[0:ss]
+        wind[-ss:ws] = hanning[ss:ws]
 
         ft1 = None
         ft2 = None
         ftZ = None
         ftP = None
-        ftZ, f = utils.calculate_windowed_fft(self.trZ, ws, ss)
-        if self.ncomp == 2 or self.ncomp == 4:
-            ftP, f = utils.calculate_windowed_fft(self.trP, ws, ss)
-        if self.ncomp == 3 or self.ncomp == 4:
-            ft1, f = utils.calculate_windowed_fft(self.tr1, ws, ss)
-            ft2, f = utils.calculate_windowed_fft(self.tr2, ws, ss)
 
-        self.f = f
+        _f, _t, ftZ = stft(
+            self.trZ.data, self.fs, return_onesided=False, boundary=None, padded=False, 
+            nperseg=ws, noverlap=ss)
+        ftZ = ftZ.T
+        if self.ncomp == 2 or self.ncomp == 4:
+            _f, _t, ftP = stft(
+                self.trP.data, self.fs, return_onesided=False, boundary=None, padded=False, 
+                nperseg=ws, noverlap=ss)
+            ftP = ftP.T
+        if self.ncomp == 3 or self.ncomp == 4:
+            _f, _t, ft1 = stft(
+                self.tr1.data, self.fs, return_onesided=False, boundary=None, padded=False, 
+                nperseg=ws, noverlap=ss)
+            _f, _t, ft2 = stft(
+                self.tr2.data, self.fs, return_onesided=False, boundary=None, padded=False, 
+                nperseg=ws, noverlap=ss)
+            ft1 = ft1.T
+            ft2 = ft2.T
 
         # Extract good windows
         c11 = None
@@ -662,18 +681,18 @@ class DayNoise(object):
         cPP = None
         cZZ = np.abs(
             np.mean(ftZ[self.goodwins, :]*np.conj(ftZ[self.goodwins, :]),
-                    axis=0))[0:len(f)]
+                    axis=0))[0:len(self.f)]
         if self.ncomp == 2 or self.ncomp == 4:
             cPP = np.abs(
                 np.mean(ftP[self.goodwins, :]*np.conj(ftP[self.goodwins, :]),
-                        axis=0))[0:len(f)]
+                        axis=0))[0:len(self.f)]
         if self.ncomp == 3 or self.ncomp == 4:
             c11 = np.abs(
                 np.mean(ft1[self.goodwins, :]*np.conj(ft1[self.goodwins, :]),
-                        axis=0))[0:len(f)]
+                        axis=0))[0:len(self.f)]
             c22 = np.abs(
                 np.mean(ft2[self.goodwins, :]*np.conj(ft2[self.goodwins, :]),
-                        axis=0))[0:len(f)]
+                        axis=0))[0:len(self.f)]
 
         # Extract bad windows
         bc11 = None
@@ -683,18 +702,18 @@ class DayNoise(object):
         if np.sum(~self.goodwins) > 0:
             bcZZ = np.abs(np.mean(
                 ftZ[~self.goodwins, :]*np.conj(ftZ[~self.goodwins, :]),
-                axis=0))[0:len(f)]
+                axis=0))[0:len(self.f)]
             if self.ncomp == 2 or self.ncomp == 4:
                 bcPP = np.abs(np.mean(
                     ftP[~self.goodwins, :]*np.conj(ftP[~self.goodwins, :]),
-                    axis=0))[0:len(f)]
+                    axis=0))[0:len(self.f)]
             if self.ncomp == 3 or self.ncomp == 4:
                 bc11 = np.abs(np.mean(
                     ft1[~self.goodwins, :]*np.conj(ft1[~self.goodwins, :]),
-                    axis=0))[0:len(f)]
+                    axis=0))[0:len(self.f)]
                 bc22 = np.abs(np.mean(
                     ft2[~self.goodwins, :]*np.conj(ft2[~self.goodwins, :]),
-                    axis=0))[0:len(f)]
+                    axis=0))[0:len(self.f)]
 
         # Calculate mean of all good windows if component combinations exist
         c12 = None
@@ -705,19 +724,19 @@ class DayNoise(object):
         cZP = None
         if self.ncomp == 3 or self.ncomp == 4:
             c12 = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ft2[self.goodwins, :]), axis=0)[0:len(f)]
+                          np.conj(ft2[self.goodwins, :]), axis=0)[0:len(self.f)]
             c1Z = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(f)]
+                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
             c2Z = np.mean(ft2[self.goodwins, :] *
-                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(f)]
+                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
         if self.ncomp == 4:
             c1P = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(f)]
+                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
             c2P = np.mean(ft2[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(f)]
+                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
         if self.ncomp == 2 or self.ncomp == 4:
             cZP = np.mean(ftZ[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(f)]
+                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
 
         # Store as attributes
         self.power = Power(c11, c22, cZZ, cPP)
@@ -725,7 +744,7 @@ class DayNoise(object):
         bad = Power(bc11, bc22, bcZZ, bcPP)
 
         if fig_average:
-            plot = plotting.fig_average(f, self.power, bad, self.goodwins,
+            plot = plotting.fig_average(self.f, self.power, bad, self.goodwins,
                                         self.ncomp, key=self.key)
             if save:
                 fname = self.key + '.' + self.tkey + '.' + 'average.' + form
@@ -739,7 +758,7 @@ class DayNoise(object):
         if calc_rotation and self.ncomp >= 3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
                 utils.calculate_tilt(
-                    ft1, ft2, ftZ, ftP, f, self.goodwins)
+                    ft1, ft2, ftZ, ftP, self.f, self.goodwins)
             self.rotation = Rotation(
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
