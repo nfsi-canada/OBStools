@@ -22,13 +22,15 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ['3.7', '3.8', '3.9']
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
           activate-environment: test
           auto-activate-base: false
 
