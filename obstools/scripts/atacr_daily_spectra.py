@@ -363,8 +363,7 @@ def main(args=None):
         sta.location = tlocs
 
         # Update Display
-        print()
-        print("|===============================================|")
+        print("\n|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(
             sta.station))
@@ -401,8 +400,7 @@ def main(args=None):
             year = str(trZ.stats.starttime.year).zfill(4)
             jday = str(trZ.stats.starttime.julday).zfill(3)
 
-            print()
-            print("*"*60)
+            print("\n"+"*"*60)
             print("* Calculating noise spectra for key " +
                   stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'

@@ -318,8 +318,7 @@ def main(args=None):
         # Define path to see if it exists
         datapath = Path('DATA') / Path(stkey)
         if not datapath.is_dir():
-            print()
-            print('Path to '+str(datapath)+' doesn`t exist - creating it')
+            print('\nPath to '+str(datapath)+' doesn`t exist - creating it')
             datapath.mkdir(parents=True)
 
         # Establish client
@@ -354,8 +353,7 @@ def main(args=None):
         sta.location = tlocs
 
         # Update Display
-        print()
-        print("|===============================================|")
+        print("\n|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(
             sta.station))
@@ -389,9 +387,7 @@ def main(args=None):
             # Time stamp
             tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
-            print()
-            print(
-                "***********************************************************")
+            print("\n"+"*"*60)
             print("* Downloading day-long data for key "+stkey +
                   " and day "+str(t1.year)+"."+str(t1.julday))
             print("*")

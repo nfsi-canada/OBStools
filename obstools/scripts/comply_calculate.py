@@ -368,10 +368,7 @@ def main(args=None):
                         day_comply_functions.append(daycomply.complyfunc)
                         continue
 
-                print()
-                print(
-                    "*********************************************" +
-                    "***************")
+                print("\n"+"*"*60)
                 print("* Calculating compliance functions for key " +
                       stkey+" and day "+year+"."+jday)
 
@@ -416,10 +413,7 @@ def main(args=None):
                         sta_comply_functions = stacomply.complyfunc
                         continue
 
-                print()
-                print(
-                    "*********************************************" +
-                    "***************")
+                print("\n"+"*"*60)
                 print("* Calculating compliance functions for key " +
                       stkey+" and range "+name[0])
                 # Load file

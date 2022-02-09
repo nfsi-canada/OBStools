@@ -476,8 +476,7 @@ def main(args=None):
                 mag = -9.
 
             # Display Event Info
-            print(
-                "\n****************************************************")
+            print("\n"+"*"*60)
             print(
                 "* #({0:d}/{1:d}):  {2:13s}".format(
                     inum+1, nevtT, time.strftime("%Y%m%d_%H%M%S")))
