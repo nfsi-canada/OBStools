@@ -1,3 +1,8 @@
+import os
+import matplotlib as mpl
+if os.environ.get('DISPLAY','') == '':
+    mpl.use('Agg')
+
 import stdb
 import numpy as np
 import shutil
