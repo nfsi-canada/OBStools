@@ -2514,7 +2514,7 @@ Vanuatu on March 9, 2012.</p>
 <p>All the scripts provided require a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> database containing station
 information and metadata. Let’s first create this database for station
 M08A and send the prompt to a logfile</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A &gt; logfile
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb -N 7D -C ?H? -S M08A M08A &gt; logfile
 </pre></div>
 </div>
 <div class="admonition note">
@@ -2527,8 +2527,8 @@ pattern matching. To find out, just type <cite>ps -p $$</cite>, which will retur
 enclose the <cite>?H?</cite> in single or double quotes (e.g.,
 <cite>query_fdsn_stdb.py -N 7D -C “?H?” -S M08A M08A &gt; logfile</cite>)</p>
 </div>
-<p>To check the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb.py</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb.py M08A.pkl
+<p>To check the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb M08A.pkl
  Listing Station Pickle: M08A.pkl
  7D.M08A
  --------------------------------------------------------------------------
@@ -2886,7 +2886,7 @@ Path to EVENTS/7D.M08A/ doesn`t exist - creating it
 |  Found     1 possible events                  |
 
 ****************************************************
-* #1 (2/1):  20120309_070953
+* (1/1):  20120309_070953
 *   Origin Time: 2012-03-09 07:09:53
 *   Lat: -19.22; Lon:  169.75
 *   Dep:  33.70; Mag: 6.6
