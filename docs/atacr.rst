@@ -731,7 +731,7 @@ M08A and send the prompt to a logfile
 
 .. code-block::
 
-   $ query_fdsn_stdb.py -N 7D -C ?H? -S M08A M08A > logfile
+   $ query_fdsn_stdb -N 7D -C ?H? -S M08A M08A > logfile
 
 .. note::
 
@@ -743,11 +743,11 @@ M08A and send the prompt to a logfile
     enclose the `?H?` in single or double quotes (e.g., 
     `query_fdsn_stdb.py -N 7D -C "?H?" -S M08A M08A > logfile`) 
 
-To check the station info for M08A, use the program ``ls_stdb.py``:
+To check the station info for M08A, use the program ``ls_stdb``:
 
 .. code-block::
 
-   $ ls_stdb.py M08A.pkl
+   $ ls_stdb M08A.pkl
     Listing Station Pickle: M08A.pkl
     7D.M08A
     --------------------------------------------------------------------------
@@ -1144,7 +1144,7 @@ Vanuatu earthquake (be conservative with the options), type in a terminal:
     |  Found     1 possible events                  |
      
     ****************************************************
-    * #1 (2/1):  20120309_070953
+    * (1/1):  20120309_070953
     *   Origin Time: 2012-03-09 07:09:53
     *   Lat: -19.22; Lon:  169.75
     *   Dep:  33.70; Mag: 6.6
