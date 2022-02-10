@@ -657,20 +657,20 @@ class DayNoise(object):
 
         _f, _t, ftZ = stft(
             self.trZ.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-            nperseg=ws, noverlap=ss)
+            window=wind, nperseg=ws, noverlap=ss)
         ftZ = ftZ.T
         if self.ncomp == 2 or self.ncomp == 4:
             _f, _t, ftP = stft(
                 self.trP.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                nperseg=ws, noverlap=ss)
+                window=wind, nperseg=ws, noverlap=ss)
             ftP = ftP.T
         if self.ncomp == 3 or self.ncomp == 4:
             _f, _t, ft1 = stft(
                 self.tr1.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                nperseg=ws, noverlap=ss)
+                window=wind, nperseg=ws, noverlap=ss)
             _f, _t, ft2 = stft(
                 self.tr2.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                nperseg=ws, noverlap=ss)
+                window=wind, nperseg=ws, noverlap=ss)
             ft1 = ft1.T
             ft2 = ft2.T
 
@@ -1968,12 +1968,15 @@ class EventStream(object):
         ft2 = None
         ftZ = None
         ftP = None
-        ftZ, f = utils.calculate_windowed_fft(trZ, ws, hann=False)
+        ftZ = np.fft.fft(trZ, n=ws)
         if self.ncomp == 2 or self.ncomp == 4:
-            ftP, f = utils.calculate_windowed_fft(trP, ws, hann=False)
+            ftP = np.fft.fft(trP, n=ws)
         if self.ncomp == 3 or self.ncomp == 4:
-            ft1, f = utils.calculate_windowed_fft(tr1, ws, hann=False)
-            ft2, f = utils.calculate_windowed_fft(tr2, ws, hann=False)
+            ft1 = np.fft.fft(tr1, n=ws)
+            ft2 = np.fft.fft(tr2, n=ws)
+
+        # Use one-sided frequency axis to match spectrogram
+        f = np.fft.rfftfreq(ws, d=self.dt)
 
         if not np.allclose(f, tfnoise.f):
             raise(Exception('Frequency axes are different: ', f, tfnoise.f))
