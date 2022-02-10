@@ -64,3 +64,8 @@ def test_27_comply_all():
         dbfile, '--keys', '7D.M08A', '-O', '--save-fig', '--fig'])
     comply.main(args=args0)
 
+def test_17_rmtree():
+    shutil.rmtree(avgdir)
+    shutil.rmtree(specdir)
+    shutil.rmtree(tfdir)
+    shutil.rmtree(cmpdir)
