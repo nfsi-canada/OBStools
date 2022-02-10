@@ -26,7 +26,7 @@ def test_11_data_noP():
     args0 = atacr.get_daylong_arguments([
         dbfile, '--keys', '7D.M08A', '-O',
         '--start', '2012-03-08', '--end', '2012-03-10',
-        '--sampling-rate', '0.5', '--channels', 'H'])
+        '--sampling-rate', '1.0', '--channels', 'H'])
     atacr.main(args=args0)
 def test_12_daily_noP():
     from obstools.scripts import atacr_daily_spectra as atacr
@@ -51,7 +51,7 @@ def test_15_event_noP():
         dbfile, '--keys', '7D.M08A', '-O',
         '--start', '2012-03-08', '--end', '2012-03-10',
         '--min-mag', '6.3', '--max-mag', '6.7',
-        '--sampling-rate', '0.5', '--channels', 'H'])
+        '--sampling-rate', '1.0', '--channels', 'H'])
     atacr.main(args=args0)
 def test_16_correct_noP():
     from obstools.scripts import atacr_correct_event as atacr

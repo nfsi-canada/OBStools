@@ -317,8 +317,7 @@ def main(args=None):
         sta.location = tlocs
 
         # Update Display
-        print()
-        print("|===============================================|")
+        print("\n|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(
             sta.station))
@@ -385,8 +384,7 @@ def main(args=None):
 
             # Load file if it exists
             if filespec.exists():
-                print()
-                print("*"*60)
+                print("\n"+"*"*60)
                 print('* Calculating noise spectra for key ' +
                       stkey+' and day '+year+'.'+jday)
                 print("*   -> file "+str(filespec)+" found - loading")

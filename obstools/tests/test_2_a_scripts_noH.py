@@ -1,3 +1,8 @@
+import os
+import matplotlib as mpl
+if os.environ.get('DISPLAY','') == '':
+    mpl.use('Agg')
+
 import stdb
 import numpy as np
 import shutil
@@ -26,7 +31,7 @@ def test_01_data_noH():
     args0 = atacr.get_daylong_arguments([
         dbfile, '--keys', '7D.M08A', '-O',
         '--start', '2012-03-08', '--end', '2012-03-10',
-        '--sampling-rate', '0.5', '--channels', 'P'])
+        '--sampling-rate', '1.0', '--channels', 'P'])
     atacr.main(args=args0)
 def test_02_daily_noH():
     from obstools.scripts import atacr_daily_spectra as atacr
@@ -51,7 +56,7 @@ def test_05_event_noH():
         dbfile, '--keys', '7D.M08A', '-O',
         '--start', '2012-03-08', '--end', '2012-03-10',
         '--min-mag', '6.3', '--max-mag', '6.7',
-        '--sampling-rate', '0.5', '--channels', 'P'])
+        '--sampling-rate', '1.0', '--channels', 'P'])
     atacr.main(args=args0)
 def test_06_correct_noH():
     from obstools.scripts import atacr_correct_event as atacr

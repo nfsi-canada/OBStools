@@ -333,10 +333,7 @@ def main(args=None):
                 year = filespec.name.split('.')[0]
                 jday = filespec.name.split('.')[1]
 
-                print()
-                print(
-                    "*********************************************" +
-                    "***************")
+                print("\n"+"*"*60)
                 print("* Calculating transfer functions for key " +
                       stkey+" and day "+year+"."+jday)
                 tstamp = year+'.'+jday+'.'
@@ -369,10 +366,7 @@ def main(args=None):
 
                 name = fileavst.name.split('avg_sta')
 
-                print()
-                print(
-                    "*********************************************" +
-                    "***************")
+                print("\n"+"*"*60)
                 print("* Calculating transfer functions for key " +
                       stkey+" and range "+name[0])
                 filename = tfpath / (name[0] + 'transfunc.pkl')

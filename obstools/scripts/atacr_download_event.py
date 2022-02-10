@@ -374,7 +374,7 @@ def main(args=None):
         # Define path to see if it exists
         eventpath = Path('EVENTS') / Path(stkey)
         if not eventpath.is_dir():
-            print('Path to '+str(eventpath)+' doesn`t exist - creating it')
+            print('\nPath to '+str(eventpath)+' doesn`t exist - creating it')
             eventpath.mkdir(parents=True)
 
         # Establish client
@@ -408,9 +408,7 @@ def main(args=None):
         sta.location = tlocs
 
         # Update Display
-        print(" ")
-        print(" ")
-        print("|===============================================|")
+        print("\n|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(
             sta.station))
@@ -447,21 +445,18 @@ def main(args=None):
             minmagnitude=args.minmag, maxmagnitude=args.maxmag)
 
         # Total number of events in Catalogue
-        nevK = 0
         nevtT = len(cat)
         print(
             "|  Found {0:5d}".format(nevtT) +
             " possible events                  |")
-        ievs = range(0, nevtT)
 
         # Select order of processing
-        if args.reverse:
-            ievs = range(0, nevtT)
-        else:
+        ievs = range(0, nevtT)
+        if not args.reverse:
             ievs = range(nevtT-1, -1, -1)
 
         # Read through catalogue
-        for iev in ievs:
+        for inum, iev in enumerate(ievs):
 
             # Extract event
             ev = cat[iev]
@@ -480,247 +475,242 @@ def main(args=None):
             if mag is None:
                 mag = -9.
 
-            # If distance between 85 and 120 deg:
-            if (gac > args.mindist and gac < args.maxdist):
+            # Display Event Info
+            print("\n"+"*"*60)
+            print(
+                "* #({0:d}/{1:d}):  {2:13s}".format(
+                    inum+1, nevtT, time.strftime("%Y%m%d_%H%M%S")))
+            print(
+                "*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
+            print(
+                "*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
+            print(
+                "*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
+            print(
+                "*   Dist: {0:7.2f} km; {1:7.2f} deg".format(
+                    epi_dist, gac))
 
-                # Display Event Info
-                nevK = nevK + 1
-                if args.reverse:
-                    inum = iev + 1
-                else:
-                    inum = nevtT - iev + 1
-                print(" ")
-                print(
-                    "****************************************************")
-                print(
-                    "* #{0:d} ({1:d}/{2:d}):  {3:13s}".format(
-                        nevK, inum, nevtT, time.strftime("%Y%m%d_%H%M%S")))
-                print(
-                    "*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
-                print(
-                    "*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
-                print(
-                    "*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
-                print(
-                    "*   Dist: {0:7.2f} km; {1:7.2f} deg".format(
-                        epi_dist, gac))
+            # If distance outside of distance range:
+            if not (gac > args.mindist and gac < args.maxdist):
+                print("\n*   -> Event outside epicentral distance " + 
+                    "range - continuing")
+                continue
 
-                t1 = time
-                t2 = t1 + window
+            t1 = time
+            t2 = t1 + window
 
-                # Time stamp
-                tstamp = str(time.year).zfill(4)+'.' + \
-                    str(time.julday).zfill(3)+'.'
-                tstamp = tstamp + str(time.hour).zfill(2) + \
-                    '.'+str(time.minute).zfill(2)
+            # Time stamp
+            tstamp = str(time.year).zfill(4)+'.' + \
+                str(time.julday).zfill(3)+'.'
+            tstamp = tstamp + str(time.hour).zfill(2) + \
+                '.'+str(time.minute).zfill(2)
 
-                # Define file names (to check if files already exist)
-                filename = eventpath / (tstamp+'.pkl')
-                # Horizontal 1 channel
-                file1 = eventpath / (tstamp+'.'+sta.channel+'1.SAC')
-                # Horizontal 2 channel
-                file2 = eventpath / (tstamp+'.'+sta.channel+'2.SAC')
-                # Vertical channel
-                fileZ = eventpath / (tstamp+'.'+sta.channel+'Z.SAC')
-                # Pressure channel
-                fileP = eventpath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
+            # Define file names (to check if files already exist)
+            filename = eventpath / (tstamp+'.pkl')
+            # Horizontal 1 channel
+            file1 = eventpath / (tstamp+'.'+sta.channel+'1.SAC')
+            # Horizontal 2 channel
+            file2 = eventpath / (tstamp+'.'+sta.channel+'2.SAC')
+            # Vertical channel
+            fileZ = eventpath / (tstamp+'.'+sta.channel+'Z.SAC')
+            # Pressure channel
+            fileP = eventpath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
 
-                print()
-                print("* Channels selected: " +
-                      str(args.channels)+' and vertical')
+            print("\n* Channels selected: " +
+                  str(args.channels)+' and vertical')
 
-                # If data file exists, continue
-                if filename.exists():
-                    if not args.ovr:
-                        print("*")
-                        print("*   "+str(filename))
-                        print("*   -> File already exists, continuing")
-                        continue
-
-                if "P" not in args.channels:
-
-                    # Number of channels
-                    ncomp = 3
-
-                    # Comma-separated list of channels for Client
-                    channels = sta.channel.upper() + '1,' + \
-                        sta.channel.upper() + '2,' + \
-                        sta.channel.upper() + 'Z'
-
-                    # Get waveforms from client
-                    try:
-                        print("*   "+tstamp +
-                              "                                     ")
-                        print("*   -> Downloading Seismic data... ")
-                        sth = client.get_waveforms(
-                            network=sta.network, station=sta.station,
-                            location=sta.location[0], channel=channels,
-                            starttime=t1, endtime=t2, attach_response=True)
-                        print("*      ...done")
-                    except:
-                        print(
-                            " Error: Unable to download ?H? components - " +
-                            "continuing")
-                        continue
-
-                    st = sth
-
-                elif "H" not in args.channels:
-
-                    # Number of channels
-                    ncomp = 2
-
-                    # Comma-separated list of channels for Client
-                    channels = sta.channel.upper() + 'Z'
-
-                    # Get waveforms from client
-                    try:
-                        print("*   "+tstamp +
-                              "                                     ")
-                        print("*   -> Downloading Seismic data... ")
-                        sth = client.get_waveforms(
-                            network=sta.network, station=sta.station,
-                            location=sta.location[0], channel=channels,
-                            starttime=t1, endtime=t2, attach_response=True)
-                        print("*      ...done")
-                    except:
-                        print(
-                            " Error: Unable to download ?H? components - " +
-                            "continuing")
-                        continue
-                    try:
-                        print("*   -> Downloading Pressure data...")
-                        stp = client.get_waveforms(
-                            network=sta.network, station=sta.station,
-                            location=sta.location[0], channel='?DH',
-                            starttime=t1, endtime=t2, attach_response=True)
-                        print("*      ...done")
-                        if len(stp) > 1:
-                            print("WARNING: There are more than one ?DH trace")
-                            print("*   -> Keeping the highest sampling rate")
-                            print("*   -> Renaming channel to "+
-                                sta.channel[0]+"DH")
-                            if stp[0].stats.sampling_rate > \
-                                    stp[1].stats.sampling_rate:
-                                stp = Stream(traces=stp[0])
-                            else:
-                                stp = Stream(traces=stp[1])
-                    except:
-                        print(" Error: Unable to download ?DH component - " +
-                              "continuing")
-                        continue
-
-                    st = sth + stp
-
-                else:
-
-                    # Comma-separated list of channels for Client
-                    ncomp = 4
-
-                    # Comma-separated list of channels for Client
-                    channels = sta.channel.upper() + '1,' + \
-                        sta.channel.upper() + '2,' + \
-                        sta.channel.upper() + 'Z'
-
-                    # Get waveforms from client
-                    try:
-                        print("*   "+tstamp +
-                              "                                     ")
-                        print("*   -> Downloading Seismic data... ")
-                        sth = client.get_waveforms(
-                            network=sta.network, station=sta.station,
-                            location=sta.location[0], channel=channels,
-                            starttime=t1, endtime=t2, attach_response=True)
-                        print("*      ...done")
-                    except:
-                        print(
-                            " Error: Unable to download ?H? components - " +
-                            "continuing")
-                        continue
-                    try:
-                        print("*   -> Downloading Pressure data...")
-                        stp = client.get_waveforms(
-                            network=sta.network, station=sta.station,
-                            location=sta.location[0], channel='?DH',
-                            starttime=t1, endtime=t2, attach_response=True)
-                        print("     ...done")
-                        if len(stp) > 1:
-                            print("WARNING: There are more than one ?DH trace")
-                            print("*   -> Keeping the highest sampling rate")
-                            print("*   -> Renaming channel to "+
-                                sta.channel[0]+"DH")
-                            if stp[0].stats.sampling_rate > \
-                                    stp[1].stats.sampling_rate:
-                                stp = Stream(traces=stp[0])
-                            else:
-                                stp = Stream(traces=stp[1])
-                    except:
-                        print(" Error: Unable to download ?DH component - " +
-                              "continuing")
-                        continue
-
-                    st = sth + stp
-
-                # Detrend, filter
-                st.detrend('demean')
-                st.detrend('linear')
-                st.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                          corners=2, zerophase=True)
-                st.resample(args.new_sampling_rate)
-
-                # Check streams
-                is_ok, st = utils.QC_streams(t1, t2, st)
-                if not is_ok:
+            # If data file exists, continue
+            if filename.exists():
+                if not args.ovr:
+                    print("*")
+                    print("*   "+str(filename))
+                    print("*   -> File already exists - continuing")
                     continue
 
-                sth = st.select(component='1') + st.select(component='2') + \
-                    st.select(component='Z')
+            if "P" not in args.channels:
 
-                # Remove responses
-                print("*   -> Removing responses - Seismic data")
-                sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+                # Number of channels
+                ncomp = 3
 
-                # Extract traces - Z
-                trZ = sth.select(component='Z')[0]
-                trZ = utils.update_stats(
-                    trZ, sta.latitude, sta.longitude, sta.elevation, 
-                    sta.channel+'Z')
-                trZ.write(str(fileZ), format='SAC')
+                # Comma-separated list of channels for Client
+                channels = sta.channel.upper() + '1,' + \
+                    sta.channel.upper() + '2,' + \
+                    sta.channel.upper() + 'Z'
 
-                # Extract traces and write out in SAC format
-                # Seismic channels
-                if "H" in args.channels:
-                    tr1 = sth.select(component='1')[0]
-                    tr2 = sth.select(component='2')[0]
-                    tr1 = utils.update_stats(
-                        tr1, sta.latitude, sta.longitude, sta.elevation, 
-                        sta.channel+'1')
-                    tr2 = utils.update_stats(
-                        tr2, sta.latitude, sta.longitude, sta.elevation, 
-                        sta.channel+'2')
-                    tr1.write(str(file1), format='SAC')
-                    tr2.write(str(file2), format='SAC')
+                # Get waveforms from client
+                try:
+                    print("*   "+tstamp +
+                          "                                     ")
+                    print("*   -> Downloading Seismic data... ")
+                    sth = client.get_waveforms(
+                        network=sta.network, station=sta.station,
+                        location=sta.location[0], channel=channels,
+                        starttime=t1, endtime=t2, attach_response=True)
+                    print("*      ...done")
+                except:
+                    print(
+                        " Error: Unable to download ?H? components - " +
+                        "continuing")
+                    continue
 
-                # Pressure channel
-                if "P" in args.channels:
-                    stp = st.select(component='H')
-                    print("*   -> Removing responses - Pressure data")
-                    stp.remove_response(pre_filt=args.pre_filt)
-                    trP = stp[0]
-                    trP = utils.update_stats(
-                        trP, sta.latitude, sta.longitude, sta.elevation, 
-                        sta.channel[0]+'DH')
-                    trP.write(str(fileP), format='SAC')
+                st = sth
 
-                else:
-                    stp = Stream()
+            elif "H" not in args.channels:
 
-                # Write out EventStream object
-                eventstream = EventStream(
-                    sta, sth, stp, tstamp, lat, lon, time, window,
-                    args.new_sampling_rate, ncomp)
+                # Number of channels
+                ncomp = 2
 
-                eventstream.save(filename)
+                # Comma-separated list of channels for Client
+                channels = sta.channel.upper() + 'Z'
+
+                # Get waveforms from client
+                try:
+                    print("*   "+tstamp +
+                          "                                     ")
+                    print("*   -> Downloading Seismic data... ")
+                    sth = client.get_waveforms(
+                        network=sta.network, station=sta.station,
+                        location=sta.location[0], channel=channels,
+                        starttime=t1, endtime=t2, attach_response=True)
+                    print("*      ...done")
+                except:
+                    print(
+                        " Error: Unable to download ?H? components - " +
+                        "continuing")
+                    continue
+                try:
+                    print("*   -> Downloading Pressure data...")
+                    stp = client.get_waveforms(
+                        network=sta.network, station=sta.station,
+                        location=sta.location[0], channel='?DH',
+                        starttime=t1, endtime=t2, attach_response=True)
+                    print("*      ...done")
+                    if len(stp) > 1:
+                        print("WARNING: There are more than one ?DH trace")
+                        print("*   -> Keeping the highest sampling rate")
+                        print("*   -> Renaming channel to "+
+                            sta.channel[0]+"DH")
+                        if stp[0].stats.sampling_rate > \
+                                stp[1].stats.sampling_rate:
+                            stp = Stream(traces=stp[0])
+                        else:
+                            stp = Stream(traces=stp[1])
+                except:
+                    print(" Error: Unable to download ?DH component - " +
+                          "continuing")
+                    continue
+
+                st = sth + stp
+
+            else:
+
+                # Comma-separated list of channels for Client
+                ncomp = 4
+
+                # Comma-separated list of channels for Client
+                channels = sta.channel.upper() + '1,' + \
+                    sta.channel.upper() + '2,' + \
+                    sta.channel.upper() + 'Z'
+
+                # Get waveforms from client
+                try:
+                    print("*   "+tstamp +
+                          "                                     ")
+                    print("*   -> Downloading Seismic data... ")
+                    sth = client.get_waveforms(
+                        network=sta.network, station=sta.station,
+                        location=sta.location[0], channel=channels,
+                        starttime=t1, endtime=t2, attach_response=True)
+                    print("*      ...done")
+                except:
+                    print(
+                        " Error: Unable to download ?H? components - " +
+                        "continuing")
+                    continue
+                try:
+                    print("*   -> Downloading Pressure data...")
+                    stp = client.get_waveforms(
+                        network=sta.network, station=sta.station,
+                        location=sta.location[0], channel='?DH',
+                        starttime=t1, endtime=t2, attach_response=True)
+                    print("     ...done")
+                    if len(stp) > 1:
+                        print("WARNING: There are more than one ?DH trace")
+                        print("*   -> Keeping the highest sampling rate")
+                        print("*   -> Renaming channel to "+
+                            sta.channel[0]+"DH")
+                        if stp[0].stats.sampling_rate > \
+                                stp[1].stats.sampling_rate:
+                            stp = Stream(traces=stp[0])
+                        else:
+                            stp = Stream(traces=stp[1])
+                except:
+                    print(" Error: Unable to download ?DH component - " +
+                          "continuing")
+                    continue
+
+                st = sth + stp
+
+            # Detrend, filter
+            st.detrend('demean')
+            st.detrend('linear')
+            st.filter('lowpass', freq=0.5*args.new_sampling_rate,
+                      corners=2, zerophase=True)
+            st.resample(args.new_sampling_rate)
+
+            # Check streams
+            is_ok, st = utils.QC_streams(t1, t2, st)
+            if not is_ok:
+                continue
+
+            sth = st.select(component='1') + st.select(component='2') + \
+                st.select(component='Z')
+
+            # Remove responses
+            print("*   -> Removing responses - Seismic data")
+            sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+
+            # Extract traces - Z
+            trZ = sth.select(component='Z')[0]
+            trZ = utils.update_stats(
+                trZ, sta.latitude, sta.longitude, sta.elevation, 
+                sta.channel+'Z')
+            trZ.write(str(fileZ), format='SAC')
+
+            # Extract traces and write out in SAC format
+            # Seismic channels
+            if "H" in args.channels:
+                tr1 = sth.select(component='1')[0]
+                tr2 = sth.select(component='2')[0]
+                tr1 = utils.update_stats(
+                    tr1, sta.latitude, sta.longitude, sta.elevation, 
+                    sta.channel+'1')
+                tr2 = utils.update_stats(
+                    tr2, sta.latitude, sta.longitude, sta.elevation, 
+                    sta.channel+'2')
+                tr1.write(str(file1), format='SAC')
+                tr2.write(str(file2), format='SAC')
+
+            # Pressure channel
+            if "P" in args.channels:
+                stp = st.select(component='H')
+                print("*   -> Removing responses - Pressure data")
+                stp.remove_response(pre_filt=args.pre_filt)
+                trP = stp[0]
+                trP = utils.update_stats(
+                    trP, sta.latitude, sta.longitude, sta.elevation, 
+                    sta.channel[0]+'DH')
+                trP.write(str(fileP), format='SAC')
+
+            else:
+                stp = Stream()
+
+            # Write out EventStream object
+            eventstream = EventStream(
+                sta, sth, stp, tstamp, lat, lon, time, window,
+                args.new_sampling_rate, ncomp)
+
+            eventstream.save(filename)
 
 
 if __name__ == "__main__":

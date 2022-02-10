@@ -321,15 +321,13 @@ def main(args=None):
         # Path where data are located
         datapath = Path('DATA') / stkey
         if not datapath.is_dir():
-            print()
-            print("Path to "+str(datapath)+" doesn`t exist - continuing")
+            print("\nPath to "+str(datapath)+" doesn`t exist - continuing")
             continue
 
         # Path where spectra will be saved
         specpath = Path('SPECTRA') / stkey
         if not specpath.is_dir():
-            print()
-            print("Path to "+str(specpath)+" doesn`t exist - creating it")
+            print("\nPath to "+str(specpath)+" doesn`t exist - creating it")
             specpath.mkdir(parents=True)
 
         # Path where plots will be saved
@@ -365,8 +363,7 @@ def main(args=None):
         sta.location = tlocs
 
         # Update Display
-        print()
-        print("|===============================================|")
+        print("\n|===============================================|")
         print("|===============================================|")
         print("|                   {0:>8s}                    |".format(
             sta.station))
@@ -403,8 +400,7 @@ def main(args=None):
             year = str(trZ.stats.starttime.year).zfill(4)
             jday = str(trZ.stats.starttime.julday).zfill(3)
 
-            print()
-            print("*"*60)
+            print("\n"+"*"*60)
             print("* Calculating noise spectra for key " +
                   stkey+" and day "+year+"."+jday)
             tstamp = year+'.'+jday+'.'
