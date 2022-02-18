@@ -1850,29 +1850,6 @@ in direction of maximum tilt), HZ, and HP</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="obstools.atacr.utils.calculate_windowed_fft">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_windowed_fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hann</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.calculate_windowed_fft" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates windowed Fourier transform</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>trace</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code>) – Input trace data</p></li>
-<li><p><strong>ws</strong> (<em>int</em>) – Window size, in number of samples</p></li>
-<li><p><strong>ss</strong> (<em>int</em>) – Step size, or number of samples until next window</p></li>
-<li><p><strong>han</strong> (<em>bool</em>) – Whether or not to apply a Hanning taper to data</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>ft</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Fourier transform of trace</p></li>
-<li><p><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis in Hz</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.smooth">
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.smooth" title="Permalink to this definition"></a></dt>
 <dd><p>Function to smooth power spectral density functions from the convolution
@@ -1948,32 +1925,6 @@ of a boxcar function with the PSD</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, optional</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="obstools.atacr.utils.sliding_window">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">sliding_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hann</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.sliding_window" title="Permalink to this definition"></a></dt>
-<dd><p>Function to split a data array into overlapping, possibly tapered sub-windows</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – 1D array of data to split</p></li>
-<li><p><strong>ws</strong> (<em>int</em>) – Window size in samples</p></li>
-<li><p><strong>ss</strong> (<em>int</em>) – <dl class="simple">
-<dt>Step size in samples. If not provided, window and step size</dt><dd><p>are equal.</p>
-</dd>
-</dl>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>out</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – 1D array of windowed data</p></li>
-<li><p><strong>nd</strong> (<em>int</em>) – Number of windows</p></li>
-</ul>
-</p>
 </dd>
 </dl>
 </dd></dl>
