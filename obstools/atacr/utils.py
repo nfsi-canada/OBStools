@@ -448,45 +448,6 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     return cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value
 
 
-def calculate_windowed_fft(trace, ws, ss=None, hann=True):
-    """
-    Calculates windowed Fourier transform
-
-    Parameters
-    ----------
-    trace : :class:`~obspy.core.Trace`
-        Input trace data
-    ws : int
-        Window size, in number of samples
-    ss : int
-        Step size, or number of samples until next window
-    han : bool
-        Whether or not to apply a Hanning taper to data
-
-    Returns
-    -------
-    ft : :class:`~numpy.ndarray`
-        Fourier transform of trace
-    f : :class:`~numpy.ndarray`
-        Frequency axis in Hz
-
-    """
-
-    n2 = _npow2(ws)
-    f = trace.stats.sampling_rate/2. * np.linspace(0., 1., int(n2/2) + 1)
-
-    # Extract sliding windows
-    tr, nd = sliding_window(trace.data, ws, ss)
-
-    # Fourier transform
-    ft = np.fft.fft(tr, n=n2)
-
-    return ft, f
-
-# def smooth(data, np, poly=0, axis=0):
-#     return savgol_filter(data, np, poly, axis=axis, mode='wrap')
-
-
 def smooth(data, nd, axis=0):
     """
     Function to smooth power spectral density functions from the convolution
@@ -594,57 +555,6 @@ def phase(Gxy):
         return np.angle(Gxy)
     else:
         return None
-
-
-def sliding_window(a, ws, ss=None, hann=True):
-    """
-    Function to split a data array into overlapping, possibly tapered sub-windows
-
-    Parameters
-    ----------
-    a : :class:`~numpy.ndarray`
-        1D array of data to split
-    ws : int
-        Window size in samples
-    ss : int
-        Step size in samples. If not provided, window and step size
-         are equal.
-
-    Returns
-    -------
-    out : :class:`~numpy.ndarray`
-        1D array of windowed data
-    nd : int
-        Number of windows
-
-    """
-
-    if ss is None:
-        # no step size was provided. Return non-overlapping windows
-        ss = ws
-
-    # Calculate the number of windows to return, ignoring leftover samples, and
-    # allocate memory to contain the samples
-    valid = len(a) - ss
-    nd = (valid) // ss
-    out = np.ndarray((nd, ws), dtype=a.dtype)
-
-    if nd == 0:
-        if hann:
-            out = a * np.hanning(ws)
-        else:
-            out = a
-
-    for i in range(nd):
-        # "slide" the window along the samples
-        start = i * ss
-        stop = start + ws
-        if hann:
-            out[i] = a[start: stop] * np.hanning(ws)
-        else:
-            out[i] = a[start: stop]
-
-    return out, nd
 
 
 def rotate_dir(tr1, tr2, direc):
