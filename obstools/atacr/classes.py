@@ -350,7 +350,7 @@ class DayNoise(object):
         f, t, psdZ = spectrogram(
             self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
         self.f = f
-        print(f)
+
         if self.ncomp == 2 or self.ncomp == 4:
             f, t, psdP = spectrogram(
                 self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
