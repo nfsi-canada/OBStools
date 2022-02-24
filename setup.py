@@ -8,7 +8,7 @@ from pathlib import Path
 
 def find_version(*paths):
     fname = os.path.join(os.path.dirname(__file__), *paths)
-    with open(fname) as fp:
+    with open(fname, encoding='utf-8') as fp:
         code = fp.read()
     match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", code, re.M)
     if match:
