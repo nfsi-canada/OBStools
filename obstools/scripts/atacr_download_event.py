@@ -282,7 +282,7 @@ def get_event_arguments(argv=None):
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from start time: " +
                 args.startT)
@@ -293,7 +293,7 @@ def get_event_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from end time: " +
                 args.endT)
@@ -349,7 +349,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -492,7 +492,8 @@ def main(args=None):
 
             # If distance outside of distance range:
             if not (gac > args.mindist and gac < args.maxdist):
-                print("\n*   -> Event outside epicentral distance " + 
+                print(
+                    "\n*   -> Event outside epicentral distance " +
                     "range - continuing")
                 continue
 
@@ -547,7 +548,7 @@ def main(args=None):
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
-                except:
+                except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
@@ -573,7 +574,7 @@ def main(args=None):
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
-                except:
+                except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
@@ -588,14 +589,15 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+
-                            sta.channel[0]+"DH")
+                        print(
+                            "*   -> Renaming channel to " +
+                            sta.channel[0] + "DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
-                except:
+                except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     continue
@@ -622,7 +624,7 @@ def main(args=None):
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
-                except:
+                except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
@@ -637,14 +639,15 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+
-                            sta.channel[0]+"DH")
+                        print(
+                            "*   -> Renaming channel to " +
+                            sta.channel[0] + "DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
-                except:
+                except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     continue
@@ -673,7 +676,7 @@ def main(args=None):
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation, 
+                trZ, sta.latitude, sta.longitude, sta.elevation,
                 sta.channel+'Z')
             trZ.write(str(fileZ), format='SAC')
 
@@ -683,10 +686,10 @@ def main(args=None):
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation, 
+                    tr1, sta.latitude, sta.longitude, sta.elevation,
                     sta.channel+'1')
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation, 
+                    tr2, sta.latitude, sta.longitude, sta.elevation,
                     sta.channel+'2')
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
@@ -698,7 +701,7 @@ def main(args=None):
                 stp.remove_response(pre_filt=args.pre_filt)
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation, 
+                    trP, sta.latitude, sta.longitude, sta.elevation,
                     sta.channel[0]+'DH')
                 trP.write(str(fileP), format='SAC')
 
