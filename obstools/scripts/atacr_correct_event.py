@@ -41,7 +41,8 @@ def get_correct_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    Calling options for the script `obs_correct_event.py` that accompany this package.
+    Calling options for the script `obs_correct_event.py` that accompanies this
+    package.
 
     """
 
@@ -201,7 +202,7 @@ def get_correct_arguments(argv=None):
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from " +
                 "start time: " + args.startT)
@@ -212,7 +213,7 @@ def get_correct_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from " +
                 "end time: " + args.endT)
@@ -238,7 +239,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -357,7 +358,7 @@ def main(args=None):
                     file = open(eventfile, 'rb')
                     eventstream = pickle.load(file)
                     file.close()
-                except:
+                except Exception:
                     print("File "+str(eventfile) +
                           " exists but cannot be loaded")
                     continue
@@ -405,7 +406,7 @@ def main(args=None):
                                 file = open(transfile, 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
-                            except:
+                            except Exception:
                                 print("File "+str(transfile) +
                                       " exists but cannot be loaded")
                                 continue
@@ -438,17 +439,17 @@ def main(args=None):
                             # Now save as SAC files
                             for key, value in tfaverage.tf_list.items():
                                 if value and eventstream.ev_list[key]:
-                                    nameZ = '.sta.' + key + '.' 
+                                    nameZ = '.sta.' + key + '.'
                                     nameZ += sta.channel+'Z.SAC'
-                                    fileZ = correctpath / (eventfile.stem + nameZ)
-                                    trZ = eventstream.sth.select(component='Z')[0].copy()
+                                    fileZ = correctpath /
+                                    (eventfile.stem + nameZ)
+                                    trZ = eventstream.sth.select(
+                                        component='Z')[0].copy()
                                     trZ.data = eventstream.correct[key]
-                                    trZ = utils.update_stats(trZ, 
-                                        sta.latitude, sta.longitude, 
+                                    trZ = utils.update_stats(
+                                        trZ, sta.latitude, sta.longitude,
                                         sta.elevation, 'Z')
                                     trZ.write(str(fileZ), format='SAC')
-
-
 
                 # This case refers to the "daily" spectral averages
                 else:
@@ -461,7 +462,7 @@ def main(args=None):
                                 file = open(transfile, 'rb')
                                 tfaverage = pickle.load(file)
                                 file.close()
-                            except:
+                            except Exception:
                                 print("File "+str(transfile) +
                                       " exists but cannot be loaded")
                                 continue
@@ -494,13 +495,15 @@ def main(args=None):
                             # Now save as SAC files
                             for key, value in tfaverage.tf_list.items():
                                 if value and eventstream.ev_list[key]:
-                                    nameZ = '.day.' + key + '.' 
+                                    nameZ = '.day.' + key + '.'
                                     nameZ += sta.channel+'Z.SAC'
-                                    fileZ = correctpath / (eventfile.stem + nameZ)
-                                    trZ = eventstream.sth.select(component='Z')[0].copy()
+                                    fileZ = correctpath /
+                                    (eventfile.stem + nameZ)
+                                    trZ = eventstream.sth.select(
+                                        component='Z')[0].copy()
                                     trZ.data = eventstream.correct[key]
-                                    trZ = utils.update_stats(trZ, 
-                                        sta.latitude, sta.longitude, 
+                                    trZ = utils.update_stats(
+                                        trZ, sta.latitude, sta.longitude,
                                         sta.elevation, 'Z')
                                     trZ.write(str(fileZ), format='SAC')
 
