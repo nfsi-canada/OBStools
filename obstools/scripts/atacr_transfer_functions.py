@@ -36,11 +36,13 @@ from argparse import ArgumentParser
 from os.path import exists as exist
 from numpy import nan
 
+
 def get_transfer_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    Calling options for the script `obs_transfer functions.py` that accompany this package.
+    Calling options for the script `obs_transfer_functions.py` that accompanies
+    this package.
 
     """
 
@@ -174,7 +176,7 @@ def get_transfer_arguments(argv=None):
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from " +
                 "start time: " + args.startT)
@@ -185,7 +187,7 @@ def get_transfer_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from " +
                 "end time: " + args.endT)
@@ -211,7 +213,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -395,15 +397,16 @@ def main(args=None):
 
         if args.fig_TF:
             fname = stkey + '.' + 'transfer_functions'
-            plot = plotting.fig_TF(f, day_transfer_functions, daynoise.tf_list,
-                        sta_transfer_functions, stanoise.tf_list, skey=stkey)
+            plot = plotting.fig_TF(
+                f, day_transfer_functions, daynoise.tf_list,
+                sta_transfer_functions, stanoise.tf_list, skey=stkey)
 
             if plotpath:
-                plot.savefig(plotpath / (fname + '.' + args.form),
-                            dpi=300, bbox_inches='tight', format=args.form)
+                plot.savefig(
+                    plotpath / (fname + '.' + args.form),
+                    dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
-
 
 
 if __name__ == "__main__":
