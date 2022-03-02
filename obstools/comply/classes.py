@@ -63,7 +63,7 @@ class Comply(object):
 
     def __init__(self, sta=None, objnoise=None):
 
-        if any(value == None for value in [sta, objnoise]):
+        if any(value is None for value in [sta, objnoise]):
             raise(Exception(
                 "Error: Initializing EventStream object with None values - " +
                 "aborting"))

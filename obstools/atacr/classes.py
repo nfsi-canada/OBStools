@@ -32,7 +32,7 @@ from obstools.atacr import utils, plotting
 from pkg_resources import resource_filename
 from pathlib import Path
 np.seterr(all='ignore')
-#np.set_printoptions(threshold=sys.maxsize)
+# np.set_printoptions(threshold=sys.maxsize)
 
 
 class Power(object):
@@ -514,9 +514,9 @@ class DayNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
-        indwin = np.argwhere(goodwins == True)
+        indwin = np.argwhere(goodwins is True)
 
-        while moveon == False:
+        while moveon is False:
 
             ubernorm = np.empty((self.ncomp, np.sum(goodwins)))
             for ind_u, dsl in enumerate(dsls):
@@ -550,11 +550,11 @@ class DayNoise(object):
                 self.goodwins = goodwins
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill == False)].T[0]
+            trypenalty = penalty[np.argwhere(kill is False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                goodwins[indwin[kill == True]] = False
-                indwin = np.argwhere(goodwins == True)
+                goodwins[indwin[kill is True]] = False
+                indwin = np.argwhere(goodwins is True)
                 moveon = False
             else:
                 moveon = True
@@ -656,21 +656,21 @@ class DayNoise(object):
         ftP = None
 
         _f, _t, ftZ = stft(
-            self.trZ.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-            window=wind, nperseg=ws, noverlap=ss)
+            self.trZ.data, self.fs, return_onesided=False, boundary=None,
+            padded=False, window=wind, nperseg=ws, noverlap=ss)
         ftZ = ftZ.T
         if self.ncomp == 2 or self.ncomp == 4:
             _f, _t, ftP = stft(
-                self.trP.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                window=wind, nperseg=ws, noverlap=ss)
+                self.trP.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss)
             ftP = ftP.T
         if self.ncomp == 3 or self.ncomp == 4:
             _f, _t, ft1 = stft(
-                self.tr1.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                window=wind, nperseg=ws, noverlap=ss)
+                self.tr1.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss)
             _f, _t, ft2 = stft(
-                self.tr2.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                window=wind, nperseg=ws, noverlap=ss)
+                self.tr2.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss)
             ft1 = ft1.T
             ft2 = ft2.T
 
@@ -723,20 +723,26 @@ class DayNoise(object):
         c2P = None
         cZP = None
         if self.ncomp == 3 or self.ncomp == 4:
-            c12 = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ft2[self.goodwins, :]), axis=0)[0:len(self.f)]
-            c1Z = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
-            c2Z = np.mean(ft2[self.goodwins, :] *
-                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c12 = np.mean(
+                ft1[self.goodwins, :] *
+                np.conj(ft2[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c1Z = np.mean(
+                ft1[self.goodwins, :] *
+                np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c2Z = np.mean(
+                ft2[self.goodwins, :] *
+                np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
         if self.ncomp == 4:
-            c1P = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
-            c2P = np.mean(ft2[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c1P = np.mean(
+                ft1[self.goodwins, :] *
+                np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c2P = np.mean(
+                ft2[self.goodwins, :] *
+                np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
         if self.ncomp == 2 or self.ncomp == 4:
-            cZP = np.mean(ftZ[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+            cZP = np.mean(
+                ftZ[self.goodwins, :] *
+                np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
 
         # Store as attributes
         self.power = Power(c11, c22, cZZ, cPP)
@@ -1200,9 +1206,9 @@ class StaNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         gooddays = np.repeat([True], self.cZZ.shape[1])
-        indwin = np.argwhere(gooddays == True)
+        indwin = np.argwhere(gooddays is True)
 
-        while moveon == False:
+        while moveon is False:
             ubernorm = np.empty((self.ncomp, np.sum(gooddays)))
             for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(gooddays))
@@ -1236,11 +1242,11 @@ class StaNoise(object):
                 self.QC = True
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill == False)].T[0]
+            trypenalty = penalty[np.argwhere(kill is False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                gooddays[indwin[kill == True]] = False
-                indwin = np.argwhere(gooddays == True)
+                gooddays[indwin[kill is True]] = False
+                indwin = np.argwhere(gooddays is True)
                 moveon = False
             else:
                 moveon = True
@@ -1828,7 +1834,7 @@ class EventStream(object):
             ncomp = evstream.ncomp
             correct = evstream.correct
 
-        if any(value == None for value in [sta, sth, stp, tstamp, lat, lon,
+        if any(value is None for value in [sta, sth, stp, tstamp, lat, lon,
                                            time, window, sampling_rate,
                                            ncomp]):
             raise(Exception(

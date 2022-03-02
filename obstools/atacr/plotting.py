@@ -32,8 +32,8 @@ from obstools.atacr import utils
 
 def fig_QC(f, power, gooddays, ncomp, key=''):
     """
-    Function to plot the Quality-Control step of the analysis. This function is used
-    in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+    Function to plot the Quality-Control step of the analysis. This function is
+    used in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
 
     Parameters
     ----------
@@ -42,7 +42,8 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
     power : :class:`~obstools.classes.Power`
         Container for the Power spectra
     gooddays : List
-        List of booleans representing whether a window is good (True) or not (False)
+        List of booleans representing whether a window is good (True) or not
+        (False)
     ncomp : int
         Number of components used in analysis (can be 2, 3 or 4)
     key : str
@@ -100,7 +101,8 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
     bad : :class:`~obstools.classes.Power`
         Container for the *bad* Power spectra
     gooddays : List
-        List of booleans representing whether a window is good (True) or not (False)
+        List of booleans representing whether a window is good (True) or not
+        (False)
     ncomp : int
         Number of components used in analysis (can be 2, 3 or 4)
     key : str
@@ -153,8 +155,8 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
 def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
                  save=False, fname='', form='png', **kwargs):
     """
-    Function to plot the averaged cross-spectra (those qualified as 'good' in the
-    QC step). This function is used in the `obs_daily_spectra.py` script.
+    Function to plot the averaged cross-spectra (those qualified as 'good' in
+    the QC step). This function is used in the `obs_daily_spectra.py` script.
 
     Parameters
     ----------
@@ -163,9 +165,11 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     field : :class:`~obstools.classes.Rotation`
         Container for the Power spectra
     gooddays : List
-        List of booleans representing whether a window is good (True) or not (False)
+        List of booleans representing whether a window is good (True) or not
+        (False)
     ftype : str
-        Type of plot to be displayed. If ftype is Admittance, plot is loglog. Otherwise semilogx
+        Type of plot to be displayed. If ftype is Admittance, plot is loglog.
+        Otherwise semilogx
     key : str
         String corresponding to the station key under analysis
     **kwargs : None
@@ -219,8 +223,8 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
 
 def fig_coh_ph(coh, ph, direc):
     """
-    Function to plot the coherence and phase between the rotated H and Z components,
-    used to characterize the tilt direction.
+    Function to plot the coherence and phase between the rotated H and Z
+    components, used to characterize the tilt direction.
 
     Parameters
     ----------

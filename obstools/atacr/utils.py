@@ -111,7 +111,7 @@ def QC_streams(start, end, st):
     dt = st[0].stats.delta
     try:
         st.trim(start, end-dt, fill_value=0., pad=True)
-    except:
+    except Exception:
         print("* Unable to trim")
         print("* -> Skipping")
         print("**************************************************")
@@ -191,8 +191,8 @@ def get_data(datapath, tstart, tend):
     Returns
     -------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. Returns empty traces
-        for missing components.
+        Corresponding trace objects for components H1, H2, HZ and HP. Returns
+        empty traces for missing components.
 
     """
 
@@ -260,7 +260,8 @@ def get_data(datapath, tstart, tend):
 
 def get_event(eventpath, tstart, tend):
     """
-    Function to grab all available earthquake data given a path and data time range
+    Function to grab all available earthquake data given a path and data time
+    range
 
     Parameters
     ----------
@@ -274,8 +275,8 @@ def get_event(eventpath, tstart, tend):
     Returns
     -------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. Returns empty traces
-        for missing components.
+        Corresponding trace objects for components H1, H2, HZ and HP. Returns
+        empty traces for missing components.
 
     """
 
@@ -352,20 +353,24 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     f : :class:`~numpy.ndarray`
         Frequency axis in Hz
     goodwins : list
-        List of booleans representing whether a window is good (True) or not (False).
-        This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
+        List of booleans representing whether a window is good (True) or not
+        (False). This attribute is returned from the method
+        :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
     tiltfreq : list
-        Two floats representing the frequency band at which the tilt is calculated
+        Two floats representing the frequency band at which the tilt is
+        calculated
 
     Returns
     -------
     cHH, cHZ, cHP : :class:`~numpy.ndarray`
-        Arrays of power and cross-spectral density functions of components HH (rotated H1
-        in direction of maximum tilt), HZ, and HP
+        Arrays of power and cross-spectral density functions of components HH
+        (rotated H1 in direction of maximum tilt), HZ, and HP
     coh : :class:`~numpy.ndarray`
-        Coherence value between rotated H and Z components, as a function of directions (azimuths)
+        Coherence value between rotated H and Z components, as a function of
+        directions (azimuths)
     ph : :class:`~numpy.ndarray`
-        Phase value between rotated H and Z components, as a function of directions (azimuths)
+        Phase value between rotated H and Z components, as a function of
+        directions (azimuths)
     direc : :class:`~numpy.ndarray`
         Array of directions (azimuths) considered
     tilt : float
@@ -605,4 +610,3 @@ def ftest(res1, pars1, res2, pars2):
     P = 1. - (f_dist.cdf(Fobs, dof1, dof2) - f_dist.cdf(1./Fobs, dof1, dof2))
 
     return P
-
