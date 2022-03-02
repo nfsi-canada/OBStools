@@ -44,6 +44,22 @@ def traceshift(trace, tt):
     """
     Function to shift traces in time given travel time
 
+
+    Parameters
+    ----------
+
+    trace : :class:`~obspy.core.Trace` object
+        Trace object to update
+    tt : float
+        Time shift in seconds
+
+    Returns
+    -------
+
+    rtrace : :class:`~obspy.core.Trace` object
+        Updated trace object
+
+
     """
 
     # Define frequencies
@@ -272,7 +288,7 @@ def get_event(eventpath, tstart, tend):
     # Time iterator
     t1 = tstart
 
-    # Cycle through each day withing time range
+    # Cycle through each day within time range
     while t1 < tend:
 
         # Time stamp used in file name
