@@ -36,11 +36,13 @@ from os.path import exists as exist
 from obspy import UTCDateTime
 from numpy import nan
 
+
 def get_cleanspec_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    Calling options for the script `obs_clean_spectra.py` that accompany this package.
+    Calling options for the script `obs_clean_spectra.py` that accompany this
+    package.
 
     """
 
@@ -208,7 +210,7 @@ def get_cleanspec_arguments(argv=None):
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from start time: " +
                 args.startT)
@@ -219,7 +221,7 @@ def get_cleanspec_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from end time: " +
                 args.endT)
@@ -251,7 +253,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -276,7 +278,9 @@ def main(args=None):
         # Path where spectra are located
         specpath = Path('SPECTRA') / stkey
         if not specpath.is_dir():
-            raise(Exception("Path to "+str(specpath)+" doesn`t exist - aborting"))
+            raise(Exception(
+                "Path to " + str(specpath) +
+                " doesn`t exist - aborting"))
 
         # Path where average spectra will be saved
         avstpath = Path('AVG_STA') / stkey
@@ -441,32 +445,32 @@ def main(args=None):
             try:
                 ph_12_all.append(
                     180./np.pi*utils.phase(daynoise.cross.c12))
-            except:
+            except Exception:
                 ph_12_all.append(None)
             try:
                 ph_1Z_all.append(
                     180./np.pi*utils.phase(daynoise.cross.c1Z))
-            except:
+            except Exception:
                 ph_1Z_all.append(None)
             try:
                 ph_1P_all.append(
                     180./np.pi*utils.phase(daynoise.cross.c1P))
-            except:
+            except Exception:
                 ph_1P_all.append(None)
             try:
                 ph_2Z_all.append(
                     180./np.pi*utils.phase(daynoise.cross.c2Z))
-            except:
+            except Exception:
                 ph_2Z_all.append(None)
             try:
                 ph_2P_all.append(
                     180./np.pi*utils.phase(daynoise.cross.c2P))
-            except:
+            except Exception:
                 ph_2P_all.append(None)
             try:
                 ph_ZP_all.append(
                     180./np.pi*utils.phase(daynoise.cross.cZP))
-            except:
+            except Exception:
                 ph_ZP_all.append(None)
 
             # Admittance
@@ -527,32 +531,38 @@ def main(args=None):
 
         if args.fig_av_cross:
             fname = stkey + '.' + 'av_coherence'
-            plot = plotting.fig_av_cross(stanoise.f, coh, stanoise.gooddays,
-                              'Coherence', stanoise.ncomp, key=stkey, lw=0.5)
+            plot = plotting.fig_av_cross(
+                stanoise.f, coh, stanoise.gooddays,
+                'Coherence', stanoise.ncomp, key=stkey, lw=0.5)
             # if plotpath.is_dir():
             if plotpath:
-                plot.savefig(str(plotpath / (fname + '.' + args.form)),
-                            dpi=300, bbox_inches='tight', format=args.form)
+                plot.savefig(
+                    str(plotpath / (fname + '.' + args.form)),
+                    dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
             fname = stkey + '.' + 'av_admittance'
-            plot = plotting.fig_av_cross(stanoise.f, ad, stanoise.gooddays,
-                              'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
+            plot = plotting.fig_av_cross(
+                stanoise.f, ad, stanoise.gooddays,
+                'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
 
             if plotpath:
-                plot.savefig(str(plotpath / (fname + '.' + args.form)),
-                            dpi=300, bbox_inches='tight', format=args.form)
+                plot.savefig(
+                    str(plotpath / (fname + '.' + args.form)),
+                    dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
             fname = stkey + '.' + 'av_phase'
-            plot = plotting.fig_av_cross(stanoise.f, ph, stanoise.gooddays,
-                              'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
+            plot = plotting.fig_av_cross(
+                stanoise.f, ph, stanoise.gooddays,
+                'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
 
             if plotpath:
-                plot.savefig(str(plotpath / (fname + '.' + args.form)),
-                            dpi=300, bbox_inches='tight', format=args.form)
+                plot.savefig(
+                    str(plotpath / (fname + '.' + args.form)),
+                    dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
@@ -560,8 +570,9 @@ def main(args=None):
             fname = stkey + '.' + 'coh_ph'
             plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.direc)
             if plotpath:
-                plot.savefig(str(plotpath / (fname + '.' + args.form)),
-                            dpi=300, bbox_inches='tight', format=args.form)
+                plot.savefig(
+                    str(plotpath / (fname + '.' + args.form)),
+                    dpi=300, bbox_inches='tight', format=args.form)
             else:
                 plot.show()
 
