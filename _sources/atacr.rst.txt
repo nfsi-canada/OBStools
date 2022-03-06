@@ -173,7 +173,7 @@ Utility functions
 Plotting functions
 ++++++++++++++++++
 
-.. automodule:: obstools.atacr.plot
+.. automodule:: obstools.atacr.plotting
    :members:
 
 Scripts
