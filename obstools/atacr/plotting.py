@@ -273,9 +273,13 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
         Frequency axis (in Hz)
     day_trfs : Dict
         Dictionary containing the transfer functions for the daily averages
+    day_list : Dict
+        Dictionary containing the list of daily transfer functions
     sta_trfs : Dict
         Dictionary containing the transfer functions for the station averages
-    key : str
+    sta_list : Dict
+        Dictionary containing the list of average transfer functions
+    skey : str
         String corresponding to the station key under analysis
 
     """
@@ -357,8 +361,12 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         Frequency axis (in Hz)
     day_comps : Dict
         Dictionary containing the compliance functions for the daily averages
+    day_list : Dict
+        Dictionary containing the list of daily transfer functions
     sta_comps : Dict
         Dictionary containing the compliance functions for the station averages
+    sta_list : Dict
+        Dictionary containing the list of average transfer functions
     key : str
         String corresponding to the station key under analysis
 
@@ -469,50 +477,58 @@ def fig_event_raw(evstream, fmin, fmax):
 
     """
 
-    import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=fmin,
-                        freqmax=fmax, corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=fmin,
-                        freqmax=fmax, corners=2, zerophase=True)
-    sr = evstream.sth[0].stats.sampling_rate
-    taxis = np.arange(0., 7200., 1./sr)
+    from obspy import Stream
+
+    # Unpack traces
+    tr1 = evstream.tr1.copy()
+    tr2 = evstream.tr2.copy()
+    trZ = evstream.trZ.copy()
+    trP = evstream.trP.copy()
+    st = Stream(traces=[tr for tr in [tr1, tr2, trZ, trP] if np.any(tr.data)])
+    st.filter(
+        'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+    sr = trZ.stats.sampling_rate
+
+    taxis = np.arange(0., trZ.stats.npts/sr, 1./sr)
 
     fig = plt.figure(figsize=(6, 6))
 
     ax = fig.add_subplot(4, 1, 1)
-    ax.plot(taxis, evstream.sth.select(component='Z')[0].data, 'k', lw=0.5)
-    ax.set_title(evstream.key+' '+evstream.tstamp +
+    ax.plot(taxis, trZ.data, 'k', lw=0.5)
+    ax.set_title(evstream.key + ' ' + evstream.tstamp +
                  ': Z', fontdict={'fontsize': 8})
     ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                         scilimits=(-3, 3))
-    ax.set_xlim((0., 7200.))
+    ax.set_xlim((0., trZ.stats.npts/sr))
 
-    if len(evstream.sth) > 1:
+    #######
+    if len(tr1.data > 0):
         ax = fig.add_subplot(4, 1, 2)
-        ax.plot(taxis, evstream.sth.select(component='1')[0].data, 'k', lw=0.5)
+        ax.plot(taxis, tr1.data, 'k', lw=0.5)
         ax.set_xlim((0., 7200.))
-        ax.set_title(evstream.tstamp+': 1', fontdict={'fontsize': 8})
+        ax.set_title(evstream.tstamp + ': 1', fontdict={'fontsize': 8})
         ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                             scilimits=(-3, 3))
 
         ax = fig.add_subplot(4, 1, 3)
-        ax.plot(taxis, evstream.sth.select(component='2')[0].data, 'k', lw=0.5)
-        ax.set_xlim((0., 7200.))
-        ax.set_title(evstream.tstamp+': 2', fontdict={'fontsize': 8})
+        ax.plot(taxis, tr2.data, 'k', lw=0.5)
+        ax.set_xlim((0., trZ.stats.npts/sr))
+        ax.set_title(evstream.tstamp + ': 2', fontdict={'fontsize': 8})
         ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                             scilimits=(-3, 3))
 
-    if evstream.stp:
-        if len(evstream.sth) > 1:
+    if len(trP.data > 0):
+        if len(tr1.data > 0):
             ax = fig.add_subplot(4, 1, 4)
         else:
             ax = fig.add_subplot(4, 1, 2)
-        ax.plot(taxis, evstream.stp[0].data, 'k', lw=0.5)
+        ax.plot(taxis, trP.data, 'k', lw=0.5)
         ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                             scilimits=(-3, 3))
-        ax.set_xlim((0., 7200.))
-        ax.set_title(evstream.tstamp+': P', fontdict={'fontsize': 8})
+        ax.set_xlim((0., trZ.stats.npts/sr))
+        ax.set_title(evstream.tstamp + ': P', fontdict={'fontsize': 8})
 
+    #######
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
 
@@ -533,76 +549,75 @@ def fig_event_corrected(evstream, TF_list):
 
     """
 
-    import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=1./150.,
-                        freqmax=1./10., corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=1./150.,
-                        freqmax=1./10., corners=2, zerophase=True)
-    sr = evstream.sth[0].stats.sampling_rate
-    taxis = np.arange(0., 7200., 1./sr)
+    # Unpack vertical trace
+    trZ = evstream.trZ.copy()
+    trZ.filter(
+        'bandpass', freqmin=1./150., freqmax=1./10., corners=2, zerophase=True)
+    sr = trZ.stats.sampling_rate
+    taxis = np.arange(0., trZ.stats.npts/sr, 1./sr)
 
     plt.figure(figsize=(8, 8))
 
     plt.subplot(611)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
         plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
-    plt.title(evstream.key+' '+evstream.tstamp +
+    plt.title(evstream.key + ' ' + evstream.tstamp +
               ': Z1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(612)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z2-1']:
         plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': Z2-1', fontdict={'fontsize': 8})
+    plt.title(evstream.tstamp + ': Z2-1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(613)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-21']:
         plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZP-21', fontdict={'fontsize': 8})
+    plt.title(evstream.tstamp + ': ZP-21', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(614)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZH']:
         plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZH', fontdict={'fontsize': 8})
+    plt.title(evstream.tstamp + ': ZH', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(615)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-H']:
         plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZP-H', fontdict={'fontsize': 8})
+    plt.title(evstream.tstamp + ': ZP-H', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(616)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP']:
         plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZP', fontdict={'fontsize': 8})
+    plt.title(evstream.tstamp + ': ZP', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()

@@ -138,7 +138,7 @@ def get_correct_arguments(argv=None):
         action="store",
         type=float,
         dest="fmin",
-        default="1/150.",
+        default="0.006666666666666667",
         help="Low frequency corner (in Hz) for " +
         "plotting the raw (un-corrected) seismograms. "
         "Filter is a 2nd order, zero phase butterworth " +

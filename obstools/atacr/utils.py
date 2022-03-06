@@ -31,7 +31,7 @@ import math
 import numpy as np
 import fnmatch
 from matplotlib import pyplot as plt
-from obspy.core import read, Stream, Trace, AttribDict
+from obspy.core import read, Stream, Trace, AttribDict, UTCDateTime
 from scipy.signal import savgol_filter
 
 
@@ -141,7 +141,7 @@ def QC_streams(start, end, st):
         return True, st
 
 
-def update_stats(tr, stla, stlo, stel, cha):
+def update_stats(tr, stla, stlo, stel, cha, evla=None, evlo=None):
     """
     Function to include SAC metadata to :class:`~obspy.core.Trace` objects
 
@@ -154,8 +154,14 @@ def update_stats(tr, stla, stlo, stel, cha):
         Latitude of station
     stlo : float
         Longitude of station
+    stel : float
+        Station elevation (m)
     cha : str
         Channel for component
+    evla : float
+        Latitude of event
+    evlo : float
+        Longitute of event
 
     Returns
     -------
@@ -171,6 +177,9 @@ def update_stats(tr, stla, stlo, stel, cha):
     tr.stats.sac.stel = stel
     tr.stats.sac.kcmpnm = cha
     tr.stats.channel = cha
+    if evla is not None and evlo is not None:
+        tr.stats.sac.evla = evla
+        tr.stats.sac.evlo = evlo
 
     return tr
 
@@ -258,6 +267,90 @@ def get_data(datapath, tstart, tend):
     return trN1, trN2, trNZ, trNP
 
 
+# def get_event(eventpath, tstart, tend):
+#     """
+#     Function to grab all available earthquake data given a path and data time
+#     range
+
+#     Parameters
+#     ----------
+#     eventpath : str
+#         Path to earthquake data folder
+#     tstart : :class:`~obspy.class.UTCDateTime`
+#         Start time for query
+#     tend : :class:`~obspy.class.UTCDateTime`
+#         End time for query
+
+#     Returns
+#     -------
+#     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+#         Corresponding trace objects for components H1, H2, HZ and HP. Returns
+#         empty traces for missing components.
+
+#     """
+
+#     # Define empty streams
+#     tr1 = Stream()
+#     tr2 = Stream()
+#     trZ = Stream()
+#     trP = Stream()
+
+#     # Time iterator
+#     t1 = tstart
+
+#     # Cycle through each day within time range
+#     while t1 < tend:
+
+#         # Time stamp used in file name
+#         tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
+
+#         # Cycle through directory and load files
+#         p = eventpath.glob('*.*')
+#         files = [x for x in p if x.is_file()]
+#         for file in files:
+#             if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
+#                 tr = read(str(file))
+#                 tr1.append(tr[0])
+#             elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
+#                 tr = read(str(file))
+#                 tr2.append(tr[0])
+#             elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
+#                 tr = read(str(file))
+#                 trZ.append(tr[0])
+#             elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
+#                 tr = read(str(file))
+#                 trP.append(tr[0])
+
+#         # Increase increment
+#         t1 += 3600.*24.
+
+#     # Fill with empty traces if components are not found
+#     ntr = len(trZ)
+#     if not tr1 and not tr2:
+#         for i in range(ntr):
+#             tr1.append(Trace())
+#             tr2.append(Trace())
+#     if not trP:
+#         for i in range(ntr):
+#             trP.append(Trace())
+
+#     if ntr > 0:
+#         # Check that all sampling rates are equal - otherwise resample
+#         if trZ[0].stats.sampling_rate != trP[0].stats.sampling_rate:
+
+#             # These checks assume that all seismic data have the same sampling
+#             if trZ[0].stats.sampling_rate < trP[0].stats.sampling_rate:
+#                 trP.resample(trZ[0].stats.sampling_rate, no_filter=False)
+#             else:
+#                 trZ.resample(trP[0].stats.sampling_rate, no_filter=False)
+#                 if tr1:
+#                     tr1.resample(trP[0].stats.sampling_rate, no_filter=False)
+#                 if tr2:
+#                     tr2.resample(trP[0].stats.sampling_rate, no_filter=False)
+
+#     return tr1, tr2, trZ, trP
+
+
 def get_event(eventpath, tstart, tend):
     """
     Function to grab all available earthquake data given a path and data time
@@ -280,40 +373,42 @@ def get_event(eventpath, tstart, tend):
 
     """
 
+    # Find out how many events from Z.SAC files
+    eventfiles = list(eventpath.glob('*Z.SAC'))
+    if not eventfiles:
+        raise(Exception("No event found in folder "+str(eventpath)))
+
+    # Extract events from time stamps
+    prefix = [file.name.split('.') for file in eventfiles]
+    evstamp = [p[0]+'.'+p[1]+'.'+p[2]+'.'+p[3]+'.' for p in prefix]
+    evDateTime = [UTCDateTime(p[0]+'-'+p[1]+'T'+p[2]+":"+p[3]) for p in prefix]
+
     # Define empty streams
     tr1 = Stream()
     tr2 = Stream()
     trZ = Stream()
     trP = Stream()
 
-    # Time iterator
-    t1 = tstart
+    # Cycle over all available files in time range
+    for event, tstamp in zip(evDateTime, evstamp):
+        if event >= tstart and event <= tend:
 
-    # Cycle through each day within time range
-    while t1 < tend:
-
-        # Time stamp used in file name
-        tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
-
-        # Cycle through directory and load files
-        p = eventpath.glob('*.*')
-        files = [x for x in p if x.is_file()]
-        for file in files:
-            if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
-                tr = read(str(file))
-                tr1.append(tr[0])
-            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
-                tr = read(str(file))
-                tr2.append(tr[0])
-            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
-                tr = read(str(file))
-                trZ.append(tr[0])
-            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
-                tr = read(str(file))
-                trP.append(tr[0])
-
-        # Increase increment
-        t1 += 3600.*24.
+            # Cycle through directory and load files
+            p = list(eventpath.glob('*.SAC'))
+            files = [x for x in p if x.is_file()]
+            for file in files:
+                if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
+                    tr = read(str(file))
+                    tr1.append(tr[0])
+                elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
+                    tr = read(str(file))
+                    tr2.append(tr[0])
+                elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
+                    tr = read(str(file))
+                    trZ.append(tr[0])
+                elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
+                    tr = read(str(file))
+                    trP.append(tr[0])
 
     # Fill with empty traces if components are not found
     ntr = len(trZ)

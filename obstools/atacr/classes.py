@@ -145,6 +145,9 @@ class DayNoise(object):
 
     Attributes
     ----------
+    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+        Corresponding trace objects for components H1, H2, HZ and HP. 
+        Traces can be empty (i.e., ``Trace()``) for missing components.
     window : float
         Length of time window in seconds
     overlap : float
@@ -169,22 +172,6 @@ class DayNoise(object):
     tf_list : Dict
         Dictionary of possible transfer functions given the available
         components.
-    goodwins : list
-        List of booleans representing whether a window is good (True) or
-        not (False).
-        This attribute is returned from the method
-        :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
-    power : :class:`~obstools.atacr.classes.Power`
-        Container for daily spectral power for all available components
-    cross : :class:`~obstools.atacr.classes.Cross`
-        Container for daily cross spectral power for all available components
-    rotation : :class:`~obstools.atacr.classes.Rotation`
-        Container for daily rotated (cross) spectral power for all available
-        components
-    f : :class:`~numpy.ndarray`
-        Frequency axis for corresponding time sampling parameters. Determined
-        from method
-        :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
     Examples
     --------
@@ -198,10 +185,10 @@ class DayNoise(object):
     Now check its main attributes
 
     >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep="\n")
-    7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-    7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-    7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-    7D.M08A..Z | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
+    7D.M08A..BH1 | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples
+    7D.M08A..BH2 | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples
+    7D.M08A..BHZ | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples
+    7D.M08A..BDH | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples    
     >>> daynoise.window
     7200.0
     >>> daynoise.overlap
@@ -227,7 +214,7 @@ class DayNoise(object):
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
-            trP = st.select(component='P')[0]
+            trP = st.select(component='H')[0]
             window = 7200.
             overlap = 0.3
             key = '7D.M08A'
@@ -514,9 +501,9 @@ class DayNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
-        indwin = np.argwhere(goodwins is True)
+        indwin = np.argwhere(goodwins == True)
 
-        while moveon is False:
+        while moveon == False:
 
             ubernorm = np.empty((self.ncomp, np.sum(goodwins)))
             for ind_u, dsl in enumerate(dsls):
@@ -550,11 +537,11 @@ class DayNoise(object):
                 self.goodwins = goodwins
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill is False)].T[0]
+            trypenalty = penalty[np.argwhere(kill == False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                goodwins[indwin[kill is True]] = False
-                indwin = np.argwhere(goodwins is True)
+                goodwins[indwin[kill == True]] = False
+                indwin = np.argwhere(goodwins == True)
                 moveon = False
             else:
                 moveon = True
@@ -909,7 +896,7 @@ class StaNoise(object):
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
-            trP = st.select(component='P')[0]
+            trP = st.select(component='H')[0]
             window = 7200.
             overlap = 0.3
             key = '7D.M08A'
@@ -1030,11 +1017,9 @@ class StaNoise(object):
         Check that `daylist` attribute has been deleted
 
         >>> stanoise.daylist
-        ---------------------------------------------------------------------------
-        AttributeError                            Traceback (most recent call last)
-        <ipython-input-4-a292a91450a9> in <module>
-        ----> 1 stanoise.daylist
-        AttributeError: 'StaNoise' object has no attribute 'daylist'
+        Traceback (most recent call last):
+          File "<stdin>", line 1, in <module>
+        AttributeError: 'StaNoise' object has no attribute 'daylist'        
         >>> stanoise.__dict__.keys()
         dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P',
         'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f', 'nwins',
@@ -1127,7 +1112,7 @@ class StaNoise(object):
         --------
         Import demo data, call method and generate final figure
 
-        >>> obstools.atacr import StaNoise
+        >>> from obstools.atacr import StaNoise
         >>> stanoise = StaNoise('demo')
         Uploading demo data - March 01 to 04, 2012, station 7D.M08A
         >>> stanoise.QC_sta_spectra(fig_QC=True)
@@ -1206,9 +1191,9 @@ class StaNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         gooddays = np.repeat([True], self.cZZ.shape[1])
-        indwin = np.argwhere(gooddays is True)
+        indwin = np.argwhere(gooddays == True)
 
-        while moveon is False:
+        while moveon == False:
             ubernorm = np.empty((self.ncomp, np.sum(gooddays)))
             for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(gooddays))
@@ -1242,11 +1227,11 @@ class StaNoise(object):
                 self.QC = True
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill is False)].T[0]
+            trypenalty = penalty[np.argwhere(kill == False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                gooddays[indwin[kill is True]] = False
-                indwin = np.argwhere(gooddays is True)
+                gooddays[indwin[kill == True]] = False
+                indwin = np.argwhere(gooddays == True)
                 moveon = False
             else:
                 moveon = True
@@ -1745,48 +1730,40 @@ class EventStream(object):
 
     Note
     ----
-    An ``EventStream`` object is defined as the data
-    (:class:`~obspy.core.Stream` object) are read from file or downloaded
-    from an ``obspy`` Client. Based on the available components, a list of
+    The object is initialized with :class:`~obspy.core.Trace` objects for
+    H1, H2, HZ and P components. Traces can be empty if data are not
+    available. Based on the available components, a list of
     possible corrections is determined automatically.
 
     Attributes
     ----------
-    sta : :class:`~stdb.StdbElement`
-        An instance of an stdb object
+    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+        Corresponding trace objects for components H1, H2, HZ and HP. 
+        Traces can be empty (i.e., ``Trace()``) for missing components.
     key : str
         Station key for current object
-    sth : :class:`~obspy.core.Stream`
-        Stream containing three-component seismic data (traces are empty if
-        data are not available)
-    stp : :class:`~obspy.core.Stream`
-        Stream containing pressure data (trace is empty if data are not
-        available)
-    tstamp : str
-        Time stamp for event
     evlat : float
         Latitude of seismic event
     evlon : float
         Longitude of seismic event
     evtime : :class:`~obspy.core.UTCDateTime`
-        Origin time of seismic event
-    window : float
-        Length of time window in seconds
-    fs : float
-        Sampling frequency (in Hz)
-    dt : float
-        Sampling distance in seconds
+        Origin time of seismic event. 
+    tstamp : str
+        Time stamp for event
+    prefix : str
+        Associated prefix of SAC files
     npts : int
-        Number of points in time series
+        Number of points in time series. 
+    fs : float
+        Sampling frequency (in Hz). 
+    dt : float
+        Sampling distance in seconds. 
     ncomp : int
-        Number of available components (either 2, 3 or 4)
+        Number of available components (either 2, 3 or 4). Obtained from
+        non-empty ``Trace`` objects
     ev_list : Dict
         Dictionary of possible transfer functions given the available
         components. This is determined during initialization.
-    correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
-        Container Dictionary for all possible corrections from the transfer
-        functions. This is calculated from the method
-        :func:`~obstools.atacr.classes.EventStream.correct_data`
 
     Examples
     --------
@@ -1797,8 +1774,8 @@ class EventStream(object):
     >>> evstream = EventStream('demo')
     Uploading demo earthquake data - March 09, 2012, station 7D.M08A
     >>> evstream.__dict__.keys()
-    dict_keys(['sta', 'key', 'sth', 'stp', 'tstamp', 'evlat', 'evlon', 'evtime',
-    'window', 'fs', 'dt', 'ncomp', 'ev_list'])
+    dict_keys(['tr1', 'tr2', 'trZ', 'trP, 'key', 'evlat', 'evlon', 'evtime',
+    'tstamp', 'window', 'fs', 'dt', 'ncomp', 'ev_list'])
 
     Plot the raw traces
 
@@ -1810,50 +1787,46 @@ class EventStream(object):
 
     """
 
-    def __init__(self, sta=None, sth=None, stp=None, tstamp=None, lat=None,
-                 lon=None, time=None, window=None, sampling_rate=None,
-                 ncomp=None, correct=False):
+    def __init__(self, tr1=Trace(), tr2=Trace(), trZ=Trace(), trP=Trace(), 
+        correct=False):
 
-        if sta == 'demo' or sta == 'Demo':
+        if tr1 == 'demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
                   "station 7D.M08A")
             exmpl_path = Path(resource_filename('obstools', 'examples'))
-            fn = '2012.069.07.09.event.pkl'
-            fn = exmpl_path / 'event' / fn
-            evstream = pickle.load(open(fn, 'rb'))
-            sta = evstream.sta
-            key = evstream.key
-            sth = evstream.sth
-            stp = evstream.stp
-            tstamp = evstream.tstamp
-            lat = evstream.evlat
-            lon = evstream.evlon
-            time = evstream.evtime
-            window = evstream.window
-            sampling_rate = evstream.fs
-            ncomp = evstream.ncomp
-            correct = evstream.correct
+            fn = exmpl_path / 'event' / '2012.069*.SAC'
+            st = read(str(fn))
+            tr1 = st.select(component='1')[0]
+            tr2 = st.select(component='2')[0]
+            trZ = st.select(component='Z')[0]
+            trP = st.select(component='H')[0]
 
-        if any(value is None for value in [sta, sth, stp, tstamp, lat, lon,
-                                           time, window, sampling_rate,
-                                           ncomp]):
+        ncomp = np.sum([np.any(tr.data) for tr in [tr1, tr2, trZ, trP]])
+        if ncomp <= 1 or len(trZ.data) == 0:
             raise(Exception(
-                "Error: Initializing EventStream object with None values - " +
-                "aborting"))
+                "Incorrect initialization of EventStream object: " +
+                "missing a vertical component or too few components"))
 
-        self.sta = sta
-        self.key = sta.network+'.'+sta.station
-        self.sth = sth
-        self.stp = stp
+        self.tr1 = tr1
+        self.tr2 = tr2
+        self.trZ = trZ
+        self.trP = trP
+        zstats = trZ.stats
+        self.key = zstats.network + '.' + zstats.station
+        self.evlat = zstats.sac.evla
+        self.evlon = zstats.sac.evlo
+        self.evtime = zstats.starttime
+        # Time stamp
+        tstamp = str(self.evtime.year).zfill(4)+'.' + \
+            str(self.evtime.julday).zfill(3)+'.'
+        tstamp = tstamp + str(self.evtime.hour).zfill(2) + \
+            '.'+str(self.evtime.minute).zfill(2)
         self.tstamp = tstamp
-        self.evlat = lat
-        self.evlon = lon
-        self.evtime = time
-        self.window = window
-        self.fs = sampling_rate
-        self.dt = 1./sampling_rate
+        self.prefix = self.key + '.' + self.tstamp
+        self.npts = zstats.npts
+        self.fs = zstats.sampling_rate
+        self.dt = zstats.delta
         self.ncomp = ncomp
-        self.correct = False
 
         # Build list of available transfer functions for future use
         if self.ncomp == 2:
@@ -1941,6 +1914,13 @@ class EventStream(object):
         .. figure:: ../obstools/examples/figures/Figure_corrected_sta.png
            :align: center
 
+
+        .. warning::
+            If the noise window and event window are not identical, they cannot
+            be compared on the same frequency axis and the code will exit. Make
+            sure you are using identical time samples in both the noise and
+            event windows.
+
         """
 
         if not tfnoise.transfunc:
@@ -1954,38 +1934,31 @@ class EventStream(object):
         tf_list = tfnoise.tf_list
         transfunc = tfnoise.transfunc
 
-        # Points in window
-        ws = int(self.window/self.dt)
-
         # Extract traces
-        trZ = Trace()
-        tr1 = Trace()
-        tr2 = Trace()
-        trP = Trace()
-        trZ = self.sth.select(component='Z')[0]
-        if self.ncomp == 2 or self.ncomp == 4:
-            trP = self.stp[0]
-        if self.ncomp == 3 or self.ncomp == 4:
-            tr1 = self.sth.select(component='1')[0]
-            tr2 = self.sth.select(component='2')[0]
+        trZ = self.trZ
+        tr1 = self.tr1
+        tr2 = self.tr2
+        trP = self.trP
 
         # Get Fourier spectra
         ft1 = None
         ft2 = None
         ftZ = None
         ftP = None
-        ftZ = np.fft.fft(trZ, n=ws)
+        ftZ = np.fft.fft(trZ, n=self.npts)
         if self.ncomp == 2 or self.ncomp == 4:
-            ftP = np.fft.fft(trP, n=ws)
+            ftP = np.fft.fft(trP, n=self.npts)
         if self.ncomp == 3 or self.ncomp == 4:
-            ft1 = np.fft.fft(tr1, n=ws)
-            ft2 = np.fft.fft(tr2, n=ws)
+            ft1 = np.fft.fft(tr1, n=self.npts)
+            ft2 = np.fft.fft(tr2, n=self.npts)
 
         # Use one-sided frequency axis to match spectrogram
-        f = np.fft.rfftfreq(ws, d=self.dt)
+        f = np.fft.rfftfreq(self.npts, d=self.dt)
 
         if not np.allclose(f, tfnoise.f):
-            raise(Exception('Frequency axes are different: ', f, tfnoise.f))
+            raise(Exception(
+                'Frequency axes are different: ', f, tfnoise.f,
+                ' - the noise and event windows are not the same, aborting'))
 
         for key, value in tf_list.items():
 
@@ -1995,7 +1968,7 @@ class EventStream(object):
                     fTF_ZP = np.hstack(
                         (TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZP*ftP
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
                     correct.add('ZP', corrtime)
 
             if key == 'Z1' and self.ev_list[key]:
@@ -2004,7 +1977,7 @@ class EventStream(object):
                     fTF_Z1 = np.hstack(
                         (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_Z1*ft1
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
                     correct.add('Z1', corrtime)
 
             if key == 'Z2-1' and self.ev_list[key]:
@@ -2019,7 +1992,7 @@ class EventStream(object):
                     fTF_Z2_1 = np.hstack(
                         (TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
                     correct.add('Z2-1', corrtime)
 
             if key == 'ZP-21' and self.ev_list[key]:
@@ -2046,7 +2019,7 @@ class EventStream(object):
                         (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
                         (ftP - ft1*fTF_P1 -
                          (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
                     correct.add('ZP-21', corrtime)
 
             if key == 'ZH' and self.ev_list[key]:
@@ -2059,7 +2032,7 @@ class EventStream(object):
                     fTF_ZH = np.hstack(
                         (TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZH*ftH
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
                     correct.add('ZH', corrtime)
 
             if key == 'ZP-H' and self.ev_list[key]:
@@ -2078,7 +2051,7 @@ class EventStream(object):
                     fTF_ZP_H = np.hstack(
                         (TF_ZP_H, np.conj(TF_ZP_H[::-1][1:len(f)-1])))
                     corrspec = ftZ - fTF_ZH*ftH - (ftP - ftH*fTF_PH)*fTF_ZP_H
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
                     correct.add('ZP-H', corrtime)
 
         self.correct = correct
@@ -2109,7 +2082,7 @@ class EventStream(object):
 
         """
 
-        if not self.correct:
+        if hasattr(self, 'correct'):
             print("Warning: saving EventStream object before having done " +
                   "the corrections")
 
