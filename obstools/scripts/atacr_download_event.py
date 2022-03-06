@@ -86,10 +86,10 @@ def get_event_arguments(argv=None):
         default="",
         help="Specify a comma-separated list of channels for " +
         "which to perform the transfer function analysis. " +
-        "Possible options are 'H' (for horizontal channels) or 'P' " +
-        "(for pressure channel). Specifying 'H' allows " +
+        "Possible options are '12' (for horizontal channels) or 'P' " +
+        "(for pressure channel). Specifying '12' allows " +
         "for tilt correction. Specifying 'P' allows for compliance " +
-        "correction. [Default looks for both horizontal and " +
+        "correction. [Default '12,P' looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(
         "-O", "--overwrite",
@@ -178,6 +178,16 @@ def get_event_arguments(argv=None):
         help="Specify four comma-separated corner " +
         "frequencies (float, in Hz) for deconvolution " +
         "pre-filter. [Default 0.001,0.005,45.,50.]")
+    FreqGroup.add_argument(
+        "--window",
+        action="store",
+        type=float,
+        dest="window",
+        default=7200.,
+        help="Specify window length in seconds. " +
+        "Default value is highly recommended. "
+        "Program may not be stable for large deviations " +
+        "from default value. [Default 7200. (or 2 hours)]")
 
     # Event Selection Criteria
     EventGroup = parser.add_argument_group(
@@ -272,10 +282,10 @@ def get_event_arguments(argv=None):
     if len(args.channels) > 0:
         args.channels = args.channels.split(',')
     else:
-        args.channels = ['H', 'P']
+        args.channels = ['12', 'P']
 
     for cha in args.channels:
-        if cha not in ['H', 'P']:
+        if cha not in ['12', 'P']:
             parser.error("Error: Channel not recognized " + str(cha))
 
     # construct start time
@@ -461,9 +471,6 @@ def main(args=None):
             # Extract event
             ev = cat[iev]
 
-            window = 7200.
-            new_sampling_rate = 5.
-
             time = ev.origins[0].time
             dep = ev.origins[0].depth
             lon = ev.origins[0].longitude
@@ -498,7 +505,7 @@ def main(args=None):
                 continue
 
             t1 = time
-            t2 = t1 + window
+            t2 = t1 + args.window
 
             # Time stamp
             tstamp = str(time.year).zfill(4)+'.' + \
@@ -556,7 +563,7 @@ def main(args=None):
 
                 st = sth
 
-            elif "H" not in args.channels:
+            elif "12" not in args.channels:
 
                 # Number of channels
                 ncomp = 2
@@ -677,20 +684,20 @@ def main(args=None):
             trZ = sth.select(component='Z')[0]
             trZ = utils.update_stats(
                 trZ, sta.latitude, sta.longitude, sta.elevation,
-                sta.channel+'Z')
+                sta.channel+'Z', evla=lat, evlo=lon)
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces and write out in SAC format
             # Seismic channels
-            if "H" in args.channels:
+            if "12" in args.channels:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
                     tr1, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel+'1')
+                    sta.channel+'1', evla=lat, evlo=lon)
                 tr2 = utils.update_stats(
                     tr2, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel+'2')
+                    sta.channel+'2', evla=lat, evlo=lon)
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
 
@@ -702,18 +709,15 @@ def main(args=None):
                 trP = stp[0]
                 trP = utils.update_stats(
                     trP, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel[0]+'DH')
+                    sta.channel[0]+'DH', evla=lat, evlo=lon)
                 trP.write(str(fileP), format='SAC')
 
             else:
                 stp = Stream()
 
-            # Write out EventStream object
-            eventstream = EventStream(
-                sta, sth, stp, tstamp, lat, lon, time, window,
-                args.new_sampling_rate, ncomp)
-
-            eventstream.save(filename)
+            # # Write out EventStream object
+            # eventstream = EventStream(sta, sth, stp)
+            # eventstream.save(filename)
 
 
 if __name__ == "__main__":
