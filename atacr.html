@@ -1697,8 +1697,8 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 <li><p><strong>stlo</strong> (<em>float</em>) – Longitude of station</p></li>
 <li><p><strong>stel</strong> (<em>float</em>) – Station elevation (m)</p></li>
 <li><p><strong>cha</strong> (<em>str</em>) – Channel for component</p></li>
-<li><p><strong>evla</strong> (<em>float</em>) – Latitude of event</p></li>
-<li><p><strong>evlo</strong> (<em>float</em>) – Longitute of event</p></li>
+<li><p><strong>evla</strong> (<em>float</em><em>, </em><em>optional</em>) – Latitude of event</p></li>
+<li><p><strong>evlo</strong> (<em>float</em><em>, </em><em>optional</em>) – Longitute of event</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1770,7 +1770,7 @@ empty traces for missing components.</p>
 <li><p><strong>goodwins</strong> (<em>list</em>) – List of booleans representing whether a window is good (True) or not
 (False). This attribute is returned from the method
 <a class="reference internal" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="obstools.atacr.classes.DayNoise.QC_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_daily_spectra()</span></code></a></p></li>
-<li><p><strong>tiltfreq</strong> (<em>list</em>) – Two floats representing the frequency band at which the tilt is
+<li><p><strong>tiltfreq</strong> (<em>list</em><em>, </em><em>optional</em>) – Two floats representing the frequency band at which the tilt is
 calculated</p></li>
 </ul>
 </dd>
@@ -1802,7 +1802,7 @@ of a boxcar function with the PSD</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Real-valued array to smooth (PSD)</p></li>
 <li><p><strong>nd</strong> (<em>int</em>) – Number of samples over which to smooth</p></li>
-<li><p><strong>axis</strong> (<em>int</em>) – axis over which to perform the smoothing</p></li>
+<li><p><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em>) – axis over which to perform the smoothing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
