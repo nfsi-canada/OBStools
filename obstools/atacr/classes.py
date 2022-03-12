@@ -235,11 +235,12 @@ class DayNoise(object):
         self.key = key
 
         # Get trace attributes
-        self.dt = self.trZ.stats.delta
-        self.npts = self.trZ.stats.npts
-        self.fs = self.trZ.stats.sampling_rate
-        self.year = self.trZ.stats.starttime.year
-        self.julday = self.trZ.stats.starttime.julday
+        zstats = self.trZ.stats
+        self.dt = zstats.delta
+        self.npts = zstats.npts
+        self.fs = zstats.sampling_rate
+        self.year = zstats.starttime.year
+        self.julday = zstats.starttime.julday
         self.tkey = str(self.year) + '.' + str(self.julday)
 
         # Get number of components for the available, non-empty traces
@@ -264,7 +265,7 @@ class DayNoise(object):
         self.av = False
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05,
-                         smooth=True, fig_QC=False, debug=False, save=False,
+                         smooth=True, fig_QC=False, debug=False, save=None,
                          form='png'):
         """
         Method to determine daily time windows for which the spectra are
@@ -288,6 +289,10 @@ class DayNoise(object):
         debug : boolean
             Whether or not to plot intermediate steps in the QC procedure
             for debugging
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -566,7 +571,7 @@ class DayNoise(object):
         self.QC = True
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False,
-                              fig_coh_ph=False, save=False, form='png'):
+                              fig_coh_ph=False, save=None, form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
         method will attempt to calculate the azimuth of maximum coherence
@@ -584,6 +589,10 @@ class DayNoise(object):
         fig_coh_ph : boolean
             Whether or not to produce a figure showing the maximum coherence
             between H and Z
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -833,7 +842,9 @@ class StaNoise(object):
     object is initialized (using the method `init()` or by calling the
     `QC_sta_spectra` method), each individual spectral quantity is unpacked
     as an object attribute and the original `DayNoise` objects are removed
-    from memory. In addition, all spectral quantities associated with the
+    from memory. **DayNoise objects cannot be added or appended to the
+    StaNoise object once this is done**.
+    In addition, all spectral quantities associated with the
     original `DayNoise` objects (now stored as attributes) are discarded as
     the object is saved to disk and new container objects are defined and
     saved.
@@ -1019,11 +1030,11 @@ class StaNoise(object):
         >>> stanoise.daylist
         Traceback (most recent call last):
           File "<stdin>", line 1, in <module>
-        AttributeError: 'StaNoise' object has no attribute 'daylist'        
+        AttributeError: 'StaNoise' object has no attribute 'daylist'
         >>> stanoise.__dict__.keys()
-        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P',
-        'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f', 'nwins',
-        'ncomp', 'key', 'tf_list', 'QC', 'av'])
+        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z',
+        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f',
+        'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
 
@@ -1080,7 +1091,7 @@ class StaNoise(object):
         del self.daylist
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05,
-                       fig_QC=False, debug=False, save=False, form='png'):
+                       fig_QC=False, debug=False, save=None, form='png'):
         """
         Method to determine the days (for given time window) for which the
         spectra are anomalous and should be discarded in the calculation of
@@ -1101,6 +1112,10 @@ class StaNoise(object):
         debug : boolean
             Whether or not to plot intermediate steps in the QC procedure for
             debugging
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -1252,7 +1267,7 @@ class StaNoise(object):
             else:
                 plot.show()
 
-    def average_sta_spectra(self, fig_average=False, save=False, form='png'):
+    def average_sta_spectra(self, fig_average=False, save=None, form='png'):
         r"""
         Method to average the daily station spectra for good windows.
 
@@ -1261,6 +1276,10 @@ class StaNoise(object):
         fig_average : boolean
             Whether or not to produce a figure showing the average daily
             spectra
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -1738,26 +1757,22 @@ class EventStream(object):
     Attributes
     ----------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. 
+        Corresponding trace objects for components H1, H2, HZ and HP.
         Traces can be empty (i.e., ``Trace()``) for missing components.
     key : str
         Station key for current object
-    evlat : float
-        Latitude of seismic event
-    evlon : float
-        Longitude of seismic event
     evtime : :class:`~obspy.core.UTCDateTime`
-        Origin time of seismic event. 
+        Origin time of seismic event.
     tstamp : str
         Time stamp for event
     prefix : str
         Associated prefix of SAC files
     npts : int
-        Number of points in time series. 
+        Number of points in time series.
     fs : float
-        Sampling frequency (in Hz). 
+        Sampling frequency (in Hz).
     dt : float
-        Sampling distance in seconds. 
+        Sampling distance in seconds.
     ncomp : int
         Number of available components (either 2, 3 or 4). Obtained from
         non-empty ``Trace`` objects
@@ -1774,7 +1789,7 @@ class EventStream(object):
     >>> evstream = EventStream('demo')
     Uploading demo earthquake data - March 09, 2012, station 7D.M08A
     >>> evstream.__dict__.keys()
-    dict_keys(['tr1', 'tr2', 'trZ', 'trP, 'key', 'evlat', 'evlon', 'evtime',
+    dict_keys(['tr1', 'tr2', 'trZ', 'trP, 'key', 'evtime',
     'tstamp', 'window', 'fs', 'dt', 'ncomp', 'ev_list'])
 
     Plot the raw traces
@@ -1787,7 +1802,7 @@ class EventStream(object):
 
     """
 
-    def __init__(self, tr1=Trace(), tr2=Trace(), trZ=Trace(), trP=Trace(), 
+    def __init__(self, tr1=Trace(), tr2=Trace(), trZ=Trace(), trP=Trace(),
         correct=False):
 
         if tr1 == 'demo':
@@ -1811,10 +1826,9 @@ class EventStream(object):
         self.tr2 = tr2
         self.trZ = trZ
         self.trP = trP
+
         zstats = trZ.stats
         self.key = zstats.network + '.' + zstats.station
-        self.evlat = zstats.sac.evla
-        self.evlon = zstats.sac.evlo
         self.evtime = zstats.starttime
         # Time stamp
         tstamp = str(self.evtime.year).zfill(4)+'.' + \

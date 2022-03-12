@@ -123,32 +123,6 @@ def get_event_arguments(argv=None):
         "(--User-Auth='username:authpassword') to access and download " +
         "restricted data. [Default no user and password]")
 
-    """
-    # Database Settings
-    DataGroup = parser.add_argument_group(
-        title="Local Data Settings",
-        description="Settings associated with defining " +
-        "and using a local data base of pre-downloaded day-long SAC files.")
-    DataGroup.add_argument(
-        "--local-data",
-        action="store",
-        type=str,
-        dest="localdata",
-        default=None,
-        help="Specify a comma separated list of paths containing " +
-        "day-long sac files of data already downloaded. " +
-        "If data exists for a seismogram is already present on disk, " +
-        "it is selected preferentially over downloading " +
-        "the data using the Client interface")
-    DataGroup.add_argument(
-        "--no-data-zero",
-        action="store_true",
-        dest="ndval",
-        default=False,
-        help="Specify to force missing data to be set as zero, " +
-        "rather than default behaviour which sets to nan.")
-"""
-
     # Constants Settings
     FreqGroup = parser.add_argument_group(
         title='Frequency Settings',
@@ -321,18 +295,6 @@ def get_event_arguments(argv=None):
             args.UserAuth = tt
     else:
         args.UserAuth = []
-
-    # # Parse Local Data directories
-    # if args.localdata is not None:
-    #     args.localdata = args.localdata.split(',')
-    # else:
-    #     args.localdata = []
-
-    # # Check NoData Value
-    # if args.ndval:
-    #     args.ndval = 0.0
-    # else:
-    #     args.ndval = nan
 
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]

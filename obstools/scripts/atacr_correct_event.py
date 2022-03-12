@@ -368,6 +368,14 @@ def main(args=None):
             print(tr1, tr2, trZ, trP)
             eventstream = EventStream(tr1, tr2, trZ, trP)
 
+            # Check if Trace is from SAC file with event info
+            evlo = None
+            evla = None
+            if hasattr(trZ.stats, 'sac'):
+                if hasattr(trZ.stats.sac, 'evlo'):
+                    evlo = trZ.stats.sac.evlo
+                    evla = trZ.stats.sac.evla
+
             if args.fig_event_raw:
                 fname = stkey + '.' + eventstream.tstamp + 'raw'
                 plot = plotting.fig_event_raw(
@@ -457,8 +465,8 @@ def main(args=None):
                                     trZ = utils.update_stats(
                                         trZ, sta.latitude, sta.longitude,
                                         sta.elevation, sta.channel+'Z',
-                                        evla=eventstream.evlat,
-                                        evlo=eventstream.evlon)
+                                        evla=evla,
+                                        evlo=evlo)
 
                                     # Save as SAC file
                                     trZ.write(str(fileZ), format='SAC')
@@ -523,8 +531,8 @@ def main(args=None):
                                     trZ = utils.update_stats(
                                         trZ, sta.latitude, sta.longitude,
                                         sta.elevation, sta.channel+'Z',
-                                        evla=eventstream.evlat,
-                                        evlo=eventstream.evlon)
+                                        evla=evla,
+                                        evlo=evlo)
 
                                     # Save as SAC file
                                     trZ.write(str(fileZ), format='SAC')

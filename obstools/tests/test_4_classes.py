@@ -24,7 +24,8 @@ def test_day_ncomp_opts(tmp_path):
 
 def test_day_average(tmp_path):
     daynoise = test_daynoise_demo()
-    daynoise.average_daily_spectra(fig_average=True, fig_coh_ph=True,
+    daynoise.average_daily_spectra(
+        fig_average=True, fig_coh_ph=True,
         save=tmp_path)
     return daynoise
 
@@ -130,7 +131,7 @@ def test_tfnoise_sta_demo(tmp_path):
 def test_comply_day_demo(tmp_path):
     daynoise = test_day_average(tmp_path)
     sta = get_meta.get_stdb()
-    comply_day = Comply(objnoise=daynoise, sta=sta)
+    comply_day = Comply(objnoise=daynoise, elev=sta.elevation*1.e3)
     comply_day.calculate_compliance()
     return comply_day
 
@@ -138,7 +139,7 @@ def test_comply_day_demo(tmp_path):
 def test_comply_sta_demo(tmp_path):
     stanoise = test_sta_average(tmp_path)
     sta = get_meta.get_stdb()
-    comply_sta = Comply(objnoise=stanoise, sta=sta)
+    comply_sta = Comply(objnoise=stanoise, elev=sta.elevation*1.e3)
     comply_sta.calculate_compliance()
     return comply_sta
 
@@ -153,15 +154,15 @@ def test_comply_fail(tmp_path):
 
     sta = get_meta.get_stdb()
     with pytest.raises(Exception):
-        assert Comply(sta=sta, objnoise=[])
+        assert Comply(elev=sta.elevation*1.e3, objnoise=[])
 
     objnoise = test_day_average(tmp_path)
     objnoise.av = None
     with pytest.raises(Exception):
-        assert Comply(sta=sta, objnoise=objnoise)
+        assert Comply(elev=sta.elevation*1.e3, objnoise=objnoise)
 
     daynoise = test_day_average(tmp_path)
-    comply_day = Comply(objnoise=daynoise, sta=sta)
+    comply_day = Comply(objnoise=daynoise, elev=sta.elevation*1.e3)
     comply_day.calculate_compliance()
     d = tmp_path / "tmp"
     comply_day.save(d, form='pkl')

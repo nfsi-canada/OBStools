@@ -79,6 +79,32 @@ def traceshift(trace, tt):
 
 
 def QC_streams(start, end, st):
+    """
+    Function for quality control of traces, which compares the
+    start and end times that were requested, as well as the total n
+    length of the traces.
+
+
+    Parameters
+    ----------
+
+    start : :class:`~obspy.core.UTCDateTime` object
+        Start time of requested stream
+    end : :class:`~obspy.core.UTCDateTime` object
+        End time of requested stream
+    st : :class:`~obspy.core.Stream` object
+        Stream object with all trace data
+
+    Returns
+    -------
+
+    (pass): bool
+        Whether the QC test has passed
+    st : :class:`~obspy.core.Stream` object
+        Updated stream object
+
+
+    """
 
     # Check start times
     if not np.all([tr.stats.starttime == start for tr in st]):

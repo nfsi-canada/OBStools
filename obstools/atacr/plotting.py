@@ -351,7 +351,8 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     return plt
 
 
-def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
+def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
+    elev=-1000., f_0=None):
     """
     Function to plot the transfer functions available.
 
@@ -367,20 +368,23 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         Dictionary containing the compliance functions for the station averages
     sta_list : Dict
         Dictionary containing the list of average transfer functions
-    key : str
+    skey : str
         String corresponding to the station key under analysis
+    elev : float
+        Station elevation in meters (OBS stations have negative elevations)
+    f_0 : float
+        Lowest frequency to consider in plot (Hz)
 
     """
 
     import matplotlib.ticker as mtick
     import matplotlib.pyplot as plt
 
-    # Get station information
-    sta_key = sta.network + '.' + sta.station
-    sta_H = -1.*sta.elevation*1.e3
+    # Positive station elevation for frequency limit calc
+    elev = -1.*elev
 
     # Calculate theoretical frequency limit for infra-gravity waves
-    f_c = np.sqrt(9.81/np.pi/sta_H)/2.
+    f_c = np.sqrt(9.81/np.pi/elev)/2.
 
     # Define all possible combinations
     comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
@@ -408,7 +412,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
             for i in range(len(day_comps)):
                 compliance = np.abs(day_comps[i][key][0])
                 ax.plot(f, compliance, 'gray', alpha=0.3, lw=0.5)
-                ax.set_xlim(f_0, f_c)
+                # ax.set_xlim(f_0, f_c)
                 ytop = np.max(compliance[(f > f_0) & (f < f_c)])
                 ybot = np.min(compliance[(f > f_0) & (f < f_c)])
                 ax.set_ylim(ybot, ytop)
@@ -417,16 +421,17 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
             ax.plot(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_title(sta_key+' Compliance: ZP',
+            ax.set_title(skey+' Compliance: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_title(sta_key+' Compliance: ZP-21',
+            ax.set_title(skey+' Compliance: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_title(sta_key+' Compliance: ZP-H',
+            ax.set_title(skey+' Compliance: ZP-H',
                          fontdict={'fontsize': 8})
 
-        ax.axvline(f_0, ls='--', c='k', lw=0.75)
+        if f_0:
+            ax.axvline(f_0, ls='--', c='k', lw=0.75)
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
         ax = fig.add_subplot(ncomps, 2, j*2+2)
@@ -441,16 +446,17 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
             ax.semilogx(f, np.abs(sta_comps[key][1]), 'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_title(sta_key+' Coherence: ZP',
+            ax.set_title(skey+' Coherence: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_title(sta_key+' Coherence: ZP-21',
+            ax.set_title(skey+' Coherence: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_title(sta_key+' Coherence: ZP-H',
+            ax.set_title(skey+' Coherence: ZP-H',
                          fontdict={'fontsize': 8})
 
-        ax.axvline(f_0, ls='--', c='k', lw=0.75)
+        if f_0:
+            ax.axvline(f_0, ls='--', c='k', lw=0.75)
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
     axes = plt.gcf().get_axes()
@@ -501,7 +507,6 @@ def fig_event_raw(evstream, fmin, fmax):
                         scilimits=(-3, 3))
     ax.set_xlim((0., trZ.stats.npts/sr))
 
-    #######
     if len(tr1.data > 0):
         ax = fig.add_subplot(4, 1, 2)
         ax.plot(taxis, tr1.data, 'k', lw=0.5)
@@ -528,7 +533,6 @@ def fig_event_raw(evstream, fmin, fmax):
         ax.set_xlim((0., trZ.stats.npts/sr))
         ax.set_title(evstream.tstamp + ': P', fontdict={'fontsize': 8})
 
-    #######
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
 

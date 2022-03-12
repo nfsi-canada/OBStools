@@ -30,7 +30,7 @@ def test_21_data_all():
     atacr.main(args=args0)
 
 
-def test_22_daily_all():
+def test_22_event_all():
     from obstools.scripts import atacr_download_event as atacr
     args0 = atacr.get_event_arguments([
         dbfile, '--keys', '7D.M08A',
@@ -40,14 +40,14 @@ def test_22_daily_all():
     atacr.main(args=args0)
 
 
-def test_23_clean_all():
+def test_23_daily_all():
     from obstools.scripts import atacr_daily_spectra as atacr
     args0 = atacr.get_dailyspec_arguments([
         dbfile, '--keys', '7D.M08A', '-O', '--save-fig'])
     atacr.main(args=args0)
 
 
-def test_24_trans_all():
+def test_24_clean_all():
     from obstools.scripts import atacr_clean_spectra as atacr
     args0 = atacr.get_cleanspec_arguments([
         dbfile, '--keys', '7D.M08A', '-O', '--save-fig',
@@ -55,7 +55,7 @@ def test_24_trans_all():
     atacr.main(args=args0)
 
 
-def test_25_event_all():
+def test_25_trans_all():
     from obstools.scripts import atacr_transfer_functions as atacr
     args0 = atacr.get_transfer_arguments([
         dbfile, '--keys', '7D.M08A', '-O', '--save-fig', '--figTF'])
