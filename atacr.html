@@ -415,7 +415,7 @@ components.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.QC_daily_spectra">
-<span class="sig-name descname"><span class="pre">QC_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">QC_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Permalink to this definition"></a></dt>
 <dd><p>Method to determine daily time windows for which the spectra are
 anomalous and should be discarded in the calculation of the
 transfer functions.</p>
@@ -431,6 +431,8 @@ bad</p></li>
 quality control</p></li>
 <li><p><strong>debug</strong> (<em>boolean</em>) – Whether or not to plot intermediate steps in the QC procedure
 for debugging</p></li>
+<li><p><strong>save</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> object) – Relative path to figures folder</p></li>
+<li><p><strong>form</strong> (<em>str</em>) – File format (e.g., ‘png’, ‘jpg’, ‘eps’)</p></li>
 </ul>
 </dd>
 </dl>
@@ -468,7 +470,7 @@ figure</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.average_daily_spectra">
-<span class="sig-name descname"><span class="pre">average_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_coh_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">average_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_coh_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Permalink to this definition"></a></dt>
 <dd><p>Method to average the daily spectra for good windows. By default, the
 method will attempt to calculate the azimuth of maximum coherence
 between horizontal components and the vertical component (for maximum
@@ -482,6 +484,8 @@ function calculations.</p>
 spectra</p></li>
 <li><p><strong>fig_coh_ph</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the maximum coherence
 between H and Z</p></li>
+<li><p><strong>save</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> object) – Relative path to figures folder</p></li>
+<li><p><strong>form</strong> (<em>str</em>) – File format (e.g., ‘png’, ‘jpg’, ‘eps’)</p></li>
 </ul>
 </dd>
 </dl>
@@ -599,7 +603,9 @@ and window parameters.</p>
 object is initialized (using the method <cite>init()</cite> or by calling the
 <cite>QC_sta_spectra</cite> method), each individual spectral quantity is unpacked
 as an object attribute and the original <cite>DayNoise</cite> objects are removed
-from memory. In addition, all spectral quantities associated with the
+from memory. <strong>DayNoise objects cannot be added or appended to the
+StaNoise object once this is done</strong>.
+In addition, all spectral quantities associated with the
 original <cite>DayNoise</cite> objects (now stored as attributes) are discarded as
 the object is saved to disk and new container objects are defined and
 saved.</p>
@@ -813,16 +819,16 @@ been called.</p>
   File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
 <span class="gr">AttributeError</span>: <span class="n">&#39;StaNoise&#39; object has no attribute &#39;daylist&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="go">dict_keys([&#39;initialized&#39;, &#39;c11&#39;, &#39;c22&#39;, &#39;cZZ&#39;, &#39;cPP&#39;, &#39;c12&#39;, &#39;c1Z&#39;, &#39;c1P&#39;,</span>
-<span class="go">&#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;direc&#39;, &#39;tilt&#39;, &#39;f&#39;, &#39;nwins&#39;,</span>
-<span class="go">&#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
+<span class="go">dict_keys([&#39;initialized&#39;, &#39;c11&#39;, &#39;c22&#39;, &#39;cZZ&#39;, &#39;cPP&#39;, &#39;c12&#39;, &#39;c1Z&#39;,</span>
+<span class="go">&#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;direc&#39;, &#39;tilt&#39;, &#39;f&#39;,</span>
+<span class="go">&#39;nwins&#39;, &#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.QC_sta_spectra">
-<span class="sig-name descname"><span class="pre">QC_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">QC_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Permalink to this definition"></a></dt>
 <dd><p>Method to determine the days (for given time window) for which the
 spectra are anomalous and should be discarded in the calculation of
 the long-term transfer functions.</p>
@@ -837,6 +843,8 @@ bad</p></li>
 quality control</p></li>
 <li><p><strong>debug</strong> (<em>boolean</em>) – Whether or not to plot intermediate steps in the QC procedure for
 debugging</p></li>
+<li><p><strong>save</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> object) – Relative path to figures folder</p></li>
+<li><p><strong>form</strong> (<em>str</em>) – File format (e.g., ‘png’, ‘jpg’, ‘eps’)</p></li>
 </ul>
 </dd>
 </dl>
@@ -866,12 +874,16 @@ debugging</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.average_sta_spectra">
-<span class="sig-name descname"><span class="pre">average_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">average_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Permalink to this definition"></a></dt>
 <dd><p>Method to average the daily station spectra for good windows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
-spectra</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
+spectra</p></li>
+<li><p><strong>save</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> object) – Relative path to figures folder</p></li>
+<li><p><strong>form</strong> (<em>str</em>) – File format (e.g., ‘png’, ‘jpg’, ‘eps’)</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1180,28 +1192,6 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.evlat">
-<span class="sig-name descname"><span class="pre">evlat</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.evlat" title="Permalink to this definition"></a></dt>
-<dd><p>Latitude of seismic event</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.evlon">
-<span class="sig-name descname"><span class="pre">evlon</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.evlon" title="Permalink to this definition"></a></dt>
-<dd><p>Longitude of seismic event</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.evtime">
 <span class="sig-name descname"><span class="pre">evtime</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.evtime" title="Permalink to this definition"></a></dt>
 <dd><p>Origin time of seismic event.</p>
@@ -1297,7 +1287,7 @@ components. This is determined during initialization.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span> <span class="o">=</span> <span class="n">EventStream</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo earthquake data - March 09, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">evstream</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="go">dict_keys([&#39;tr1&#39;, &#39;tr2&#39;, &#39;trZ&#39;, &#39;trP, &#39;key&#39;, &#39;evlat&#39;, &#39;evlon&#39;, &#39;evtime&#39;,</span>
+<span class="go">dict_keys([&#39;tr1&#39;, &#39;tr2&#39;, &#39;trZ&#39;, &#39;trP, &#39;key&#39;, &#39;evtime&#39;,</span>
 <span class="go">&#39;tstamp&#39;, &#39;window&#39;, &#39;fs&#39;, &#39;dt&#39;, &#39;ncomp&#39;, &#39;ev_list&#39;])</span>
 </pre></div>
 </div>
@@ -1686,6 +1676,30 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="obstools.atacr.utils.QC_streams">
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">QC_streams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.QC_streams" title="Permalink to this definition"></a></dt>
+<dd><p>Function for quality control of traces, which compares the
+start and end times that were requested, as well as the total n
+length of the traces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code> object) – Start time of requested stream</p></li>
+<li><p><strong>end</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code> object) – End time of requested stream</p></li>
+<li><p><strong>st</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> object) – Stream object with all trace data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>(pass)</strong> (<em>bool</em>) – Whether the QC test has passed</p></li>
+<li><p><strong>st</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> object) – Updated stream object</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.update_stats">
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">update_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stla</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evla</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evlo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.update_stats" title="Permalink to this definition"></a></dt>
 <dd><p>Function to include SAC metadata to <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
@@ -1974,7 +1988,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_comply">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1984,7 +1998,9 @@ components, used to characterize the tilt direction.</p>
 <li><p><strong>day_list</strong> (<em>Dict</em>) – Dictionary containing the list of daily transfer functions</p></li>
 <li><p><strong>sta_comps</strong> (<em>Dict</em>) – Dictionary containing the compliance functions for the station averages</p></li>
 <li><p><strong>sta_list</strong> (<em>Dict</em>) – Dictionary containing the list of average transfer functions</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – String corresponding to the station key under analysis</p></li>
+<li><p><strong>skey</strong> (<em>str</em>) – String corresponding to the station key under analysis</p></li>
+<li><p><strong>elev</strong> (<em>float</em>) – Station elevation in meters (OBS stations have negative elevations)</p></li>
+<li><p><strong>f_0</strong> (<em>float</em>) – Lowest frequency to consider in plot (Hz)</p></li>
 </ul>
 </dd>
 </dl>

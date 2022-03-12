@@ -160,7 +160,7 @@ script and tutorial for details.</p>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.comply.classes.</span></span><span class="sig-name descname"><span class="pre">Comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.comply.classes.</span></span><span class="sig-name descname"><span class="pre">Comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply" title="Permalink to this definition"></a></dt>
 <dd><p>A Comply object contains attributes that calculate and store the
 compliance and coherence functions for the available channels.</p>
 <div class="admonition note">
@@ -172,12 +172,12 @@ spectral quantity is unpacked as an object attribute, but all of them
 are discarded as the object is saved to disk.</p>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.comply.classes.Comply.sta">
-<span class="sig-name descname"><span class="pre">sta</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.sta" title="Permalink to this definition"></a></dt>
-<dd><p>An instance of an stdb object</p>
+<dt class="sig sig-object py" id="obstools.comply.classes.Comply.elev">
+<span class="sig-name descname"><span class="pre">elev</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.elev" title="Permalink to this definition"></a></dt>
+<dd><p>Station elevation in meters (OBS stations have negative elevations)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">StdbElement</span></code></p>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -255,14 +255,16 @@ coherence functions</p>
 </dd></dl>
 
 <p class="rubric">Examples</p>
-<p>Calculate compliance and coherence functions for a DayNoise object</p>
+<p>Calculate compliance and coherence functions for a DayNoise object.
+In these examples, station elevation is extracted from the IRIS
+metadata aggregator site: <a class="reference external" href="http://ds.iris.edu/mda/7D/M08A/">http://ds.iris.edu/mda/7D/M08A/</a></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.comply</span> <span class="kn">import</span> <span class="n">Comply</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">daycomply</span> <span class="o">=</span> <span class="n">Comply</span><span class="p">(</span><span class="n">objnoise</span><span class="o">=</span><span class="n">daynoise</span><span class="p">,</span> <span class="n">sta</span><span class="o">=</span><span class="n">sta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">daycomply</span> <span class="o">=</span> <span class="n">Comply</span><span class="p">(</span><span class="n">objnoise</span><span class="o">=</span><span class="n">daynoise</span><span class="p">,</span> <span class="n">elev</span><span class="o">=-</span><span class="mf">126.4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daycomply</span><span class="o">.</span><span class="n">calculate_compliance</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tfnoise</span><span class="o">.</span><span class="n">complyfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;ZP&#39;, &#39;ZP-21&#39;, &#39;ZP-H&#39;])</span>
@@ -275,7 +277,7 @@ coherence functions</p>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">average_sta_spectra</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span> <span class="o">=</span> <span class="n">Comply</span><span class="p">(</span><span class="n">objnoise</span><span class="o">=</span><span class="n">stanoise</span><span class="p">,</span> <span class="n">sta</span><span class="o">=</span><span class="n">sta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span> <span class="o">=</span> <span class="n">Comply</span><span class="p">(</span><span class="n">objnoise</span><span class="o">=</span><span class="n">stanoise</span><span class="p">,</span> <span class="n">elev</span><span class="o">=-</span><span class="mf">126.4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span><span class="o">.</span><span class="n">calculate_compliance</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stacomply</span><span class="o">.</span><span class="n">complyfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;ZP&#39;, &#39;ZP-21&#39;])</span>
