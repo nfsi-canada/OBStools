@@ -624,8 +624,8 @@ class DayNoise(object):
 
         >>> daynoise.__dict__.keys()
         dict_keys(['tr1', 'tr2', 'trZ', 'trP', 'window', 'overlap', 'key',
-        'dt', 'npts', 'fs', 'year', 'julday', 'ncomp', 'tf_list', 'QC', 'av',
-        'goodwins', 'f', 'power', 'cross', 'rotation'])
+        'dt', 'npts', 'fs', 'year', 'julday', 'tkey', 'ncomp', 'tf_list',
+        'QC', 'av', 'f', 'goodwins', 'power', 'cross', 'rotation'])
 
         """
 
@@ -892,7 +892,7 @@ class StaNoise(object):
      <obstools.atacr.classes.DayNoise at 0x121c7ae10>,
      <obstools.atacr.classes.DayNoise at 0x121ca5940>,
      <obstools.atacr.classes.DayNoise at 0x121e7dd30>]
-     >>> sta.initialized
+     >>> stanoise.initialized
      False
 
     """
@@ -1790,12 +1790,13 @@ class EventStream(object):
     Uploading demo earthquake data - March 09, 2012, station 7D.M08A
     >>> evstream.__dict__.keys()
     dict_keys(['tr1', 'tr2', 'trZ', 'trP, 'key', 'evtime',
-    'tstamp', 'window', 'fs', 'dt', 'ncomp', 'ev_list'])
+    'tstamp', 'prefix', 'npts', fs', 'dt', 'ncomp', 'ev_list'])
 
     Plot the raw traces
 
-    >>> import obstools.atacr.plot as plot
-    >>> plot.fig_event_raw(evstream, fmin=1./150., fmax=2.)
+    >>> import obstools.atacr.plotting as atplot
+    >>> figure = atplot.fig_event_raw(evstream, fmin=1./150., fmax=2.)
+    >>> figure.show()
 
     .. figure:: ../obstools/examples/figures/Figure_11.png
        :align: center
@@ -1901,8 +1902,9 @@ class EventStream(object):
 
         Plot the corrected traces
 
-        >>> import obstools.atacr.plot as plot
-        >>> plot.fig_event_corrected(evstream, tfnoise_day.tf_list)
+        >>> import obstools.atacr.plotting as atplot
+        >>> figure = atplot.fig_event_corrected(evstream, tfnoise_day.tf_list)
+        >>> figure.show()
 
         .. figure:: ../obstools/examples/figures/Figure_corrected_march04.png
            :align: center
