@@ -568,7 +568,8 @@ def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
         tr = Trace(
-            data=evstream.correct['Z1']).filter(
+            data=evstream.correct['Z1'],
+            header=trZ.stats).filter(
             'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
         plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.key + ' ' + evstream.tstamp +
@@ -582,7 +583,8 @@ def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z2-1']:
         tr = Trace(
-            data=evstream.correct['Z2-1']).filter(
+            data=evstream.correct['Z2-1'],
+            header=trZ.stats).filter(
             'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
         plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': Z2-1', fontdict={'fontsize': 8})
@@ -595,7 +597,8 @@ def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-21']:
         tr = Trace(
-            data=evstream.correct['ZP-21']).filter(
+            data=evstream.correct['ZP-21'],
+            header=trZ.stats).filter(
             'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
         plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZP-21', fontdict={'fontsize': 8})
@@ -608,7 +611,8 @@ def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZH']:
         tr = Trace(
-            data=evstream.correct['ZH']).filter(
+            data=evstream.correct['ZH'],
+            header=trZ.stats).filter(
             'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
         plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZH', fontdict={'fontsize': 8})
@@ -621,7 +625,8 @@ def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-H']:
         tr = Trace(
-            data=evstream.correct['ZP-H']).filter(
+            data=evstream.correct['ZP-H'],
+            header=trZ.stats).filter(
             'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
         plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZP-H', fontdict={'fontsize': 8})
@@ -634,7 +639,8 @@ def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP']:
         tr = Trace(
-            data=evstream.correct['ZP']).filter(
+            data=evstream.correct['ZP'],
+            header=trZ.stats).filter(
             'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
         plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZP', fontdict={'fontsize': 8})

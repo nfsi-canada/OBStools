@@ -365,7 +365,6 @@ def main(args=None):
 
             # else:
             #     continue
-            print(tr1, tr2, trZ, trP)
             eventstream = EventStream(tr1, tr2, trZ, trP)
 
             # Check if Trace is from SAC file with event info
@@ -397,6 +396,7 @@ def main(args=None):
                     continue
 
                 tfprefix = transfile.name.split('transfunc')[0]
+                print(tfprefix)
 
                 # This case refers to the "cleaned" spectral averages
                 if len(tfprefix) > 9:
