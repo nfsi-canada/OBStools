@@ -28,6 +28,7 @@ of the analysis at various final and intermediate steps.
 import numpy as np
 from matplotlib import pyplot as plt
 from obstools.atacr import utils
+from obspy import Trace
 
 
 def fig_QC(f, power, gooddays, ncomp, key=''):
@@ -468,7 +469,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
     return plt
 
 
-def fig_event_raw(evstream, fmin, fmax):
+def fig_event_raw(evstream, fmin=1./150., fmax=2.):
     """
     Function to plot the raw (although bandpassed) seismograms.
 
@@ -539,7 +540,7 @@ def fig_event_raw(evstream, fmin, fmax):
     return plt
 
 
-def fig_event_corrected(evstream, TF_list):
+def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
     """
     Function to plot the corrected vertical component seismograms.
 
@@ -553,10 +554,10 @@ def fig_event_corrected(evstream, TF_list):
 
     """
 
-    # Unpack vertical trace
+    # Unpack vertical trace and filter
     trZ = evstream.trZ.copy()
     trZ.filter(
-        'bandpass', freqmin=1./150., freqmax=1./10., corners=2, zerophase=True)
+        'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
     sr = trZ.stats.sampling_rate
     taxis = np.arange(0., trZ.stats.npts/sr, 1./sr)
 
@@ -566,7 +567,10 @@ def fig_event_corrected(evstream, TF_list):
     plt.plot(
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
-        plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
+        tr = Trace(
+            data=evstream.correct['Z1']).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.key + ' ' + evstream.tstamp +
               ': Z1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
@@ -577,7 +581,10 @@ def fig_event_corrected(evstream, TF_list):
     plt.plot(
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z2-1']:
-        plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
+        tr = Trace(
+            data=evstream.correct['Z2-1']).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': Z2-1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
@@ -587,7 +594,10 @@ def fig_event_corrected(evstream, TF_list):
     plt.plot(
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-21']:
-        plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
+        tr = Trace(
+            data=evstream.correct['ZP-21']).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZP-21', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
@@ -597,7 +607,10 @@ def fig_event_corrected(evstream, TF_list):
     plt.plot(
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZH']:
-        plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
+        tr = Trace(
+            data=evstream.correct['ZH']).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZH', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
@@ -607,7 +620,10 @@ def fig_event_corrected(evstream, TF_list):
     plt.plot(
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-H']:
-        plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
+        tr = Trace(
+            data=evstream.correct['ZP-H']).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZP-H', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
@@ -617,7 +633,10 @@ def fig_event_corrected(evstream, TF_list):
     plt.plot(
         taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP']:
-        plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
+        tr = Trace(
+            data=evstream.correct['ZP']).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
     plt.title(evstream.tstamp + ': ZP', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
