@@ -39,7 +39,7 @@ setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     package_data={'': ['examples/meta/*.pkl', 'examples/event/*.pkl',
-                       'examples/data/*.SAC']},
+                       'examples/data/*.SAC', 'examples/event/*.SAC']},
     #    scripts=scripts)
     entry_points={
         'console_scripts':
