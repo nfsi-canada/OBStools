@@ -22,7 +22,7 @@
 
 
 import sys
-from scipy.signal import spectrogram, stft, detrend
+from scipy.signal import stft, detrend
 from scipy.linalg import norm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -296,6 +296,11 @@ class DayNoise(object):
 
         Attributes
         ----------
+        ftX : :class:`~numpy.ndarray`
+            Windowed Fourier transform for the `X` component (can be either
+            1, 2, Z or P)
+        f : :class:`~numpy.ndarray`
+            Full frequency axis (Hz)
         goodwins : list
             List of booleans representing whether a window is good (True)
             or not (False)
@@ -334,23 +339,65 @@ class DayNoise(object):
         wind[0:ss] = hanning[0:ss]
         wind[-ss:ws] = hanning[ss:ws]
 
+        # Get windowed Fourier transforms
+        ft1 = None
+        ft2 = None
+        ftZ = None
+        ftP = None
+
+        f, t, ftZ = stft(
+            self.trZ.data, self.fs, return_onesided=False, boundary=None,
+            padded=False, window=wind, nperseg=ws, noverlap=ss,
+            detrend='constant')
+        ftZ = ftZ * ws
+        if self.ncomp == 2 or self.ncomp == 4:
+            _f, _t, ftP = stft(
+                self.trP.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss,
+                detrend='constant')
+            ftP = ftP * ws
+        if self.ncomp == 3 or self.ncomp == 4:
+            _f, _t, ft1 = stft(
+                self.tr1.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss,
+                detrend='constant')
+            _f, _t, ft2 = stft(
+                self.tr2.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss,
+                detrend='constant')
+            ft1 = ft1 * ws
+            ft2 = ft2 * ws
+
+        # Store FFTs - as transpose
+        self.ft1 = ft1.T
+        self.ft2 = ft2.T
+        self.ftZ = ftZ.T
+        self.ftP = ftP.T
+
+        # Store frequency axis
+        self.f = f
+
         # Get spectrograms for single day-long keys
         psd1 = None
         psd2 = None
         psdZ = None
         psdP = None
-        f, t, psdZ = spectrogram(
-            self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        self.f = f
+
+        # Positive frequencies for PSD plots
+        faxis = int(len(f)/2)
+        f = f[0:faxis]
+
+        psdZ = np.abs(ftZ)**2*2./self.dt
+        psdZ = psdZ[0:faxis, :]
 
         if self.ncomp == 2 or self.ncomp == 4:
-            f, t, psdP = spectrogram(
-                self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+            psdP = np.abs(ftP)**2*2/self.dt
+            psdP = psdP[0:faxis, :]
         if self.ncomp == 3 or self.ncomp == 4:
-            f, t, psd1 = spectrogram(
-                self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-            f, t, psd2 = spectrogram(
-                self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+            psd1 = np.abs(ft1)**2*2/self.dt
+            psd1 = psd1[0:faxis, :]
+            psd2 = np.abs(ft2)**2*2/self.dt
+            psd2 = psd2[0:faxis, :]
 
         if fig_QC:
             if self.ncomp == 2:
@@ -634,61 +681,29 @@ class DayNoise(object):
                   "QC_daily_spectra using default values")
             self.QC_daily_spectra()
 
-        # Points in window
-        ws = int(self.window/self.dt)
-
-        # Number of points in step
-        ss = int(self.window*self.overlap/self.dt)
-
-        # hanning window
-        hanning = np.hanning(2*ss)
-        wind = np.ones(ws)
-        wind[0:ss] = hanning[0:ss]
-        wind[-ss:ws] = hanning[ss:ws]
-
-        ft1 = None
-        ft2 = None
-        ftZ = None
-        ftP = None
-
-        _f, _t, ftZ = stft(
-            self.trZ.data, self.fs, return_onesided=False, boundary=None,
-            padded=False, window=wind, nperseg=ws, noverlap=ss)
-        ftZ = ftZ.T
-        if self.ncomp == 2 or self.ncomp == 4:
-            _f, _t, ftP = stft(
-                self.trP.data, self.fs, return_onesided=False, boundary=None,
-                padded=False, window=wind, nperseg=ws, noverlap=ss)
-            ftP = ftP.T
-        if self.ncomp == 3 or self.ncomp == 4:
-            _f, _t, ft1 = stft(
-                self.tr1.data, self.fs, return_onesided=False, boundary=None,
-                padded=False, window=wind, nperseg=ws, noverlap=ss)
-            _f, _t, ft2 = stft(
-                self.tr2.data, self.fs, return_onesided=False, boundary=None,
-                padded=False, window=wind, nperseg=ws, noverlap=ss)
-            ft1 = ft1.T
-            ft2 = ft2.T
-
         # Extract good windows
         c11 = None
         c22 = None
         cZZ = None
         cPP = None
         cZZ = np.abs(
-            np.mean(ftZ[self.goodwins, :]*np.conj(ftZ[self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
+            np.mean(
+                self.ftZ[self.goodwins, :]*np.conj(self.ftZ[self.goodwins, :]),
+                axis=0))
         if self.ncomp == 2 or self.ncomp == 4:
             cPP = np.abs(
-                np.mean(ftP[self.goodwins, :]*np.conj(ftP[self.goodwins, :]),
-                        axis=0))[0:len(self.f)]
+                np.mean(
+                    self.ftP[self.goodwins, :]*np.conj(
+                        self.ftP[self.goodwins, :]), axis=0))
         if self.ncomp == 3 or self.ncomp == 4:
             c11 = np.abs(
-                np.mean(ft1[self.goodwins, :]*np.conj(ft1[self.goodwins, :]),
-                        axis=0))[0:len(self.f)]
+                np.mean(
+                    self.ft1[self.goodwins, :]*np.conj(
+                        self.ft1[self.goodwins, :]), axis=0))
             c22 = np.abs(
-                np.mean(ft2[self.goodwins, :]*np.conj(ft2[self.goodwins, :]),
-                        axis=0))[0:len(self.f)]
+                np.mean(
+                    self.ft2[self.goodwins, :]*np.conj(
+                        self.ft2[self.goodwins, :]), axis=0))
 
         # Extract bad windows
         bc11 = None
@@ -696,20 +711,24 @@ class DayNoise(object):
         bcZZ = None
         bcPP = None
         if np.sum(~self.goodwins) > 0:
-            bcZZ = np.abs(np.mean(
-                ftZ[~self.goodwins, :]*np.conj(ftZ[~self.goodwins, :]),
-                axis=0))[0:len(self.f)]
+            bcZZ = np.abs(
+                np.mean(
+                    self.ftZ[~self.goodwins, :]*np.conj(
+                        self.ftZ[~self.goodwins, :]), axis=0))
             if self.ncomp == 2 or self.ncomp == 4:
-                bcPP = np.abs(np.mean(
-                    ftP[~self.goodwins, :]*np.conj(ftP[~self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
+                bcPP = np.abs(
+                    np.mean(
+                        self.ftP[~self.goodwins, :]*np.conj(
+                            self.ftP[~self.goodwins, :]), axis=0))
             if self.ncomp == 3 or self.ncomp == 4:
-                bc11 = np.abs(np.mean(
-                    ft1[~self.goodwins, :]*np.conj(ft1[~self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
-                bc22 = np.abs(np.mean(
-                    ft2[~self.goodwins, :]*np.conj(ft2[~self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
+                bc11 = np.abs(
+                    np.mean(
+                        self.ft1[~self.goodwins, :]*np.conj(
+                            self.ft1[~self.goodwins, :]), axis=0))
+                bc22 = np.abs(
+                    np.mean(
+                        self.ft2[~self.goodwins, :]*np.conj(
+                            self.ft2[~self.goodwins, :]), axis=0))
 
         # Calculate mean of all good windows if component combinations exist
         c12 = None
@@ -720,25 +739,25 @@ class DayNoise(object):
         cZP = None
         if self.ncomp == 3 or self.ncomp == 4:
             c12 = np.mean(
-                ft1[self.goodwins, :] *
-                np.conj(ft2[self.goodwins, :]), axis=0)[0:len(self.f)]
+                self.ft1[self.goodwins, :] *
+                np.conj(self.ft2[self.goodwins, :]), axis=0)
             c1Z = np.mean(
-                ft1[self.goodwins, :] *
-                np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
+                self.ft1[self.goodwins, :] *
+                np.conj(self.ftZ[self.goodwins, :]), axis=0)
             c2Z = np.mean(
-                ft2[self.goodwins, :] *
-                np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
+                self.ft2[self.goodwins, :] *
+                np.conj(self.ftZ[self.goodwins, :]), axis=0)
         if self.ncomp == 4:
             c1P = np.mean(
-                ft1[self.goodwins, :] *
-                np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+                self.ft1[self.goodwins, :] *
+                np.conj(self.ftP[self.goodwins, :]), axis=0)
             c2P = np.mean(
-                ft2[self.goodwins, :] *
-                np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+                self.ft2[self.goodwins, :] *
+                np.conj(self.ftP[self.goodwins, :]), axis=0)
         if self.ncomp == 2 or self.ncomp == 4:
             cZP = np.mean(
-                ftZ[self.goodwins, :] *
-                np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+                self.ftZ[self.goodwins, :] *
+                np.conj(self.ftP[self.goodwins, :]), axis=0)
 
         # Store as attributes
         self.power = Power(c11, c22, cZZ, cPP)
@@ -760,7 +779,8 @@ class DayNoise(object):
         if calc_rotation and self.ncomp >= 3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
                 utils.calculate_tilt(
-                    ft1, ft2, ftZ, ftP, self.f, self.goodwins)
+                    self.ft1, self.ft2, self.ftZ, self.ftP, self.f,
+                    self.goodwins)
             self.rotation = Rotation(
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
@@ -840,7 +860,7 @@ class StaNoise(object):
     The object is initially a container for
     :class:`~obstools.atacr.classes.DayNoise` objects. Once the StaNoise
     object is initialized (using the method `init()` or by calling the
-    `QC_sta_spectra` method), each individual spectral quantity is unpacked
+    `QC_sta_spectra()` method), each individual spectral quantity is unpacked
     as an object attribute and the original `DayNoise` objects are removed
     from memory. **DayNoise objects cannot be added or appended to the
     StaNoise object once this is done**.
@@ -1146,6 +1166,9 @@ class StaNoise(object):
         # Select bandpass frequencies
         ff = (self.f > pd[0]) & (self.f < pd[1])
 
+        # Extract only positive frequencies
+        faxis = self.f > 0
+
         # Smooth out the log of the PSDs
         sl_cZZ = None
         sl_c11 = None
@@ -1176,29 +1199,29 @@ class StaNoise(object):
         if self.ncomp == 2:
             plt.figure(2)
             plt.subplot(2, 1, 1)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
             plt.subplot(2, 1, 2)
-            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
             plt.tight_layout()
         elif self.ncomp == 3:
             plt.figure(2)
             plt.subplot(3, 1, 1)
-            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
             plt.subplot(3, 1, 2)
-            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
             plt.subplot(3, 1, 3)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
             plt.tight_layout()
         else:
             plt.figure(2)
             plt.subplot(4, 1, 1)
-            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
             plt.subplot(4, 1, 2)
-            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
             plt.subplot(4, 1, 3)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
             plt.subplot(4, 1, 4)
-            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
             plt.tight_layout()
         if debug:
             plt.show()
@@ -1961,6 +1984,12 @@ class EventStream(object):
         ft2 = None
         ftZ = None
         ftP = None
+
+        ft1 = None
+        ft2 = None
+        ftZ = None
+        ftP = None
+
         ftZ = np.fft.fft(trZ, n=self.npts)
         if self.ncomp == 2 or self.ncomp == 4:
             ftP = np.fft.fft(trP, n=self.npts)
@@ -1968,8 +1997,7 @@ class EventStream(object):
             ft1 = np.fft.fft(tr1, n=self.npts)
             ft2 = np.fft.fft(tr2, n=self.npts)
 
-        # Use one-sided frequency axis to match spectrogram
-        f = np.fft.rfftfreq(self.npts, d=self.dt)
+        f = np.fft.fftfreq(self.npts, d=self.dt)
 
         if not np.allclose(f, tfnoise.f):
             raise(Exception(
@@ -1981,61 +2009,39 @@ class EventStream(object):
             if key == 'ZP' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_ZP = transfunc[key]['TF_ZP']
-                    fTF_ZP = np.hstack(
-                        (TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZP*ftP
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
+                    corrspec = ftZ - TF_ZP*ftP
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP', corrtime)
 
             if key == 'Z1' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
-                    fTF_Z1 = np.hstack(
-                        (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
+                    corrspec = ftZ - TF_Z1*ft1
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('Z1', corrtime)
 
             if key == 'Z2-1' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc['Z1']['TF_Z1']
-                    fTF_Z1 = np.hstack(
-                        (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     TF_21 = transfunc[key]['TF_21']
-                    fTF_21 = np.hstack(
-                        (TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
                     TF_Z2_1 = transfunc[key]['TF_Z2-1']
-                    fTF_Z2_1 = np.hstack(
-                        (TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
+                    corrspec = ftZ - TF_Z1*ft1 - (ft2 - ft1*TF_21)*TF_Z2_1
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('Z2-1', corrtime)
 
             if key == 'ZP-21' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
-                    fTF_Z1 = np.hstack(
-                        (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     TF_21 = transfunc[key]['TF_21']
-                    fTF_21 = np.hstack(
-                        (TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
                     TF_Z2_1 = transfunc[key]['TF_Z2-1']
-                    fTF_Z2_1 = np.hstack(
-                        (TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
                     TF_P1 = transfunc[key]['TF_P1']
-                    fTF_P1 = np.hstack(
-                        (TF_P1, np.conj(TF_P1[::-1][1:len(f)-1])))
                     TF_P2_1 = transfunc[key]['TF_P2-1']
-                    fTF_P2_1 = np.hstack(
-                        (TF_P2_1, np.conj(TF_P2_1[::-1][1:len(f)-1])))
                     TF_ZP_21 = transfunc[key]['TF_ZP-21']
-                    fTF_ZP_21 = np.hstack(
-                        (TF_ZP_21, np.conj(TF_ZP_21[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1 - \
-                        (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
-                        (ftP - ft1*fTF_P1 -
-                         (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
+                    corrspec = ftZ - TF_Z1*ft1 - \
+                        (ft2 - ft1*TF_21)*TF_Z2_1 - \
+                        (ftP - ft1*TF_P1 -
+                         (ft2 - ft1*TF_21)*TF_P2_1)*TF_ZP_21
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP-21', corrtime)
 
             if key == 'ZH' and self.ev_list[key]:
@@ -2045,10 +2051,8 @@ class EventStream(object):
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
                     TF_ZH = transfunc[key]['TF_ZH']
-                    fTF_ZH = np.hstack(
-                        (TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZH*ftH
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
+                    corrspec = ftZ - TF_ZH*ftH
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZH', corrtime)
 
             if key == 'ZP-H' and self.ev_list[key]:
@@ -2058,16 +2062,10 @@ class EventStream(object):
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
                     TF_ZH = transfunc['ZH']['TF_ZH']
-                    fTF_ZH = np.hstack(
-                        (TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
                     TF_PH = transfunc[key]['TF_PH']
-                    fTF_PH = np.hstack(
-                        (TF_PH, np.conj(TF_PH[::-1][1:len(f)-1])))
                     TF_ZP_H = transfunc[key]['TF_ZP-H']
-                    fTF_ZP_H = np.hstack(
-                        (TF_ZP_H, np.conj(TF_ZP_H[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZH*ftH - (ftP - ftH*fTF_PH)*fTF_ZP_H
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:self.npts]
+                    corrspec = ftZ - TF_ZH*ftH - (ftP - ftH*TF_PH)*TF_ZP_H
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP-H', corrtime)
 
         self.correct = correct
