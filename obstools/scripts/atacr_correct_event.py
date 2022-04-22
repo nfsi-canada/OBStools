@@ -338,33 +338,9 @@ def main(args=None):
             raise(Exception("There are no transfer functions in folder " +
                             str(transpath)))
 
-        # # Cycle through available files
-        # for eventfile in event_files:
         # Cycle through available data
         for tr1, tr2, trZ, trP in zip(trE1, trE2, trEZ, trEP):
 
-            # # Skip hidden files and folders
-            # if eventfile.name[0] == '.':
-            #     continue
-
-            # evprefix = eventfile.name.split('.')
-            # evstamp = evprefix[0]+'.'+evprefix[1]+'.'
-
-            # evDateTime = UTCDateTime(evprefix[0]+'-'+evprefix[1])
-            # if evDateTime >= tstart and evDateTime <= tend:
-
-            #     # Load event file
-            #     try:
-            #         file = open(eventfile, 'rb')
-            #         eventstream = pickle.load(file)
-            #         file.close()
-            #     except Exception:
-            #         print("File "+str(eventfile) +
-            #               " exists but cannot be loaded")
-            #         continue
-
-            # else:
-            #     continue
             eventstream = EventStream(tr1, tr2, trZ, trP)
 
             # Check if Trace is from SAC file with event info
