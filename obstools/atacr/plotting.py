@@ -33,8 +33,8 @@ from obspy import Trace
 
 def fig_QC(f, power, gooddays, ncomp, key=''):
     """
-    Function to plot the Quality-Control step of the analysis. This function is
-    used in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+    Function to plot the Quality-Control step of the analysis. This function
+    is used in both the `atacr_daily_spectra` or `atacr_clean_spectra` scripts.
 
     Parameters
     ----------
@@ -73,12 +73,15 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
                  'HZ component, Station: '+key,
                  'HP component, Station: '+key]
 
+    # Extract only positive frequencies
+    faxis = f > 0
+
     fig = plt.figure(6)
     for i, sl in enumerate(sls):
         ax = fig.add_subplot(ncomp, 1, i+1)
-        ax.semilogx(f, sl[:, gooddays], 'k', lw=0.5)
+        ax.semilogx(f[faxis], sl[:, gooddays][faxis], 'k', lw=0.5)
         if np.sum(~gooddays) > 0:
-            plt.semilogx(f, sl[:, ~gooddays], 'r', lw=0.5)
+            plt.semilogx(f[faxis], sl[:, ~gooddays][faxis], 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
         if i == len(sls)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
@@ -91,7 +94,7 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
     """
     Function to plot the averaged spectra (those qualified as 'good' in the
     QC step). This function is used
-    in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+    in both the `atacr_daily_spectra` or `atacr_clean_spectra` scripts.
 
     Parameters
     ----------
@@ -139,12 +142,17 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
                  'Average HZ, Station: '+key,
                  'Average HP, Station: '+key]
 
+    # Extract only positive frequencies
+    faxis = f > 0
+
     plt.figure()
     for i, (cc, bc) in enumerate(zip(ccs, bcs)):
         ax = plt.subplot(ncomp, 1, i+1)
-        ax.semilogx(f, utils.smooth(np.log(cc), 50), 'k', lw=0.5)
+        ax.semilogx(
+            f[faxis], utils.smooth(np.log(cc)[faxis], 50), 'k', lw=0.5)
         if np.sum(~gooddays) > 0:
-            ax.semilogx(f, utils.smooth(np.log(bc), 50), 'r', lw=0.5)
+            ax.semilogx(
+                f[faxis], utils.smooth(np.log(bc)[faxis], 50), 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
         if i == len(ccs)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
@@ -157,7 +165,7 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
                  save=False, fname='', form='png', **kwargs):
     """
     Function to plot the averaged cross-spectra (those qualified as 'good' in
-    the QC step). This function is used in the `obs_daily_spectra.py` script.
+    the QC step). This function is used in the `atacr_daily_spectra` script.
 
     Parameters
     ----------
@@ -177,6 +185,9 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
         Keyword arguments to modify plot
 
     """
+
+    # Extract only positive frequencies
+    faxis = f > 0
 
     if ncomp == 2:
         fieldZP = field.cZP.T
@@ -205,13 +216,17 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
         ax = fig.add_subplot(len(fields), 1, i+1)
         # Extact field
         if ftype == 'Admittance':
-            ax.loglog(f, field[:, gooddays], color='gray', **kwargs)
+            ax.loglog(
+                f[faxis], field[:, gooddays][faxis], color='gray', **kwargs)
             if np.sum(~gooddays) > 0:
-                ax.loglog(f, field[:, ~gooddays], color='r', **kwargs)
+                ax.loglog(
+                    f[faxis], field[:, ~gooddays][faxis], color='r', **kwargs)
         else:
-            ax.semilogx(f, field[:, gooddays], color='gray', **kwargs)
+            ax.semilogx(
+                f[faxis], field[:, gooddays][faxis], color='gray', **kwargs)
             if np.sum(~gooddays) > 0:
-                ax.semilogx(f, field[:, ~gooddays], color='r', **kwargs)
+                ax.semilogx(
+                    f[faxis], field[:, ~gooddays][faxis], color='r', **kwargs)
         plt.ylabel(ftype, fontdict={'fontsize': 8})
         plt.title(key+' '+ftype+title[i], fontdict={'fontsize': 8})
         if i == len(fields)-1:
