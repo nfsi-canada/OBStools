@@ -911,7 +911,7 @@ pass the quality control are colored red.
 .. figure:: ../obstools/examples/figures/Figure_3b.png
    :align: center
 
-Figure 3a: Daily average PSD of bad (red) and good (black) windows.
+Figure 3b: Daily average PSD of bad (red) and good (black) windows.
 
 3. QC for clean station averages
 ++++++++++++++++++++++++++++++++
