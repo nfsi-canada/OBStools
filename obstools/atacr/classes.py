@@ -345,17 +345,20 @@ class DayNoise(object):
         ftZ = None
         ftP = None
 
+        # Calculate windowed FFTs and store as transpose
         f, t, ftZ = stft(
             self.trZ.data, self.fs, return_onesided=False, boundary=None,
             padded=False, window=wind, nperseg=ws, noverlap=ss,
             detrend='constant')
         ftZ = ftZ * ws
+        self.ftZ = ftZ.T
         if self.ncomp == 2 or self.ncomp == 4:
             _f, _t, ftP = stft(
                 self.trP.data, self.fs, return_onesided=False, boundary=None,
                 padded=False, window=wind, nperseg=ws, noverlap=ss,
                 detrend='constant')
             ftP = ftP * ws
+            self.ftP = ftP.T
         if self.ncomp == 3 or self.ncomp == 4:
             _f, _t, ft1 = stft(
                 self.tr1.data, self.fs, return_onesided=False, boundary=None,
@@ -367,12 +370,8 @@ class DayNoise(object):
                 detrend='constant')
             ft1 = ft1 * ws
             ft2 = ft2 * ws
-
-        # Store FFTs - as transpose
-        self.ft1 = ft1.T
-        self.ft2 = ft2.T
-        self.ftZ = ftZ.T
-        self.ftP = ftP.T
+            self.ft1 = ft1.T
+            self.ft2 = ft2.T
 
         # Store frequency axis
         self.f = f
