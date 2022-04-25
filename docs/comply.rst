@@ -165,7 +165,7 @@ Once the ``StaNoise`` objects have been produced and saved to disk, the complian
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available. 
 
-If no horizontal components are available (i.e., only ``?HZ`` and ``?XH?`` components are available),
+If no horizontal components are available (i.e., only ``?HZ`` and ``?DH?`` components are available),
 the only compliance function possible is:
 
 - ``ZP``
