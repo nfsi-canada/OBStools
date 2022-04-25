@@ -340,10 +340,10 @@ class DayNoise(object):
         wind[-ss:ws] = hanning[ss:ws]
 
         # Get windowed Fourier transforms
-        ft1 = None
-        ft2 = None
-        ftZ = None
-        ftP = None
+        ft1 = self.ft1 = None
+        ft2 = self.ft2 = None
+        ftZ = self.ftZ = None
+        ftP = self.ftP = None
 
         # Calculate windowed FFTs and store as transpose
         f, t, ftZ = stft(
