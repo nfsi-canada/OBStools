@@ -86,10 +86,10 @@ def get_event_arguments(argv=None):
         default="",
         help="Specify a comma-separated list of channels for " +
         "which to perform the transfer function analysis. " +
-        "Possible options are 'H' (for horizontal channels) or 'P' " +
-        "(for pressure channel). Specifying 'H' allows " +
+        "Possible options are '12' (for horizontal channels) or 'P' " +
+        "(for pressure channel). Specifying '12' allows " +
         "for tilt correction. Specifying 'P' allows for compliance " +
-        "correction. [Default looks for both horizontal and " +
+        "correction. [Default '12,P' looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(
         "-O", "--overwrite",
@@ -123,32 +123,6 @@ def get_event_arguments(argv=None):
         "(--User-Auth='username:authpassword') to access and download " +
         "restricted data. [Default no user and password]")
 
-    """
-    # Database Settings
-    DataGroup = parser.add_argument_group(
-        title="Local Data Settings",
-        description="Settings associated with defining " +
-        "and using a local data base of pre-downloaded day-long SAC files.")
-    DataGroup.add_argument(
-        "--local-data",
-        action="store",
-        type=str,
-        dest="localdata",
-        default=None,
-        help="Specify a comma separated list of paths containing " +
-        "day-long sac files of data already downloaded. " +
-        "If data exists for a seismogram is already present on disk, " +
-        "it is selected preferentially over downloading " +
-        "the data using the Client interface")
-    DataGroup.add_argument(
-        "--no-data-zero",
-        action="store_true",
-        dest="ndval",
-        default=False,
-        help="Specify to force missing data to be set as zero, " +
-        "rather than default behaviour which sets to nan.")
-"""
-
     # Constants Settings
     FreqGroup = parser.add_argument_group(
         title='Frequency Settings',
@@ -178,6 +152,16 @@ def get_event_arguments(argv=None):
         help="Specify four comma-separated corner " +
         "frequencies (float, in Hz) for deconvolution " +
         "pre-filter. [Default 0.001,0.005,45.,50.]")
+    FreqGroup.add_argument(
+        "--window",
+        action="store",
+        type=float,
+        dest="window",
+        default=7200.,
+        help="Specify window length in seconds. " +
+        "Default value is highly recommended. "
+        "Program may not be stable for large deviations " +
+        "from default value. [Default 7200. (or 2 hours)]")
 
     # Event Selection Criteria
     EventGroup = parser.add_argument_group(
@@ -272,17 +256,17 @@ def get_event_arguments(argv=None):
     if len(args.channels) > 0:
         args.channels = args.channels.split(',')
     else:
-        args.channels = ['H', 'P']
+        args.channels = ['12', 'P']
 
     for cha in args.channels:
-        if cha not in ['H', 'P']:
+        if cha not in ['12', 'P']:
             parser.error("Error: Channel not recognized " + str(cha))
 
     # construct start time
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from start time: " +
                 args.startT)
@@ -293,7 +277,7 @@ def get_event_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from end time: " +
                 args.endT)
@@ -311,18 +295,6 @@ def get_event_arguments(argv=None):
             args.UserAuth = tt
     else:
         args.UserAuth = []
-
-    # # Parse Local Data directories
-    # if args.localdata is not None:
-    #     args.localdata = args.localdata.split(',')
-    # else:
-    #     args.localdata = []
-
-    # # Check NoData Value
-    # if args.ndval:
-    #     args.ndval = 0.0
-    # else:
-    #     args.ndval = nan
 
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
@@ -349,7 +321,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -461,9 +433,6 @@ def main(args=None):
             # Extract event
             ev = cat[iev]
 
-            window = 7200.
-            new_sampling_rate = 5.
-
             time = ev.origins[0].time
             dep = ev.origins[0].depth
             lon = ev.origins[0].longitude
@@ -492,12 +461,13 @@ def main(args=None):
 
             # If distance outside of distance range:
             if not (gac > args.mindist and gac < args.maxdist):
-                print("\n*   -> Event outside epicentral distance " + 
+                print(
+                    "\n*   -> Event outside epicentral distance " +
                     "range - continuing")
                 continue
 
             t1 = time
-            t2 = t1 + window
+            t2 = t1 + args.window
 
             # Time stamp
             tstamp = str(time.year).zfill(4)+'.' + \
@@ -547,7 +517,7 @@ def main(args=None):
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
-                except:
+                except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
@@ -555,7 +525,7 @@ def main(args=None):
 
                 st = sth
 
-            elif "H" not in args.channels:
+            elif "12" not in args.channels:
 
                 # Number of channels
                 ncomp = 2
@@ -573,7 +543,7 @@ def main(args=None):
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
-                except:
+                except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
@@ -588,14 +558,15 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+
-                            sta.channel[0]+"DH")
+                        print(
+                            "*   -> Renaming channel to " +
+                            sta.channel[0] + "DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
-                except:
+                except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     continue
@@ -622,7 +593,7 @@ def main(args=None):
                         location=sta.location[0], channel=channels,
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
-                except:
+                except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
@@ -637,14 +608,15 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+
-                            sta.channel[0]+"DH")
+                        print(
+                            "*   -> Renaming channel to " +
+                            sta.channel[0] + "DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
-                except:
+                except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     continue
@@ -673,21 +645,21 @@ def main(args=None):
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation, 
-                sta.channel+'Z')
+                trZ, sta.latitude, sta.longitude, sta.elevation,
+                sta.channel+'Z', evla=lat, evlo=lon)
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces and write out in SAC format
             # Seismic channels
-            if "H" in args.channels:
+            if "12" in args.channels:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation, 
-                    sta.channel+'1')
+                    tr1, sta.latitude, sta.longitude, sta.elevation,
+                    sta.channel+'1', evla=lat, evlo=lon)
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation, 
-                    sta.channel+'2')
+                    tr2, sta.latitude, sta.longitude, sta.elevation,
+                    sta.channel+'2', evla=lat, evlo=lon)
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
 
@@ -698,19 +670,16 @@ def main(args=None):
                 stp.remove_response(pre_filt=args.pre_filt)
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation, 
-                    sta.channel[0]+'DH')
+                    trP, sta.latitude, sta.longitude, sta.elevation,
+                    sta.channel[0]+'DH', evla=lat, evlo=lon)
                 trP.write(str(fileP), format='SAC')
 
             else:
                 stp = Stream()
 
-            # Write out EventStream object
-            eventstream = EventStream(
-                sta, sth, stp, tstamp, lat, lon, time, window,
-                args.new_sampling_rate, ncomp)
-
-            eventstream.save(filename)
+            # # Write out EventStream object
+            # eventstream = EventStream(sta, sth, stp)
+            # eventstream.save(filename)
 
 
 if __name__ == "__main__":

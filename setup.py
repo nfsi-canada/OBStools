@@ -8,7 +8,7 @@ from pathlib import Path
 
 def find_version(*paths):
     fname = os.path.join(os.path.dirname(__file__), *paths)
-    with open(fname) as fp:
+    with open(fname, encoding='utf-8') as fp:
         code = fp.read()
     match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", code, re.M)
     if match:
@@ -32,13 +32,14 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'],
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'],
     install_requires=['numpy', 'obspy', 'stdb', 'pandas'],
     python_requires='>=3.6',
     packages=setuptools.find_packages(),
     include_package_data=True,
     package_data={'': ['examples/meta/*.pkl', 'examples/event/*.pkl',
-                       'examples/data/*.SAC']},
+                       'examples/data/*.SAC', 'examples/event/*.SAC']},
     #    scripts=scripts)
     entry_points={
         'console_scripts':

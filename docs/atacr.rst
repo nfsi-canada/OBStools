@@ -57,7 +57,7 @@ horizontal (``?H1,2``) component data.
 It is of course possible to combine both corrections and apply them
 sequentially. In this case the tilt noise is removed first, followed by compliance.
 This analysis requires all four components: three-component
-seismic (``?HZ,1,2``) and pressure (``?XH``) data.
+seismic (``?HZ,1,2``) and pressure (``?DH``) data.
 
 API documentation
 *****************
@@ -173,7 +173,7 @@ Utility functions
 Plotting functions
 ++++++++++++++++++
 
-.. automodule:: obstools.atacr.plot
+.. automodule:: obstools.atacr.plotting
    :members:
 
 Scripts
@@ -237,8 +237,8 @@ Usage
       -C CHANNELS, --channels CHANNELS
                             Specify a comma-separated list of channels for which
                             to perform the transfer function analysis. Possible
-                            options are 'H' (for horizontal channels) or 'P' (for
-                            pressure channel). Specifying 'H' allows for tilt
+                            options are '12' (for horizontal channels) or 'P' (for
+                            pressure channel). Specifying '12' allows for tilt
                             correction. Specifying 'P' allows for compliance
                             correction. [Default looks for both horizontal and
                             pressure and allows for both tilt AND compliance
@@ -566,8 +566,8 @@ Usage
       -C CHANNELS, --channels CHANNELS
                             Specify a comma-separated list of channels for which
                             to perform the transfer function analysis. Possible
-                            options are 'H' (for horizontal channels) or 'P' (for
-                            pressure channel). Specifying 'H' allows for tilt
+                            options are '12' (for horizontal channels) or 'P' (for
+                            pressure channel). Specifying '12' allows for tilt
                             correction. Specifying 'P' allows for compliance
                             correction. [Default looks for both horizontal and
                             pressure and allows for both tilt AND compliance
@@ -767,7 +767,7 @@ To check the station info for M08A, use the program ``ls_stdb``:
 
 We wish to download one month of data for the station M08A for March 2012. 
 The various options above allow us to select the additional channels to use
-(e.g., ``-C H,P`` for both horizontal and pressure data - which is the default
+(e.g., ``-C 12,P`` for both horizontal and pressure data - which is the default
 setting). Default frequency settings for data pre-processing match those of
 the Matlab ``ATaCR`` software and can therefore be ignored when calling the program.
 Since the file ``M08A.pkl`` contains only one station, it is not necessary to specify a
@@ -810,7 +810,7 @@ An example log printed on the terminal will look like:
     ***********************************************************
     * Downloading day-long data for key 7D.M08A and day 2012.61
     *
-    * Channels selected: ['H', 'P'] and vertical
+    * Channels selected: ['12', 'P'] and vertical
     *   2012.061.*SAC                                 
     *   -> Downloading Seismic data... 
     *      ...done
@@ -826,7 +826,7 @@ An example log printed on the terminal will look like:
     ***********************************************************
     * Downloading day-long data for key 7D.M08A and day 2012.62
     *
-    * Channels selected: ['H', 'P'] and vertical
+    * Channels selected: ['12', 'P'] and vertical
     *   2012.062.*SAC                                 
     *   -> Downloading Seismic data... 
 
@@ -911,7 +911,7 @@ pass the quality control are colored red.
 .. figure:: ../obstools/examples/figures/Figure_3b.png
    :align: center
 
-Figure 3a: Daily average PSD of bad (red) and good (black) windows.
+Figure 3b: Daily average PSD of bad (red) and good (black) windows.
 
 3. QC for clean station averages
 ++++++++++++++++++++++++++++++++
@@ -1025,12 +1025,12 @@ Once the ``StaNoise`` objects have been produced and saved to disk, the transfer
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available. 
 
-For compliance only (i.e., only ``?HZ`` and ``?XH?`` components are available),
+For compliance only (i.e., only ``?HZ`` and ``?DH?`` components are available),
 the only transfer function possible is:
 
 - ``ZP``
 
-For tilt only (i.e., all of ``?HZ,1,2`` components are available, but not ``?XH``), 
+For tilt only (i.e., all of ``?HZ,1,2`` components are available, but not ``?DH``), 
 the transfer functions are:
 
 - ``Z1``
@@ -1150,7 +1150,7 @@ Vanuatu earthquake (be conservative with the options), type in a terminal:
     *   Dep:  33.70; Mag: 6.6
     *     M08A  -> Ev: 9651.91 km;   86.80 deg; 239.43;  40.95
 
-    * Channels selected: ['H', 'P'] and vertical
+    * Channels selected: ['12', 'P'] and vertical
     *   2012.069.07.09                                     
     *   -> Downloading Seismic data... 
     *      ...done

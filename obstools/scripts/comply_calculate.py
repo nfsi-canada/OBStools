@@ -41,7 +41,8 @@ def get_comply_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    Calling options for the script `obs_transfer functions.py` that accompany this package.
+    Calling options for the script `obs_transfer functions.py` that accompanies
+    this package.
 
     """
 
@@ -190,7 +191,7 @@ def get_comply_arguments(argv=None):
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from " +
                 "start time: " + args.startT)
@@ -201,7 +202,7 @@ def get_comply_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from " +
                 "end time: " + args.endT)
@@ -231,7 +232,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -378,7 +379,7 @@ def main(args=None):
                 file.close()
 
                 # Load spectra into TFNoise object
-                daycomply = Comply(objnoise=daynoise, sta=sta)
+                daycomply = Comply(objnoise=daynoise, elev=sta.elevation*1.e3)
 
                 # Calculate the transfer functions
                 daycomply.calculate_compliance()
@@ -386,7 +387,7 @@ def main(args=None):
                 # Store the frequency axis
                 f = daycomply.f
 
-                # Append to list of transfer functions
+                # Append to list of transfer functions - for plotting
                 day_comply_functions.append(daycomply.complyfunc)
 
                 # Save daily transfer functions to file
@@ -405,7 +406,7 @@ def main(args=None):
                 if filepkl.exists():
                     if not args.ovr:
                         print("*   -> file " + str(filepkl) +
-                              " exists - continuing")
+                              " exists - loading")
 
                         # Load Comply object and append to list
                         stacomply = pickle.load(open(filepkl, 'rb'))
@@ -424,7 +425,7 @@ def main(args=None):
                 # Load spectra into TFNoise object - no Rotation object
                 # for station averages
                 rotation = Rotation(None, None, None)
-                stacomply = Comply(objnoise=stanoise, sta=sta)
+                stacomply = Comply(objnoise=stanoise, elev=sta.elevation*1.e3)
 
                 # Calculate the transfer functions
                 stacomply.calculate_compliance()
@@ -432,7 +433,7 @@ def main(args=None):
                 # Store the frequency axis
                 f = stacomply.f
 
-                # Extract the transfer functions
+                # Extract the transfer functions - for plotting
                 sta_comply_functions = stacomply.complyfunc
 
                 # Save average transfer functions to file
@@ -442,8 +443,8 @@ def main(args=None):
             fname = stkey + '.' + 'compliance'
             plot = plotting.fig_comply(
                 f, day_comply_functions, daycomply.tf_list,
-                sta_comply_functions, stacomply.tf_list, sta=sta,
-                f_0=args.f0)
+                sta_comply_functions, stacomply.tf_list, skey=stkey,
+                elev=sta.elevation*1.e3, f_0=args.f0)
 
             if plotpath:
                 plot.savefig(plotpath / (fname + '.' + args.form),

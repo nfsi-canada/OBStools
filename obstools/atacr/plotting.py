@@ -28,12 +28,13 @@ of the analysis at various final and intermediate steps.
 import numpy as np
 from matplotlib import pyplot as plt
 from obstools.atacr import utils
+from obspy import Trace
 
 
 def fig_QC(f, power, gooddays, ncomp, key=''):
     """
-    Function to plot the Quality-Control step of the analysis. This function is used
-    in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+    Function to plot the Quality-Control step of the analysis. This function
+    is used in both the `atacr_daily_spectra` or `atacr_clean_spectra` scripts.
 
     Parameters
     ----------
@@ -42,7 +43,8 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
     power : :class:`~obstools.classes.Power`
         Container for the Power spectra
     gooddays : List
-        List of booleans representing whether a window is good (True) or not (False)
+        List of booleans representing whether a window is good (True) or not
+        (False)
     ncomp : int
         Number of components used in analysis (can be 2, 3 or 4)
     key : str
@@ -71,12 +73,15 @@ def fig_QC(f, power, gooddays, ncomp, key=''):
                  'HZ component, Station: '+key,
                  'HP component, Station: '+key]
 
+    # Extract only positive frequencies
+    faxis = f > 0
+
     fig = plt.figure(6)
     for i, sl in enumerate(sls):
         ax = fig.add_subplot(ncomp, 1, i+1)
-        ax.semilogx(f, sl[:, gooddays], 'k', lw=0.5)
+        ax.semilogx(f[faxis], sl[:, gooddays][faxis], 'k', lw=0.5)
         if np.sum(~gooddays) > 0:
-            plt.semilogx(f, sl[:, ~gooddays], 'r', lw=0.5)
+            plt.semilogx(f[faxis], sl[:, ~gooddays][faxis], 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
         if i == len(sls)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
@@ -89,7 +94,7 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
     """
     Function to plot the averaged spectra (those qualified as 'good' in the
     QC step). This function is used
-    in both the `obs_daily_spectra.py` or `obs_clean_spectra.py` scripts.
+    in both the `atacr_daily_spectra` or `atacr_clean_spectra` scripts.
 
     Parameters
     ----------
@@ -100,7 +105,8 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
     bad : :class:`~obstools.classes.Power`
         Container for the *bad* Power spectra
     gooddays : List
-        List of booleans representing whether a window is good (True) or not (False)
+        List of booleans representing whether a window is good (True) or not
+        (False)
     ncomp : int
         Number of components used in analysis (can be 2, 3 or 4)
     key : str
@@ -136,12 +142,17 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
                  'Average HZ, Station: '+key,
                  'Average HP, Station: '+key]
 
+    # Extract only positive frequencies
+    faxis = f > 0
+
     plt.figure()
     for i, (cc, bc) in enumerate(zip(ccs, bcs)):
         ax = plt.subplot(ncomp, 1, i+1)
-        ax.semilogx(f, utils.smooth(np.log(cc), 50), 'k', lw=0.5)
+        ax.semilogx(
+            f[faxis], utils.smooth(np.log(cc)[faxis], 50), 'k', lw=0.5)
         if np.sum(~gooddays) > 0:
-            ax.semilogx(f, utils.smooth(np.log(bc), 50), 'r', lw=0.5)
+            ax.semilogx(
+                f[faxis], utils.smooth(np.log(bc)[faxis], 50), 'r', lw=0.5)
         ax.set_title(title[i], fontdict={'fontsize': 8})
         if i == len(ccs)-1:
             plt.xlabel('Frequency (Hz)', fontdict={'fontsize': 8})
@@ -153,8 +164,8 @@ def fig_average(f, power, bad, gooddays, ncomp, key=''):
 def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
                  save=False, fname='', form='png', **kwargs):
     """
-    Function to plot the averaged cross-spectra (those qualified as 'good' in the
-    QC step). This function is used in the `obs_daily_spectra.py` script.
+    Function to plot the averaged cross-spectra (those qualified as 'good' in
+    the QC step). This function is used in the `atacr_daily_spectra` script.
 
     Parameters
     ----------
@@ -163,15 +174,20 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     field : :class:`~obstools.classes.Rotation`
         Container for the Power spectra
     gooddays : List
-        List of booleans representing whether a window is good (True) or not (False)
+        List of booleans representing whether a window is good (True) or not
+        (False)
     ftype : str
-        Type of plot to be displayed. If ftype is Admittance, plot is loglog. Otherwise semilogx
+        Type of plot to be displayed. If ftype is Admittance, plot is loglog.
+        Otherwise semilogx
     key : str
         String corresponding to the station key under analysis
     **kwargs : None
         Keyword arguments to modify plot
 
     """
+
+    # Extract only positive frequencies
+    faxis = f > 0
 
     if ncomp == 2:
         fieldZP = field.cZP.T
@@ -200,13 +216,17 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
         ax = fig.add_subplot(len(fields), 1, i+1)
         # Extact field
         if ftype == 'Admittance':
-            ax.loglog(f, field[:, gooddays], color='gray', **kwargs)
+            ax.loglog(
+                f[faxis], field[:, gooddays][faxis], color='gray', **kwargs)
             if np.sum(~gooddays) > 0:
-                ax.loglog(f, field[:, ~gooddays], color='r', **kwargs)
+                ax.loglog(
+                    f[faxis], field[:, ~gooddays][faxis], color='r', **kwargs)
         else:
-            ax.semilogx(f, field[:, gooddays], color='gray', **kwargs)
+            ax.semilogx(
+                f[faxis], field[:, gooddays][faxis], color='gray', **kwargs)
             if np.sum(~gooddays) > 0:
-                ax.semilogx(f, field[:, ~gooddays], color='r', **kwargs)
+                ax.semilogx(
+                    f[faxis], field[:, ~gooddays][faxis], color='r', **kwargs)
         plt.ylabel(ftype, fontdict={'fontsize': 8})
         plt.title(key+' '+ftype+title[i], fontdict={'fontsize': 8})
         if i == len(fields)-1:
@@ -219,8 +239,8 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
 
 def fig_coh_ph(coh, ph, direc):
     """
-    Function to plot the coherence and phase between the rotated H and Z components,
-    used to characterize the tilt direction.
+    Function to plot the coherence and phase between the rotated H and Z
+    components, used to characterize the tilt direction.
 
     Parameters
     ----------
@@ -269,14 +289,21 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
         Frequency axis (in Hz)
     day_trfs : Dict
         Dictionary containing the transfer functions for the daily averages
+    day_list : Dict
+        Dictionary containing the list of daily transfer functions
     sta_trfs : Dict
         Dictionary containing the transfer functions for the station averages
-    key : str
+    sta_list : Dict
+        Dictionary containing the list of average transfer functions
+    skey : str
         String corresponding to the station key under analysis
 
     """
 
     import matplotlib.ticker as mtick
+
+    # Extract only positive frequencies
+    faxis = f > 0
 
     # Get max number of TFs to plot
     ntf = max(sum(day_list.values()), sum(sta_list.values()))
@@ -301,9 +328,14 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
         if day_list[key]:
             for i in range(len(day_trfs)):
                 ax.loglog(
-                    f, np.abs(day_trfs[i][key]['TF_'+key]), 'gray', lw=0.5)
+                    f[faxis],
+                    np.abs(day_trfs[i][key]['TF_'+key][faxis]),
+                    'gray', lw=0.5)
         if sta_list[key]:
-            ax.loglog(f, np.abs(sta_trfs[key]['TF_'+key]), 'k', lw=0.5)
+            ax.loglog(
+                f[faxis],
+                np.abs(sta_trfs[key]['TF_'+key][faxis]),
+                'k', lw=0.5)
         if key == 'ZP':
             ax.set_ylim(1.e-20, 1.e0)
             ax.set_xlim(1.e-4, 2.5)
@@ -343,7 +375,8 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
     return plt
 
 
-def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
+def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
+    elev=-1000., f_0=None):
     """
     Function to plot the transfer functions available.
 
@@ -353,22 +386,32 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         Frequency axis (in Hz)
     day_comps : Dict
         Dictionary containing the compliance functions for the daily averages
+    day_list : Dict
+        Dictionary containing the list of daily transfer functions
     sta_comps : Dict
         Dictionary containing the compliance functions for the station averages
-    key : str
+    sta_list : Dict
+        Dictionary containing the list of average transfer functions
+    skey : str
         String corresponding to the station key under analysis
+    elev : float
+        Station elevation in meters (OBS stations have negative elevations)
+    f_0 : float
+        Lowest frequency to consider in plot (Hz)
 
     """
 
     import matplotlib.ticker as mtick
     import matplotlib.pyplot as plt
 
-    # Get station information
-    sta_key = sta.network + '.' + sta.station
-    sta_H = -1.*sta.elevation*1.e3
+    # Extract only positive frequencies
+    faxis = f > 0
+
+    # Positive station elevation for frequency limit calc
+    elev = -1.*elev
 
     # Calculate theoretical frequency limit for infra-gravity waves
-    f_c = np.sqrt(9.81/np.pi/sta_H)/2.
+    f_c = np.sqrt(9.81/np.pi/elev)/2.
 
     # Define all possible combinations
     comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
@@ -395,26 +438,33 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         if day_list[key]:
             for i in range(len(day_comps)):
                 compliance = np.abs(day_comps[i][key][0])
-                ax.plot(f, compliance, 'gray', alpha=0.3, lw=0.5)
+                ax.plot(
+                    f[faxis],
+                    compliance[faxis],
+                    'gray', alpha=0.3, lw=0.5)
                 ax.set_xlim(f_0, f_c)
                 ytop = np.max(compliance[(f > f_0) & (f < f_c)])
                 ybot = np.min(compliance[(f > f_0) & (f < f_c)])
                 ax.set_ylim(ybot, ytop)
 
         if sta_list[key]:
-            ax.plot(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
+            ax.plot(
+                f[faxis],
+                np.abs(sta_comps[key][0][faxis]),
+                'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_title(sta_key+' Compliance: ZP',
+            ax.set_title(skey+' Compliance: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_title(sta_key+' Compliance: ZP-21',
+            ax.set_title(skey+' Compliance: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_title(sta_key+' Compliance: ZP-H',
+            ax.set_title(skey+' Compliance: ZP-H',
                          fontdict={'fontsize': 8})
 
-        ax.axvline(f_0, ls='--', c='k', lw=0.75)
+        if f_0:
+            ax.axvline(f_0, ls='--', c='k', lw=0.75)
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
         ax = fig.add_subplot(ncomps, 2, j*2+2)
@@ -423,22 +473,27 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
         if day_list[key]:
             for i in range(len(day_comps)):
                 ax.semilogx(
-                    f, np.abs(day_comps[i][key][1]), 'gray',
-                    alpha=0.3, lw=0.5)
+                    f[faxis],
+                    np.abs(day_comps[i][key][1][faxis]),
+                    'gray', alpha=0.3, lw=0.5)
         if sta_list[key]:
-            ax.semilogx(f, np.abs(sta_comps[key][1]), 'k', lw=0.5)
+            ax.semilogx(
+                f[faxis], 
+                np.abs(sta_comps[key][1][faxis]),
+                'k', lw=0.5)
 
         if key == 'ZP':
-            ax.set_title(sta_key+' Coherence: ZP',
+            ax.set_title(skey+' Coherence: ZP',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-21':
-            ax.set_title(sta_key+' Coherence: ZP-21',
+            ax.set_title(skey+' Coherence: ZP-21',
                          fontdict={'fontsize': 8})
         elif key == 'ZP-H':
-            ax.set_title(sta_key+' Coherence: ZP-H',
+            ax.set_title(skey+' Coherence: ZP-H',
                          fontdict={'fontsize': 8})
 
-        ax.axvline(f_0, ls='--', c='k', lw=0.75)
+        if f_0:
+            ax.axvline(f_0, ls='--', c='k', lw=0.75)
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
     axes = plt.gcf().get_axes()
@@ -450,7 +505,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, sta, f_0):
     return plt
 
 
-def fig_event_raw(evstream, fmin, fmax):
+def fig_event_raw(evstream, fmin=1./150., fmax=2.):
     """
     Function to plot the raw (although bandpassed) seismograms.
 
@@ -465,49 +520,55 @@ def fig_event_raw(evstream, fmin, fmax):
 
     """
 
-    import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=fmin,
-                        freqmax=fmax, corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=fmin,
-                        freqmax=fmax, corners=2, zerophase=True)
-    sr = evstream.sth[0].stats.sampling_rate
-    taxis = np.arange(0., 7200., 1./sr)
+    from obspy import Stream
+
+    # Unpack traces
+    tr1 = evstream.tr1.copy()
+    tr2 = evstream.tr2.copy()
+    trZ = evstream.trZ.copy()
+    trP = evstream.trP.copy()
+    st = Stream(traces=[tr for tr in [tr1, tr2, trZ, trP] if np.any(tr.data)])
+    st.filter(
+        'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+    sr = trZ.stats.sampling_rate
+
+    taxis = np.arange(0., trZ.stats.npts/sr, 1./sr)
 
     fig = plt.figure(figsize=(6, 6))
 
     ax = fig.add_subplot(4, 1, 1)
-    ax.plot(taxis, evstream.sth.select(component='Z')[0].data, 'k', lw=0.5)
-    ax.set_title(evstream.key+' '+evstream.tstamp +
+    ax.plot(taxis, trZ.data, 'k', lw=0.5)
+    ax.set_title(evstream.key + ' ' + evstream.tstamp +
                  ': Z', fontdict={'fontsize': 8})
     ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                         scilimits=(-3, 3))
-    ax.set_xlim((0., 7200.))
+    ax.set_xlim((0., trZ.stats.npts/sr))
 
-    if len(evstream.sth) > 1:
+    if len(tr1.data > 0):
         ax = fig.add_subplot(4, 1, 2)
-        ax.plot(taxis, evstream.sth.select(component='1')[0].data, 'k', lw=0.5)
+        ax.plot(taxis, tr1.data, 'k', lw=0.5)
         ax.set_xlim((0., 7200.))
-        ax.set_title(evstream.tstamp+': 1', fontdict={'fontsize': 8})
+        ax.set_title(evstream.tstamp + ': 1', fontdict={'fontsize': 8})
         ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                             scilimits=(-3, 3))
 
         ax = fig.add_subplot(4, 1, 3)
-        ax.plot(taxis, evstream.sth.select(component='2')[0].data, 'k', lw=0.5)
-        ax.set_xlim((0., 7200.))
-        ax.set_title(evstream.tstamp+': 2', fontdict={'fontsize': 8})
+        ax.plot(taxis, tr2.data, 'k', lw=0.5)
+        ax.set_xlim((0., trZ.stats.npts/sr))
+        ax.set_title(evstream.tstamp + ': 2', fontdict={'fontsize': 8})
         ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                             scilimits=(-3, 3))
 
-    if evstream.stp:
-        if len(evstream.sth) > 1:
+    if len(trP.data > 0):
+        if len(tr1.data > 0):
             ax = fig.add_subplot(4, 1, 4)
         else:
             ax = fig.add_subplot(4, 1, 2)
-        ax.plot(taxis, evstream.stp[0].data, 'k', lw=0.5)
+        ax.plot(taxis, trP.data, 'k', lw=0.5)
         ax.ticklabel_format(axis='y', style='sci', useOffset=True,
                             scilimits=(-3, 3))
-        ax.set_xlim((0., 7200.))
-        ax.set_title(evstream.tstamp+': P', fontdict={'fontsize': 8})
+        ax.set_xlim((0., trZ.stats.npts/sr))
+        ax.set_title(evstream.tstamp + ': P', fontdict={'fontsize': 8})
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()
@@ -515,7 +576,7 @@ def fig_event_raw(evstream, fmin, fmax):
     return plt
 
 
-def fig_event_corrected(evstream, TF_list):
+def fig_event_corrected(evstream, TF_list, fmin=1./150., fmax=2.):
     """
     Function to plot the corrected vertical component seismograms.
 
@@ -529,76 +590,99 @@ def fig_event_corrected(evstream, TF_list):
 
     """
 
-    import matplotlib as mpl
-    evstream.sth.filter('bandpass', freqmin=1./150.,
-                        freqmax=1./10., corners=2, zerophase=True)
-    evstream.stp.filter('bandpass', freqmin=1./150.,
-                        freqmax=1./10., corners=2, zerophase=True)
-    sr = evstream.sth[0].stats.sampling_rate
-    taxis = np.arange(0., 7200., 1./sr)
+    # Unpack vertical trace and filter
+    trZ = evstream.trZ.copy()
+    trZ.filter(
+        'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+    sr = trZ.stats.sampling_rate
+    taxis = np.arange(0., trZ.stats.npts/sr, 1./sr)
 
     plt.figure(figsize=(8, 8))
 
     plt.subplot(611)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z1']:
-        plt.plot(taxis, evstream.correct['Z1'], 'k', lw=0.5)
-    plt.title(evstream.key+' '+evstream.tstamp +
+        tr = Trace(
+            data=evstream.correct['Z1'],
+            header=trZ.stats).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
+    plt.title(evstream.key + ' ' + evstream.tstamp +
               ': Z1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(612)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['Z2-1']:
-        plt.plot(taxis, evstream.correct['Z2-1'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': Z2-1', fontdict={'fontsize': 8})
+        tr = Trace(
+            data=evstream.correct['Z2-1'],
+            header=trZ.stats).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
+    plt.title(evstream.tstamp + ': Z2-1', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(613)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-21']:
-        plt.plot(taxis, evstream.correct['ZP-21'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZP-21', fontdict={'fontsize': 8})
+        tr = Trace(
+            data=evstream.correct['ZP-21'],
+            header=trZ.stats).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
+    plt.title(evstream.tstamp + ': ZP-21', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(614)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZH']:
-        plt.plot(taxis, evstream.correct['ZH'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZH', fontdict={'fontsize': 8})
+        tr = Trace(
+            data=evstream.correct['ZH'],
+            header=trZ.stats).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
+    plt.title(evstream.tstamp + ': ZH', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(615)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP-H']:
-        plt.plot(taxis, evstream.correct['ZP-H'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZP-H', fontdict={'fontsize': 8})
+        tr = Trace(
+            data=evstream.correct['ZP-H'],
+            header=trZ.stats).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
+    plt.title(evstream.tstamp + ': ZP-H', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.subplot(616)
     plt.plot(
-        taxis, evstream.sth.select(component='Z')[0].data, 'lightgray', lw=0.5)
+        taxis, trZ.data, 'lightgray', lw=0.5)
     if TF_list['ZP']:
-        plt.plot(taxis, evstream.correct['ZP'], 'k', lw=0.5)
-    plt.title(evstream.tstamp+': ZP', fontdict={'fontsize': 8})
+        tr = Trace(
+            data=evstream.correct['ZP'],
+            header=trZ.stats).filter(
+            'bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+        plt.plot(taxis, tr.data, 'k', lw=0.5)
+    plt.title(evstream.tstamp + ': ZP', fontdict={'fontsize': 8})
     plt.gca().ticklabel_format(axis='y', style='sci', useOffset=True,
                                scilimits=(-3, 3))
-    plt.xlim((0., 7200.))
+    plt.xlim((0., trZ.stats.npts/sr))
 
     plt.xlabel('Time since earthquake (sec)')
     plt.tight_layout()

@@ -42,7 +42,8 @@ def get_daylong_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    Calling options for the script `obs_download_data.py` that accompany this package.
+    Calling options for the script `obs_download_data.py` that accompany this
+    package.
 
     """
 
@@ -82,10 +83,10 @@ def get_daylong_arguments(argv=None):
         default="",
         help="Specify a comma-separated list of channels for " +
         "which to perform the transfer function analysis. " +
-        "Possible options are 'H' (for horizontal channels) or 'P' " +
-        "(for pressure channel). Specifying 'H' allows " +
+        "Possible options are '12' (for horizontal channels 1 and 2) " +
+        "and/or 'P' (for pressure channel). Specifying '12' allows " +
         "for tilt correction. Specifying 'P' allows for compliance " +
-        "correction. [Default looks for both horizontal and " +
+        "correction. [Default '12,P' looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(
         "-O", "--overwrite",
@@ -214,16 +215,16 @@ def get_daylong_arguments(argv=None):
     if len(args.channels) > 0:
         args.channels = args.channels.split(',')
     else:
-        args.channels = ["H", "P"]
+        args.channels = ["12", "P"]
     for cha in args.channels:
-        if cha not in ["H", "P"]:
+        if cha not in ["12", "P"]:
             parser.error("Error: Channel not recognized " + str(cha))
 
     # construct start time
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from start time: " +
                 args.startT)
@@ -234,7 +235,7 @@ def get_daylong_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from end time: " +
                 args.endT)
@@ -293,7 +294,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop
@@ -432,7 +433,7 @@ def main(args=None):
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
 
-                except:
+                except Exception:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
                     t1 += dt
@@ -441,7 +442,7 @@ def main(args=None):
 
                 st = sth
 
-            elif "H" not in args.channels:
+            elif "12" not in args.channels:
 
                 # If data files exist, continue
                 if fileZ.exists() and fileP.exists():
@@ -467,7 +468,7 @@ def main(args=None):
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
 
-                except:
+                except Exception:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
                     t1 += dt
@@ -483,14 +484,16 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
+                        print(
+                            "*   -> Renaming channel to " +
+                            sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
 
-                except:
+                except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     t1 += dt
@@ -527,7 +530,7 @@ def main(args=None):
                         starttime=t1, endtime=t2, attach_response=True)
                     print("*      ...done")
 
-                except:
+                except Exception:
                     print(" Error: Unable to download ?H? components - " +
                           "continuing")
                     t1 += dt
@@ -543,14 +546,16 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
+                        print(
+                            "*   -> Renaming channel to " +
+                            sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
 
-                except:
+                except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     t1 += dt
@@ -562,7 +567,8 @@ def main(args=None):
             # Detrend, filter
             st.detrend('demean')
             st.detrend('linear')
-            st.filter('lowpass', freq=0.5*args.new_sampling_rate,
+            st.filter(
+                'lowpass', freq=0.5*args.new_sampling_rate,
                 corners=2, zerophase=True)
             st.resample(args.new_sampling_rate)
 
@@ -581,19 +587,19 @@ def main(args=None):
             # Extract traces - Z
             trZ = sth.select(component='Z')[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation, 
+                trZ, sta.latitude, sta.longitude, sta.elevation,
                 sta.channel+'Z')
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces - H
-            if "H" in args.channels:
+            if "12" in args.channels:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation, 
+                    tr1, sta.latitude, sta.longitude, sta.elevation,
                     sta.channel+'1')
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation, 
+                    tr2, sta.latitude, sta.longitude, sta.elevation,
                     sta.channel+'2')
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
@@ -605,8 +611,8 @@ def main(args=None):
                 stp.remove_response(pre_filt=args.pre_filt)
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation, 
-                    sta.channel[0]+'P')
+                    trP, sta.latitude, sta.longitude, sta.elevation,
+                    sta.channel[0]+'DH')
                 trP.write(str(fileP), format='SAC')
 
             t1 += dt

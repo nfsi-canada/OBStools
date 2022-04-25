@@ -41,7 +41,8 @@ def get_dailyspec_arguments(argv=None):
     """
     Get Options from :class:`~optparse.OptionParser` objects.
 
-    Calling options for the script `obs_daily_spectra.py` that accompany this package.
+    Calling options for the script `obs_daily_spectra.py` that accompany this
+    package.
 
     """
 
@@ -252,7 +253,7 @@ def get_dailyspec_arguments(argv=None):
     if len(args.startT) > 0:
         try:
             args.startT = UTCDateTime(args.startT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from start time: " +
                 args.startT)
@@ -263,7 +264,7 @@ def get_dailyspec_arguments(argv=None):
     if len(args.endT) > 0:
         try:
             args.endT = UTCDateTime(args.endT)
-        except:
+        except Exception:
             parser.error(
                 "Error: Cannot construct UTCDateTime from end time: " +
                 args.endT)
@@ -296,7 +297,7 @@ def main(args=None):
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
     # stdb=0.1.3
-    except:
+    except Exception:
         db = stdb.io.load_db(fname=args.indb)
 
         # Construct station key loop

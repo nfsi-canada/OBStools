@@ -23,7 +23,7 @@ def test_get_daylong_arguments():
         dbfile, '--keys', 'MM08'])
     # channels
     args = atacr.get_daylong_arguments([
-        dbfile, '--channels', 'H,P'])
+        dbfile, '--channels', '12,P'])
     with pytest.raises(SystemExit):
         atacr.get_daylong_arguments([
             dbfile, '--channels', 'J,P'])
@@ -76,7 +76,7 @@ def test_get_event_arguments():
         dbfile, '--keys', '7D.MM08'])
     # channels
     args = atacr.get_event_arguments([
-        dbfile, '--channels', 'H,P'])
+        dbfile, '--channels', '12,P'])
     with pytest.raises(SystemExit):
         atacr.get_event_arguments([
             dbfile, '--channels', 'J,P'])
@@ -92,7 +92,7 @@ def test_get_event_arguments():
     with pytest.raises(SystemExit):
         atacr.get_event_arguments([
             dbfile, '--end', 'abcd'])
-     # user auth
+    # user auth
     args = atacr.get_event_arguments([
         dbfile, '-U', 'user:name'])
     with pytest.raises(SystemExit):

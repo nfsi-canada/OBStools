@@ -31,18 +31,28 @@ import math
 import numpy as np
 import fnmatch
 from matplotlib import pyplot as plt
-from obspy.core import read, Stream, Trace, AttribDict
-from scipy.signal import savgol_filter
-
-
-def floor_decimal(n, decimals=0):
-    multiplier = 10 ** decimals
-    return math.floor(n * multiplier) / multiplier
+from obspy.core import read, Stream, Trace, AttribDict, UTCDateTime
 
 
 def traceshift(trace, tt):
     """
     Function to shift traces in time given travel time
+
+
+    Parameters
+    ----------
+
+    trace : :class:`~obspy.core.Trace` object
+        Trace object to update
+    tt : float
+        Time shift in seconds
+
+    Returns
+    -------
+
+    rtrace : :class:`~obspy.core.Trace` object
+        Updated trace object
+
 
     """
 
@@ -69,6 +79,32 @@ def traceshift(trace, tt):
 
 
 def QC_streams(start, end, st):
+    """
+    Function for quality control of traces, which compares the
+    start and end times that were requested, as well as the total n
+    length of the traces.
+
+
+    Parameters
+    ----------
+
+    start : :class:`~obspy.core.UTCDateTime` object
+        Start time of requested stream
+    end : :class:`~obspy.core.UTCDateTime` object
+        End time of requested stream
+    st : :class:`~obspy.core.Stream` object
+        Stream object with all trace data
+
+    Returns
+    -------
+
+    (pass): bool
+        Whether the QC test has passed
+    st : :class:`~obspy.core.Stream` object
+        Updated stream object
+
+
+    """
 
     # Check start times
     if not np.all([tr.stats.starttime == start for tr in st]):
@@ -83,19 +119,11 @@ def QC_streams(start, end, st):
             traces=[traceshift(tr, dt) for tr, dt in zip(st, delay)])
         st = st_shifted.copy()
 
-    # # Check sampling rate
-    # sr = st[0].stats.sampling_rate
-    # sr_round = float(floor_decimal(sr, 0))
-    # if not sr == sr_round:
-    #     print("* Sampling rate is not an integer value: ", sr)
-    #     print("* -> Resampling")
-    #     st.resample(sr_round, no_filter=False)
-
     # Try trimming
     dt = st[0].stats.delta
     try:
         st.trim(start, end-dt, fill_value=0., pad=True)
-    except:
+    except Exception:
         print("* Unable to trim")
         print("* -> Skipping")
         print("**************************************************")
@@ -125,7 +153,7 @@ def QC_streams(start, end, st):
         return True, st
 
 
-def update_stats(tr, stla, stlo, stel, cha):
+def update_stats(tr, stla, stlo, stel, cha, evla=None, evlo=None):
     """
     Function to include SAC metadata to :class:`~obspy.core.Trace` objects
 
@@ -138,8 +166,14 @@ def update_stats(tr, stla, stlo, stel, cha):
         Latitude of station
     stlo : float
         Longitude of station
+    stel : float
+        Station elevation (m)
     cha : str
         Channel for component
+    evla : float, optional
+        Latitude of event
+    evlo : float, optional
+        Longitute of event
 
     Returns
     -------
@@ -155,6 +189,9 @@ def update_stats(tr, stla, stlo, stel, cha):
     tr.stats.sac.stel = stel
     tr.stats.sac.kcmpnm = cha
     tr.stats.channel = cha
+    if evla is not None and evlo is not None:
+        tr.stats.sac.evla = evla
+        tr.stats.sac.evlo = evlo
 
     return tr
 
@@ -175,8 +212,8 @@ def get_data(datapath, tstart, tend):
     Returns
     -------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. Returns empty traces
-        for missing components.
+        Corresponding trace objects for components H1, H2, HZ and HP. Returns
+        empty traces for missing components.
 
     """
 
@@ -244,7 +281,8 @@ def get_data(datapath, tstart, tend):
 
 def get_event(eventpath, tstart, tend):
     """
-    Function to grab all available earthquake data given a path and data time range
+    Function to grab all available earthquake data given a path and data time
+    range
 
     Parameters
     ----------
@@ -258,10 +296,20 @@ def get_event(eventpath, tstart, tend):
     Returns
     -------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. Returns empty traces
-        for missing components.
+        Corresponding trace objects for components H1, H2, HZ and HP. Returns
+        empty traces for missing components.
 
     """
+
+    # Find out how many events from Z.SAC files
+    eventfiles = list(eventpath.glob('*Z.SAC'))
+    if not eventfiles:
+        raise(Exception("No event found in folder "+str(eventpath)))
+
+    # Extract events from time stamps
+    prefix = [file.name.split('.') for file in eventfiles]
+    evstamp = [p[0]+'.'+p[1]+'.'+p[2]+'.'+p[3]+'.' for p in prefix]
+    evDateTime = [UTCDateTime(p[0]+'-'+p[1]+'T'+p[2]+":"+p[3]) for p in prefix]
 
     # Define empty streams
     tr1 = Stream()
@@ -269,34 +317,26 @@ def get_event(eventpath, tstart, tend):
     trZ = Stream()
     trP = Stream()
 
-    # Time iterator
-    t1 = tstart
+    # Cycle over all available files in time range
+    for event, tstamp in zip(evDateTime, evstamp):
+        if event >= tstart and event <= tend:
 
-    # Cycle through each day withing time range
-    while t1 < tend:
-
-        # Time stamp used in file name
-        tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
-
-        # Cycle through directory and load files
-        p = eventpath.glob('*.*')
-        files = [x for x in p if x.is_file()]
-        for file in files:
-            if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
-                tr = read(str(file))
-                tr1.append(tr[0])
-            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
-                tr = read(str(file))
-                tr2.append(tr[0])
-            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
-                tr = read(str(file))
-                trZ.append(tr[0])
-            elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
-                tr = read(str(file))
-                trP.append(tr[0])
-
-        # Increase increment
-        t1 += 3600.*24.
+            # Cycle through directory and load files
+            p = list(eventpath.glob('*.SAC'))
+            files = [x for x in p if x.is_file()]
+            for file in files:
+                if fnmatch.fnmatch(str(file), '*' + tstamp + '*1.SAC'):
+                    tr = read(str(file))
+                    tr1.append(tr[0])
+                elif fnmatch.fnmatch(str(file), '*' + tstamp + '*2.SAC'):
+                    tr = read(str(file))
+                    tr2.append(tr[0])
+                elif fnmatch.fnmatch(str(file), '*' + tstamp + '*Z.SAC'):
+                    tr = read(str(file))
+                    trZ.append(tr[0])
+                elif fnmatch.fnmatch(str(file), '*' + tstamp + '*H.SAC'):
+                    tr = read(str(file))
+                    trP.append(tr[0])
 
     # Fill with empty traces if components are not found
     ntr = len(trZ)
@@ -336,20 +376,24 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     f : :class:`~numpy.ndarray`
         Frequency axis in Hz
     goodwins : list
-        List of booleans representing whether a window is good (True) or not (False).
-        This attribute is returned from the method :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
-    tiltfreq : list
-        Two floats representing the frequency band at which the tilt is calculated
+        List of booleans representing whether a window is good (True) or not
+        (False). This attribute is returned from the method
+        :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
+    tiltfreq : list, optional
+        Two floats representing the frequency band at which the tilt is
+        calculated
 
     Returns
     -------
     cHH, cHZ, cHP : :class:`~numpy.ndarray`
-        Arrays of power and cross-spectral density functions of components HH (rotated H1
-        in direction of maximum tilt), HZ, and HP
+        Arrays of power and cross-spectral density functions of components HH
+        (rotated H1 in direction of maximum tilt), HZ, and HP
     coh : :class:`~numpy.ndarray`
-        Coherence value between rotated H and Z components, as a function of directions (azimuths)
+        Coherence value between rotated H and Z components, as a function of
+        directions (azimuths)
     ph : :class:`~numpy.ndarray`
-        Phase value between rotated H and Z components, as a function of directions (azimuths)
+        Phase value between rotated H and Z components, as a function of
+        directions (azimuths)
     direc : :class:`~numpy.ndarray`
         Array of directions (azimuths) considered
     tilt : float
@@ -448,45 +492,6 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     return cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value
 
 
-def calculate_windowed_fft(trace, ws, ss=None, hann=True):
-    """
-    Calculates windowed Fourier transform
-
-    Parameters
-    ----------
-    trace : :class:`~obspy.core.Trace`
-        Input trace data
-    ws : int
-        Window size, in number of samples
-    ss : int
-        Step size, or number of samples until next window
-    han : bool
-        Whether or not to apply a Hanning taper to data
-
-    Returns
-    -------
-    ft : :class:`~numpy.ndarray`
-        Fourier transform of trace
-    f : :class:`~numpy.ndarray`
-        Frequency axis in Hz
-
-    """
-
-    n2 = _npow2(ws)
-    f = trace.stats.sampling_rate/2. * np.linspace(0., 1., int(n2/2) + 1)
-
-    # Extract sliding windows
-    tr, nd = sliding_window(trace.data, ws, ss)
-
-    # Fourier transform
-    ft = np.fft.fft(tr, n=n2)
-
-    return ft, f
-
-# def smooth(data, np, poly=0, axis=0):
-#     return savgol_filter(data, np, poly, axis=axis, mode='wrap')
-
-
 def smooth(data, nd, axis=0):
     """
     Function to smooth power spectral density functions from the convolution
@@ -498,7 +503,7 @@ def smooth(data, nd, axis=0):
         Real-valued array to smooth (PSD)
     nd : int
         Number of samples over which to smooth
-    axis : int
+    axis : int, optional
         axis over which to perform the smoothing
 
     Returns
@@ -596,57 +601,6 @@ def phase(Gxy):
         return None
 
 
-def sliding_window(a, ws, ss=None, hann=True):
-    """
-    Function to split a data array into overlapping, possibly tapered sub-windows
-
-    Parameters
-    ----------
-    a : :class:`~numpy.ndarray`
-        1D array of data to split
-    ws : int
-        Window size in samples
-    ss : int
-        Step size in samples. If not provided, window and step size
-         are equal.
-
-    Returns
-    -------
-    out : :class:`~numpy.ndarray`
-        1D array of windowed data
-    nd : int
-        Number of windows
-
-    """
-
-    if ss is None:
-        # no step size was provided. Return non-overlapping windows
-        ss = ws
-
-    # Calculate the number of windows to return, ignoring leftover samples, and
-    # allocate memory to contain the samples
-    valid = len(a) - ss
-    nd = (valid) // ss
-    out = np.ndarray((nd, ws), dtype=a.dtype)
-
-    if nd == 0:
-        if hann:
-            out = a * np.hanning(ws)
-        else:
-            out = a
-
-    for i in range(nd):
-        # "slide" the window along the samples
-        start = i * ss
-        stop = start + ws
-        if hann:
-            out[i] = a[start: stop] * np.hanning(ws)
-        else:
-            out[i] = a[start: stop]
-
-    return out, nd
-
-
 def rotate_dir(tr1, tr2, direc):
 
     d = -direc*np.pi/180.+np.pi/2.
@@ -679,7 +633,3 @@ def ftest(res1, pars1, res2, pars2):
     P = 1. - (f_dist.cdf(Fobs, dof1, dof2) - f_dist.cdf(1./Fobs, dof1, dof2))
 
     return P
-
-
-def _npow2(x):
-    return 1 if x == 0 else 2**(x-1).bit_length()

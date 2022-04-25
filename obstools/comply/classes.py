@@ -42,8 +42,8 @@ class Comply(object):
 
     Attributes
     ----------
-    sta : :class:`~stdb.StdbElement`
-        An instance of an stdb object
+    elev : float
+        Station elevation in meters (OBS stations have negative elevations)
     f : :class:`~numpy.ndarray`
         Frequency axis for corresponding time sampling parameters
     c11 : `numpy.ndarray`
@@ -61,9 +61,9 @@ class Comply(object):
 
     """
 
-    def __init__(self, sta=None, objnoise=None):
+    def __init__(self, objnoise=None, elev=None):
 
-        if any(value == None for value in [sta, objnoise]):
+        if any(value is None for value in [elev, objnoise]):
             raise(Exception(
                 "Error: Initializing EventStream object with None values - " +
                 "aborting"))
@@ -79,7 +79,7 @@ class Comply(object):
                 "Error: Noise object has not been processed (QC and " +
                 "averaging) - aborting"))
 
-        self.sta = sta
+        self.elevation = elev
         self.f = objnoise.f
         self.c11 = objnoise.power.c11
         self.c22 = objnoise.power.c22
@@ -118,7 +118,9 @@ class Comply(object):
         Examples
         --------
 
-        Calculate compliance and coherence functions for a DayNoise object
+        Calculate compliance and coherence functions for a DayNoise object.
+        In these examples, station elevation is extracted from the IRIS
+        metadata aggregator site: http://ds.iris.edu/mda/7D/M08A/
 
         >>> from obstools.atacr import DayNoise
         >>> from obstools.comply import Comply
@@ -126,7 +128,7 @@ class Comply(object):
         Uploading demo data - March 04, 2012, station 7D.M08A
         >>> daynoise.QC_daily_spectra()
         >>> daynoise.average_daily_spectra()
-        >>> daycomply = Comply(objnoise=daynoise, sta=sta)
+        >>> daycomply = Comply(objnoise=daynoise, elev=-126.4)
         >>> daycomply.calculate_compliance()
         >>> tfnoise.complyfunc.keys()
         dict_keys(['ZP', 'ZP-21', 'ZP-H'])
@@ -139,7 +141,7 @@ class Comply(object):
         Uploading demo data - March 01 to 04, 2012, station 7D.M08A
         >>> stanoise.QC_sta_spectra()
         >>> stanoise.average_sta_spectra()
-        >>> stacomply = Comply(objnoise=stanoise, sta=sta)
+        >>> stacomply = Comply(objnoise=stanoise, elev=-126.4)
         >>> stacomply.calculate_compliance()
         >>> stacomply.complyfunc.keys()
         dict_keys(['ZP', 'ZP-21'])
@@ -189,7 +191,7 @@ class Comply(object):
                     k[i] = 0.
                 else:
 
-                    a0 = -27 * om**2 / g                   # constant terms
+                    a0 = -27 * om**2 / g    # constant terms
                     a1 = 0.                 # no linear terms
                     a2 = 27 * H - (9 * om**2 * H**2)/g     # quadratic terms
                     a3 = 0.                 # no cubic terms
@@ -210,7 +212,7 @@ class Comply(object):
             return k
 
         # Calculate wavenumber - careful here, elevation is negative
-        k = wavenumber(2.*np.pi*self.f, -1.*self.sta.elevation*1.e3)
+        k = wavenumber(2.*np.pi*self.f, -1.*self.elevation)
 
         # Initialize empty dictionary
         complyfunc = self.ComplyDict()

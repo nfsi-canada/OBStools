@@ -22,7 +22,7 @@
 
 
 import sys
-from scipy.signal import spectrogram, stft, detrend
+from scipy.signal import stft, detrend
 from scipy.linalg import norm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,7 +32,7 @@ from obstools.atacr import utils, plotting
 from pkg_resources import resource_filename
 from pathlib import Path
 np.seterr(all='ignore')
-#np.set_printoptions(threshold=sys.maxsize)
+# np.set_printoptions(threshold=sys.maxsize)
 
 
 class Power(object):
@@ -145,6 +145,9 @@ class DayNoise(object):
 
     Attributes
     ----------
+    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+        Corresponding trace objects for components H1, H2, HZ and HP. 
+        Traces can be empty (i.e., ``Trace()``) for missing components.
     window : float
         Length of time window in seconds
     overlap : float
@@ -169,22 +172,6 @@ class DayNoise(object):
     tf_list : Dict
         Dictionary of possible transfer functions given the available
         components.
-    goodwins : list
-        List of booleans representing whether a window is good (True) or
-        not (False).
-        This attribute is returned from the method
-        :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
-    power : :class:`~obstools.atacr.classes.Power`
-        Container for daily spectral power for all available components
-    cross : :class:`~obstools.atacr.classes.Cross`
-        Container for daily cross spectral power for all available components
-    rotation : :class:`~obstools.atacr.classes.Rotation`
-        Container for daily rotated (cross) spectral power for all available
-        components
-    f : :class:`~numpy.ndarray`
-        Frequency axis for corresponding time sampling parameters. Determined
-        from method
-        :func:`~obstools.atacr.classes.DayNoise.average_daily_spectra`
 
     Examples
     --------
@@ -198,10 +185,10 @@ class DayNoise(object):
     Now check its main attributes
 
     >>> print(*[daynoise.tr1, daynoise.tr2, daynoise.trZ, daynoise.trP], sep="\n")
-    7D.M08A..1 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-    7D.M08A..2 | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-    7D.M08A..P | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
-    7D.M08A..Z | 2012-03-04T00:00:00.005500Z - 2012-03-04T23:59:59.805500Z | 5.0 Hz, 432000 samples
+    7D.M08A..BH1 | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples
+    7D.M08A..BH2 | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples
+    7D.M08A..BHZ | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples
+    7D.M08A..BDH | 2012-03-04T00:00:00.000000Z - 2012-03-04T23:59:59.800000Z | 5.0 Hz, 432000 samples    
     >>> daynoise.window
     7200.0
     >>> daynoise.overlap
@@ -227,7 +214,7 @@ class DayNoise(object):
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
-            trP = st.select(component='P')[0]
+            trP = st.select(component='H')[0]
             window = 7200.
             overlap = 0.3
             key = '7D.M08A'
@@ -248,11 +235,12 @@ class DayNoise(object):
         self.key = key
 
         # Get trace attributes
-        self.dt = self.trZ.stats.delta
-        self.npts = self.trZ.stats.npts
-        self.fs = self.trZ.stats.sampling_rate
-        self.year = self.trZ.stats.starttime.year
-        self.julday = self.trZ.stats.starttime.julday
+        zstats = self.trZ.stats
+        self.dt = zstats.delta
+        self.npts = zstats.npts
+        self.fs = zstats.sampling_rate
+        self.year = zstats.starttime.year
+        self.julday = zstats.starttime.julday
         self.tkey = str(self.year) + '.' + str(self.julday)
 
         # Get number of components for the available, non-empty traces
@@ -277,7 +265,7 @@ class DayNoise(object):
         self.av = False
 
     def QC_daily_spectra(self, pd=[0.004, 0.2], tol=1.5, alpha=0.05,
-                         smooth=True, fig_QC=False, debug=False, save=False,
+                         smooth=True, fig_QC=False, debug=False, save=None,
                          form='png'):
         """
         Method to determine daily time windows for which the spectra are
@@ -301,9 +289,18 @@ class DayNoise(object):
         debug : boolean
             Whether or not to plot intermediate steps in the QC procedure
             for debugging
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
+        ftX : :class:`~numpy.ndarray`
+            Windowed Fourier transform for the `X` component (can be either
+            1, 2, Z or P)
+        f : :class:`~numpy.ndarray`
+            Full frequency axis (Hz)
         goodwins : list
             List of booleans representing whether a window is good (True)
             or not (False)
@@ -342,23 +339,64 @@ class DayNoise(object):
         wind[0:ss] = hanning[0:ss]
         wind[-ss:ws] = hanning[ss:ws]
 
+        # Get windowed Fourier transforms
+        ft1 = self.ft1 = None
+        ft2 = self.ft2 = None
+        ftZ = self.ftZ = None
+        ftP = self.ftP = None
+
+        # Calculate windowed FFTs and store as transpose
+        f, t, ftZ = stft(
+            self.trZ.data, self.fs, return_onesided=False, boundary=None,
+            padded=False, window=wind, nperseg=ws, noverlap=ss,
+            detrend='constant')
+        ftZ = ftZ * ws
+        self.ftZ = ftZ.T
+        if self.ncomp == 2 or self.ncomp == 4:
+            _f, _t, ftP = stft(
+                self.trP.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss,
+                detrend='constant')
+            ftP = ftP * ws
+            self.ftP = ftP.T
+        if self.ncomp == 3 or self.ncomp == 4:
+            _f, _t, ft1 = stft(
+                self.tr1.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss,
+                detrend='constant')
+            _f, _t, ft2 = stft(
+                self.tr2.data, self.fs, return_onesided=False, boundary=None,
+                padded=False, window=wind, nperseg=ws, noverlap=ss,
+                detrend='constant')
+            ft1 = ft1 * ws
+            ft2 = ft2 * ws
+            self.ft1 = ft1.T
+            self.ft2 = ft2.T
+
+        # Store frequency axis
+        self.f = f
+
         # Get spectrograms for single day-long keys
         psd1 = None
         psd2 = None
         psdZ = None
         psdP = None
-        f, t, psdZ = spectrogram(
-            self.trZ.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-        self.f = f
-        print(f)
+
+        # Positive frequencies for PSD plots
+        faxis = int(len(f)/2)
+        f = f[0:faxis]
+
+        psdZ = np.abs(ftZ)**2*2./self.dt
+        psdZ = psdZ[0:faxis, :]
+
         if self.ncomp == 2 or self.ncomp == 4:
-            f, t, psdP = spectrogram(
-                self.trP.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+            psdP = np.abs(ftP)**2*2/self.dt
+            psdP = psdP[0:faxis, :]
         if self.ncomp == 3 or self.ncomp == 4:
-            f, t, psd1 = spectrogram(
-                self.tr1.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
-            f, t, psd2 = spectrogram(
-                self.tr2.data, self.fs, window=wind, nperseg=ws, noverlap=ss)
+            psd1 = np.abs(ft1)**2*2/self.dt
+            psd1 = psd1[0:faxis, :]
+            psd2 = np.abs(ft2)**2*2/self.dt
+            psd2 = psd2[0:faxis, :]
 
         if fig_QC:
             if self.ncomp == 2:
@@ -579,7 +617,7 @@ class DayNoise(object):
         self.QC = True
 
     def average_daily_spectra(self, calc_rotation=True, fig_average=False,
-                              fig_coh_ph=False, save=False, form='png'):
+                              fig_coh_ph=False, save=None, form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
         method will attempt to calculate the azimuth of maximum coherence
@@ -597,6 +635,10 @@ class DayNoise(object):
         fig_coh_ph : boolean
             Whether or not to produce a figure showing the maximum coherence
             between H and Z
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -628,8 +670,8 @@ class DayNoise(object):
 
         >>> daynoise.__dict__.keys()
         dict_keys(['tr1', 'tr2', 'trZ', 'trP', 'window', 'overlap', 'key',
-        'dt', 'npts', 'fs', 'year', 'julday', 'ncomp', 'tf_list', 'QC', 'av',
-        'goodwins', 'f', 'power', 'cross', 'rotation'])
+        'dt', 'npts', 'fs', 'year', 'julday', 'tkey', 'ncomp', 'tf_list',
+        'QC', 'av', 'f', 'goodwins', 'power', 'cross', 'rotation'])
 
         """
 
@@ -638,61 +680,29 @@ class DayNoise(object):
                   "QC_daily_spectra using default values")
             self.QC_daily_spectra()
 
-        # Points in window
-        ws = int(self.window/self.dt)
-
-        # Number of points in step
-        ss = int(self.window*self.overlap/self.dt)
-
-        # hanning window
-        hanning = np.hanning(2*ss)
-        wind = np.ones(ws)
-        wind[0:ss] = hanning[0:ss]
-        wind[-ss:ws] = hanning[ss:ws]
-
-        ft1 = None
-        ft2 = None
-        ftZ = None
-        ftP = None
-
-        _f, _t, ftZ = stft(
-            self.trZ.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-            window=wind, nperseg=ws, noverlap=ss)
-        ftZ = ftZ.T
-        if self.ncomp == 2 or self.ncomp == 4:
-            _f, _t, ftP = stft(
-                self.trP.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                window=wind, nperseg=ws, noverlap=ss)
-            ftP = ftP.T
-        if self.ncomp == 3 or self.ncomp == 4:
-            _f, _t, ft1 = stft(
-                self.tr1.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                window=wind, nperseg=ws, noverlap=ss)
-            _f, _t, ft2 = stft(
-                self.tr2.data, self.fs, return_onesided=False, boundary=None, padded=False, 
-                window=wind, nperseg=ws, noverlap=ss)
-            ft1 = ft1.T
-            ft2 = ft2.T
-
         # Extract good windows
         c11 = None
         c22 = None
         cZZ = None
         cPP = None
         cZZ = np.abs(
-            np.mean(ftZ[self.goodwins, :]*np.conj(ftZ[self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
+            np.mean(
+                self.ftZ[self.goodwins, :]*np.conj(self.ftZ[self.goodwins, :]),
+                axis=0))
         if self.ncomp == 2 or self.ncomp == 4:
             cPP = np.abs(
-                np.mean(ftP[self.goodwins, :]*np.conj(ftP[self.goodwins, :]),
-                        axis=0))[0:len(self.f)]
+                np.mean(
+                    self.ftP[self.goodwins, :]*np.conj(
+                        self.ftP[self.goodwins, :]), axis=0))
         if self.ncomp == 3 or self.ncomp == 4:
             c11 = np.abs(
-                np.mean(ft1[self.goodwins, :]*np.conj(ft1[self.goodwins, :]),
-                        axis=0))[0:len(self.f)]
+                np.mean(
+                    self.ft1[self.goodwins, :]*np.conj(
+                        self.ft1[self.goodwins, :]), axis=0))
             c22 = np.abs(
-                np.mean(ft2[self.goodwins, :]*np.conj(ft2[self.goodwins, :]),
-                        axis=0))[0:len(self.f)]
+                np.mean(
+                    self.ft2[self.goodwins, :]*np.conj(
+                        self.ft2[self.goodwins, :]), axis=0))
 
         # Extract bad windows
         bc11 = None
@@ -700,20 +710,24 @@ class DayNoise(object):
         bcZZ = None
         bcPP = None
         if np.sum(~self.goodwins) > 0:
-            bcZZ = np.abs(np.mean(
-                ftZ[~self.goodwins, :]*np.conj(ftZ[~self.goodwins, :]),
-                axis=0))[0:len(self.f)]
+            bcZZ = np.abs(
+                np.mean(
+                    self.ftZ[~self.goodwins, :]*np.conj(
+                        self.ftZ[~self.goodwins, :]), axis=0))
             if self.ncomp == 2 or self.ncomp == 4:
-                bcPP = np.abs(np.mean(
-                    ftP[~self.goodwins, :]*np.conj(ftP[~self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
+                bcPP = np.abs(
+                    np.mean(
+                        self.ftP[~self.goodwins, :]*np.conj(
+                            self.ftP[~self.goodwins, :]), axis=0))
             if self.ncomp == 3 or self.ncomp == 4:
-                bc11 = np.abs(np.mean(
-                    ft1[~self.goodwins, :]*np.conj(ft1[~self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
-                bc22 = np.abs(np.mean(
-                    ft2[~self.goodwins, :]*np.conj(ft2[~self.goodwins, :]),
-                    axis=0))[0:len(self.f)]
+                bc11 = np.abs(
+                    np.mean(
+                        self.ft1[~self.goodwins, :]*np.conj(
+                            self.ft1[~self.goodwins, :]), axis=0))
+                bc22 = np.abs(
+                    np.mean(
+                        self.ft2[~self.goodwins, :]*np.conj(
+                            self.ft2[~self.goodwins, :]), axis=0))
 
         # Calculate mean of all good windows if component combinations exist
         c12 = None
@@ -723,20 +737,26 @@ class DayNoise(object):
         c2P = None
         cZP = None
         if self.ncomp == 3 or self.ncomp == 4:
-            c12 = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ft2[self.goodwins, :]), axis=0)[0:len(self.f)]
-            c1Z = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
-            c2Z = np.mean(ft2[self.goodwins, :] *
-                          np.conj(ftZ[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c12 = np.mean(
+                self.ft1[self.goodwins, :] *
+                np.conj(self.ft2[self.goodwins, :]), axis=0)
+            c1Z = np.mean(
+                self.ft1[self.goodwins, :] *
+                np.conj(self.ftZ[self.goodwins, :]), axis=0)
+            c2Z = np.mean(
+                self.ft2[self.goodwins, :] *
+                np.conj(self.ftZ[self.goodwins, :]), axis=0)
         if self.ncomp == 4:
-            c1P = np.mean(ft1[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
-            c2P = np.mean(ft2[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+            c1P = np.mean(
+                self.ft1[self.goodwins, :] *
+                np.conj(self.ftP[self.goodwins, :]), axis=0)
+            c2P = np.mean(
+                self.ft2[self.goodwins, :] *
+                np.conj(self.ftP[self.goodwins, :]), axis=0)
         if self.ncomp == 2 or self.ncomp == 4:
-            cZP = np.mean(ftZ[self.goodwins, :] *
-                          np.conj(ftP[self.goodwins, :]), axis=0)[0:len(self.f)]
+            cZP = np.mean(
+                self.ftZ[self.goodwins, :] *
+                np.conj(self.ftP[self.goodwins, :]), axis=0)
 
         # Store as attributes
         self.power = Power(c11, c22, cZZ, cPP)
@@ -758,7 +778,8 @@ class DayNoise(object):
         if calc_rotation and self.ncomp >= 3:
             cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
                 utils.calculate_tilt(
-                    ft1, ft2, ftZ, ftP, self.f, self.goodwins)
+                    self.ft1, self.ft2, self.ftZ, self.ftP, self.f,
+                    self.goodwins)
             self.rotation = Rotation(
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
 
@@ -838,9 +859,11 @@ class StaNoise(object):
     The object is initially a container for
     :class:`~obstools.atacr.classes.DayNoise` objects. Once the StaNoise
     object is initialized (using the method `init()` or by calling the
-    `QC_sta_spectra` method), each individual spectral quantity is unpacked
+    `QC_sta_spectra()` method), each individual spectral quantity is unpacked
     as an object attribute and the original `DayNoise` objects are removed
-    from memory. In addition, all spectral quantities associated with the
+    from memory. **DayNoise objects cannot be added or appended to the
+    StaNoise object once this is done**.
+    In addition, all spectral quantities associated with the
     original `DayNoise` objects (now stored as attributes) are discarded as
     the object is saved to disk and new container objects are defined and
     saved.
@@ -888,7 +911,7 @@ class StaNoise(object):
      <obstools.atacr.classes.DayNoise at 0x121c7ae10>,
      <obstools.atacr.classes.DayNoise at 0x121ca5940>,
      <obstools.atacr.classes.DayNoise at 0x121e7dd30>]
-     >>> sta.initialized
+     >>> stanoise.initialized
      False
 
     """
@@ -903,7 +926,7 @@ class StaNoise(object):
             tr1 = st.select(component='1')[0]
             tr2 = st.select(component='2')[0]
             trZ = st.select(component='Z')[0]
-            trP = st.select(component='P')[0]
+            trP = st.select(component='H')[0]
             window = 7200.
             overlap = 0.3
             key = '7D.M08A'
@@ -1024,15 +1047,13 @@ class StaNoise(object):
         Check that `daylist` attribute has been deleted
 
         >>> stanoise.daylist
-        ---------------------------------------------------------------------------
-        AttributeError                            Traceback (most recent call last)
-        <ipython-input-4-a292a91450a9> in <module>
-        ----> 1 stanoise.daylist
+        Traceback (most recent call last):
+          File "<stdin>", line 1, in <module>
         AttributeError: 'StaNoise' object has no attribute 'daylist'
         >>> stanoise.__dict__.keys()
-        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z', 'c1P',
-        'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f', 'nwins',
-        'ncomp', 'key', 'tf_list', 'QC', 'av'])
+        dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z',
+        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f',
+        'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
 
@@ -1089,7 +1110,7 @@ class StaNoise(object):
         del self.daylist
 
     def QC_sta_spectra(self, pd=[0.004, 0.2], tol=2.0, alpha=0.05,
-                       fig_QC=False, debug=False, save=False, form='png'):
+                       fig_QC=False, debug=False, save=None, form='png'):
         """
         Method to determine the days (for given time window) for which the
         spectra are anomalous and should be discarded in the calculation of
@@ -1110,6 +1131,10 @@ class StaNoise(object):
         debug : boolean
             Whether or not to plot intermediate steps in the QC procedure for
             debugging
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -1121,7 +1146,7 @@ class StaNoise(object):
         --------
         Import demo data, call method and generate final figure
 
-        >>> obstools.atacr import StaNoise
+        >>> from obstools.atacr import StaNoise
         >>> stanoise = StaNoise('demo')
         Uploading demo data - March 01 to 04, 2012, station 7D.M08A
         >>> stanoise.QC_sta_spectra(fig_QC=True)
@@ -1139,6 +1164,9 @@ class StaNoise(object):
 
         # Select bandpass frequencies
         ff = (self.f > pd[0]) & (self.f < pd[1])
+
+        # Extract only positive frequencies
+        faxis = self.f > 0
 
         # Smooth out the log of the PSDs
         sl_cZZ = None
@@ -1170,29 +1198,29 @@ class StaNoise(object):
         if self.ncomp == 2:
             plt.figure(2)
             plt.subplot(2, 1, 1)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
             plt.subplot(2, 1, 2)
-            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
             plt.tight_layout()
         elif self.ncomp == 3:
             plt.figure(2)
             plt.subplot(3, 1, 1)
-            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
             plt.subplot(3, 1, 2)
-            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
             plt.subplot(3, 1, 3)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
             plt.tight_layout()
         else:
             plt.figure(2)
             plt.subplot(4, 1, 1)
-            plt.semilogx(self.f, sl_c11, 'r', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
             plt.subplot(4, 1, 2)
-            plt.semilogx(self.f, sl_c22, 'b', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
             plt.subplot(4, 1, 3)
-            plt.semilogx(self.f, sl_cZZ, 'g', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
             plt.subplot(4, 1, 4)
-            plt.semilogx(self.f, sl_cPP, 'k', lw=0.5)
+            plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
             plt.tight_layout()
         if debug:
             plt.show()
@@ -1261,7 +1289,7 @@ class StaNoise(object):
             else:
                 plot.show()
 
-    def average_sta_spectra(self, fig_average=False, save=False, form='png'):
+    def average_sta_spectra(self, fig_average=False, save=None, form='png'):
         r"""
         Method to average the daily station spectra for good windows.
 
@@ -1270,6 +1298,10 @@ class StaNoise(object):
         fig_average : boolean
             Whether or not to produce a figure showing the average daily
             spectra
+        save : :class:`~pathlib.Path` object
+            Relative path to figures folder
+        form : str
+            File format (e.g., 'png', 'jpg', 'eps')
 
         Attributes
         ----------
@@ -1739,48 +1771,36 @@ class EventStream(object):
 
     Note
     ----
-    An ``EventStream`` object is defined as the data
-    (:class:`~obspy.core.Stream` object) are read from file or downloaded
-    from an ``obspy`` Client. Based on the available components, a list of
+    The object is initialized with :class:`~obspy.core.Trace` objects for
+    H1, H2, HZ and P components. Traces can be empty if data are not
+    available. Based on the available components, a list of
     possible corrections is determined automatically.
 
     Attributes
     ----------
-    sta : :class:`~stdb.StdbElement`
-        An instance of an stdb object
+    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
+        Corresponding trace objects for components H1, H2, HZ and HP.
+        Traces can be empty (i.e., ``Trace()``) for missing components.
     key : str
         Station key for current object
-    sth : :class:`~obspy.core.Stream`
-        Stream containing three-component seismic data (traces are empty if
-        data are not available)
-    stp : :class:`~obspy.core.Stream`
-        Stream containing pressure data (trace is empty if data are not
-        available)
+    evtime : :class:`~obspy.core.UTCDateTime`
+        Origin time of seismic event.
     tstamp : str
         Time stamp for event
-    evlat : float
-        Latitude of seismic event
-    evlon : float
-        Longitude of seismic event
-    evtime : :class:`~obspy.core.UTCDateTime`
-        Origin time of seismic event
-    window : float
-        Length of time window in seconds
-    fs : float
-        Sampling frequency (in Hz)
-    dt : float
-        Sampling distance in seconds
+    prefix : str
+        Associated prefix of SAC files
     npts : int
-        Number of points in time series
+        Number of points in time series.
+    fs : float
+        Sampling frequency (in Hz).
+    dt : float
+        Sampling distance in seconds.
     ncomp : int
-        Number of available components (either 2, 3 or 4)
+        Number of available components (either 2, 3 or 4). Obtained from
+        non-empty ``Trace`` objects
     ev_list : Dict
         Dictionary of possible transfer functions given the available
         components. This is determined during initialization.
-    correct : :class:`~obstools.atacr.classes.EventStream.CorrectDict`
-        Container Dictionary for all possible corrections from the transfer
-        functions. This is calculated from the method
-        :func:`~obstools.atacr.classes.EventStream.correct_data`
 
     Examples
     --------
@@ -1791,63 +1811,59 @@ class EventStream(object):
     >>> evstream = EventStream('demo')
     Uploading demo earthquake data - March 09, 2012, station 7D.M08A
     >>> evstream.__dict__.keys()
-    dict_keys(['sta', 'key', 'sth', 'stp', 'tstamp', 'evlat', 'evlon', 'evtime',
-    'window', 'fs', 'dt', 'ncomp', 'ev_list'])
+    dict_keys(['tr1', 'tr2', 'trZ', 'trP, 'key', 'evtime',
+    'tstamp', 'prefix', 'npts', fs', 'dt', 'ncomp', 'ev_list'])
 
     Plot the raw traces
 
-    >>> import obstools.atacr.plot as plot
-    >>> plot.fig_event_raw(evstream, fmin=1./150., fmax=2.)
+    >>> import obstools.atacr.plotting as atplot
+    >>> figure = atplot.fig_event_raw(evstream, fmin=1./150., fmax=2.)
+    >>> figure.show()
 
     .. figure:: ../obstools/examples/figures/Figure_11.png
        :align: center
 
     """
 
-    def __init__(self, sta=None, sth=None, stp=None, tstamp=None, lat=None,
-                 lon=None, time=None, window=None, sampling_rate=None,
-                 ncomp=None, correct=False):
+    def __init__(self, tr1=Trace(), tr2=Trace(), trZ=Trace(), trP=Trace(),
+        correct=False):
 
-        if sta == 'demo' or sta == 'Demo':
+        if tr1 == 'demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
                   "station 7D.M08A")
             exmpl_path = Path(resource_filename('obstools', 'examples'))
-            fn = '2012.069.07.09.event.pkl'
-            fn = exmpl_path / 'event' / fn
-            evstream = pickle.load(open(fn, 'rb'))
-            sta = evstream.sta
-            key = evstream.key
-            sth = evstream.sth
-            stp = evstream.stp
-            tstamp = evstream.tstamp
-            lat = evstream.evlat
-            lon = evstream.evlon
-            time = evstream.evtime
-            window = evstream.window
-            sampling_rate = evstream.fs
-            ncomp = evstream.ncomp
-            correct = evstream.correct
+            fn = exmpl_path / 'event' / '2012.069*.SAC'
+            st = read(str(fn))
+            tr1 = st.select(component='1')[0]
+            tr2 = st.select(component='2')[0]
+            trZ = st.select(component='Z')[0]
+            trP = st.select(component='H')[0]
 
-        if any(value == None for value in [sta, sth, stp, tstamp, lat, lon,
-                                           time, window, sampling_rate,
-                                           ncomp]):
+        ncomp = np.sum([np.any(tr.data) for tr in [tr1, tr2, trZ, trP]])
+        if ncomp <= 1 or len(trZ.data) == 0:
             raise(Exception(
-                "Error: Initializing EventStream object with None values - " +
-                "aborting"))
+                "Incorrect initialization of EventStream object: " +
+                "missing a vertical component or too few components"))
 
-        self.sta = sta
-        self.key = sta.network+'.'+sta.station
-        self.sth = sth
-        self.stp = stp
+        self.tr1 = tr1
+        self.tr2 = tr2
+        self.trZ = trZ
+        self.trP = trP
+
+        zstats = trZ.stats
+        self.key = zstats.network + '.' + zstats.station
+        self.evtime = zstats.starttime
+        # Time stamp
+        tstamp = str(self.evtime.year).zfill(4)+'.' + \
+            str(self.evtime.julday).zfill(3)+'.'
+        tstamp = tstamp + str(self.evtime.hour).zfill(2) + \
+            '.'+str(self.evtime.minute).zfill(2)
         self.tstamp = tstamp
-        self.evlat = lat
-        self.evlon = lon
-        self.evtime = time
-        self.window = window
-        self.fs = sampling_rate
-        self.dt = 1./sampling_rate
+        self.prefix = self.key + '.' + self.tstamp
+        self.npts = zstats.npts
+        self.fs = zstats.sampling_rate
+        self.dt = zstats.delta
         self.ncomp = ncomp
-        self.correct = False
 
         # Build list of available transfer functions for future use
         if self.ncomp == 2:
@@ -1908,8 +1924,9 @@ class EventStream(object):
 
         Plot the corrected traces
 
-        >>> import obstools.atacr.plot as plot
-        >>> plot.fig_event_corrected(evstream, tfnoise_day.tf_list)
+        >>> import obstools.atacr.plotting as atplot
+        >>> figure = atplot.fig_event_corrected(evstream, tfnoise_day.tf_list)
+        >>> figure.show()
 
         .. figure:: ../obstools/examples/figures/Figure_corrected_march04.png
            :align: center
@@ -1935,6 +1952,13 @@ class EventStream(object):
         .. figure:: ../obstools/examples/figures/Figure_corrected_sta.png
            :align: center
 
+
+        .. warning::
+            If the noise window and event window are not identical, they cannot
+            be compared on the same frequency axis and the code will exit. Make
+            sure you are using identical time samples in both the noise and
+            event windows.
+
         """
 
         if not tfnoise.transfunc:
@@ -1948,99 +1972,75 @@ class EventStream(object):
         tf_list = tfnoise.tf_list
         transfunc = tfnoise.transfunc
 
-        # Points in window
-        ws = int(self.window/self.dt)
-
         # Extract traces
-        trZ = Trace()
-        tr1 = Trace()
-        tr2 = Trace()
-        trP = Trace()
-        trZ = self.sth.select(component='Z')[0]
-        if self.ncomp == 2 or self.ncomp == 4:
-            trP = self.stp[0]
-        if self.ncomp == 3 or self.ncomp == 4:
-            tr1 = self.sth.select(component='1')[0]
-            tr2 = self.sth.select(component='2')[0]
+        trZ = self.trZ
+        tr1 = self.tr1
+        tr2 = self.tr2
+        trP = self.trP
 
         # Get Fourier spectra
         ft1 = None
         ft2 = None
         ftZ = None
         ftP = None
-        ftZ = np.fft.fft(trZ, n=ws)
-        if self.ncomp == 2 or self.ncomp == 4:
-            ftP = np.fft.fft(trP, n=ws)
-        if self.ncomp == 3 or self.ncomp == 4:
-            ft1 = np.fft.fft(tr1, n=ws)
-            ft2 = np.fft.fft(tr2, n=ws)
 
-        # Use one-sided frequency axis to match spectrogram
-        f = np.fft.rfftfreq(ws, d=self.dt)
+        ft1 = None
+        ft2 = None
+        ftZ = None
+        ftP = None
+
+        ftZ = np.fft.fft(trZ, n=self.npts)
+        if self.ncomp == 2 or self.ncomp == 4:
+            ftP = np.fft.fft(trP, n=self.npts)
+        if self.ncomp == 3 or self.ncomp == 4:
+            ft1 = np.fft.fft(tr1, n=self.npts)
+            ft2 = np.fft.fft(tr2, n=self.npts)
+
+        f = np.fft.fftfreq(self.npts, d=self.dt)
 
         if not np.allclose(f, tfnoise.f):
-            raise(Exception('Frequency axes are different: ', f, tfnoise.f))
+            raise(Exception(
+                'Frequency axes are different: ', f, tfnoise.f,
+                ' - the noise and event windows are not the same, aborting'))
 
         for key, value in tf_list.items():
 
             if key == 'ZP' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_ZP = transfunc[key]['TF_ZP']
-                    fTF_ZP = np.hstack(
-                        (TF_ZP, np.conj(TF_ZP[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZP*ftP
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrspec = ftZ - TF_ZP*ftP
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP', corrtime)
 
             if key == 'Z1' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
-                    fTF_Z1 = np.hstack(
-                        (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrspec = ftZ - TF_Z1*ft1
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('Z1', corrtime)
 
             if key == 'Z2-1' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc['Z1']['TF_Z1']
-                    fTF_Z1 = np.hstack(
-                        (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     TF_21 = transfunc[key]['TF_21']
-                    fTF_21 = np.hstack(
-                        (TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
                     TF_Z2_1 = transfunc[key]['TF_Z2-1']
-                    fTF_Z2_1 = np.hstack(
-                        (TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1 - (ft2 - ft1*fTF_21)*fTF_Z2_1
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrspec = ftZ - TF_Z1*ft1 - (ft2 - ft1*TF_21)*TF_Z2_1
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('Z2-1', corrtime)
 
             if key == 'ZP-21' and self.ev_list[key]:
                 if value and tf_list[key]:
                     TF_Z1 = transfunc[key]['TF_Z1']
-                    fTF_Z1 = np.hstack(
-                        (TF_Z1, np.conj(TF_Z1[::-1][1:len(f)-1])))
                     TF_21 = transfunc[key]['TF_21']
-                    fTF_21 = np.hstack(
-                        (TF_21, np.conj(TF_21[::-1][1:len(f)-1])))
                     TF_Z2_1 = transfunc[key]['TF_Z2-1']
-                    fTF_Z2_1 = np.hstack(
-                        (TF_Z2_1, np.conj(TF_Z2_1[::-1][1:len(f)-1])))
                     TF_P1 = transfunc[key]['TF_P1']
-                    fTF_P1 = np.hstack(
-                        (TF_P1, np.conj(TF_P1[::-1][1:len(f)-1])))
                     TF_P2_1 = transfunc[key]['TF_P2-1']
-                    fTF_P2_1 = np.hstack(
-                        (TF_P2_1, np.conj(TF_P2_1[::-1][1:len(f)-1])))
                     TF_ZP_21 = transfunc[key]['TF_ZP-21']
-                    fTF_ZP_21 = np.hstack(
-                        (TF_ZP_21, np.conj(TF_ZP_21[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_Z1*ft1 - \
-                        (ft2 - ft1*fTF_21)*fTF_Z2_1 - \
-                        (ftP - ft1*fTF_P1 -
-                         (ft2 - ft1*fTF_21)*fTF_P2_1)*fTF_ZP_21
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrspec = ftZ - TF_Z1*ft1 - \
+                        (ft2 - ft1*TF_21)*TF_Z2_1 - \
+                        (ftP - ft1*TF_P1 -
+                         (ft2 - ft1*TF_21)*TF_P2_1)*TF_ZP_21
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP-21', corrtime)
 
             if key == 'ZH' and self.ev_list[key]:
@@ -2050,10 +2050,8 @@ class EventStream(object):
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
                     TF_ZH = transfunc[key]['TF_ZH']
-                    fTF_ZH = np.hstack(
-                        (TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZH*ftH
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrspec = ftZ - TF_ZH*ftH
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZH', corrtime)
 
             if key == 'ZP-H' and self.ev_list[key]:
@@ -2063,16 +2061,10 @@ class EventStream(object):
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
                     TF_ZH = transfunc['ZH']['TF_ZH']
-                    fTF_ZH = np.hstack(
-                        (TF_ZH, np.conj(TF_ZH[::-1][1:len(f)-1])))
                     TF_PH = transfunc[key]['TF_PH']
-                    fTF_PH = np.hstack(
-                        (TF_PH, np.conj(TF_PH[::-1][1:len(f)-1])))
                     TF_ZP_H = transfunc[key]['TF_ZP-H']
-                    fTF_ZP_H = np.hstack(
-                        (TF_ZP_H, np.conj(TF_ZP_H[::-1][1:len(f)-1])))
-                    corrspec = ftZ - fTF_ZH*ftH - (ftP - ftH*fTF_PH)*fTF_ZP_H
-                    corrtime = np.real(np.fft.ifft(corrspec))[0:ws]
+                    corrspec = ftZ - TF_ZH*ftH - (ftP - ftH*TF_PH)*TF_ZP_H
+                    corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP-H', corrtime)
 
         self.correct = correct
@@ -2103,7 +2095,7 @@ class EventStream(object):
 
         """
 
-        if not self.correct:
+        if hasattr(self, 'correct'):
             print("Warning: saving EventStream object before having done " +
                   "the corrections")
 

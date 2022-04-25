@@ -165,7 +165,7 @@ Once the ``StaNoise`` objects have been produced and saved to disk, the complian
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available. 
 
-If no horizontal components are available (i.e., only ``?HZ`` and ``?XH?`` components are available),
+If no horizontal components are available (i.e., only ``?HZ`` and ``?DH?`` components are available),
 the only compliance function possible is:
 
 - ``ZP``
@@ -229,8 +229,10 @@ argument ``--f0``)
 .. figure:: ../obstools/examples/figures/Figure_comply.png
    :align: center
 
-Figure 1: Coherence and compliance functions for the component combinations of interest,
-as indicated in the title of each subplot. This example is for the month of March 2012
-for station M08A. The daily compliance functions are shown in grey and the average
-calculated for the whole month is shown in black.
+Figure 1: Coherence and compliance functions for the component combinations 
+of interest, as indicated in the title of each subplot. This example is for 
+the month of March 2012 for station M08A. The QC'ed daily compliance functions 
+are shown in grey. The QC'ed stations average calculated for the whole month is 
+shown in black. Note that *all* daily compliance functions are calculated and 
+displayed, even those that did not pass the QC threshold for the station average.
 
