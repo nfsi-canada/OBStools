@@ -191,7 +191,7 @@ horizontal (<code class="docutils literal notranslate"><span class="pre">?H1,2</
 <p>It is of course possible to combine both corrections and apply them
 sequentially. In this case the tilt noise is removed first, followed by compliance.
 This analysis requires all four components: three-component
-seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?XH</span></code>) data.</p>
+seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?DH</span></code>) data.</p>
 </div>
 <div class="section" id="api-documentation">
 <h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline"></a></h2>
@@ -437,6 +437,29 @@ for debugging</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.ftX">
+<span class="sig-name descname"><span class="pre">ftX</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.ftX" title="Permalink to this definition"></a></dt>
+<dd><p>Windowed Fourier transform for the <cite>X</cite> component (can be either
+1, 2, Z or P)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.f">
+<span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.f" title="Permalink to this definition"></a></dt>
+<dd><p>Full frequency axis (Hz)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.goodwins">
 <span class="sig-name descname"><span class="pre">goodwins</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.goodwins" title="Permalink to this definition"></a></dt>
 <dd><p>List of booleans representing whether a window is good (True)
@@ -490,8 +513,8 @@ between H and Z</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.f">
-<span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.f" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
 <dd><p>Positive frequency axis for corresponding window parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -601,7 +624,7 @@ and window parameters.</p>
 <p>The object is initially a container for
 <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> objects. Once the StaNoise
 object is initialized (using the method <cite>init()</cite> or by calling the
-<cite>QC_sta_spectra</cite> method), each individual spectral quantity is unpacked
+<cite>QC_sta_spectra()</cite> method), each individual spectral quantity is unpacked
 as an object attribute and the original <cite>DayNoise</cite> objects are removed
 from memory. <strong>DayNoise objects cannot be added or appended to the
 StaNoise object once this is done</strong>.
@@ -1896,8 +1919,8 @@ of the analysis at various final and intermediate steps.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_QC">
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_QC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_QC" title="Permalink to this definition"></a></dt>
-<dd><p>Function to plot the Quality-Control step of the analysis. This function is
-used in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cite> scripts.</p>
+<dd><p>Function to plot the Quality-Control step of the analysis. This function
+is used in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite> scripts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1917,7 +1940,7 @@ used in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_average" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the averaged spectra (those qualified as ‘good’ in the
 QC step). This function is used
-in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cite> scripts.</p>
+in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite> scripts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1937,7 +1960,7 @@ in both the <cite>obs_daily_spectra.py</cite> or <cite>obs_clean_spectra.py</cit
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_av_cross">
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_av_cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_av_cross" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the averaged cross-spectra (those qualified as ‘good’ in
-the QC step). This function is used in the <cite>obs_daily_spectra.py</cite> script.</p>
+the QC step). This function is used in the <cite>atacr_daily_spectra</cite> script.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2010,7 +2033,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_event_raw">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_raw" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_raw" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the raw (although bandpassed) seismograms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2025,7 +2048,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_event_corrected">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_corrected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_corrected" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_corrected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_corrected" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the corrected vertical component seismograms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2090,8 +2113,8 @@ optional arguments:
   -C CHANNELS, --channels CHANNELS
                         Specify a comma-separated list of channels for which
                         to perform the transfer function analysis. Possible
-                        options are &#39;H&#39; (for horizontal channels) or &#39;P&#39; (for
-                        pressure channel). Specifying &#39;H&#39; allows for tilt
+                        options are &#39;12&#39; (for horizontal channels) or &#39;P&#39; (for
+                        pressure channel). Specifying &#39;12&#39; allows for tilt
                         correction. Specifying &#39;P&#39; allows for compliance
                         correction. [Default looks for both horizontal and
                         pressure and allows for both tilt AND compliance
@@ -2409,8 +2432,8 @@ optional arguments:
   -C CHANNELS, --channels CHANNELS
                         Specify a comma-separated list of channels for which
                         to perform the transfer function analysis. Possible
-                        options are &#39;H&#39; (for horizontal channels) or &#39;P&#39; (for
-                        pressure channel). Specifying &#39;H&#39; allows for tilt
+                        options are &#39;12&#39; (for horizontal channels) or &#39;P&#39; (for
+                        pressure channel). Specifying &#39;12&#39; allows for tilt
                         correction. Specifying &#39;P&#39; allows for compliance
                         correction. [Default looks for both horizontal and
                         pressure and allows for both tilt AND compliance
@@ -2606,7 +2629,7 @@ enclose the <cite>?H?</cite> in single or double quotes (e.g.,
 <h3>1. Download noise data<a class="headerlink" href="#download-noise-data" title="Permalink to this headline"></a></h3>
 <p>We wish to download one month of data for the station M08A for March 2012.
 The various options above allow us to select the additional channels to use
-(e.g., <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">H,P</span></code> for both horizontal and pressure data - which is the default
+(e.g., <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">12,P</span></code> for both horizontal and pressure data - which is the default
 setting). Default frequency settings for data pre-processing match those of
 the Matlab <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> software and can therefore be ignored when calling the program.
 Since the file <code class="docutils literal notranslate"><span class="pre">M08A.pkl</span></code> contains only one station, it is not necessary to specify a
@@ -2642,7 +2665,7 @@ following line with the option <code class="docutils literal notranslate"><span 
 ***********************************************************
 * Downloading day-long data for key 7D.M08A and day 2012.61
 *
-* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
+* Channels selected: [&#39;12&#39;, &#39;P&#39;] and vertical
 *   2012.061.*SAC
 *   -&gt; Downloading Seismic data...
 *      ...done
@@ -2658,7 +2681,7 @@ following line with the option <code class="docutils literal notranslate"><span 
 ***********************************************************
 * Downloading day-long data for key 7D.M08A and day 2012.62
 *
-* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
+* Channels selected: [&#39;12&#39;, &#39;P&#39;] and vertical
 *   2012.062.*SAC
 *   -&gt; Downloading Seismic data...
 
@@ -2736,7 +2759,7 @@ pass the quality control are colored red.</p>
 <div class="figure align-center">
 <img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
 </div>
-<p>Figure 3a: Daily average PSD of bad (red) and good (black) windows.</p>
+<p>Figure 3b: Daily average PSD of bad (red) and good (black) windows.</p>
 </div>
 <div class="section" id="qc-for-clean-station-averages">
 <h3>3. QC for clean station averages<a class="headerlink" href="#qc-for-clean-station-averages" title="Permalink to this headline"></a></h3>
@@ -2838,12 +2861,12 @@ are different (e.g., <code class="docutils literal notranslate"><span class="pre
 <p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the transfer
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available.</p>
-<p>For compliance only (i.e., only <code class="docutils literal notranslate"><span class="pre">?HZ</span></code> and <code class="docutils literal notranslate"><span class="pre">?XH?</span></code> components are available),
+<p>For compliance only (i.e., only <code class="docutils literal notranslate"><span class="pre">?HZ</span></code> and <code class="docutils literal notranslate"><span class="pre">?DH?</span></code> components are available),
 the only transfer function possible is:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">ZP</span></code></p></li>
 </ul>
-<p>For tilt only (i.e., all of <code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code> components are available, but not <code class="docutils literal notranslate"><span class="pre">?XH</span></code>),
+<p>For tilt only (i.e., all of <code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code> components are available, but not <code class="docutils literal notranslate"><span class="pre">?DH</span></code>),
 the transfer functions are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Z1</span></code></p></li>
@@ -2949,7 +2972,7 @@ Path to EVENTS/7D.M08A/ doesn`t exist - creating it
 *   Dep:  33.70; Mag: 6.6
 *     M08A  -&gt; Ev: 9651.91 km;   86.80 deg; 239.43;  40.95
 
-* Channels selected: [&#39;H&#39;, &#39;P&#39;] and vertical
+* Channels selected: [&#39;12&#39;, &#39;P&#39;] and vertical
 *   2012.069.07.09
 *   -&gt; Downloading Seismic data...
 *      ...done
