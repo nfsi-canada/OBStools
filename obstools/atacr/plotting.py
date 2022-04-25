@@ -302,6 +302,9 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
 
     import matplotlib.ticker as mtick
 
+    # Extract only positive frequencies
+    faxis = f > 0
+
     # Get max number of TFs to plot
     ntf = max(sum(day_list.values()), sum(sta_list.values()))
 
@@ -325,9 +328,14 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
         if day_list[key]:
             for i in range(len(day_trfs)):
                 ax.loglog(
-                    f, np.abs(day_trfs[i][key]['TF_'+key]), 'gray', lw=0.5)
+                    f[faxis],
+                    np.abs(day_trfs[i][key]['TF_'+key][faxis]),
+                    'gray', lw=0.5)
         if sta_list[key]:
-            ax.loglog(f, np.abs(sta_trfs[key]['TF_'+key]), 'k', lw=0.5)
+            ax.loglog(
+                f[faxis],
+                np.abs(sta_trfs[key]['TF_'+key][faxis]),
+                'k', lw=0.5)
         if key == 'ZP':
             ax.set_ylim(1.e-20, 1.e0)
             ax.set_xlim(1.e-4, 2.5)
@@ -396,6 +404,9 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
     import matplotlib.ticker as mtick
     import matplotlib.pyplot as plt
 
+    # Extract only positive frequencies
+    faxis = f > 0
+
     # Positive station elevation for frequency limit calc
     elev = -1.*elev
 
@@ -427,14 +438,20 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         if day_list[key]:
             for i in range(len(day_comps)):
                 compliance = np.abs(day_comps[i][key][0])
-                ax.plot(f, compliance, 'gray', alpha=0.3, lw=0.5)
-                # ax.set_xlim(f_0, f_c)
+                ax.plot(
+                    f[faxis],
+                    compliance[faxis],
+                    'gray', alpha=0.3, lw=0.5)
+                ax.set_xlim(f_0, f_c)
                 ytop = np.max(compliance[(f > f_0) & (f < f_c)])
                 ybot = np.min(compliance[(f > f_0) & (f < f_c)])
                 ax.set_ylim(ybot, ytop)
 
         if sta_list[key]:
-            ax.plot(f, np.abs(sta_comps[key][0]), 'k', lw=0.5)
+            ax.plot(
+                f[faxis],
+                np.abs(sta_comps[key][0][faxis]),
+                'k', lw=0.5)
 
         if key == 'ZP':
             ax.set_title(skey+' Compliance: ZP',
@@ -456,10 +473,14 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         if day_list[key]:
             for i in range(len(day_comps)):
                 ax.semilogx(
-                    f, np.abs(day_comps[i][key][1]), 'gray',
-                    alpha=0.3, lw=0.5)
+                    f[faxis],
+                    np.abs(day_comps[i][key][1][faxis]),
+                    'gray', alpha=0.3, lw=0.5)
         if sta_list[key]:
-            ax.semilogx(f, np.abs(sta_comps[key][1]), 'k', lw=0.5)
+            ax.semilogx(
+                f[faxis], 
+                np.abs(sta_comps[key][1][faxis]),
+                'k', lw=0.5)
 
         if key == 'ZP':
             ax.set_title(skey+' Coherence: ZP',
