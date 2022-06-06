@@ -337,7 +337,7 @@ def main(args=None):
 
         # Get catalogue search end time
         if args.endT is None:
-            tend = sta.startdate
+            tend = sta.enddate
         else:
             tend = args.endT
 
