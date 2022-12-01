@@ -26,7 +26,7 @@ setup(
     author_email='pascal.audet@uottawa.ca',
     maintainer='Pascal Audet, Helen Janiszewski',
     maintainer_email='pascal.audet@uottawa.ca, hajanisz@hawaii.edu',
-    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.2.tar.gz',
+    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.3.tar.gz',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
@@ -44,6 +44,7 @@ setup(
     entry_points={
         'console_scripts':
         ['atacr_download_data=obstools.scripts.atacr_download_data:main',
+         # 'atacr_download_data_xml=obstools.scripts.atacr_download_data_xml:main',
          'atacr_download_event=obstools.scripts.atacr_download_event:main',
          'atacr_daily_spectra=obstools.scripts.atacr_daily_spectra:main',
          'atacr_clean_spectra=obstools.scripts.atacr_clean_spectra:main',
