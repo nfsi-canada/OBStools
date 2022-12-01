@@ -34,7 +34,9 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9'],
-    install_requires=['numpy', 'obspy', 'stdb', 'pandas'],
+    install_requires=[
+        'numpy==1.21.5', 'scipy==1.8.0',
+        'obspy==1.2.2', 'stdb==0.2.3', 'pandas==1.4.1'],
     python_requires='>=3.6',
     packages=setuptools.find_packages(),
     include_package_data=True,
