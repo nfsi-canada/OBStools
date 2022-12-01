@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ATaCR &mdash; Home 0.1.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +14,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -66,8 +69,30 @@
 <li class="toctree-l4"><a class="reference internal" href="#rotation">Rotation</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.utils">Utility functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plotting">Plotting functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.utils">Utility functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.traceshift"><code class="docutils literal notranslate"><span class="pre">traceshift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.QC_streams"><code class="docutils literal notranslate"><span class="pre">QC_streams()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.update_stats"><code class="docutils literal notranslate"><span class="pre">update_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.get_data"><code class="docutils literal notranslate"><span class="pre">get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.get_event"><code class="docutils literal notranslate"><span class="pre">get_event()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.calculate_tilt"><code class="docutils literal notranslate"><span class="pre">calculate_tilt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.smooth"><code class="docutils literal notranslate"><span class="pre">smooth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.admittance"><code class="docutils literal notranslate"><span class="pre">admittance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.coherence"><code class="docutils literal notranslate"><span class="pre">coherence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.phase"><code class="docutils literal notranslate"><span class="pre">phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plotting">Plotting functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_QC"><code class="docutils literal notranslate"><span class="pre">fig_QC()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_average"><code class="docutils literal notranslate"><span class="pre">fig_average()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_av_cross"><code class="docutils literal notranslate"><span class="pre">fig_av_cross()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_coh_ph"><code class="docutils literal notranslate"><span class="pre">fig_coh_ph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_TF"><code class="docutils literal notranslate"><span class="pre">fig_TF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_comply"><code class="docutils literal notranslate"><span class="pre">fig_comply()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_event_raw"><code class="docutils literal notranslate"><span class="pre">fig_event_raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_event_corrected"><code class="docutils literal notranslate"><span class="pre">fig_event_corrected()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
@@ -131,8 +156,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>ATaCR</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">ATaCR</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/atacr.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -142,10 +167,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="atacr">
-<h1>ATaCR<a class="headerlink" href="#atacr" title="Permalink to this headline"></a></h1>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline"></a></h2>
+  <section id="atacr">
+<h1>ATaCR<a class="headerlink" href="#atacr" title="Permalink to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">atacr</span></code> is a module for the correction of vertical component data from OBS
 stations from tilt and compliance noise. This module is a translation of the
 Matlab code <a class="reference external" href="https://github.com/helenjanisz/ATaCR">ATaCR</a> and the acronym
@@ -168,9 +193,9 @@ corrections. In all cases the analysis requires at least vertical component
 data. Additional data required depend on the type of analysis. The software
 will automatically calculate all possible corrections depending on the available
 channels.</p>
-</div>
-<div class="section" id="noise-corrections">
-<h2>Noise Corrections<a class="headerlink" href="#noise-corrections" title="Permalink to this headline"></a></h2>
+</section>
+<section id="noise-corrections">
+<h2>Noise Corrections<a class="headerlink" href="#noise-corrections" title="Permalink to this heading"></a></h2>
 <p><strong>Compliance</strong></p>
 <p>Compliance is defined as the spectral ratio between pressure and vertical
 displacement data. Compliance noise arises from seafloor deformation due
@@ -192,11 +217,11 @@ horizontal (<code class="docutils literal notranslate"><span class="pre">?H1,2</
 sequentially. In this case the tilt noise is removed first, followed by compliance.
 This analysis requires all four components: three-component
 seismic (<code class="docutils literal notranslate"><span class="pre">?HZ,1,2</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?DH</span></code>) data.</p>
-</div>
-<div class="section" id="api-documentation">
-<h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline"></a></h2>
-<div class="section" id="base-classes">
-<h3>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this headline"></a></h3>
+</section>
+<section id="api-documentation">
+<h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this heading"></a></h2>
+<section id="base-classes">
+<h3>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this heading"></a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">atacr</span></code> defines the following base classes:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a></p></li>
@@ -246,8 +271,8 @@ that are used as attributes of the base classes.</p>
 using the accompanying scripts <code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code> and
 <code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code>. See the script and tutorial for details.</p>
 </div>
-<div class="section" id="daynoise">
-<h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this headline"></a></h4>
+<section id="daynoise">
+<h4>DayNoise<a class="headerlink" href="#daynoise" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">DayNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7200.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Permalink to this definition"></a></dt>
@@ -480,9 +505,9 @@ figure</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">(</span><span class="n">fig_QC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_3a.png" src="_images/Figure_3a.png" />
-</div>
+</figure>
 <p>Print out new attribute of DayNoise object</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">goodwins</span>
 <span class="go">array([False,  True,  True,  True,  True,  True,  True,  True, False,</span>
@@ -566,9 +591,9 @@ figure</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">average_daily_spectra</span><span class="p">(</span><span class="n">fig_average</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
-</div>
+</figure>
 <p>Print out available attributes of DayNoise object</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;tr1&#39;, &#39;tr2&#39;, &#39;trZ&#39;, &#39;trP&#39;, &#39;window&#39;, &#39;overlap&#39;, &#39;key&#39;,</span>
@@ -610,9 +635,9 @@ figure</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="stanoise">
-<h4>StaNoise<a class="headerlink" href="#stanoise" title="Permalink to this headline"></a></h4>
+</section>
+<section id="stanoise">
+<h4>StaNoise<a class="headerlink" href="#stanoise" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">StaNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">daylist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise" title="Permalink to this definition"></a></dt>
@@ -986,9 +1011,9 @@ final figure</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="tfnoise">
-<h4>TFNoise<a class="headerlink" href="#tfnoise" title="Permalink to this headline"></a></h4>
+</section>
+<section id="tfnoise">
+<h4>TFNoise<a class="headerlink" href="#tfnoise" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.TFNoise">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">TFNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Permalink to this definition"></a></dt>
@@ -1175,9 +1200,9 @@ components (and component combinations) from the averaged
 
 </dd></dl>
 
-</div>
-<div class="section" id="eventstream">
-<h4>EventStream<a class="headerlink" href="#eventstream" title="Permalink to this headline"></a></h4>
+</section>
+<section id="eventstream">
+<h4>EventStream<a class="headerlink" href="#eventstream" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">EventStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr1=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr2=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trZ=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trP=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream" title="Permalink to this definition"></a></dt>
@@ -1320,9 +1345,9 @@ components. This is determined during initialization.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_11.png" src="_images/Figure_11.png" />
-</div>
+</figure>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.CorrectDict">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CorrectDict</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.CorrectDict" title="Permalink to this definition"></a></dt>
@@ -1376,9 +1401,9 @@ correction.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_corrected_march04.png" src="_images/Figure_corrected_march04.png" />
-</div>
+</figure>
 <p>Carry out the same exercise but this time using a StaNoise object</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span><span class="p">,</span> <span class="n">TFNoise</span><span class="p">,</span> <span class="n">EventStream</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
@@ -1397,9 +1422,9 @@ correction.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="o">.</span><span class="n">fig_event_corrected</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">tfnoise_sta</span><span class="o">.</span><span class="n">tf_list</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_corrected_sta.png" src="_images/Figure_corrected_sta.png" />
-</div>
+</figure>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>If the noise window and event window are not identical, they cannot
@@ -1435,12 +1460,12 @@ save the final object</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="container-classes">
-<h3>Container Classes<a class="headerlink" href="#container-classes" title="Permalink to this headline"></a></h3>
-<div class="section" id="power">
-<h4>Power<a class="headerlink" href="#power" title="Permalink to this headline"></a></h4>
+</section>
+</section>
+<section id="container-classes">
+<h3>Container Classes<a class="headerlink" href="#container-classes" title="Permalink to this heading"></a></h3>
+<section id="power">
+<h4>Power<a class="headerlink" href="#power" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Power">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c11</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c22</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cZZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cPP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Power" title="Permalink to this definition"></a></dt>
@@ -1491,9 +1516,9 @@ save the final object</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="cross">
-<h4>Cross<a class="headerlink" href="#cross" title="Permalink to this headline"></a></h4>
+</section>
+<section id="cross">
+<h4>Cross<a class="headerlink" href="#cross" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Cross">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c12</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cZP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Cross" title="Permalink to this definition"></a></dt>
@@ -1566,9 +1591,9 @@ save the final object</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="rotation">
-<h4>Rotation<a class="headerlink" href="#rotation" title="Permalink to this headline"></a></h4>
+</section>
+<section id="rotation">
+<h4>Rotation<a class="headerlink" href="#rotation" title="Permalink to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cHH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Permalink to this definition"></a></dt>
@@ -1674,10 +1699,10 @@ save the final object</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-obstools.atacr.utils">
-<span id="utility-functions"></span><h3>Utility functions<a class="headerlink" href="#module-obstools.atacr.utils" title="Permalink to this headline"></a></h3>
+</section>
+</section>
+<section id="module-obstools.atacr.utils">
+<span id="utility-functions"></span><h3>Utility functions<a class="headerlink" href="#module-obstools.atacr.utils" title="Permalink to this heading"></a></h3>
 <p><a class="reference internal" href="#module-obstools.atacr.utils" title="obstools.atacr.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a> contains several functions that are used in the
 class methods of <cite>~obstools.atacr.classes</cite>.</p>
 <dl class="py function">
@@ -1911,9 +1936,9 @@ of a boxcar function with the PSD</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-obstools.atacr.plotting">
-<span id="plotting-functions"></span><h3>Plotting functions<a class="headerlink" href="#module-obstools.atacr.plotting" title="Permalink to this headline"></a></h3>
+</section>
+<section id="module-obstools.atacr.plotting">
+<span id="plotting-functions"></span><h3>Plotting functions<a class="headerlink" href="#module-obstools.atacr.plotting" title="Permalink to this heading"></a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">plot</span></code> contains several functions for plotting the results
 of the analysis at various final and intermediate steps.</p>
 <dl class="py function">
@@ -2013,7 +2038,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_comply">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2061,10 +2086,10 @@ for plotting the corrected vertical component.</p></li>
 </dl>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="scripts">
-<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+<section id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this heading"></a></h2>
 <p>There are several Python scripts that accompany <code class="docutils literal notranslate"><span class="pre">~obstools.atacr</span></code>. These can be used
 in bash scripts to automate data processing. These include scripts to download noise and
 event data, and perform tilt and compliance noise removal using either the default
@@ -2078,17 +2103,17 @@ program values or by refining parameters. All of them use a station database pro
 <li><p>atacr_transfer_functions</p></li>
 <li><p>atacr_correct_event</p></li>
 </ul>
-<div class="section" id="atacr-download-data">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code><a class="headerlink" href="#atacr-download-data" title="Permalink to this headline"></a></h3>
-<div class="section" id="description">
-<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h4>
+<section id="atacr-download-data">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code><a class="headerlink" href="#atacr-download-data" title="Permalink to this heading"></a></h3>
+<section id="description">
+<h4>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h4>
 <p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
 to use in noise corrections of vertical
 component data. Station selection is specified by a network and
 station code. The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="usage">
-<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h4>
+</section>
+<section id="usage">
+<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data -h
 usage: atacr_download_data [options] &lt;indb&gt;
 
@@ -2160,19 +2185,19 @@ Time Search Settings:
                         each station in database]
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="atacr-daily-spectra">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code><a class="headerlink" href="#atacr-daily-spectra" title="Permalink to this headline"></a></h3>
-<div class="section" id="id2">
-<h4>Description<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h4>
+</section>
+</section>
+<section id="atacr-daily-spectra">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code><a class="headerlink" href="#atacr-daily-spectra" title="Permalink to this heading"></a></h3>
+<section id="id2">
+<h4>Description<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
 <p>Extracts two-hour-long windows from the day-long data, calculates
 power-spectral densities and flags windows for outlier from the PSD properties.
 Station selection is specified by a network and station code. The database
 is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id3">
-<h4>Usage<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h4>
+</section>
+<section id="id3">
+<h4>Usage<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra -h
 usage: atacr_daily_spectra [options] &lt;indb&gt;
 
@@ -2249,20 +2274,20 @@ Figure Settings:
                      [Default &#39;png&#39;]
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="atacr-clean-spectra">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code><a class="headerlink" href="#atacr-clean-spectra" title="Permalink to this headline"></a></h3>
-<div class="section" id="id4">
-<h4>Description<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h4>
+</section>
+</section>
+<section id="atacr-clean-spectra">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code><a class="headerlink" href="#atacr-clean-spectra" title="Permalink to this heading"></a></h3>
+<section id="id4">
+<h4>Description<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
 <p>Extracts daily spectra calculated from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code> and
 flags days for which the daily averages are outliers from the PSD properties.
 Further averages the spectra over the whole period specified by <code class="docutils literal notranslate"><span class="pre">--start</span></code>
 and <code class="docutils literal notranslate"><span class="pre">--end</span></code>. Station selection is specified by a network and station code.
 The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id5">
-<h4>Usage<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h4>
+</section>
+<section id="id5">
+<h4>Usage<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra -h
 usage: atacr_clean_spectra [options] &lt;indb&gt;
 
@@ -2324,20 +2349,20 @@ Figure Settings:
                    [Default &#39;png&#39;]
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="atacr-transfer-functions">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions</span></code><a class="headerlink" href="#atacr-transfer-functions" title="Permalink to this headline"></a></h3>
-<div class="section" id="id6">
-<h4>Description<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h4>
+</section>
+</section>
+<section id="atacr-transfer-functions">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_transfer</span> <span class="pre">functions</span></code><a class="headerlink" href="#atacr-transfer-functions" title="Permalink to this heading"></a></h3>
+<section id="id6">
+<h4>Description<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h4>
 <p>Calculates transfer functions using the noise windows flagged as <em>good</em>, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code>) or for those averaged over several days
 (from <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code>), if available. The transfer functions are stored to disk.
 Station selection is specified by a network and station code. The database is
 provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id7">
-<h4>Usage<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h4>
+</section>
+<section id="id7">
+<h4>Usage<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions -h
 usage: atacr_transfer_functions [options] &lt;indb&gt;
 
@@ -2395,19 +2420,19 @@ Figure Settings:
                    [Default &#39;png&#39;]
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="atacr-download-event">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code><a class="headerlink" href="#atacr-download-event" title="Permalink to this headline"></a></h3>
-<div class="section" id="id8">
-<h4>Description<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h4>
+</section>
+</section>
+<section id="atacr-download-event">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code><a class="headerlink" href="#atacr-download-event" title="Permalink to this heading"></a></h3>
+<section id="id8">
+<h4>Description<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h4>
 <p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and
 station code. The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id9">
-<h4>Usage<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h4>
+</section>
+<section id="id9">
+<h4>Usage<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event -h
 usage: atacr_download_event [options] &lt;indb&gt;
 
@@ -2496,19 +2521,19 @@ Geometry Settings:
                         between the station and event. [Default 120]
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="atacr-correct-event">
-<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event</span></code><a class="headerlink" href="#atacr-correct-event" title="Permalink to this headline"></a></h3>
-<div class="section" id="id10">
-<h4>Description<a class="headerlink" href="#id10" title="Permalink to this headline"></a></h4>
+</section>
+</section>
+<section id="atacr-correct-event">
+<h3><code class="docutils literal notranslate"><span class="pre">atacr_correct_event</span></code><a class="headerlink" href="#atacr-correct-event" title="Permalink to this heading"></a></h3>
+<section id="id10">
+<h4>Description<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h4>
 <p>Loads the transfer functions previously calculated and performs the noise corrections, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code>) or for those averaged over several days
 (from <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code>), if available. The database is provided as a
 <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
-</div>
-<div class="section" id="id11">
-<h4>Usage<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h4>
+</section>
+<section id="id11">
+<h4>Usage<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event -h
 usage: atacr_correct_event [options] &lt;indb&gt;
 
@@ -2574,11 +2599,11 @@ Figure Settings:
                    [Default &#39;png&#39;]
 </pre></div>
 </div>
-</div>
-</div>
-</div>
-<div class="section" id="tutorial">
-<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+</section>
+<section id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Here we roughly follow the steps highlighted in the
@@ -2589,8 +2614,8 @@ the various figures. The examples provided below are for one month of data
 Corrections are applied to a magnitude 6.6 earthquake that occurred near
 Vanuatu on March 9, 2012.</p>
 </div>
-<div class="section" id="creating-the-stdb-database">
-<h3>0. Creating the <code class="docutils literal notranslate"><span class="pre">StDb</span></code> Database<a class="headerlink" href="#creating-the-stdb-database" title="Permalink to this headline"></a></h3>
+<section id="creating-the-stdb-database">
+<h3>0. Creating the <code class="docutils literal notranslate"><span class="pre">StDb</span></code> Database<a class="headerlink" href="#creating-the-stdb-database" title="Permalink to this heading"></a></h3>
 <p>All the scripts provided require a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> database containing station
 information and metadata. Let’s first create this database for station
 M08A and send the prompt to a logfile</p>
@@ -2624,9 +2649,9 @@ enclose the <cite>?H?</cite> in single or double quotes (e.g.,
        Azimuth Correction: 0.000000
 </pre></div>
 </div>
-</div>
-<div class="section" id="download-noise-data">
-<h3>1. Download noise data<a class="headerlink" href="#download-noise-data" title="Permalink to this headline"></a></h3>
+</section>
+<section id="download-noise-data">
+<h3>1. Download noise data<a class="headerlink" href="#download-noise-data" title="Permalink to this heading"></a></h3>
 <p>We wish to download one month of data for the station M08A for March 2012.
 The various options above allow us to select the additional channels to use
 (e.g., <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">12,P</span></code> for both horizontal and pressure data - which is the default
@@ -2691,9 +2716,9 @@ following line with the option <code class="docutils literal notranslate"><span 
 <p>And so on until all day-long files have been downloaded. You will
 notice that a folder called <code class="docutils literal notranslate"><span class="pre">DATA/7D.M08A/</span></code> has been created.
 This is where all day-long files will be stored on disk.</p>
-</div>
-<div class="section" id="qc-for-daily-spectral-averages">
-<h3>2. QC for daily spectral averages<a class="headerlink" href="#qc-for-daily-spectral-averages" title="Permalink to this headline"></a></h3>
+</section>
+<section id="qc-for-daily-spectral-averages">
+<h3>2. QC for daily spectral averages<a class="headerlink" href="#qc-for-daily-spectral-averages" title="Permalink to this heading"></a></h3>
 <p>For this step, there are several Parameter Settings that can be tuned. Once again,
 the default values are the ones used to reproduce the results of the Matlab
 ATaCR software and can be left un-changed. The Time Search Settings can be used
@@ -2744,25 +2769,25 @@ previous results (option <code class="docutils literal notranslate"><span class=
 into 3a and 3b below). Several intermediate steps are also produces, which show
 all the raw data and the window classification into good and bad windows for
 subsequent analysis.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_2.png" src="_images/Figure_2.png" />
-</div>
+</figure>
 <p>Figure 2: Daily spectrogram for the vertical (Z), horizontals (H1, H2), and pressure
 (P) components.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_3a.png" src="_images/Figure_3a.png" />
-</div>
+</figure>
 <p>Figure 3a: Power spectral density (PSD) functions for the Z, H1, H2, and P compo-
 nents from a single day of data (M08A, March 4, 2012, same as in Figure 2). The left
 column shows PSDs for each individual window; PSDs from windows that did not
 pass the quality control are colored red.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_3b.png" src="_images/Figure_3b.png" />
-</div>
+</figure>
 <p>Figure 3b: Daily average PSD of bad (red) and good (black) windows.</p>
-</div>
-<div class="section" id="qc-for-clean-station-averages">
-<h3>3. QC for clean station averages<a class="headerlink" href="#qc-for-clean-station-averages" title="Permalink to this headline"></a></h3>
+</section>
+<section id="qc-for-clean-station-averages">
+<h3>3. QC for clean station averages<a class="headerlink" href="#qc-for-clean-station-averages" title="Permalink to this heading"></a></h3>
 <p>Now that we have processed daily spectra for all available components, it is
 possible to further average the spectra over multiple days to produce a cleaned
 station average. It is still possible to specify a date range over which to
@@ -2814,50 +2839,50 @@ or per month, etc.). For example:</p>
 </div>
 </div>
 <p>Several figures are also produced, including Figures 4, 6-9.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_4.png" src="_images/Figure_4.png" />
-</div>
+</figure>
 <p>Figure 4: The orientation of maximum coherence between the vertical and the two
 horizontal components for M08A during March 2012. (Left) Coherence as a function
 of angle from the H1 component. (Right) Phase as a function of the angle. In this
 example, the coherence is low indicating the absence of dominant, uni-directional tilt
 noise.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_6.png" src="_images/Figure_6.png" />
-</div>
+</figure>
 <p>Figure 6: The daily PSDs plotted for the vertical (Z), horizontal (H1, H2), and
 pressure (P) components for March 2012 at station M08A. Each line is a daily PSD.
 Gray colors indicate days that were accepted by the second quality control step,
 while the red colors indicate days that were discarded.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_7.png" src="_images/Figure_7.png" />
-</div>
+</figure>
 <p>Figure 7: The daily coherences between pairs of components as indicated above each
 subplot for March 2012 at station M08A (e.g. 1Z - coherence between Horizontal 1
 and Vertical). Each line represents average coherence for a single day in the data
 set. Gray colors indicate days that were accepted by the second quality control step,
 while the red colors indicate days that were discarded. Note that some definitions
 are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used in the Matlab Tutorial.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_8.png" src="_images/Figure_8.png" />
-</div>
+</figure>
 <p>Figure 8: The daily admittances between pairs of components as indicated above
 (see Figure 7) each subplot for March 2012 at station M08A. Each line is a daily
 admittance. Gray colors indicate days that were accepted by the second quality
 control step, while the red colors indicate days that were discarded.
 Note that some definitions are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used
 in the Matlab Tutorial.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_9.png" src="_images/Figure_9.png" />
-</div>
+</figure>
 <p>Figure 9: The daily phases between pairs of components as indicated above (see
 Figure 7) each subplot for March 2012 at station M08A. Each line is a daily phase.
 Gray colors indicate days that were accepted by the second quality control step,
 while the red colors indicate days that were discarded. Note that some definitions
 are different (e.g., <code class="docutils literal notranslate"><span class="pre">ZP</span></code> vs <code class="docutils literal notranslate"><span class="pre">PZ</span></code>) than those used in the Matlab Tutorial.</p>
-</div>
-<div class="section" id="transfer-function-calculation">
-<h3>4. Transfer function calculation<a class="headerlink" href="#transfer-function-calculation" title="Permalink to this headline"></a></h3>
+</section>
+<section id="transfer-function-calculation">
+<h3>4. Transfer function calculation<a class="headerlink" href="#transfer-function-calculation" title="Permalink to this heading"></a></h3>
 <p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the transfer
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available.</p>
@@ -2921,16 +2946,16 @@ Path to TF_STA/7D.M08A/ doesn&#39;t exist - creating it
 created folder called <code class="docutils literal notranslate"><span class="pre">TF_STA/7D.M08A/</span></code>.</p>
 <p>We can produce Figure 10 by re-running the previous command with the options
 <code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--figTF</span></code>.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_10.png" src="_images/Figure_10.png" />
-</div>
+</figure>
 <p>Figure 10: Transfer function amplitudes for the component combinations of interest,
 as indicated in the title of each subplot. This example is for the month of March 2012
 for station M08A. The daily transfer functions are shown in grey and the average
 calculated for the whole month is shown in black.</p>
-</div>
-<div class="section" id="download-earthquake-data">
-<h3>5. Download earthquake data<a class="headerlink" href="#download-earthquake-data" title="Permalink to this headline"></a></h3>
+</section>
+<section id="download-earthquake-data">
+<h3>5. Download earthquake data<a class="headerlink" href="#download-earthquake-data" title="Permalink to this heading"></a></h3>
 <p>Now we need to download the earthquake data, for which we wish to
 clean the vertical component using the transfer functions just calculated.
 This script <code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code> is very similar to <code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code>,
@@ -2988,9 +3013,9 @@ Path to EVENTS/7D.M08A/ doesn`t exist - creating it
 </div>
 <p>The data are stored as an <code class="docutils literal notranslate"><span class="pre">EventStream</span></code> object, saved to disk in the
 newly created folder <code class="docutils literal notranslate"><span class="pre">EVENTS/7D.M08A/</span></code>.</p>
-</div>
-<div class="section" id="correct-clean-earthquake-data">
-<h3>6. Correct/clean earthquake data<a class="headerlink" href="#correct-clean-earthquake-data" title="Permalink to this headline"></a></h3>
+</section>
+<section id="correct-clean-earthquake-data">
+<h3>6. Correct/clean earthquake data<a class="headerlink" href="#correct-clean-earthquake-data" title="Permalink to this heading"></a></h3>
 <p>The final step in the analysis is the application of the transfer functions
 to the raw earthquake seismograms to clean up the vertical component.
 Once again, the default settings can be used. The corrected seismograms will
@@ -3038,29 +3063,29 @@ components in the <code class="docutils literal notranslate"><span class="pre">E
 transfer function has been calculated previously and applied during the correction.</p>
 </div>
 <p>Figures 11 and 12 should look like:</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_11.png" src="_images/Figure_11.png" />
-</div>
+</figure>
 <p>Figure 11: Event time series for the vertical (Z), horizontal 1 (H1), horizontal 2 (H2),
 and pressure (P) components. No corrections have been applied. The data is for
 station M08A for the Mw 6.6 earthquake that occurred near Vanuatu on March 9,
 2012 and has been bandpass filtered from 10 - 150 s.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_12a.png" src="_images/Figure_12a.png" />
-</div>
+</figure>
 <p>Figure 12a: Event time series for the vertical (Z) components after each of the transfer
 functions of interest have been applied. The corrections are specified in the titles of
 each subplot. The data is for station M08A for the Mw 6.6 earthquake that occurred
 near Vanuatu on March 9, 2012 (same as Figure 11) and has been bandpass filtered
 from 10 - 150 s. Traces in grey show the original (raw, un-corrected) vertical component.</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="_images/Figure_12b.png" src="_images/Figure_12b.png" />
-</div>
+</figure>
 <p>Figure 12b: Same as Figure 12a but using the station averaged transfer functions. In this
 case the <code class="docutils literal notranslate"><span class="pre">ZH</span></code> and <code class="docutils literal notranslate"><span class="pre">ZP-H</span></code> transfer functions are not available.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
