@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ATaCR &mdash; Home 0.1.3 documentation</title>
@@ -11,10 +11,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Home
-            <img src="_static/obstools_logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Home
+              <img src="_static/obstools_logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -156,7 +159,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">ATaCR</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/atacr.rst.txt" rel="nofollow"> View page source</a>
@@ -293,7 +296,7 @@ available. Upon saving, those traces are discarded to save disk space.</p>
 <dd><p>Corresponding trace objects for components H1, H2, HZ and HP.
 Traces can be empty (i.e., <code class="docutils literal notranslate"><span class="pre">Trace()</span></code>) for missing components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object</p>
 </dd>
 </dl>
@@ -304,7 +307,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">window</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.window" title="Permalink to this definition"></a></dt>
 <dd><p>Length of time window in seconds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -315,7 +318,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">overlap</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.overlap" title="Permalink to this definition"></a></dt>
 <dd><p>Fraction of overlap between adjacent windows</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -326,7 +329,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.key" title="Permalink to this definition"></a></dt>
 <dd><p>Station key for current object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -337,7 +340,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.dt" title="Permalink to this definition"></a></dt>
 <dd><p>Sampling distance in seconds. Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -348,7 +351,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">npts</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.npts" title="Permalink to this definition"></a></dt>
 <dd><p>Number of points in time series. Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -359,7 +362,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">fs</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.fs" title="Permalink to this definition"></a></dt>
 <dd><p>Sampling frequency (in Hz). Obtained from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -371,7 +374,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <dd><p>Year for current object (obtained from UTCDateTime). Obtained from
 <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -383,7 +386,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <dd><p>Julian day for current object (obtained from UTCDateTime). Obtained
 from <code class="docutils literal notranslate"><span class="pre">trZ</span></code> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -395,7 +398,7 @@ from <code class="docutils literal notranslate"><span class="pre">trZ</span></co
 <dd><p>Number of available components (either 2, 3 or 4). Obtained from
 non-empty <code class="docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -407,7 +410,7 @@ non-empty <code class="docutils literal notranslate"><span class="pre">Trace</sp
 <dd><p>Dictionary of possible transfer functions given the available
 components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict</p>
 </dd>
 </dl>
@@ -445,7 +448,7 @@ components.</p>
 anomalous and should be discarded in the calculation of the
 transfer functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pd</strong> (<em>list</em>) – Frequency corners of passband for calculating the spectra</p></li>
 <li><p><strong>tol</strong> (<em>float</em>) – Tolerance threshold. If spectrum &gt; std*tol, window is flagged as
@@ -467,7 +470,7 @@ for debugging</p></li>
 <dd><p>Windowed Fourier transform for the <cite>X</cite> component (can be either
 1, 2, Z or P)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -478,7 +481,7 @@ for debugging</p></li>
 <span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.f" title="Permalink to this definition"></a></dt>
 <dd><p>Full frequency axis (Hz)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -490,7 +493,7 @@ for debugging</p></li>
 <dd><p>List of booleans representing whether a window is good (True)
 or not (False)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -525,7 +528,7 @@ between horizontal components and the vertical component (for maximum
 tilt direction), and use the rotated horizontals in the transfer
 function calculations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>calc_rotation</strong> (<em>boolean</em>) – Whether or not to calculate the tilt direction</p></li>
 <li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
@@ -542,7 +545,7 @@ between H and Z</p></li>
 <span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
 <dd><p>Positive frequency axis for corresponding window parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -553,7 +556,7 @@ between H and Z</p></li>
 <span class="sig-name descname"><span class="pre">power</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.power" title="Permalink to this definition"></a></dt>
 <dd><p>Container for the Power spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
 </dd>
 </dl>
@@ -564,7 +567,7 @@ between H and Z</p></li>
 <span class="sig-name descname"><span class="pre">cross</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.cross" title="Permalink to this definition"></a></dt>
 <dd><p>Container for the Cross power spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
 </dd>
 </dl>
@@ -575,7 +578,7 @@ between H and Z</p></li>
 <span class="sig-name descname"><span class="pre">rotation</span></span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.rotation" title="Permalink to this definition"></a></dt>
 <dd><p>Container for the Rotated power and cross spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a>, optional</p>
 </dd>
 </dl>
@@ -608,7 +611,7 @@ figure</p>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.save" title="Permalink to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
@@ -664,7 +667,7 @@ saved.</p>
 <dd><p>A list of <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> objects to process
 and produce a station average</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -677,7 +680,7 @@ and produce a station average</p>
 of the methods have been called. When <cite>True</cite>, the <cite>daylist</cite> attribute
 is deleted from memory</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -738,7 +741,7 @@ will be called first before unpacking into the object attributes.</p>
 <span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.f" title="Permalink to this definition"></a></dt>
 <dd><p>Frequency axis for corresponding time sampling parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -750,7 +753,7 @@ will be called first before unpacking into the object attributes.</p>
 <dd><p>Number of good windows from the
 <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -761,7 +764,7 @@ will be called first before unpacking into the object attributes.</p>
 <span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.key" title="Permalink to this definition"></a></dt>
 <dd><p>Station key for current object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -772,7 +775,7 @@ will be called first before unpacking into the object attributes.</p>
 <span class="sig-name descname"><span class="pre">ncomp</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.ncomp" title="Permalink to this definition"></a></dt>
 <dd><p>Number of available components (either 2, 3 or 4)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -784,7 +787,7 @@ will be called first before unpacking into the object attributes.</p>
 <dd><p>Dictionary of possible transfer functions given the available
 components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict</p>
 </dd>
 </dl>
@@ -798,7 +801,7 @@ are available for
 the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
 2P, ZZ, ZP, PP, HH, HZ, HP]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
 </dd>
 </dl>
@@ -809,7 +812,7 @@ the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
 <span class="sig-name descname"><span class="pre">direc</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.direc" title="Permalink to this definition"></a></dt>
 <dd><p>Array of azimuths used in determining the tilt direction</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
 </dd>
 </dl>
@@ -821,7 +824,7 @@ the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
 <dd><p>Tilt direction from maximum coherence between rotated <cite>H1</cite> and
 <cite>HZ</cite> components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -834,7 +837,7 @@ the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
 <a class="reference internal" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="obstools.atacr.classes.StaNoise.QC_sta_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_sta_spectra()</span></code></a> has
 been called.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -847,7 +850,7 @@ been called.</p>
 <a class="reference internal" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="obstools.atacr.classes.StaNoise.average_sta_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">average_sta_spectra()</span></code></a> has
 been called.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -881,7 +884,7 @@ been called.</p>
 spectra are anomalous and should be discarded in the calculation of
 the long-term transfer functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pd</strong> (<em>list</em>) – Frequency corners of passband for calculating the spectra</p></li>
 <li><p><strong>tol</strong> (<em>float</em>) – Tolerance threshold. If spectrum &gt; std*tol, window is flagged as
@@ -902,7 +905,7 @@ debugging</p></li>
 <dd><p>List of booleans representing whether a day is good (True) or not
 (False)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -925,7 +928,7 @@ debugging</p></li>
 <span class="sig-name descname"><span class="pre">average_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Permalink to this definition"></a></dt>
 <dd><p>Method to average the daily station spectra for good windows.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
 spectra</p></li>
@@ -939,7 +942,7 @@ spectra</p></li>
 <span class="sig-name descname"><span class="pre">power</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.power" title="Permalink to this definition"></a></dt>
 <dd><p>Container for the Power spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Power" title="obstools.atacr.classes.Power"><code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code></a></p>
 </dd>
 </dl>
@@ -950,7 +953,7 @@ spectra</p></li>
 <span class="sig-name descname"><span class="pre">cross</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.cross" title="Permalink to this definition"></a></dt>
 <dd><p>Container for the Cross power spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a></p>
 </dd>
 </dl>
@@ -961,7 +964,7 @@ spectra</p></li>
 <span class="sig-name descname"><span class="pre">rotation</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.rotation" title="Permalink to this definition"></a></dt>
 <dd><p>Container for the Rotated power and cross spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.Cross" title="obstools.atacr.classes.Cross"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cross</span></code></a>, optional</p>
 </dd>
 </dl>
@@ -984,7 +987,7 @@ final figure</p>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.save" title="Permalink to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
@@ -1033,7 +1036,7 @@ are defined and saved.</p>
 <span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.f" title="Permalink to this definition"></a></dt>
 <dd><p>Frequency axis for corresponding time sampling parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1046,7 +1049,7 @@ are defined and saved.</p>
 available for the power, cross and rotated spectra:
 [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
 </dd>
 </dl>
@@ -1058,7 +1061,7 @@ available for the power, cross and rotated spectra:
 <dd><p>Tilt direction from maximum coherence between rotated <cite>H1</cite> and
 <cite>HZ</cite> components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1070,7 +1073,7 @@ available for the power, cross and rotated spectra:
 <dd><p>Dictionary of possible transfer functions given the available
 components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict</p>
 </dd>
 </dl>
@@ -1124,7 +1127,7 @@ components (and component combinations) from the averaged
 <span class="sig-name descname"><span class="pre">transfunc</span></span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfunc" title="Permalink to this definition"></a></dt>
 <dd><p>Container Dictionary for all possible transfer functions</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.TFNoise.TfDict" title="obstools.atacr.classes.TFNoise.TfDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">TfDict</span></code></a></p>
 </dd>
 </dl>
@@ -1162,7 +1165,7 @@ components (and component combinations) from the averaged
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.save" title="Permalink to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
@@ -1222,7 +1225,7 @@ possible corrections is determined automatically.</p>
 <dd><p>Corresponding trace objects for components H1, H2, HZ and HP.
 Traces can be empty (i.e., <code class="docutils literal notranslate"><span class="pre">Trace()</span></code>) for missing components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object</p>
 </dd>
 </dl>
@@ -1233,7 +1236,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.key" title="Permalink to this definition"></a></dt>
 <dd><p>Station key for current object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1244,7 +1247,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">evtime</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.evtime" title="Permalink to this definition"></a></dt>
 <dd><p>Origin time of seismic event.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code></p>
 </dd>
 </dl>
@@ -1255,7 +1258,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">tstamp</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.tstamp" title="Permalink to this definition"></a></dt>
 <dd><p>Time stamp for event</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1266,7 +1269,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">prefix</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.prefix" title="Permalink to this definition"></a></dt>
 <dd><p>Associated prefix of SAC files</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1277,7 +1280,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">npts</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.npts" title="Permalink to this definition"></a></dt>
 <dd><p>Number of points in time series.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -1288,7 +1291,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">fs</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.fs" title="Permalink to this definition"></a></dt>
 <dd><p>Sampling frequency (in Hz).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1299,7 +1302,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.dt" title="Permalink to this definition"></a></dt>
 <dd><p>Sampling distance in seconds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1311,7 +1314,7 @@ Traces can be empty (i.e., <code class="docutils literal notranslate"><span clas
 <dd><p>Number of available components (either 2, 3 or 4). Obtained from
 non-empty <code class="docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -1323,7 +1326,7 @@ non-empty <code class="docutils literal notranslate"><span class="pre">Trace</sp
 <dd><p>Dictionary of possible transfer functions given the available
 components. This is determined during initialization.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict</p>
 </dd>
 </dl>
@@ -1360,7 +1363,7 @@ components. This is determined during initialization.</p>
 component combinations) to produce corrected/cleaned vertical
 components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>tfnoise</strong> (<a class="reference internal" href="#obstools.atacr.classes.TFNoise" title="obstools.atacr.classes.TFNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TFNoise</span></code></a>) – Object that contains the noise transfer functions used in the
 correction</p>
 </dd>
@@ -1371,7 +1374,7 @@ correction</p>
 <dd><p>Container Dictionary for all possible corrections from the
 transfer functions</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#obstools.atacr.classes.EventStream.CorrectDict" title="obstools.atacr.classes.EventStream.CorrectDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">CorrectDict</span></code></a></p>
 </dd>
 </dl>
@@ -1439,7 +1442,7 @@ event windows.</p>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream.save" title="Permalink to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name</p>
 </dd>
 </dl>
@@ -1475,7 +1478,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c11</span></span><a class="headerlink" href="#obstools.atacr.classes.Power.c11" title="Permalink to this definition"></a></dt>
 <dd><p>Power spectral density for component 1 (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1486,7 +1489,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c22</span></span><a class="headerlink" href="#obstools.atacr.classes.Power.c22" title="Permalink to this definition"></a></dt>
 <dd><p>Power spectral density for component 2 (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1497,7 +1500,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">cZZ</span></span><a class="headerlink" href="#obstools.atacr.classes.Power.cZZ" title="Permalink to this definition"></a></dt>
 <dd><p>Power spectral density for component Z (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1508,7 +1511,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">cPP</span></span><a class="headerlink" href="#obstools.atacr.classes.Power.cPP" title="Permalink to this definition"></a></dt>
 <dd><p>Power spectral density for component P (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1528,7 +1531,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c12</span></span><a class="headerlink" href="#obstools.atacr.classes.Cross.c12" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components 1 and 2 (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1539,7 +1542,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c1Z</span></span><a class="headerlink" href="#obstools.atacr.classes.Cross.c1Z" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components 1 and Z (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1550,7 +1553,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c1P</span></span><a class="headerlink" href="#obstools.atacr.classes.Cross.c1P" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components 1 and P (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1561,7 +1564,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c2Z</span></span><a class="headerlink" href="#obstools.atacr.classes.Cross.c2Z" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components 2 and Z (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1572,7 +1575,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">c2P</span></span><a class="headerlink" href="#obstools.atacr.classes.Cross.c2P" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components 2 and P (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1583,7 +1586,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">cZP</span></span><a class="headerlink" href="#obstools.atacr.classes.Cross.cZP" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components Z and P (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1603,7 +1606,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">cHH</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHH" title="Permalink to this definition"></a></dt>
 <dd><p>Power spectral density for rotated horizontal component H (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1614,7 +1617,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">cHZ</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHZ" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components H and Z (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1625,7 +1628,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">cHP</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.cHP" title="Permalink to this definition"></a></dt>
 <dd><p>Cross-power spectral density for components H and P (any shape)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1636,7 +1639,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">coh</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh" title="Permalink to this definition"></a></dt>
 <dd><p>Coherence between horizontal components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1647,7 +1650,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">ph</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.ph" title="Permalink to this definition"></a></dt>
 <dd><p>Phase of cross-power spectrum between horizontal components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1658,7 +1661,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">tilt</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt" title="Permalink to this definition"></a></dt>
 <dd><p>Angle (azimuth) of tilt axis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1669,7 +1672,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">coh_value</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh_value" title="Permalink to this definition"></a></dt>
 <dd><p>Maximum coherence</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1680,7 +1683,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">phase_value</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.phase_value" title="Permalink to this definition"></a></dt>
 <dd><p>Phase at maximum coherence</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1691,7 +1694,7 @@ save the final object</p>
 <span class="sig-name descname"><span class="pre">direc</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.direc" title="Permalink to this definition"></a></dt>
 <dd><p>Directions for which the coherence is calculated</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -1710,16 +1713,16 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">traceshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.traceshift" title="Permalink to this definition"></a></dt>
 <dd><p>Function to shift traces in time given travel time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trace</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object) – Trace object to update</p></li>
 <li><p><strong>tt</strong> (<em>float</em>) – Time shift in seconds</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>rtrace</strong> – Updated trace object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object</p>
 </dd>
 </dl>
@@ -1732,14 +1735,14 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 start and end times that were requested, as well as the total n
 length of the traces.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code> object) – Start time of requested stream</p></li>
 <li><p><strong>end</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code> object) – End time of requested stream</p></li>
 <li><p><strong>st</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> object) – Stream object with all trace data</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>(pass)</strong> (<em>bool</em>) – Whether the QC test has passed</p></li>
 <li><p><strong>st</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> object) – Updated stream object</p></li>
@@ -1754,7 +1757,7 @@ length of the traces.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">update_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stla</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evla</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evlo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.update_stats" title="Permalink to this definition"></a></dt>
 <dd><p>Function to include SAC metadata to <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object) – Trace object to update</p></li>
 <li><p><strong>stla</strong> (<em>float</em>) – Latitude of station</p></li>
@@ -1765,10 +1768,10 @@ length of the traces.</p>
 <li><p><strong>evlo</strong> (<em>float</em><em>, </em><em>optional</em>) – Longitute of event</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>tr</strong> – Updated trace object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object</p>
 </dd>
 </dl>
@@ -1779,18 +1782,18 @@ length of the traces.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.get_data" title="Permalink to this definition"></a></dt>
 <dd><p>Function to grab all available noise data given a path and data time range</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>datapath</strong> (<em>str</em>) – Path to noise data folder</p></li>
 <li><p><strong>tstart</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code>) – Start time for query</p></li>
 <li><p><strong>tend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code>) – End time for query</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>tr1, tr2, trZ, trP</strong> – Corresponding trace objects for components H1, H2, HZ and HP. Returns
 empty traces for missing components.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object</p>
 </dd>
 </dl>
@@ -1802,18 +1805,18 @@ empty traces for missing components.</p>
 <dd><p>Function to grab all available earthquake data given a path and data time
 range</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>eventpath</strong> (<em>str</em>) – Path to earthquake data folder</p></li>
 <li><p><strong>tstart</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code>) – Start time for query</p></li>
 <li><p><strong>tend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">UTCDateTime</span></code>) – End time for query</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>tr1, tr2, trZ, trP</strong> – Corresponding trace objects for components H1, H2, HZ and HP. Returns
 empty traces for missing components.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> object</p>
 </dd>
 </dl>
@@ -1824,7 +1827,7 @@ empty traces for missing components.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goodwins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.005,</span> <span class="pre">0.035]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.calculate_tilt" title="Permalink to this definition"></a></dt>
 <dd><p>Determines tilt direction from maximum coherence between rotated H1 and Z.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ft1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Fourier transform of corresponding H1, H2, HZ and HP components</p></li>
 <li><p><strong>ft2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Fourier transform of corresponding H1, H2, HZ and HP components</p></li>
@@ -1838,7 +1841,7 @@ empty traces for missing components.</p>
 calculated</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>cHH, cHZ, cHP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Arrays of power and cross-spectral density functions of components HH
 (rotated H1 in direction of maximum tilt), HZ, and HP</p></li>
@@ -1862,17 +1865,17 @@ directions (azimuths)</p></li>
 <dd><p>Function to smooth power spectral density functions from the convolution
 of a boxcar function with the PSD</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Real-valued array to smooth (PSD)</p></li>
 <li><p><strong>nd</strong> (<em>int</em>) – Number of samples over which to smooth</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em>) – axis over which to perform the smoothing</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>filt</strong> – Filtered data</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, optional</p>
 </dd>
 </dl>
@@ -1883,16 +1886,16 @@ of a boxcar function with the PSD</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">admittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gxx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.admittance" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates admittance between two components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Gxy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Cross spectral density function of <cite>x</cite> and <cite>y</cite></p></li>
 <li><p><strong>Gxx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Power spectral density function of <cite>x</cite></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Admittance between <cite>x</cite> and <cite>y</cite></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, optional</p>
 </dd>
 </dl>
@@ -1903,17 +1906,17 @@ of a boxcar function with the PSD</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">coherence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gxx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gyy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.coherence" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates coherence between two components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Gxy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Cross spectral density function of <cite>x</cite> and <cite>y</cite></p></li>
 <li><p><strong>Gxx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Power spectral density function of <cite>x</cite></p></li>
 <li><p><strong>Gyy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Power spectral density function of <cite>y</cite></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Coherence between <cite>x</cite> and <cite>y</cite></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, optional</p>
 </dd>
 </dl>
@@ -1924,13 +1927,13 @@ of a boxcar function with the PSD</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.phase" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates phase angle between two components</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>Gxy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Cross spectral density function of <cite>x</cite> and <cite>y</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Phase angle between <cite>x</cite> and <cite>y</cite></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, optional</p>
 </dd>
 </dl>
@@ -1947,7 +1950,7 @@ of the analysis at various final and intermediate steps.</p>
 <dd><p>Function to plot the Quality-Control step of the analysis. This function
 is used in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite> scripts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
 <li><p><strong>power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code>) – Container for the Power spectra</p></li>
@@ -1967,7 +1970,7 @@ is used in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectr
 QC step). This function is used
 in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite> scripts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
 <li><p><strong>power</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Power</span></code>) – Container for the Power spectra</p></li>
@@ -1987,7 +1990,7 @@ in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite>
 <dd><p>Function to plot the averaged cross-spectra (those qualified as ‘good’ in
 the QC step). This function is used in the <cite>atacr_daily_spectra</cite> script.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
 <li><p><strong>field</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code>) – Container for the Power spectra</p></li>
@@ -2008,7 +2011,7 @@ Otherwise semilogx</p></li>
 <dd><p>Function to plot the coherence and phase between the rotated H and Z
 components, used to characterize the tilt direction.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coh</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Coherence between rotated H and Z components</p></li>
 <li><p><strong>ph</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase between rotated H and Z components</p></li>
@@ -2023,7 +2026,7 @@ components, used to characterize the tilt direction.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_TF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_trfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_trfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_TF" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
 <li><p><strong>day_trfs</strong> (<em>Dict</em>) – Dictionary containing the transfer functions for the daily averages</p></li>
@@ -2041,7 +2044,7 @@ components, used to characterize the tilt direction.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Frequency axis (in Hz)</p></li>
 <li><p><strong>day_comps</strong> (<em>Dict</em>) – Dictionary containing the compliance functions for the daily averages</p></li>
@@ -2061,7 +2064,7 @@ components, used to characterize the tilt direction.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_raw" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the raw (although bandpassed) seismograms.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>evstream</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code>) – Container for the event stream data</p></li>
 <li><p><strong>fmin</strong> (<em>float</em>) – Low frequency corner (in Hz)</p></li>
@@ -2076,7 +2079,7 @@ components, used to characterize the tilt direction.</p>
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_corrected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_corrected" title="Permalink to this definition"></a></dt>
 <dd><p>Function to plot the corrected vertical component seismograms.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>evstream</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">EventStream</span></code>) – Container for the event stream data</p></li>
 <li><p><strong>Tf_list</strong> (<em>list</em>) – List of Dictionary elements of transfer functions used

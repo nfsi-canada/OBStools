@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Licence &mdash; Home 0.1.3 documentation</title>
@@ -11,10 +11,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Home
-            <img src="_static/obstools_logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Home
+              <img src="_static/obstools_logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -75,7 +78,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Licence</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/obstools.rst.txt" rel="nofollow"> View page source</a>
@@ -120,11 +123,11 @@ will be automatically installed by <code class="docutils literal notranslate"><s
 <h2>Conda environment<a class="headerlink" href="#conda-environment" title="Permalink to this heading"></a></h2>
 <p>We recommend creating a custom <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment
 where <code class="docutils literal notranslate"><span class="pre">OBStools</span></code> can be installed along with some of its dependencies.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n obs <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7 obspy -c conda-forge
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>obs<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7<span class="w"> </span>obspy<span class="w"> </span>-c<span class="w"> </span>conda-forge
 </pre></div>
 </div>
 <p>Activate the newly created environment:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate obs
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>obs
 </pre></div>
 </div>
 </section>
@@ -133,13 +136,13 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <ul class="simple">
 <li><p>Install dependencies:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install stdb
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>stdb
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>Install <code class="docutils literal notranslate"><span class="pre">obstools</span></code>:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install obstools
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>obstools
 </pre></div>
 </div>
 </section>
@@ -148,15 +151,15 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <ul class="simple">
 <li><p>Clone the repository:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/paudetseis/OBStools.git
-<span class="nb">cd</span> OBStools
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/paudetseis/OBStools.git
+<span class="nb">cd</span><span class="w"> </span>OBStools
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>Install using pip:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install stdb
-pip install .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>stdb
+pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
 </section>
