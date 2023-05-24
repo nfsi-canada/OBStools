@@ -352,7 +352,7 @@ def main(args=None):
                     evla = trZ.stats.sac.evla
 
             if args.fig_event_raw:
-                fname = stkey + '.' + eventstream.tstamp + 'raw'
+                fname = stkey + '.' + eventstream.tstamp + '.raw'
                 plot = plotting.fig_event_raw(
                     eventstream,
                     fmin=args.fmin, fmax=args.fmax)

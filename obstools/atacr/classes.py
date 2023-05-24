@@ -606,7 +606,7 @@ class DayNoise(object):
 
             # Save or show figure
             if save:
-                fname = self.key + '.' + self.tkey + '.' + 'QC' + form
+                fname = self.key + '.' + self.tkey + '.' + 'QC.' + form
                 if isinstance(save, Path):
                     fname = save / fname
                 plot.savefig(

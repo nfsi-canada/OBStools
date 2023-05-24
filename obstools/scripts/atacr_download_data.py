@@ -575,6 +575,8 @@ def main(args=None):
             # Check streams
             is_ok, st = utils.QC_streams(t1, t2, st)
             if not is_ok:
+                t1 += dt
+                t2 += dt
                 continue
 
             sth = st.select(component='1') + st.select(component='2') + \
