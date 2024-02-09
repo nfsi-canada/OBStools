@@ -234,6 +234,8 @@ class DayNoise(object):
         self.overlap = overlap
         self.key = key
 
+        self.station_depth = abs(self.trZ.stats.sac.stel)*1000 #Assumes sac elevation was given in km.
+
         # Get trace attributes
         zstats = self.trZ.stats
         self.dt = zstats.delta
@@ -936,6 +938,7 @@ class StaNoise(object):
         self.initialized = False
         self.QC = False
         self.av = False
+        self.direc = None
 
         if isinstance(daylist, DayNoise):
             daylist = [daylist]
@@ -946,6 +949,7 @@ class StaNoise(object):
                 '062'), _load_dn('063'), _load_dn('064')]
         if not daylist == 'demo' and daylist:
             self.daylist.extend(daylist)
+            self.station_depth = self.daylist[0].station_depth
 
     def __add__(self, other):
 
@@ -953,12 +957,13 @@ class StaNoise(object):
             other = StaNoise([other])
         if not isinstance(other, StaNoise):
             raise TypeError
+        self.station_depth = other.station_depth
         daylist = self.daylist + other.daylist
         return self.__class__(daylist=daylist)
 
     def __iter__(self):
 
-        return List(self.daylist).__iter__()
+        return list(self.daylist).__iter__()
 
     def append(self, daynoise):
 
@@ -1555,20 +1560,54 @@ class TFNoise(object):
                 "Error: Noise object has not been processed (QC and " +
                 "averaging) - aborting"))
 
+        self.station_depth = objnoise.station_depth
+        self.frequency_notch = self.fnotch(self.station_depth)
         self.f = objnoise.f
+
+        # ==========
+        # ==========
+        #### Test stratagies for tapering the coherences used in tranfer functions:
+
+        #### NO-TAPER (Taper-0)
+        # comp_tf_taper = 1
+        # tilt_tf_taper = 1
+
+        #### TAPER-1
+        # comp_tf_taper = self.calc_tf_taper(self.f,self.frequency_notch)
+        # tilt_tf_taper = self.calc_tf_taper(self.f,self.frequency_notch)
+
+        #### TAPER-2
+        # comp_tf_taper = self.calc_tf_taper(self.f,1/10)
+        # tilt_tf_taper = self.calc_tf_taper(self.f,1/10)
+
+        #### TAPER-3
+        # comp_tf_taper = self.calc_tf_taper(self.f,self.frequency_notch)
+        # tilt_tf_taper = self.calc_tf_taper(self.f,1/10)
+
+        #### TAPER-4
+        comp_tf_taper = self.calc_tf_taper(self.f,1/20)
+        tilt_tf_taper = self.calc_tf_taper(self.f,1/20)
+
+        self.comp_tf_taper = comp_tf_taper
+        self.tilt_tf_taper = tilt_tf_taper
+        # ==========
+        # ==========
+
+        # Tapering the denominator terms, the auto-spectral densities, will only reduce taper efficacy used in the cross-spectral density for all densities <1.
+        # For this reason, only the cross-spectral densities will be tapered.
         self.c11 = objnoise.power.c11
         self.c22 = objnoise.power.c22
         self.cZZ = objnoise.power.cZZ
         self.cPP = objnoise.power.cPP
         self.cHH = objnoise.rotation.cHH
-        self.cHZ = objnoise.rotation.cHZ
-        self.cHP = objnoise.rotation.cHP
-        self.c12 = objnoise.cross.c12
-        self.c1Z = objnoise.cross.c1Z
-        self.c1P = objnoise.cross.c1P
-        self.c2Z = objnoise.cross.c2Z
-        self.c2P = objnoise.cross.c2P
-        self.cZP = objnoise.cross.cZP
+        self.cHZ = objnoise.rotation.cHZ * tilt_tf_taper
+        self.cHP = objnoise.rotation.cHP * comp_tf_taper
+        self.c12 = objnoise.cross.c12 * tilt_tf_taper
+        self.c1Z = objnoise.cross.c1Z * tilt_tf_taper
+        self.c1P = objnoise.cross.c1P * comp_tf_taper
+        self.c2Z = objnoise.cross.c2Z * tilt_tf_taper
+        self.c2P = objnoise.cross.c2P * comp_tf_taper
+        self.cZP = objnoise.cross.cZP * comp_tf_taper
         self.tilt = objnoise.rotation.tilt
         self.tf_list = objnoise.tf_list
 
@@ -1621,7 +1660,6 @@ class TFNoise(object):
         """
 
         transfunc = self.TfDict()
-
         for key, value in self.tf_list.items():
 
             if key == 'ZP':
@@ -1632,6 +1670,7 @@ class TFNoise(object):
             elif key == 'Z1':
                 if value:
                     tf_Z1 = {'TF_Z1': np.conj(self.c1Z)/self.c11}
+                    tf_Z1 = tf_Z1
                     transfunc.add('Z1', tf_Z1)
 
             elif key == 'Z2-1':
@@ -1641,6 +1680,8 @@ class TFNoise(object):
                     gc2c2_c1 = self.c22*(1. - coh_12)
                     gc2cZ_c1 = np.conj(self.c2Z) - np.conj(lc1c2*self.c1Z)
                     lc2cZ_c1 = gc2cZ_c1/gc2c2_c1
+                    lc1c2 = lc1c2
+                    lc2cZ_c1 = lc2cZ_c1
                     tf_Z2_1 = {'TF_21': lc1c2, 'TF_Z2-1': lc2cZ_c1}
                     transfunc.add('Z2-1', tf_Z2_1)
 
@@ -1664,8 +1705,7 @@ class TFNoise(object):
                     lc2cP_c1 = gc2cP_c1/gc2c2_c1
                     lc2cZ_c1 = gc2cZ_c1/gc2c2_c1
 
-                    coh_c2cP_c1 = utils.coherence(gc2cP_c1, gc2c2_c1,
-                                                  gcPcP_c1)
+                    coh_c2cP_c1 = utils.coherence(gc2cP_c1, gc2c2_c1,gcPcP_c1)
 
                     gcPcP_c1c2 = gcPcP_c1*(1. - coh_c2cP_c1)
                     gcPcZ_c1c2 = gcPcZ_c1 - np.conj(lc2cP_c1)*gc2cZ_c1
@@ -1762,6 +1802,21 @@ class TFNoise(object):
         pickle.dump(self, file)
         file.close()
 
+    def calc_tf_taper(self,f,fn,exp=600):
+        taper = (np.abs(f) - fn)
+        taper = -taper + np.max(taper)
+        taper = taper**exp
+        taper[np.abs(f)<=fn] = 0
+        taper[np.abs(f)<=fn] = np.max(taper)
+        taper = taper/taper.max()
+        return taper
+
+    def fnotch(self,d):
+            '''The frequency knotch root function described in Crawford et al., 1998.
+            depth (d) is in meters. Returned (f) is in Hz.'''
+            g = 9.80665
+            f = (g/(2*np.pi*d))**0.5
+            return f
 
 class EventStream(object):
     """
@@ -1850,6 +1905,8 @@ class EventStream(object):
         self.trZ = trZ
         self.trP = trP
 
+        self.frequency_notch = self.fnotch(abs(trZ.stats.sac.stel)*1000) #Assumes sac elevation was given in km.
+
         zstats = trZ.stats
         self.key = zstats.network + '.' + zstats.station
         self.evtime = zstats.starttime
@@ -1864,6 +1921,8 @@ class EventStream(object):
         self.fs = zstats.sampling_rate
         self.dt = zstats.delta
         self.ncomp = ncomp
+
+        self.transfile = []
 
         # Build list of available transfer functions for future use
         if self.ncomp == 2:
@@ -2039,7 +2098,7 @@ class EventStream(object):
                     corrspec = ftZ - TF_Z1*ft1 - \
                         (ft2 - ft1*TF_21)*TF_Z2_1 - \
                         (ftP - ft1*TF_P1 -
-                         (ft2 - ft1*TF_21)*TF_P2_1)*TF_ZP_21
+                        (ft2 - ft1*TF_21)*TF_P2_1)*TF_ZP_21
                     corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZP-21', corrtime)
 
@@ -2049,7 +2108,7 @@ class EventStream(object):
                     # Rotate horizontals
                     ftH = utils.rotate_dir(ft1, ft2, tfnoise.tilt)
 
-                    TF_ZH = transfunc[key]['TF_ZH']
+                    TF_ZH = transfunc[key]['TF_ZH'] #tilt tf
                     corrspec = ftZ - TF_ZH*ftH
                     corrtime = np.real(np.fft.ifft(corrspec))
                     correct.add('ZH', corrtime)
@@ -2068,6 +2127,14 @@ class EventStream(object):
                     correct.add('ZP-H', corrtime)
 
         self.correct = correct
+        return self
+
+    def fnotch(self,d):
+            '''The frequency knotch root function described in Crawford et al., 1998.
+            depth (d) is in meters. Returned (f) is in Hz.'''
+            g = 9.80665
+            f = (g/(2*np.pi*d))**0.5
+            return f
 
     def save(self, filename):
         """
@@ -2096,8 +2163,7 @@ class EventStream(object):
         """
 
         if hasattr(self, 'correct'):
-            print("Warning: saving EventStream object before having done " +
-                  "the corrections")
+            print("Warning: saving EventStream object before having done " + "the corrections")
 
         file = open(filename, 'wb')
         pickle.dump(self, file)
