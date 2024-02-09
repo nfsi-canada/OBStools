@@ -1,10 +1,10 @@
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 # NoiseCut by Zahra Zali
 # https://github.com/ZahraZali/NoiseCut
 #
 # This file is part of the NoiseCut library. For licensing information see the
 # accompanying file `LICENSE`.
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 import math
 import numpy as np
@@ -12,8 +12,6 @@ import librosa
 from obspy import Trace
 import librosa.display
 import matplotlib.pyplot as plt
-
-
 
 def _next_pow2(n):
     return int(round(2**np.ceil(np.log2(n))))
