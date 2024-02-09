@@ -1,5 +1,6 @@
 # -----------------------------------------------------------------------------
-# NoiseCut
+# NoiseCut by Zahra Zali
+# https://github.com/ZahraZali/NoiseCut
 #
 # This file is part of the NoiseCut library. For licensing information see the
 # accompanying file `LICENSE`.
