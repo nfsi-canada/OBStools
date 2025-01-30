@@ -395,6 +395,8 @@ def main(args=None):
 
         if not args.skip_clean:
 
+            sta_comply_functions = []
+
             # Cycle through available files
             for fileavst in average_files:
 
@@ -411,7 +413,7 @@ def main(args=None):
                         # Load Comply object and append to list
                         stacomply = pickle.load(open(filepkl, 'rb'))
                         f = stacomply.f
-                        sta_comply_functions = stacomply.complyfunc
+                        sta_comply_functions.append(stacomply.complyfunc)
                         continue
 
                 print("\n"+"*"*60)
@@ -434,7 +436,7 @@ def main(args=None):
                 f = stacomply.f
 
                 # Extract the transfer functions - for plotting
-                sta_comply_functions = stacomply.complyfunc
+                sta_comply_functions.append(stacomply.complyfunc)
 
                 # Save average transfer functions to file
                 stacomply.save(filename, form=args.saveformat)

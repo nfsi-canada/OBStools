@@ -2,7 +2,7 @@ import setuptools
 import os.path
 from os import listdir
 import re
-from numpy.distutils.core import setup
+from setuptools import setup
 from pathlib import Path
 
 
@@ -26,7 +26,7 @@ setup(
     author_email='pascal.audet@uottawa.ca',
     maintainer='Pascal Audet, Helen Janiszewski',
     maintainer_email='pascal.audet@uottawa.ca, hajanisz@hawaii.edu',
-    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.2.tar.gz',
+    url='https://github.com/nfsi-canada/OBStools/archive/OBStools-0.1.4.tar.gz',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
@@ -34,7 +34,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9'],
-    install_requires=['numpy', 'obspy', 'stdb', 'pandas'],
+    install_requires=['numpy', 'obspy', 'stdb', 'scipy', 'pandas'],
     python_requires='>=3.6',
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -44,6 +44,7 @@ setup(
     entry_points={
         'console_scripts':
         ['atacr_download_data=obstools.scripts.atacr_download_data:main',
+         # 'atacr_download_data_xml=obstools.scripts.atacr_download_data_xml:main',
          'atacr_download_event=obstools.scripts.atacr_download_event:main',
          'atacr_daily_spectra=obstools.scripts.atacr_daily_spectra:main',
          'atacr_clean_spectra=obstools.scripts.atacr_clean_spectra:main',

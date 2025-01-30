@@ -361,6 +361,10 @@ def main(args=None):
                 # Save daily transfer functions to file
                 daytransfer.save(filename)
 
+        # Create empty daynoise if not loaded
+        # else:
+        #     XXX
+
         if not args.skip_clean:
 
             # Cycle through available files
@@ -394,6 +398,10 @@ def main(args=None):
 
                 # Save average transfer functions to file
                 statransfer.save(filename)
+
+        # Create empty stanoise if not loaded
+        # else:
+            # XXX
 
         if args.fig_TF:
             fname = stkey + '.' + 'transfer_functions'

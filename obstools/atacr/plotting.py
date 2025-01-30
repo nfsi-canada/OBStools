@@ -436,22 +436,41 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         ax.yaxis.get_offset_text().set_fontsize(8)
 
         if day_list[key]:
+            compliance_list = []
+            coherence_list = []
             for i in range(len(day_comps)):
                 compliance = np.abs(day_comps[i][key][0])
+                coherence = np.abs(day_comps[i][key][1])
+                if not np.isnan(compliance).any():
+                    compliance_list.append(compliance)
+                    coherence_list.append(coherence)
+            compliance_mean = np.mean(np.array(compliance_list), axis=0)
+            compliance_std = np.std(np.array(compliance_list), axis=0)
+            coherence_mean = np.mean(np.array(coherence_list), axis=0)
+            coherence_std = np.std(np.array(coherence_list), axis=0)
+
+            ax.fill_between(
+                f[faxis], 
+                compliance_mean[faxis]-compliance_std[faxis], 
+                compliance_mean[faxis]+compliance_std[faxis], 
+                fc='royalblue', alpha=0.3, label=r'$\pm$ Std daily'
+                )
+            ax.plot(
+                f[faxis], compliance_mean[faxis], c='royalblue', 
+                lw=0.5, label='Mean daily')
+            ax.set_xlim(f_0, f_c)
+            ytop = 1.2*np.max(compliance_mean[(f > f_0) & (f < f_c)])
+            ybot = 0/8*np.min(compliance_mean[(f > f_0) & (f < f_c)])
+            ax.set_ylim(ybot, ytop)
+
+        if sta_list[key]:
+            for i in range(len(sta_comps)):
+                compliance = np.abs(sta_comps[i][key][0])
                 ax.plot(
                     f[faxis],
                     compliance[faxis],
-                    'gray', alpha=0.3, lw=0.5)
-                ax.set_xlim(f_0, f_c)
-                ytop = np.max(compliance[(f > f_0) & (f < f_c)])
-                ybot = np.min(compliance[(f > f_0) & (f < f_c)])
-                ax.set_ylim(ybot, ytop)
-
-        if sta_list[key]:
-            ax.plot(
-                f[faxis],
-                np.abs(sta_comps[key][0][faxis]),
-                'k', lw=0.5)
+                    'red', lw=0.5, alpha=0.5,
+                    label='Sta average')
 
         if key == 'ZP':
             ax.set_title(skey+' Compliance: ZP',
@@ -467,20 +486,32 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
             ax.axvline(f_0, ls='--', c='k', lw=0.75)
         ax.axvline(f_c, ls='--', c='k', lw=0.75)
 
+        handles, labels = ax.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax.legend(by_label.values(), by_label.keys(), fontsize=6)
+
         ax = fig.add_subplot(ncomps, 2, j*2+2)
         ax.tick_params(labelsize=8)
 
         if day_list[key]:
-            for i in range(len(day_comps)):
-                ax.semilogx(
-                    f[faxis],
-                    np.abs(day_comps[i][key][1][faxis]),
-                    'gray', alpha=0.3, lw=0.5)
+            # for i in range(len(day_comps)):
+            ax.fill_between(
+                f[faxis],
+                coherence_mean[faxis]-coherence_std[faxis],
+                coherence_mean[faxis]+coherence_std[faxis],
+                fc='royalblue', alpha=0.3
+                )
+            ax.plot(
+                f[faxis],
+                coherence_mean[faxis],
+                c='royalblue', lw=0.75)
         if sta_list[key]:
-            ax.semilogx(
-                f[faxis], 
-                np.abs(sta_comps[key][1][faxis]),
-                'k', lw=0.5)
+            for i in range(len(sta_comps)):
+                ax.plot(
+                    f[faxis], 
+                    np.abs(sta_comps[i][key][1][faxis]),
+                    'red', lw=0.5, alpha=0.5)
+        ax.set_xscale('log')
 
         if key == 'ZP':
             ax.set_title(skey+' Coherence: ZP',
