@@ -372,7 +372,6 @@ def main(args=None):
                     continue
 
                 tfprefix = transfile.name.split('transfunc')[0]
-                print(tfprefix)
 
                 # This case refers to the "cleaned" spectral averages
                 if len(tfprefix) > 9:

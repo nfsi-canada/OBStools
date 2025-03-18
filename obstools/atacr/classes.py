@@ -2095,7 +2095,7 @@ class EventStream(object):
 
         """
 
-        if hasattr(self, 'correct'):
+        if not hasattr(self, 'correct'):
             print("Warning: saving EventStream object before having done " +
                   "the corrections")
 
