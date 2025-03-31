@@ -61,8 +61,8 @@ jobs:
           conda install sphinx
           pip install sphinx_rtd_theme
           python -c 'from obstools import __version__ as release; print(release)'
-      #    make html
-      #    touch _build/html/.nojekyll
+          # make html
+          # touch _build/html/.nojekyll
           cd ..
 
       - name: Deploy 🚀
