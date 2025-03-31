@@ -57,13 +57,13 @@ jobs:
         if: matrix.python-version == '3.10' 
         shell: bash -l {0}
         run: |
-          cd docs
-          conda install sphinx
-          pip install sphinx_rtd_theme
+          # cd docs
+          # conda install sphinx
+          # pip install sphinx_rtd_theme
           python -c 'import obstools; print(obstools.__version__)'
           # make html
           # touch _build/html/.nojekyll
-          cd ..
+          # cd ..
 
       - name: Deploy 🚀
         if: matrix.python-version == '3.10' 
