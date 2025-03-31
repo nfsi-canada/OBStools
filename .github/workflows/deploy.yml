@@ -42,6 +42,7 @@ jobs:
           conda install obspy pandas
           pip install stdb
           pip install .
+          conda install -c conda-forge libstdcxx-ng
           python -c 'import obstools; print(obstools.__version__)'
 
       # - name: Tests
