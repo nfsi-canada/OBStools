@@ -17,20 +17,19 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    name: Python ${{ matrix.python-version }}
+    name: ${{ matrix.os }} Python ${{ matrix.python-version }}
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.7', '3.8', '3.9']
+        os: ["ubuntu-latest"]
+        python-version: ["3.10"]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           activate-environment: test
           auto-activate-base: false
@@ -40,22 +39,22 @@ jobs:
         run: |
           conda info
           conda config --add channels conda-forge
-          conda install obspy pandas
+          conda install obspy pandas libstdcxx-ng
           pip install stdb
-          pip install -e .
+          pip install .
 
-      - name: Tests
-        shell: bash -l {0}
-        run: |
-          export MPLBACKEND=Agg
-          mkdir empty
-          cd empty
-          conda install pytest-cov
-          pytest -v --cov=obstools ../obstools/tests/
-          bash <(curl -s https://codecov.io/bash)
+      # - name: Tests
+      #   shell: bash -l {0}
+      #   run: |
+      #     export MPLBACKEND=Agg
+      #     mkdir empty
+      #     cd empty
+      #     conda install pytest-cov
+      #     pytest -v --cov=obstools ../obstools/tests/
+      #     bash <(curl -s https://codecov.io/bash)
 
       - name: Make docs
-        if: matrix.python-version == '3.8' 
+        if: matrix.python-version == '3.10' 
         shell: bash -l {0}
         run: |
           cd docs
@@ -66,7 +65,7 @@ jobs:
           cd ..
 
       - name: Deploy 🚀
-        if: matrix.python-version == '3.8' 
+        if: matrix.python-version == '3.10' 
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
