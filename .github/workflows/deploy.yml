@@ -60,6 +60,7 @@ jobs:
           cd docs
           conda install sphinx
           pip install sphinx_rtd_theme
+          pip install mlx
           make html
           touch _build/html/.nojekyll
           cd ..
