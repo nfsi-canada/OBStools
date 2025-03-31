@@ -42,6 +42,7 @@ jobs:
           conda install obspy pandas
           pip install stdb
           pip install .
+          python -c 'import obstools; print(obstools.__version__)'
 
       # - name: Tests
       #   shell: bash -l {0}
@@ -53,17 +54,17 @@ jobs:
       #     pytest -v --cov=obstools ../obstools/tests/
       #     bash <(curl -s https://codecov.io/bash)
 
-      - name: Make docs
-        if: matrix.python-version == '3.10' 
-        shell: bash -l {0}
-        run: |
-          # cd docs
-          # conda install sphinx
-          # pip install sphinx_rtd_theme
-          python -c 'import obstools; print(obstools.__version__)'
-          # make html
-          # touch _build/html/.nojekyll
-          # cd ..
+      # - name: Make docs
+      #   if: matrix.python-version == '3.10' 
+      #   shell: bash -l {0}
+      #   run: |
+      #     # cd docs
+      #     # conda install sphinx
+      #     # pip install sphinx_rtd_theme
+      #     python -c 'import obstools; print(obstools.__version__)'
+      #     # make html
+      #     # touch _build/html/.nojekyll
+      #     # cd ..
 
       - name: Deploy 🚀
         if: matrix.python-version == '3.10' 
