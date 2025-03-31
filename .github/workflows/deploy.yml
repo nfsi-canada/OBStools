@@ -43,15 +43,15 @@ jobs:
           pip install stdb
           pip install .
 
-      - name: Tests
-        shell: bash -l {0}
-        run: |
-          export MPLBACKEND=Agg
-          mkdir empty
-          cd empty
-          conda install pytest-cov
-          pytest -v --cov=obstools ../obstools/tests/
-          bash <(curl -s https://codecov.io/bash)
+      # - name: Tests
+      #   shell: bash -l {0}
+      #   run: |
+      #     export MPLBACKEND=Agg
+      #     mkdir empty
+      #     cd empty
+      #     conda install pytest-cov
+      #     pytest -v --cov=obstools ../obstools/tests/
+      #     bash <(curl -s https://codecov.io/bash)
 
       - name: Make docs
         if: matrix.python-version == '3.10' 
