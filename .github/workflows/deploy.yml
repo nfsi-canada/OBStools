@@ -60,9 +60,9 @@ jobs:
           cd docs
           conda install sphinx
           pip install sphinx_rtd_theme
-          conda list
-          make html
-          touch _build/html/.nojekyll
+          python -c 'from obstools import __version__ as release; print(release)'
+      #    make html
+      #    touch _build/html/.nojekyll
           cd ..
 
       - name: Deploy 🚀
