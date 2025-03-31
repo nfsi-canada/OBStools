@@ -41,7 +41,7 @@ jobs:
           conda config --add channels conda-forge
           conda install obspy pandas
           pip install stdb
-          pip install -e .
+          pip install .
 
       # - name: Tests
       #   shell: bash -l {0}
@@ -60,7 +60,6 @@ jobs:
           cd docs
           conda install sphinx
           pip install sphinx_rtd_theme
-          pip install mlx
           make html
           touch _build/html/.nojekyll
           cd ..
