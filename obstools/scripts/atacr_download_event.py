@@ -117,16 +117,26 @@ def get_event_arguments(argv=None):
         type=str,
         dest="server",
         default="IRIS",
-        help="Specify the server to connect to. Options include: BGR, " +
-        "ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU, NCEDC, NEIP, " +
-        "NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. [Default IRIS]")
+        help="Specify the server to connect to. Options include: " +
+        "BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU, NCEDC, " +
+        "NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. " +
+        "[Default IRIS]")
+    ServerGroup.add_argument(
+        "--server-url",
+        action="store",
+        type=str,
+        dest="server_url",
+        default=None,
+        help="Specify the obspy base_url server address (and port if needed) " +
+         "to open for the fdsn client. Overrides any settings to '--server'. " +
+         "[Default None]")
     ServerGroup.add_argument(
         "-U", "--user-auth",
         action="store",
         type=str,
         dest="userauth",
         default="",
-        help="Enter your IRIS Authentification Username and Password " +
+        help="Enter your Authentification Username and Password " +
         "(--user-auth='username:authpassword') to access and download " +
         "restricted data. [Default no user and password]")
 

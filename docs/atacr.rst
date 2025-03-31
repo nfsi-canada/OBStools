@@ -243,20 +243,26 @@ Usage
                             correction. [Default looks for both horizontal and
                             pressure and allows for both tilt AND compliance
                             corrections]
+      --zcomp ZCOMP         Specify the Vertical Component Channel Identifier.
+                            [Default Z].
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
     Server Settings:
       Settings associated with which datacenter to log into.
 
-      -S SERVER, --Server SERVER
+      -S SERVER, --server SERVER
                             Specify the server to connect to. Options include:
                             BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
                             NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
                             USP. [Default IRIS]
-      -U USERAUTH, --User-Auth USERAUTH
-                            Enter your IRIS Authentification Username and Password
-                            (--User-Auth='username:authpassword') to access and
+      --server-url SERVER_URL
+                            Specify the obspy base_url server address (and port if
+                            needed) to open for the fdsn client. Overrides any
+                            settings to '--server'. [Default None]
+      -U USERAUTH, --user-auth USERAUTH
+                            Enter your Authentification Username and Password
+                            (--user-auth='username:authpassword') to access and
                             download restricted data. [Default no user and
                             password]
 
@@ -572,20 +578,26 @@ Usage
                             correction. [Default looks for both horizontal and
                             pressure and allows for both tilt AND compliance
                             corrections]
+      --zcomp ZCOMP         Specify the Vertical Component Channel Identifier.
+                            [Default Z].
       -O, --overwrite       Force the overwriting of pre-existing data. [Default
                             False]
 
     Server Settings:
       Settings associated with which datacenter to log into.
 
-      -S SERVER, --Server SERVER
+      -S SERVER, --server SERVER
                             Specify the server to connect to. Options include:
                             BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
                             NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
                             USP. [Default IRIS]
-      -U USERAUTH, --User-Auth USERAUTH
-                            Enter your IRIS Authentification Username and Password
-                            (--User-Auth='username:authpassword') to access and
+      --server-url SERVER_URL
+                            Specify the obspy base_url server address (and port if
+                            needed) to open for the fdsn client. Overrides any
+                            settings to '--server'. [Default None]
+      -U USERAUTH, --user-auth USERAUTH
+                            Enter your Authentification Username and Password
+                            (--user-auth='username:authpassword') to access and
                             download restricted data. [Default no user and
                             password]
 
@@ -599,6 +611,10 @@ Usage
       --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
                             (float, in Hz) for deconvolution pre-filter. [Default
                             0.001,0.005,45.,50.]
+      --window WINDOW       Specify window length in seconds. Default value is
+                            highly recommended. Program may not be stable for
+                            large deviations from default value. [Default 7200.
+                            (or 2 hours)]
 
     Event Settings:
       Settings associated with refining the events to include in matching
