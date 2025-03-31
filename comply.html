@@ -1,21 +1,21 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Comply &mdash; Home 0.1.4 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=dff88ec8"></script>
-      <script src="_static/doctools.js?v=888ff710"></script>
-      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/documentation_options.js?v=fd825880"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -68,7 +68,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#obstools.comply.classes.Comply.complyfunc"><code class="docutils literal notranslate"><span class="pre">Comply.complyfunc</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.comply.classes.Comply.ComplyDict"><code class="docutils literal notranslate"><span class="pre">Comply.ComplyDict</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.comply.classes.Comply.calculate_compliance"><code class="docutils literal notranslate"><span class="pre">Comply.calculate_compliance()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Comply.complyfunc</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.comply.classes.Comply.save"><code class="docutils literal notranslate"><span class="pre">Comply.save()</span></code></a></li>
 </ul>
 </li>
@@ -115,9 +114,9 @@
            <div itemprop="articleBody">
              
   <section id="comply">
-<h1>Comply<a class="headerlink" href="#comply" title="Permalink to this heading"></a></h1>
+<h1>Comply<a class="headerlink" href="#comply" title="Link to this heading"></a></h1>
 <section id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">comply</span></code> is a module for the calculation of compliance and coherence
 functions from OBS stations. These functions can be used to retrieve shear-wave
 velocity structure in the shallow subsurface. The compliance and coherence functions
@@ -138,7 +137,7 @@ Basin constrained by seafloor compliance, J. Geophys.  Res., 121, 3220-3237,
 </ul>
 </section>
 <section id="compliance">
-<h2>Compliance<a class="headerlink" href="#compliance" title="Permalink to this heading"></a></h2>
+<h2>Compliance<a class="headerlink" href="#compliance" title="Link to this heading"></a></h2>
 <p>Compliance is defined as the spectral ratio between pressure and vertical
 displacement data. Compliance arises from vertical seafloor deformation due
 to infragravity wave effects, which propagate through the deep
@@ -160,7 +159,7 @@ Tilt noise is therefore removed from the vertical component data prior
 to calculating compliance.</p>
 </section>
 <section id="api-documentation">
-<h2>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this heading"></a></h2>
+<h2>API documentation<a class="headerlink" href="#api-documentation" title="Link to this heading"></a></h2>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">comply</span></code> defines the following class:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#obstools.comply.classes.Comply" title="obstools.comply.classes.Comply"><code class="xref py py-class docutils literal notranslate"><span class="pre">Comply</span></code></a></p></li>
@@ -180,7 +179,7 @@ script and tutorial for details.</p>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.comply.classes.</span></span><span class="sig-name descname"><span class="pre">Comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.comply.classes.</span></span><span class="sig-name descname"><span class="pre">Comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply" title="Link to this definition"></a></dt>
 <dd><p>A Comply object contains attributes that calculate and store the
 compliance and coherence functions for the available channels.</p>
 <div class="admonition note">
@@ -193,7 +192,7 @@ are discarded as the object is saved to disk.</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.elev">
-<span class="sig-name descname"><span class="pre">elev</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.elev" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">elev</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.elev" title="Link to this definition"></a></dt>
 <dd><p>Station elevation in meters (OBS stations have negative elevations)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -204,7 +203,7 @@ are discarded as the object is saved to disk.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.f">
-<span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.f" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.f" title="Link to this definition"></a></dt>
 <dd><p>Frequency axis for corresponding time sampling parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -215,7 +214,7 @@ are discarded as the object is saved to disk.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.c11">
-<span class="sig-name descname"><span class="pre">c11</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.c11" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">c11</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.c11" title="Link to this definition"></a></dt>
 <dd><p>Power spectra for component <cite>H1</cite>. Other identical attributes are
 available for the power, cross and rotated spectra:
 [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]</p>
@@ -228,7 +227,7 @@ available for the power, cross and rotated spectra:
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.tf_list">
-<span class="sig-name descname"><span class="pre">tf_list</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.tf_list" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tf_list</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.tf_list" title="Link to this definition"></a></dt>
 <dd><p>Dictionary of possible transfer functions from the available
 components (obtained from the
 <a class="reference internal" href="atacr.html#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> or the
@@ -242,7 +241,7 @@ components (obtained from the
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.complyfunc">
-<span class="sig-name descname"><span class="pre">complyfunc</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.complyfunc" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">complyfunc</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.complyfunc" title="Link to this definition"></a></dt>
 <dd><p>Dictionary of compliance and coherence functions given the available
 components.</p>
 <dl class="field-list simple">
@@ -254,17 +253,17 @@ components.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.ComplyDict">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ComplyDict</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.ComplyDict" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ComplyDict</span></span><a class="headerlink" href="#obstools.comply.classes.Comply.ComplyDict" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.calculate_compliance">
-<span class="sig-name descname"><span class="pre">calculate_compliance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.calculate_compliance" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calculate_compliance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.calculate_compliance" title="Link to this definition"></a></dt>
 <dd><p>Method to calculate compliance and coherence functions from the
 averaged (daily or station-averaged) noise spectra.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">complyfunc</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">complyfunc</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>Container Dictionary for all possible compliance and
 coherence functions</p>
 <dl class="field-list simple">
@@ -278,8 +277,8 @@ coherence functions</p>
 <p>Calculate compliance and coherence functions for a DayNoise object.
 In these examples, station elevation is extracted from the IRIS
 metadata aggregator site: <a class="reference external" href="http://ds.iris.edu/mda/7D/M08A/">http://ds.iris.edu/mda/7D/M08A/</a></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">DayNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.comply</span> <span class="kn">import</span> <span class="n">Comply</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">obstools.atacr</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">obstools.comply</span><span class="w"> </span><span class="kn">import</span> <span class="n">Comply</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span> <span class="o">=</span> <span class="n">DayNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">daynoise</span><span class="o">.</span><span class="n">QC_daily_spectra</span><span class="p">()</span>
@@ -291,8 +290,8 @@ metadata aggregator site: <a class="reference external" href="http://ds.iris.edu
 </pre></div>
 </div>
 <p>Calculate compliance and coherence functions for a StaNoise object</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.atacr</span> <span class="kn">import</span> <span class="n">StaNoise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obstools.comply</span> <span class="kn">import</span> <span class="n">Comply</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">obstools.atacr</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaNoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">obstools.comply</span><span class="w"> </span><span class="kn">import</span> <span class="n">Comply</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span> <span class="o">=</span> <span class="n">StaNoise</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 <span class="go">Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="n">QC_sta_spectra</span><span class="p">()</span>
@@ -307,7 +306,7 @@ metadata aggregator site: <a class="reference external" href="http://ds.iris.edu
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.comply.classes.Comply.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pkl'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.save" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pkl'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.comply.classes.Comply.save" title="Link to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -322,7 +321,7 @@ save the final object</p>
 </pre></div>
 </div>
 <p>Check that object has been saved</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;./daycomply_demo.pkl&quot;</span><span class="p">)</span>
 <span class="go">[&#39;./daycomply_demo.pkl&#39;]</span>
 </pre></div>
@@ -333,14 +332,14 @@ save the final object</p>
 
 </section>
 <section id="scripts">
-<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this heading"></a></h2>
+<h2>Scripts<a class="headerlink" href="#scripts" title="Link to this heading"></a></h2>
 <p>There is only one Python scripts that accompanies <code class="docutils literal notranslate"><span class="pre">~obstools.comply</span></code>. This script can be used
 in bash scripts to automate data processing. Please see the <code class="xref py py-mod docutils literal notranslate"><span class="pre">atacr</span></code>
 module and scripts to prepare the data for use in the following script.</p>
 <section id="comply-calculate">
-<h3><code class="docutils literal notranslate"><span class="pre">comply_calculate</span></code><a class="headerlink" href="#comply-calculate" title="Permalink to this heading"></a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">comply_calculate</span></code><a class="headerlink" href="#comply-calculate" title="Link to this heading"></a></h3>
 <section id="description">
-<h4>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h4>
+<h4>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h4>
 <p>Calculates compliance and coherence functions using the noise windows flagged as <em>good</em>, for either
 a single day (from <code class="docutils literal notranslate"><span class="pre">atacr_daily_spectra</span></code>) or for those averaged over several days
 (from <code class="docutils literal notranslate"><span class="pre">atacr_clean_spectra</span></code>), if available. The transfer functions are stored to disk.
@@ -348,7 +347,7 @@ Station selection is specified by a network and station code. The database is
 provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
 </section>
 <section id="usage">
-<h4>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h4>
+<h4>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ comply_calculate -h
 usage: comply_calculate [options] &lt;Station Database&gt;
 
@@ -402,14 +401,14 @@ Figure Settings:
 </section>
 </section>
 <section id="tutorial">
-<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h2>
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Here we build on the steps already carried out in the <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> tutorial. Specifically,
 steps <code class="docutils literal notranslate"><span class="pre">0</span></code> through <code class="docutils literal notranslate"><span class="pre">3</span></code> should be done prior to performing the following step.</p>
 </div>
 <section id="compliance-calculation">
-<h3>Compliance calculation<a class="headerlink" href="#compliance-calculation" title="Permalink to this heading"></a></h3>
+<h3>Compliance calculation<a class="headerlink" href="#compliance-calculation" title="Link to this heading"></a></h3>
 <p>Once the <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> objects have been produced and saved to disk, the compliance and coherence
 functions across all available components can be calculated. By default the software
 will calculate the ones for which the spectral averages are available.</p>
