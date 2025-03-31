@@ -60,7 +60,7 @@ jobs:
           cd docs
           conda install sphinx
           pip install sphinx_rtd_theme
-          python -c 'from obstools import __version__ as release; print(release)'
+          python -c 'import obstools; print(obstools.__version__)'
           # make html
           # touch _build/html/.nojekyll
           cd ..
