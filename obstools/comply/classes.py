@@ -55,9 +55,6 @@ class Comply(object):
         components (obtained from the
         :class:`~obstools.atacr.classes.DayNoise` or the
         :class:`~obstools.atacr.classes.StaNoise` noise objects)
-    complyfunc : Dict
-        Dictionary of compliance and coherence functions given the available
-        components.
 
     """
 

@@ -642,13 +642,11 @@ class DayNoise(object):
 
         Attributes
         ----------
-        f : :class:`~numpy.ndarray`
-            Positive frequency axis for corresponding window parameters
         power : :class:`~obstools.atacr.classes.Power`
             Container for the Power spectra
         cross : :class:`~obstools.atacr.classes.Cross`
             Container for the Cross power spectra
-        rotation : :class:`~obstools.atacr.classes.Cross`, optional
+        rotation : :class:`~obstools.atacr.classes.Rotation`, optional
             Container for the Rotated power and cross spectra
 
         Examples
