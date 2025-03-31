@@ -292,16 +292,16 @@ def get_event_arguments(argv=None):
         args.endT = None
 
     # Parse User Authentification
-    if not len(args.UserAuth) == 0:
-        tt = args.UserAuth.split(':')
+    if not len(args.userauth) == 0:
+        tt = args.userauth.split(':')
         if not len(tt) == 2:
             parser.error(
                 "Error: Incorrect Username and Password Strings for User " +
                 "Authentification")
         else:
-            args.UserAuth = tt
+            args.userauth = tt
     else:
-        args.UserAuth = []
+        args.userauth = []
 
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
