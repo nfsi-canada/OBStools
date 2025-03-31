@@ -89,6 +89,13 @@ def get_daylong_arguments(argv=None):
         "correction. [Default '12,P' looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(
+        "--zcomp", 
+        dest="zcomp",
+        type=str,
+        default="Z",
+        help="Specify the Vertical Component Channel Identifier. "+
+        "[Default Z].")
+    parser.add_argument(
         "-O", "--overwrite",
         action="store_true",
         dest="ovr",
@@ -102,23 +109,32 @@ def get_daylong_arguments(argv=None):
         description="Settings associated with which "
         "datacenter to log into.")
     ServerGroup.add_argument(
-        "-S", "--Server",
+        "-S", "--server",
         action="store",
         type=str,
-        dest="Server",
+        dest="server",
         default="IRIS",
         help="Specify the server to connect to. Options include: " +
         "BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU, NCEDC, " +
         "NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. " +
         "[Default IRIS]")
     ServerGroup.add_argument(
-        "-U", "--User-Auth",
+        "--server-url",
         action="store",
         type=str,
-        dest="UserAuth",
+        dest="server_url",
+        default=None,
+        help="Specify the obspy base_url server address (and port if needed) " +
+         "to open for the fdsn client. Overrides any settings to '--server'. " +
+         "[Default None]")
+    ServerGroup.add_argument(
+        "-U", "--user-auth",
+        action="store",
+        type=str,
+        dest="userauth",
         default="",
-        help="Enter your IRIS Authentification Username and Password " +
-        "(--User-Auth='username:authpassword') to access and download " +
+        help="Enter your Authentification Username and Password " +
+        "(--user-auth='username:authpassword') to access and download " +
         "restricted data. [Default no user and password]")
 
     """
@@ -323,11 +339,24 @@ def main(args=None):
             datapath.mkdir(parents=True)
 
         # Establish client
-        if len(args.UserAuth) == 0:
-            client = Client(args.Server)
+        if len(args.userauth) == 0:
+            if args.server_url is not None:
+                client = Client(
+                    base_url=args.server_url)
+            else:
+                client = Client(
+                    args.server)
         else:
-            client = Client(
-                args.Server, user=args.UserAuth[0], password=args.UserAuth[1])
+            if args.server_url is not None:
+                client = Client(
+                    base_url=args.server_url,
+                    user=args.userauth[0], 
+                    password=args.userauth[1])
+            else:
+                client = Client(
+                    args.server, 
+                    user=args.userauth[0], 
+                    password=args.userauth[1])
 
         # Get catalogue search start time
         if args.startT is None:
@@ -420,7 +449,7 @@ def main(args=None):
                         continue
 
                 channels = sta.channel.upper()+'1,'+sta.channel.upper() + \
-                    '2,'+sta.channel.upper()+'Z'
+                    '2,'+sta.channel.upper()+args.zcomp
 
                 # Get waveforms from client
                 try:
@@ -455,7 +484,7 @@ def main(args=None):
                         t2 += dt
                         continue
 
-                channels = sta.channel.upper() + 'Z'
+                channels = sta.channel.upper() + args.zcomp
 
                 # Get waveforms from client
                 try:
@@ -517,7 +546,7 @@ def main(args=None):
                         continue
 
                 channels = sta.channel.upper()+'1,'+sta.channel.upper() + \
-                    '2,'+sta.channel.upper()+'Z'
+                    '2,'+sta.channel.upper()+args.zcomp
 
                 # Get waveforms from client
                 try:
@@ -580,14 +609,14 @@ def main(args=None):
                 continue
 
             sth = st.select(component='1') + st.select(component='2') + \
-                st.select(component='Z')
+                st.select(component=args.zcomp)
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
             sth.remove_response(pre_filt=args.pre_filt, output=args.units)
 
-            # Extract traces - Z
-            trZ = sth.select(component='Z')[0]
+            # Extract traces - Z 
+            trZ = sth.select(component=args.zcomp)[0]
             trZ = utils.update_stats(
                 trZ, sta.latitude, sta.longitude, sta.elevation,
                 sta.channel+'Z')
