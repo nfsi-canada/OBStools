@@ -350,16 +350,11 @@ def main(args=None):
             datapath.mkdir(parents=True)
 
         # Establish client
-        if args.verb > 1:
-            print("   Establishing Client...")
         client = Client(
             base_url=args.server,
             user=args.userauth[0],
             password=args.userauth[1],
             eida_token=args.tokenfile)
-        if args.verb > 1:
-            print("      Done")
-            print(" ")
 
         # Get catalogue search start time
         if args.startT is None:
