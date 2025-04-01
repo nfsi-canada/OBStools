@@ -112,33 +112,52 @@ def get_event_arguments(argv=None):
         description="Settings associated with which "
         "datacenter to log into.")
     ServerGroup.add_argument(
-        "-S", "--server",
+        "--server-cat",
         action="store",
         type=str,
-        dest="server",
+        dest="server_cat",
         default="IRIS",
-        help="Specify the server to connect to. Options include: " +
-        "BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU, NCEDC, " +
-        "NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS, USP. " +
-        "[Default IRIS]")
+        help="Catalogue server setting: Key string for recognized server that "
+            "provide `available_event_catalogs` service "
+            "(one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', "
+            "'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', "
+            "'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', "
+            "'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', "
+            "'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
     ServerGroup.add_argument(
-        "--server-url",
+        "--server-wf",
         action="store",
         type=str,
-        dest="server_url",
-        default=None,
-        help="Specify the obspy base_url server address (and port if needed) " +
-         "to open for the fdsn client. Overrides any settings to '--server'. " +
-         "[Default None]")
+        dest="server_wf",
+        default="IRIS",
+        help="Waveform server setting: Base URL of FDSN web service compatible "
+            "server (e.g. “http://service.iris.edu”) or key string for recognized "
+            "server (one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', "
+            "'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', "
+            "'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', "
+            "'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', "
+            "'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
     ServerGroup.add_argument(
-        "-U", "--user-auth",
+        "--user-auth",
         action="store",
         type=str,
         dest="userauth",
-        default="",
-        help="Enter your Authentification Username and Password " +
-        "(--user-auth='username:authpassword') to access and download " +
-        "restricted data. [Default no user and password]")
+        default=None,
+        help="Authentification Username and Password for the " +
+            "waveform server (--user-auth='username:authpassword') to access " +
+            "and download restricted data. [Default no user and password]")
+    ServerGroup.add_argument(
+        "--eida-token", 
+        action="store", 
+        type=str,
+        dest="tokenfile", 
+        default=None, 
+        help="Token for EIDA authentication mechanism, see " +
+            "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
+            "If a token is provided, argument --user-auth will be ignored. "
+            "This mechanism is only available on select EIDA nodes. The token can "
+            "be provided in form of the PGP message as a string, or the filename of "
+            "a local file with the PGP message in it. [Default None]")
 
     # Constants Settings
     FreqGroup = parser.add_argument_group(
@@ -301,17 +320,25 @@ def get_event_arguments(argv=None):
     else:
         args.endT = None
 
-    # Parse User Authentification
-    if not len(args.userauth) == 0:
-        tt = args.userauth.split(':')
-        if not len(tt) == 2:
-            parser.error(
-                "Error: Incorrect Username and Password Strings for User " +
-                "Authentification")
-        else:
-            args.userauth = tt
+    # Parse restricted data settings
+    if args.tokenfile is not None:
+        args.userauth = [None, None]
     else:
-        args.userauth = []
+        if args.userauth is not None:
+            tt = args.userauth.split(':')
+            if not len(tt) == 2:
+                msg = ("Error: Incorrect Username and Password Strings for User "
+                       "Authentification")
+                parser.error(msg)
+            else:
+                args.userauth = tt
+        else:
+            args.userauth = [None, None]
+
+    if args.units not in ['DISP', 'VEL', 'ACC']:
+        msg = ("Error: invalid --units argument. Choose among "
+            "'DISP', 'VEL', or 'ACC'")
+        parser.error(msg)
 
     if args.pre_filt is None:
         args.pre_filt = [0.001, 0.005, 45., 50.]
@@ -319,9 +346,9 @@ def get_event_arguments(argv=None):
         args.pre_filt = [float(val) for val in args.pre_filt.split(',')]
         args.pre_filt = sorted(args.pre_filt)
         if (len(args.pre_filt)) != 4:
-            raise(Exception(
-                "Error: --pre-filt should contain 4 " +
-                "comma-separated floats"))
+            msg = ("Error: --pre-filt should contain 4 "
+                "comma-separated floats")
+            parser.error(msg)
 
     return args
 
@@ -366,25 +393,16 @@ def main(args=None):
             print('\nPath to '+str(eventpath)+' doesn`t exist - creating it')
             eventpath.mkdir(parents=True)
 
-        # Establish client
-        if len(args.userauth) == 0:
-            if args.server_url is not None:
-                client = Client(
-                    base_url=args.server_url)
-            else:
-                client = Client(
-                    args.server)
-        else:
-            if args.server_url is not None:
-                client = Client(
-                    base_url=args.server_url,
-                    user=args.userauth[0], 
-                    password=args.userauth[1])
-            else:
-                client = Client(
-                    args.server, 
-                    user=args.userauth[0], 
-                    password=args.userauth[1])
+        # Establish client for catalogue
+        cat_client = Client(
+            base_url=args.server_cat)
+
+        # Establish client for waveforms
+        wf_client = Client(
+            base_url=args.server_wf,
+            user=args.userauth[0],
+            password=args.userauth[1],
+            eida_token=args.tokenfile)
 
         # Get catalogue search start time
         if args.startT is None:
