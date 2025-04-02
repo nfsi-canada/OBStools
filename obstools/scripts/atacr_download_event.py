@@ -112,31 +112,18 @@ def get_event_arguments(argv=None):
         description="Settings associated with which "
         "datacenter to log into.")
     ServerGroup.add_argument(
-        "--server-cat",
+        "--server",
         action="store",
         type=str,
-        dest="server_cat",
+        dest="server",
         default="IRIS",
-        help="Catalogue server setting: Key string for recognized server that "
-            "provide `available_event_catalogs` service "
-            "(one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', "
-            "'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', "
-            "'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', "
-            "'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', "
-            "'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
-    ServerGroup.add_argument(
-        "--server-wf",
-        action="store",
-        type=str,
-        dest="server_wf",
-        default="IRIS",
-        help="Waveform server setting: Base URL of FDSN web service compatible "
-            "server (e.g. “http://service.iris.edu”) or key string for recognized "
-            "server (one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', "
-            "'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', "
-            "'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', "
-            "'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', "
-            "'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
+        help="Base URL of FDSN web service compatible "
+        "server (e.g. “http://service.iris.edu”) or key string for recognized "
+        "server (one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', "
+        "'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', "
+        "'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', "
+        "'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', "
+        "'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
     ServerGroup.add_argument(
         "--user-auth",
         action="store",
@@ -393,16 +380,15 @@ def main(args=None):
             print('\nPath to '+str(eventpath)+' doesn`t exist - creating it')
             eventpath.mkdir(parents=True)
 
-        # Establish client for catalogue
-        cat_client = Client(
-            base_url=args.server_cat)
-
-        # Establish client for waveforms
-        wf_client = Client(
-            base_url=args.server_wf,
+        # Establish client
+        client = Client(
+            base_url=args.server,
             user=args.userauth[0],
             password=args.userauth[1],
             eida_token=args.tokenfile)
+
+        # Establish client for events - Default is 'IRIS''
+        event_client = Client()
 
         # Get catalogue search start time
         if args.startT is None:
@@ -460,7 +446,7 @@ def main(args=None):
         print("| ...                                           |")
 
         # Get catalogue using deployment start and end
-        cat = client.get_events(
+        cat = event_client.get_events(
             starttime=tstart, endtime=tend,
             minmagnitude=args.minmag, maxmagnitude=args.maxmag)
 
