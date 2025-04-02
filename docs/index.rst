@@ -17,7 +17,7 @@ can be used through command-line scripts.
 .. image:: https://github.com/nfsi-canada/OBStools/workflows/Build/badge.svg
    :target: https://github.com/nfsi-canada/OBStools/actions
 .. image:: https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/nfsi-canada/OBStools
+   :target: https://codecov.io/gh/nfsi-canada/OBStools
 
 .. toctree::
    :maxdepth: 1

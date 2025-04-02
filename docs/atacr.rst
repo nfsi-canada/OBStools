@@ -251,20 +251,28 @@ Usage
     Server Settings:
       Settings associated with which datacenter to log into.
 
-      -S SERVER, --server SERVER
-                            Specify the server to connect to. Options include:
-                            BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
-                            NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
-                            USP. [Default IRIS]
-      --server-url SERVER_URL
-                            Specify the obspy base_url server address (and port if
-                            needed) to open for the fdsn client. Overrides any
-                            settings to '--server'. [Default None]
-      -U USERAUTH, --user-auth USERAUTH
-                            Enter your Authentification Username and Password
-                            (--user-auth='username:authpassword') to access and
-                            download restricted data. [Default no user and
-                            password]
+      --server SERVER       Base URL of FDSN web service compatible server (e.g.
+                            “http://service.iris.edu”) or key string for
+                            recognized server (one of 'AUSPASS', 'BGR',
+                            'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', 'GEOFON',
+                            'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP',
+                            'IRIS', 'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU',
+                            'NCEDC', 'NIEP', 'NOA', 'NRCAN', 'ODC', 'ORFEUS',
+                            'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', 'TEXNET',
+                            'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']
+      --user-auth USERAUTH  Authentification Username and Password for the
+                            waveform server (--user-auth='username:authpassword')
+                            to access and download restricted data. [Default no
+                            user and password]
+      --eida-token TOKENFILE
+                            Token for EIDA authentication mechanism, see
+                            http://geofon.gfz-
+                            potsdam.de/waveform/archive/auth/index.php. If a token
+                            is provided, argument --user-auth will be ignored.
+                            This mechanism is only available on select EIDA nodes.
+                            The token can be provided in form of the PGP message
+                            as a string, or the filename of a local file with the
+                            PGP message in it. [Default None]
 
     Frequency Settings:
       Miscellaneous frequency settings
@@ -586,21 +594,29 @@ Usage
     Server Settings:
       Settings associated with which datacenter to log into.
 
-      -S SERVER, --server SERVER
-                            Specify the server to connect to. Options include:
-                            BGR, ETH, GEONET, GFZ, INGV, IPGP, IRIS, KOERI, LMU,
-                            NCEDC, NEIP, NERIES, ODC, ORFEUS, RESIF, SCEDC, USGS,
-                            USP. [Default IRIS]
-      --server-url SERVER_URL
-                            Specify the obspy base_url server address (and port if
-                            needed) to open for the fdsn client. Overrides any
-                            settings to '--server'. [Default None]
-      -U USERAUTH, --user-auth USERAUTH
-                            Enter your Authentification Username and Password
-                            (--user-auth='username:authpassword') to access and
-                            download restricted data. [Default no user and
-                            password]
-
+      --server SERVER       Base URL of FDSN web service compatible server (e.g.
+                            “http://service.iris.edu”) or key string for
+                            recognized server (one of 'AUSPASS', 'BGR',
+                            'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', 'GEOFON',
+                            'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP',
+                            'IRIS', 'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU',
+                            'NCEDC', 'NIEP', 'NOA', 'NRCAN', 'ODC', 'ORFEUS',
+                            'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', 'TEXNET',
+                            'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']
+      --user-auth USERAUTH  Authentification Username and Password for the
+                            waveform server (--user-auth='username:authpassword')
+                            to access and download restricted data. [Default no
+                            user and password]
+      --eida-token TOKENFILE
+                            Token for EIDA authentication mechanism, see
+                            http://geofon.gfz-
+                            potsdam.de/waveform/archive/auth/index.php. If a token
+                            is provided, argument --user-auth will be ignored.
+                            This mechanism is only available on select EIDA nodes.
+                            The token can be provided in form of the PGP message
+                            as a string, or the filename of a local file with the
+                            PGP message in it. [Default None]
+                            
     Frequency Settings:
       Miscellaneous frequency settings
 
