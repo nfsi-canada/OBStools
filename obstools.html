@@ -54,7 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#installation">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#conda-environment">Conda environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installing-from-pypi">Installing from Pypi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-development-branch-on-github">Installing development branch on GitHub</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-from-source">Installing from source</a></li>
 </ul>
 </li>
@@ -112,7 +112,7 @@ SOFTWARE.</p>
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
-<p>The current version has been tested using <strong>Python 3.6, 3.7 and 3.8</strong> The following package is required before install <code class="docutils literal notranslate"><span class="pre">obstools</span></code>:</p>
+<p>The current version has been tested using <strong>Python 3.10</strong> The following package is required before install <code class="docutils literal notranslate"><span class="pre">obstools</span></code>:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/paudetseis/StDb">stdb</a></p></li>
 </ul>
@@ -123,26 +123,21 @@ will be automatically installed by <code class="docutils literal notranslate"><s
 <h2>Conda environment<a class="headerlink" href="#conda-environment" title="Link to this heading"></a></h2>
 <p>We recommend creating a custom <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment
 where <code class="docutils literal notranslate"><span class="pre">OBStools</span></code> can be installed along with some of its dependencies.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>obs<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7<span class="w"> </span>obspy<span class="w"> </span>-c<span class="w"> </span>conda-forge
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>obs<span class="w"> </span><span class="s2">&quot;python=3.10&quot;</span><span class="w"> </span><span class="s2">&quot;setuptools=60&quot;&quot; obspy -c conda-forge</span>
 </pre></div>
 </div>
 <p>Activate the newly created environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>obs
 </pre></div>
 </div>
-</section>
-<section id="installing-from-pypi">
-<h2>Installing from Pypi<a class="headerlink" href="#installing-from-pypi" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>Install dependencies:</p></li>
-</ul>
+<p>Install dependency:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>stdb
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>Install <code class="docutils literal notranslate"><span class="pre">obstools</span></code>:</p></li>
-</ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>obstools
+</section>
+<section id="installing-development-branch-on-github">
+<h2>Installing development branch on GitHub<a class="headerlink" href="#installing-development-branch-on-github" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>obstools@git+https://github.com/nfsi-canada/obstools
 </pre></div>
 </div>
 </section>
@@ -158,8 +153,7 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <ul class="simple">
 <li><p>Install using pip:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>stdb
-pip<span class="w"> </span>install<span class="w"> </span>.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
 </section>
