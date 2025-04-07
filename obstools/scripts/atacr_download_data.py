@@ -89,11 +89,11 @@ def get_daylong_arguments(argv=None):
         "correction. [Default '12,P' looks for both horizontal and " +
         "pressure and allows for both tilt AND compliance corrections]")
     parser.add_argument(
-        "--zcomp", 
+        "--zcomp",
         dest="zcomp",
         type=str,
         default="Z",
-        help="Specify the Vertical Component Channel Identifier. "+
+        help="Specify the Vertical Component Channel Identifier. " +
         "[Default Z].")
     parser.add_argument(
         "-O", "--overwrite",
@@ -131,17 +131,17 @@ def get_daylong_arguments(argv=None):
         "waveform server (--user-auth='username:authpassword') to access " +
         "and download restricted data. [Default no user and password]")
     ServerGroup.add_argument(
-        "--eida-token", 
-        action="store", 
+        "--eida-token",
+        action="store",
         type=str,
-        dest="tokenfile", 
-        default=None, 
+        dest="tokenfile",
+        default=None,
         help="Token for EIDA authentication mechanism, see " +
         "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
         "If a token is provided, argument --user-auth will be ignored. "
         "This mechanism is only available on select EIDA nodes. The token can "
-        "be provided in form of the PGP message as a string, or the filename of "
-        "a local file with the PGP message in it. [Default None]")
+        "be provided in form of the PGP message as a string, or the filename "
+        "of a local file with the PGP message in it. [Default None]")
 
     """
     # Database Settings
@@ -271,8 +271,8 @@ def get_daylong_arguments(argv=None):
         if args.userauth is not None:
             tt = args.userauth.split(':')
             if not len(tt) == 2:
-                msg = ("Error: Incorrect Username and Password Strings for User "
-                       "Authentification")
+                msg = ("Error: Incorrect Username and Password Strings for " +
+                       "User Authentification")
                 parser.error(msg)
             else:
                 args.userauth = tt
@@ -292,8 +292,8 @@ def get_daylong_arguments(argv=None):
     #     args.ndval = nan
 
     if args.units not in ['DISP', 'VEL', 'ACC']:
-        msg = ("Error: invalid --units argument. Choose among "
-            "'DISP', 'VEL', or 'ACC'")
+        msg = ("Error: invalid --units argument. Choose among " +
+               "'DISP', 'VEL', or 'ACC'")
         parser.error(msg)
 
     if args.pre_filt is None:
@@ -302,8 +302,8 @@ def get_daylong_arguments(argv=None):
         args.pre_filt = [float(val) for val in args.pre_filt.split(',')]
         args.pre_filt = sorted(args.pre_filt)
         if (len(args.pre_filt)) != 4:
-            msg = ("Error: --pre-filt should contain 4 "
-                "comma-separated floats")
+            msg = ("Error: --pre-filt should contain 4 " +
+                   "comma-separated floats")
             parser.error(msg)
 
     return args
@@ -416,8 +416,8 @@ def main(args=None):
             tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
             print("\n"+"*"*60)
-            print("* Downloading day-long data for key "+stkey +
-                  " and day "+str(t1.year)+"."+str(t1.julday))
+            print("* Downloading day-long data for key {0} " +
+                  " and day {1}.{2:03d}".format(stkey, t1.year, t1.julday))
             print("*")
             print("* Channels selected: "+str(args.channels)+' and vertical')
 
@@ -455,9 +455,13 @@ def main(args=None):
                           "*SAC                                 ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel=channels,
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
 
                 except Exception:
@@ -467,7 +471,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-                st = sth
+                st = sth.merge()
 
             elif "12" not in args.channels:
 
@@ -490,9 +494,13 @@ def main(args=None):
                           "*SAC                                 ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel=channels,
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
 
                 except Exception:
@@ -504,9 +512,13 @@ def main(args=None):
                 try:
                     print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='?DH',
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel='?DH',
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
@@ -527,7 +539,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-                st = sth + stp
+                st = sth.merge() + stp.merge()
 
             else:
 
@@ -552,9 +564,13 @@ def main(args=None):
                           "*SAC                                 ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel=channels,
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
 
                 except Exception:
@@ -566,9 +582,13 @@ def main(args=None):
                 try:
                     print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='?DH',
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel='?DH',
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
@@ -589,7 +609,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-                st = sth + stp
+                st = sth.merge() + stp.merge()
 
             # Detrend, filter
             st.detrend('demean')
@@ -613,7 +633,7 @@ def main(args=None):
             print("*   -> Removing responses - Seismic data")
             sth.remove_response(pre_filt=args.pre_filt, output=args.units)
 
-            # Extract traces - Z 
+            # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
             trZ = utils.update_stats(
                 trZ, sta.latitude, sta.longitude, sta.elevation,
