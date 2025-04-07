@@ -50,7 +50,7 @@ Installation
 Dependencies
 ++++++++++++
 
-The current version has been tested using **Python 3.6, 3.7 and 3.8** \
+The current version has been tested using **Python 3.10** \
 The following package is required before install ``obstools``:
 
 - `stdb <https://github.com/paudetseis/StDb>`_
@@ -66,7 +66,7 @@ where ``OBStools`` can be installed along with some of its dependencies.
 
 .. sourcecode:: bash
 
-   conda create -n obs python=3.7 obspy -c conda-forge
+   conda create -n obs "python=3.10" "setuptools=60"" obspy -c conda-forge
 
 Activate the newly created environment:
 
@@ -74,21 +74,18 @@ Activate the newly created environment:
 
    conda activate obs
 
-Installing from Pypi
-++++++++++++++++++++
-
-- Install dependencies:
+Install dependency:
 
 .. sourcecode:: bash
 
    pip install stdb
 
-- Install ``obstools``:
+Installing development branch on GitHub
++++++++++++++++++++++++++++++++++++++++
 
 .. sourcecode:: bash
 
-   pip install obstools
-
+   pip install obstools@git+https://github.com/nfsi-canada/obstools
 
 Installing from source
 ++++++++++++++++++++++
@@ -104,7 +101,6 @@ Installing from source
 
 .. sourcecode:: bash
 
-   pip install stdb
    pip install .
 
 """
