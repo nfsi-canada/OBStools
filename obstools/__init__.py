@@ -66,7 +66,7 @@ where ``OBStools`` can be installed along with some of its dependencies.
 
 .. sourcecode:: bash
 
-   conda create -n obs "python=3.10" "setuptools=60"" obspy -c conda-forge
+   conda create -n obs -c conda-forge python=3.12 obspy
 
 Activate the newly created environment:
 
@@ -105,7 +105,7 @@ Installing from source
 
 """
 
-__version__ = '0.1.5'
+__version__ = '0.2.0'
 
 __author__ = 'Pascal Audet & Helen Janiszewski'
 
