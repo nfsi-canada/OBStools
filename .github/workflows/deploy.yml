@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.10"]
+        python-version: ["3.12"]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -54,7 +54,7 @@ jobs:
       #     bash <(curl -s https://codecov.io/bash)
 
       - name: Make docs
-        if: matrix.python-version == '3.10' 
+        if: matrix.python-version == '3.12' 
         shell: bash -l {0}
         run: |
           cd docs
@@ -65,7 +65,7 @@ jobs:
           cd ..
 
       - name: Deploy 🚀
-        if: matrix.python-version == '3.10' 
+        if: matrix.python-version == '3.12' 
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
