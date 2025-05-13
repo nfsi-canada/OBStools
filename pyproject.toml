@@ -5,7 +5,7 @@ requires = ["meson-python>0.15.0", "numpy >= 1.25.0"]
 
 [project]
 name = "obstools"
-version = "0.2.0"
+version = "0.2.1"
 description = "Python tools for ocean bottom seismic instruments"
 authors = [
     { name = "Pascal Audet", email = "pascal.audet@uottawa.ca" }
