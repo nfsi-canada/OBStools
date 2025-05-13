@@ -25,17 +25,19 @@
 
 # Import modules and functions
 import numpy as np
-import os.path
 import pickle
 import stdb
-from obspy.clients.fdsn import Client
-from obspy import Stream, UTCDateTime
-from obstools.atacr import utils
-from pathlib import Path
+# from numpy import nan
 
+from obspy.clients.fdsn import Client as FDSN_Client
+from obspy.clients.filesystem.sds import Client as SDS_Client
+from obspy import Stream, UTCDateTime
+
+from obstools.atacr import utils
+
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from numpy import nan
 
 
 def get_daylong_arguments(argv=None):
@@ -143,31 +145,34 @@ def get_daylong_arguments(argv=None):
         "be provided in form of the PGP message as a string, or the filename "
         "of a local file with the PGP message in it. [Default None]")
 
-    """
-    # Database Settings
+    # Use local data directory
     DataGroup = parser.add_argument_group(
         title="Local Data Settings",
         description="Settings associated with defining " +
-        "and using a local data base of pre-downloaded day-long SAC files.")
+        "and using a local data base of pre-downloaded " +
+        "day-long SAC or MSEED files.")
     DataGroup.add_argument(
         "--local-data",
         action="store",
         type=str,
         dest="localdata",
         default=None,
-        help="Specify a comma separated list of paths containing " +
-        "day-long sac files of data already downloaded. " +
+        help="Specify path containing " +
+        "day-long sac or mseed files of data already downloaded. " +
         "If data exists for a seismogram is already present on disk, " +
-        "it is selected preferentially over downloading " +
-        "the data using the Client interface")
+        "it is selected preferentially over downloading the data " +
+        "using the FDSN Client interface")
     DataGroup.add_argument(
-        "--no-data-zero",
-        action="store_true",
-        dest="ndval",
-        default=False,
-        help="Specify to force missing data to be set as zero, " +
-        "rather than default behaviour which sets to nan.")
-"""
+        "--dtype",
+        action="store",
+        type=str,
+        dest="dtype",
+        default='MSEED',
+        help="Specify the data archive file type, either SAC " +
+        " or MSEED. Note the default behaviour is to search for " +
+        "SAC files. Local archive files must have extensions of " +
+        "'.SAC'  or '.MSEED'. These are case dependent, so specify " +
+        "the correct case here.")
 
     # Constants Settings
     FreqGroup = parser.add_argument_group(
@@ -291,6 +296,13 @@ def get_daylong_arguments(argv=None):
     # else:
     #     args.ndval = nan
 
+    # Check Datatype specification
+    if args.dtype.upper() not in ['MSEED', 'SAC']:
+        parser.error(
+            "Error: Local Data Archive must be of types 'SAC'" +
+            "or MSEED. These must match the file extensions for " +
+            " the archived data.")
+
     if args.units not in ['DISP', 'VEL', 'ACC']:
         msg = ("Error: invalid --units argument. Choose among " +
                "'DISP', 'VEL', or 'ACC'")
@@ -346,15 +358,20 @@ def main(args=None):
         # Define path to see if it exists
         datapath = Path('DATA') / Path(stkey)
         if not datapath.is_dir():
-            print('\nPath to '+str(datapath)+' doesn`t exist - creating it')
+            print('\nPath to ' + str(datapath) +
+                  ' doesn`t exist - creating it')
             datapath.mkdir(parents=True)
 
-        # Establish client
-        client = Client(
-            base_url=args.server,
-            user=args.userauth[0],
-            password=args.userauth[1],
-            eida_token=args.tokenfile)
+        if args.localdata is None:
+            wf_client = FDSN_Client(
+                base_url=args.server_wf,
+                user=args.userauth[0],
+                password=args.userauth[1],
+                eida_token=args.tokenfile)
+        else:
+            wf_client = SDS_Client(
+                args.localdata,
+                format=args.dtype)
 
         # Get catalogue search start time
         if args.startT is None:
