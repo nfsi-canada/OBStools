@@ -27,11 +27,12 @@
 import numpy as np
 import pickle
 import stdb
-# from numpy import nan
+import copy
+import os.path as osp
 
 from obspy.clients.fdsn import Client as FDSN_Client
 from obspy.clients.filesystem.sds import Client as SDS_Client
-from obspy import Stream, UTCDateTime
+from obspy import Stream, UTCDateTime, read_inventory
 
 from obstools.atacr import utils
 
@@ -284,18 +285,6 @@ def get_daylong_arguments(argv=None):
         else:
             args.userauth = [None, None]
 
-    # # Parse Local Data directories
-    # if args.localdata is not None:
-    #     args.localdata = args.localdata.split(',')
-    # else:
-    #     args.localdata = []
-
-    # # Check NoData Value
-    # if args.ndval:
-    #     args.ndval = 0.0
-    # else:
-    #     args.ndval = nan
-
     # Check Datatype specification
     if args.dtype.upper() not in ['MSEED', 'SAC']:
         parser.error(
@@ -322,6 +311,18 @@ def get_daylong_arguments(argv=None):
 
 
 def main(args=None):
+
+    print()
+    print("####################################################################################################")
+    print("#        _                      _                     _                 _        _       _         #")
+    print("#   __ _| |_ __ _  ___ _ __  __| | _____      ___ __ | | ___   __ _  __| |    __| | __ _| |_ __ _  #")
+    print("#  / _` | __/ _` |/ __| '__|/ _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _` |/ _` | __/ _` | #")
+    print("# | (_| | || (_| | (__| |  | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  | (_| | (_| | || (_| | #")
+    print("#  \__,_|\__\__,_|\___|_|___\__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\__,_|\__,_|\__\__,_| #")
+    print("#                      |_____|                                          |_____|                    #")
+    print("#                                                                                                  #")
+    print("####################################################################################################")
+    print()
 
     if args is None:
         # Run Input Parser
@@ -362,16 +363,26 @@ def main(args=None):
                   ' doesn`t exist - creating it')
             datapath.mkdir(parents=True)
 
+        # Use FDSN client
         if args.localdata is None:
-            wf_client = FDSN_Client(
+            client = FDSN_Client(
                 base_url=args.server_wf,
                 user=args.userauth[0],
                 password=args.userauth[1],
                 eida_token=args.tokenfile)
+        # Use local client for SDS
         else:
-            wf_client = SDS_Client(
+            client = SDS_Client(
                 args.localdata,
                 format=args.dtype)
+            # Try loading the station XML to remove response
+            xmlfile, ext = osp.splitext(args.indb)
+            try:
+                inv = read_inventory(xmlfile+'.xml')
+            except Exception:
+                inv = None
+                print('\nStation XML file ' + xmlfile +
+                      '.xml not found -> Cannot remove response')
 
         # Get catalogue search start time
         if args.startT is None:
@@ -389,13 +400,14 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
+        if "--" in tlocs:
+            sta.location = ['']
 
         # Update Display
         print("\n|===============================================|")
@@ -433,8 +445,8 @@ def main(args=None):
             tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
             print("\n"+"*"*60)
-            print("* Downloading day-long data for key {0} " +
-                  " and day {1}.{2:03d}".format(stkey, t1.year, t1.julday))
+            print("* Downloading day-long data for key {0}  and day {1}.{2:03d}".format(
+                stkey, t1.year, t1.julday))
             print("*")
             print("* Channels selected: "+str(args.channels)+' and vertical')
 
@@ -454,7 +466,7 @@ def main(args=None):
                 if fileZ.exists() and file1.exists() and file2.exists():
                     if not args.ovr:
                         print(
-                            "*   "+tstamp +
+                            "*   " +tstamp+
                             "*SAC                                 ")
                         print(
                             "*   -> Files already exist, " +
@@ -463,12 +475,11 @@ def main(args=None):
                         t2 += dt
                         continue
 
-                channels = sta.channel.upper()+'1,'+sta.channel.upper() + \
-                    '2,'+sta.channel.upper()+args.zcomp
+                channels = sta.channel.upper()+'[1,2,'+args.zcomp+']'
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp +
+                    print("*   "+tstamp+
                           "*SAC                                 ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
@@ -572,8 +583,7 @@ def main(args=None):
                         t2 += dt
                         continue
 
-                channels = sta.channel.upper()+'1,'+sta.channel.upper() + \
-                    '2,'+sta.channel.upper()+args.zcomp
+                channels = sta.channel.upper()+'[1,2'+args.zcomp+']'
 
                 # Get waveforms from client
                 try:
@@ -648,7 +658,13 @@ def main(args=None):
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
-            sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+            try:
+                sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+            except Exception:
+                try:
+                    sth.remove_response(inventory=inv, pre_filt=args.pre_filt, output=args.units)
+                except Exception:
+                    print('No station XML found -> Cannot remove response')
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
@@ -674,7 +690,13 @@ def main(args=None):
             if "P" in args.channels:
                 stp = st.select(component='H')
                 print("*   -> Removing responses - Pressure data")
-                stp.remove_response(pre_filt=args.pre_filt)
+                try:
+                    stp.remove_response(pre_filt=args.pre_filt)
+                except Exception:
+                    try:
+                        stp.remove_response(inventory=inv, pre_filt=args.pre_filt)
+                    except Exception:
+                        print('No station XML found -> Cannot remove response')
                 trP = stp[0]
                 trP = utils.update_stats(
                     trP, sta.latitude, sta.longitude, sta.elevation,

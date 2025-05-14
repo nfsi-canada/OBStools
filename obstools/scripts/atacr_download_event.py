@@ -25,19 +25,22 @@
 
 # Import modules and functions
 import numpy as np
-import os.path
 import pickle
 import stdb
-from obspy.clients.fdsn import Client
+import copy
+import os.path as osp
+
+from obspy.clients.fdsn import Client as FDSN_Client
+from obspy.clients.filesystem.sds import Client as SDS_Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
-from obspy.core import Stream, UTCDateTime
-from obstools.atacr import utils, EventStream
-from pathlib import Path
+from obspy import Stream, UTCDateTime, read_inventory
 
+from obstools.atacr import utils, EventStream
+
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from numpy import nan
 
 
 def get_event_arguments(argv=None):
@@ -145,6 +148,35 @@ def get_event_arguments(argv=None):
             "This mechanism is only available on select EIDA nodes. The token can "
             "be provided in form of the PGP message as a string, or the filename of "
             "a local file with the PGP message in it. [Default None]")
+
+    # Use local data directory
+    DataGroup = parser.add_argument_group(
+        title="Local Data Settings",
+        description="Settings associated with defining " +
+        "and using a local data base of pre-downloaded " +
+        "day-long SAC or MSEED files.")
+    DataGroup.add_argument(
+        "--local-data",
+        action="store",
+        type=str,
+        dest="localdata",
+        default=None,
+        help="Specify path containing " +
+        "day-long sac or mseed files of data already downloaded. " +
+        "If data exists for a seismogram is already present on disk, " +
+        "it is selected preferentially over downloading the data " +
+        "using the FDSN Client interface")
+    DataGroup.add_argument(
+        "--dtype",
+        action="store",
+        type=str,
+        dest="dtype",
+        default='MSEED',
+        help="Specify the data archive file type, either SAC " +
+        " or MSEED. Note the default behaviour is to search for " +
+        "SAC files. Local archive files must have extensions of " +
+        "'.SAC'  or '.MSEED'. These are case dependent, so specify " +
+        "the correct case here.")
 
     # Constants Settings
     FreqGroup = parser.add_argument_group(
@@ -322,6 +354,13 @@ def get_event_arguments(argv=None):
         else:
             args.userauth = [None, None]
 
+    # Check Datatype specification
+    if args.dtype.upper() not in ['MSEED', 'SAC']:
+        parser.error(
+            "Error: Local Data Archive must be of types 'SAC'" +
+            "or MSEED. These must match the file extensions for " +
+            " the archived data.")
+
     if args.units not in ['DISP', 'VEL', 'ACC']:
         msg = ("Error: invalid --units argument. Choose among "
             "'DISP', 'VEL', or 'ACC'")
@@ -341,6 +380,18 @@ def get_event_arguments(argv=None):
 
 
 def main(args=None):
+
+    print()
+    print("########################################################################################################")
+    print("#        _                      _                     _                 _                         _    #")
+    print("#   __ _| |_ __ _  ___ _ __  __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #")
+    print("#  / _` | __/ _` |/ __| '__|/ _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ '_ \| __| #")
+    print("# | (_| | || (_| | (__| |  | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #")
+    print("#  \__,_|\__\__,_|\___|_|___\__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #")
+    print("#                      |_____|                                          |_____|                        #")
+    print("#                                                                                                      #")
+    print("########################################################################################################")
+    print()
 
     if args is None:
         # Run Input Parser
@@ -380,12 +431,26 @@ def main(args=None):
             print('\nPath to '+str(eventpath)+' doesn`t exist - creating it')
             eventpath.mkdir(parents=True)
 
-        # Establish client
-        client = Client(
-            base_url=args.server,
-            user=args.userauth[0],
-            password=args.userauth[1],
-            eida_token=args.tokenfile)
+        # Use FDSN client
+        if args.localdata is None:
+            client = FDSN_Client(
+                base_url=args.server_wf,
+                user=args.userauth[0],
+                password=args.userauth[1],
+                eida_token=args.tokenfile)
+        # Use local client for SDS
+        else:
+            client = SDS_Client(
+                args.localdata,
+                format=args.dtype)
+            # Try loading the station XML to remove response
+            xmlfile, ext = osp.splitext(args.indb)
+            try:
+                inv = read_inventory(xmlfile+'.xml')
+            except Exception:
+                inv = None
+                print('\nStation XML file ' + xmlfile +
+                      '.xml not found -> Cannot remove response')
 
         # Establish client for events - Default is 'IRIS''
         event_client = Client()
@@ -405,13 +470,14 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
+        if "--" in tlocs:
+            sta.location = ['']
 
         # Update Display
         print("\n|===============================================|")
@@ -537,9 +603,7 @@ def main(args=None):
                 ncomp = 3
 
                 # Comma-separated list of channels for Client
-                channels = sta.channel.upper() + '1,' + \
-                    sta.channel.upper() + '2,' + \
-                    sta.channel.upper() + args.zcomp
+                channels = sta.channel.upper()+'[1,2,'+args.zcomp+']'
 
                 # Get waveforms from client
                 try:
@@ -547,17 +611,22 @@ def main(args=None):
                           "                                     ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel=channels,
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
+
                 except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
                         "continuing")
                     continue
 
-                st = sth
+                st = sth.merge()
 
             elif "12" not in args.channels:
 
@@ -573,10 +642,15 @@ def main(args=None):
                           "                                     ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel=channels,
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
+
                 except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
@@ -585,9 +659,13 @@ def main(args=None):
                 try:
                     print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='?DH',
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel='?DH',
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
@@ -600,12 +678,13 @@ def main(args=None):
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
+
                 except Exception:
                     print(" Error: Unable to download ?DH component - " +
                           "continuing")
                     continue
 
-                st = sth + stp
+                st = sth.merge() + stp.merge()
 
             else:
 
@@ -613,9 +692,7 @@ def main(args=None):
                 ncomp = 4
 
                 # Comma-separated list of channels for Client
-                channels = sta.channel.upper() + '1,' + \
-                    sta.channel.upper() + '2,' + \
-                    sta.channel.upper() + args.zcomp
+                channels = sta.channel.upper()+'[1,2'+args.zcomp+']'
 
                 # Get waveforms from client
                 try:
@@ -623,10 +700,15 @@ def main(args=None):
                           "                                     ")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel=channels,
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("*      ...done")
+
                 except Exception:
                     print(
                         " Error: Unable to download ?H? components - " +
@@ -635,9 +717,13 @@ def main(args=None):
                 try:
                     print("*   -> Downloading Pressure data...")
                     stp = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='?DH',
-                        starttime=t1, endtime=t2, attach_response=True)
+                        network=sta.network,
+                        station=sta.station,
+                        location=sta.location[0],
+                        channel='?DH',
+                        starttime=t1,
+                        endtime=t2,
+                        attach_response=True)
                     print("     ...done")
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
@@ -655,7 +741,7 @@ def main(args=None):
                           "continuing")
                     continue
 
-                st = sth + stp
+                st = sth.merge() + stp.merge()
 
             # Detrend, filter
             st.detrend('demean')
@@ -674,7 +760,13 @@ def main(args=None):
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
-            sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+            try:
+                sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+            except Exception:
+                try:
+                    sth.remove_response(inventory=inv, pre_filt=args.pre_filt, output=args.units)
+                except Exception:
+                    print('No station XML found -> Cannot remove response')
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
@@ -701,7 +793,13 @@ def main(args=None):
             if "P" in args.channels:
                 stp = st.select(component='H')
                 print("*   -> Removing responses - Pressure data")
-                stp.remove_response(pre_filt=args.pre_filt)
+                try:
+                    stp.remove_response(pre_filt=args.pre_filt)
+                except Exception:
+                    try:
+                        stp.remove_response(inventory=inv, pre_filt=args.pre_filt)
+                    except Exception:
+                        print('No station XML found -> Cannot remove response')
                 trP = stp[0]
                 trP = utils.update_stats(
                     trP, sta.latitude, sta.longitude, sta.elevation,
