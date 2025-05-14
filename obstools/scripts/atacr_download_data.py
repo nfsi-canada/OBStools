@@ -158,11 +158,12 @@ def get_daylong_arguments(argv=None):
         type=str,
         dest="localdata",
         default=None,
-        help="Specify path containing " +
-        "day-long sac or mseed files of data already downloaded. " +
-        "If data exists for a seismogram is already present on disk, " +
-        "it is selected preferentially over downloading the data " +
-        "using the FDSN Client interface")
+        help="Specify absolute path to a SeisComP Data Structure (SDS) " +
+        "archive containing day-long SAC or MSEED files" +
+        "(e.g., --local-data=/Home/username/Data/SDS). " +
+        "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
+        "for details on the SDS format. If this option is used, it takes " +
+        "precedence over the --server-wf settings.")
     DataGroup.add_argument(
         "--dtype",
         action="store",

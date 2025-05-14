@@ -134,8 +134,8 @@ def get_event_arguments(argv=None):
         dest="userauth",
         default=None,
         help="Authentification Username and Password for the " +
-            "waveform server (--user-auth='username:authpassword') to access " +
-            "and download restricted data. [Default no user and password]")
+        "waveform server (--user-auth='username:authpassword') to access " +
+        "and download restricted data. [Default no user and password]")
     ServerGroup.add_argument(
         "--eida-token", 
         action="store", 
@@ -143,11 +143,11 @@ def get_event_arguments(argv=None):
         dest="tokenfile", 
         default=None, 
         help="Token for EIDA authentication mechanism, see " +
-            "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
-            "If a token is provided, argument --user-auth will be ignored. "
-            "This mechanism is only available on select EIDA nodes. The token can "
-            "be provided in form of the PGP message as a string, or the filename of "
-            "a local file with the PGP message in it. [Default None]")
+        "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
+        "If a token is provided, argument --user-auth will be ignored. "
+        "This mechanism is only available on select EIDA nodes. The token can "
+        "be provided in form of the PGP message as a string, or the filename of "
+        "a local file with the PGP message in it. [Default None]")
 
     # Use local data directory
     DataGroup = parser.add_argument_group(
@@ -161,11 +161,12 @@ def get_event_arguments(argv=None):
         type=str,
         dest="localdata",
         default=None,
-        help="Specify path containing " +
-        "day-long sac or mseed files of data already downloaded. " +
-        "If data exists for a seismogram is already present on disk, " +
-        "it is selected preferentially over downloading the data " +
-        "using the FDSN Client interface")
+        help="Specify absolute path to a SeisComP Data Structure (SDS) " +
+        "archive containing day-long SAC or MSEED files" +
+        "(e.g., --local-data=/Home/username/Data/SDS). " +
+        "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
+        "for details on the SDS format. If this option is used, it takes " +
+        "precedence over the --server-wf settings.")
     DataGroup.add_argument(
         "--dtype",
         action="store",
@@ -448,7 +449,7 @@ def main(args=None):
             # Try loading the station XML to remove response
             xmlfile, ext = osp.splitext(args.indb)
             try:
-                inv = read_inventory(xmlfile+'.xml')
+                inv = read_inventory(xmlfile+".xml")
             except Exception:
                 print("\nStation XML file " + xmlfile +
                       ".xml not found -> Cannot remove response")
