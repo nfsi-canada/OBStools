@@ -363,7 +363,7 @@ def get_event_arguments(argv=None):
 
     if args.units not in ['DISP', 'VEL', 'ACC']:
         msg = ("Error: invalid --units argument. Choose among "
-            "'DISP', 'VEL', or 'ACC'")
+               "'DISP', 'VEL', or 'ACC'")
         parser.error(msg)
 
     if args.pre_filt is None:
@@ -373,7 +373,7 @@ def get_event_arguments(argv=None):
         args.pre_filt = sorted(args.pre_filt)
         if (len(args.pre_filt)) != 4:
             msg = ("Error: --pre-filt should contain 4 "
-                "comma-separated floats")
+                   "comma-separated floats")
             parser.error(msg)
 
     return args
@@ -428,10 +428,12 @@ def main(args=None):
         # Define path to see if it exists
         eventpath = Path('EVENTS') / Path(stkey)
         if not eventpath.is_dir():
-            print('\nPath to '+str(eventpath)+' doesn`t exist - creating it')
+            print("\nPath to "+str(eventpath)+
+                  " doesn't exist - creating it")
             eventpath.mkdir(parents=True)
 
-        # Use FDSN client
+        # Establish client
+        inv = None
         if args.localdata is None:
             client = FDSN_Client(
                 base_url=args.server_wf,
@@ -448,9 +450,8 @@ def main(args=None):
             try:
                 inv = read_inventory(xmlfile+'.xml')
             except Exception:
-                inv = None
-                print('\nStation XML file ' + xmlfile +
-                      '.xml not found -> Cannot remove response')
+                print("\nStation XML file " + xmlfile +
+                      ".xml not found -> Cannot remove response")
 
         # Establish client for events - Default is 'IRIS''
         event_client = Client()
@@ -513,14 +514,15 @@ def main(args=None):
 
         # Get catalogue using deployment start and end
         cat = event_client.get_events(
-            starttime=tstart, endtime=tend,
-            minmagnitude=args.minmag, maxmagnitude=args.maxmag)
+            starttime=tstart,
+            endtime=tend,
+            minmagnitude=args.minmag,
+            maxmagnitude=args.maxmag)
 
         # Total number of events in Catalogue
         nevtT = len(cat)
-        print(
-            "|  Found {0:5d}".format(nevtT) +
-            " possible events                  |")
+        print("|  Found {0:5d}".format(nevtT) +
+              " possible events                  |")
 
         # Select order of processing
         ievs = range(0, nevtT)
@@ -546,24 +548,18 @@ def main(args=None):
 
             # Display Event Info
             print("\n"+"*"*60)
-            print(
-                "* #({0:d}/{1:d}):  {2:13s}".format(
-                    inum+1, nevtT, time.strftime("%Y%m%d_%H%M%S")))
-            print(
-                "*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
-            print(
-                "*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
-            print(
-                "*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
-            print(
-                "*   Dist: {0:7.2f} km; {1:7.2f} deg".format(
-                    epi_dist, gac))
+            print("* #({0:d}/{1:d}):  {2:13s}".format(
+                inum+1, nevtT, time.strftime("%Y%m%d_%H%M%S")))
+            print("*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
+            print("*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
+            print("*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
+            print("*   Dist: {0:7.2f} km; {1:7.2f} deg".format(
+                epi_dist, gac))
 
             # If distance outside of distance range:
             if not (gac > args.mindist and gac < args.maxdist):
-                print(
-                    "\n*   -> Event outside epicentral distance " +
-                    "range - continuing")
+                print("\n*   -> Event outside epicentral distance " +
+                      "range - continuing")
                 continue
 
             t1 = time
@@ -607,8 +603,7 @@ def main(args=None):
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp +
-                          "                                     ")
+                    print("*   "+tstamp+"*SAC")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
                         network=sta.network,
@@ -621,9 +616,8 @@ def main(args=None):
                     print("*      ...done")
 
                 except Exception:
-                    print(
-                        " Error: Unable to download ?H? components - " +
-                        "continuing")
+                    print(" Error: Unable to download ?H? components - "+
+                          "continuing")
                     continue
 
                 st = sth.merge()
@@ -638,8 +632,7 @@ def main(args=None):
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp +
-                          "                                     ")
+                    print("*   "+tstamp+"*SAC")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
                         network=sta.network,
@@ -652,9 +645,8 @@ def main(args=None):
                     print("*      ...done")
 
                 except Exception:
-                    print(
-                        " Error: Unable to download ?H? components - " +
-                        "continuing")
+                    print(" Error: Unable to download ?H? components - "+
+                          "continuing")
                     continue
                 try:
                     print("*   -> Downloading Pressure data...")
@@ -670,9 +662,7 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print(
-                            "*   -> Renaming channel to " +
-                            sta.channel[0] + "DH")
+                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
@@ -696,8 +686,7 @@ def main(args=None):
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp +
-                          "                                     ")
+                    print("*   "+tstamp+"*SAC")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
                         network=sta.network,
@@ -710,9 +699,8 @@ def main(args=None):
                     print("*      ...done")
 
                 except Exception:
-                    print(
-                        " Error: Unable to download ?H? components - " +
-                        "continuing")
+                    print(" Error: Unable to download ?H? components - " +
+                          "continuing")
                     continue
                 try:
                     print("*   -> Downloading Pressure data...")
@@ -728,16 +716,14 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print(
-                            "*   -> Renaming channel to " +
-                            sta.channel[0] + "DH")
+                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
                 except Exception:
-                    print(" Error: Unable to download ?DH component - " +
+                    print(" Error: Unable to download ?DH component - "+
                           "continuing")
                     continue
 
@@ -746,8 +732,11 @@ def main(args=None):
             # Detrend, filter
             st.detrend('demean')
             st.detrend('linear')
-            st.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                      corners=2, zerophase=True)
+            st.filter(
+                'lowpass',
+                freq=0.5*args.new_sampling_rate,
+                corners=2,
+                zerophase=True)
             st.resample(args.new_sampling_rate)
 
             # Check streams
@@ -761,18 +750,24 @@ def main(args=None):
             # Remove responses
             print("*   -> Removing responses - Seismic data")
             try:
-                sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+                sth.remove_response(
+                    inventory=inv,
+                    pre_filt=args.pre_filt,
+                    output=args.units)
             except Exception:
-                try:
-                    sth.remove_response(inventory=inv, pre_filt=args.pre_filt, output=args.units)
-                except Exception:
-                    print('No station XML found -> Cannot remove response')
+                print("*   -> Inventory not found: Cannot remove instrument "+
+                      "response")
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation,
-                sta.channel+'Z', evla=lat, evlo=lon)
+                trZ,
+                sta.latitude,
+                sta.longitude,
+                sta.elevation,
+                sta.channel+'Z',
+                evla=lat,
+                evlo=lon)
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces and write out in SAC format
@@ -781,11 +776,21 @@ def main(args=None):
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel+'1', evla=lat, evlo=lon)
+                    tr1,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
+                    sta.channel+'1',
+                    evla=lat,
+                    evlo=lon)
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel+'2', evla=lat, evlo=lon)
+                    tr2,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
+                    sta.channel+'2',
+                    evla=lat,
+                    evlo=lon)
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
 
@@ -794,16 +799,22 @@ def main(args=None):
                 stp = st.select(component='H')
                 print("*   -> Removing responses - Pressure data")
                 try:
-                    stp.remove_response(pre_filt=args.pre_filt)
+                    stp.remove_response(
+                        inventory=inv,
+                        pre_filt=args.pre_filt,
+                        output='DEF')
                 except Exception:
-                    try:
-                        stp.remove_response(inventory=inv, pre_filt=args.pre_filt)
-                    except Exception:
-                        print('No station XML found -> Cannot remove response')
+                    print("*   -> Inventory not found: Cannot remove "+
+                          "instrument response")
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel[0]+'DH', evla=lat, evlo=lon)
+                    trP,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
+                    sta.channel[0]+'DH',
+                    evla=lat,
+                    evlo=lon)
                 trP.write(str(fileP), format='SAC')
 
             else:

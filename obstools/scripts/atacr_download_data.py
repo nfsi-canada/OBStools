@@ -359,11 +359,12 @@ def main(args=None):
         # Define path to see if it exists
         datapath = Path('DATA') / Path(stkey)
         if not datapath.is_dir():
-            print('\nPath to ' + str(datapath) +
-                  ' doesn`t exist - creating it')
+            print("\nPath to "+str(datapath)+
+                  " doesn't exist - creating it")
             datapath.mkdir(parents=True)
 
-        # Use FDSN client
+        # Establish client
+        inv = None
         if args.localdata is None:
             client = FDSN_Client(
                 base_url=args.server_wf,
@@ -378,11 +379,10 @@ def main(args=None):
             # Try loading the station XML to remove response
             xmlfile, ext = osp.splitext(args.indb)
             try:
-                inv = read_inventory(xmlfile+'.xml')
+                inv = read_inventory(xmlfile+".xml")
             except Exception:
-                inv = None
-                print('\nStation XML file ' + xmlfile +
-                      '.xml not found -> Cannot remove response')
+                print("\nStation XML file " + xmlfile +
+                      ".xml not found -> Cannot remove response")
 
         # Get catalogue search start time
         if args.startT is None:
@@ -445,7 +445,7 @@ def main(args=None):
             tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
 
             print("\n"+"*"*60)
-            print("* Downloading day-long data for key {0}  and day {1}.{2:03d}".format(
+            print("* Downloading day-long data for key {0} and day {1}.{2:03d}".format(
                 stkey, t1.year, t1.julday))
             print("*")
             print("* Channels selected: "+str(args.channels)+' and vertical')
@@ -465,12 +465,8 @@ def main(args=None):
                 # If data files exist, continue
                 if fileZ.exists() and file1.exists() and file2.exists():
                     if not args.ovr:
-                        print(
-                            "*   " +tstamp+
-                            "*SAC                                 ")
-                        print(
-                            "*   -> Files already exist, " +
-                            "continuing            ")
+                        print("*   " +tstamp+"*SAC")
+                        print("*   -> Files already exist, continuing")
                         t1 += dt
                         t2 += dt
                         continue
@@ -479,8 +475,7 @@ def main(args=None):
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp+
-                          "*SAC                                 ")
+                    print("*   "+tstamp+"*SAC")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
                         network=sta.network,
@@ -493,7 +488,7 @@ def main(args=None):
                     print("*      ...done")
 
                 except Exception:
-                    print(" Error: Unable to download ?H? components - " +
+                    print(" Error: Unable to download ?H? components - "+
                           "continuing")
                     t1 += dt
                     t2 += dt
@@ -506,10 +501,8 @@ def main(args=None):
                 # If data files exist, continue
                 if fileZ.exists() and fileP.exists():
                     if not args.ovr:
-                        print("*   "+tstamp +
-                              "*SAC                                 ")
-                        print("*   -> Files already exist, " +
-                              "continuing            ")
+                        print("*   "+tstamp+"*SAC")
+                        print("*   -> Files already exist, continuing")
                         t1 += dt
                         t2 += dt
                         continue
@@ -518,8 +511,7 @@ def main(args=None):
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp +
-                          "*SAC                                 ")
+                    print("*   "+tstamp+"*SAC")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
                         network=sta.network,
@@ -532,7 +524,7 @@ def main(args=None):
                     print("*      ...done")
 
                 except Exception:
-                    print(" Error: Unable to download ?H? components - " +
+                    print(" Error: Unable to download ?H? components - "+
                           "continuing")
                     t1 += dt
                     t2 += dt
@@ -551,9 +543,7 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print(
-                            "*   -> Renaming channel to " +
-                            sta.channel[0]+"DH")
+                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
@@ -575,10 +565,8 @@ def main(args=None):
                 if (fileZ.exists() and file1.exists() and
                         file2.exists() and fileP.exists()):
                     if not args.ovr:
-                        print("*   "+tstamp +
-                              "*SAC                                 ")
-                        print("*   -> Files already exist, " +
-                              "continuing            ")
+                        print("*   "+tstamp+"*SAC")
+                        print("*   -> Files already exist, "+"continuing")
                         t1 += dt
                         t2 += dt
                         continue
@@ -587,8 +575,7 @@ def main(args=None):
 
                 # Get waveforms from client
                 try:
-                    print("*   "+tstamp +
-                          "*SAC                                 ")
+                    print("*   "+tstamp +"*SAC")
                     print("*   -> Downloading Seismic data... ")
                     sth = client.get_waveforms(
                         network=sta.network,
@@ -601,7 +588,7 @@ def main(args=None):
                     print("*      ...done")
 
                 except Exception:
-                    print(" Error: Unable to download ?H? components - " +
+                    print(" Error: Unable to download ?H? components - "+
                           "continuing")
                     t1 += dt
                     t2 += dt
@@ -620,9 +607,7 @@ def main(args=None):
                     if len(stp) > 1:
                         print("WARNING: There are more than one ?DH trace")
                         print("*   -> Keeping the highest sampling rate")
-                        print(
-                            "*   -> Renaming channel to " +
-                            sta.channel[0]+"DH")
+                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
                         if stp[0].stats.sampling_rate > \
                                 stp[1].stats.sampling_rate:
                             stp = Stream(traces=stp[0])
@@ -630,7 +615,7 @@ def main(args=None):
                             stp = Stream(traces=stp[1])
 
                 except Exception:
-                    print(" Error: Unable to download ?DH component - " +
+                    print(" Error: Unable to download ?DH component - "+
                           "continuing")
                     t1 += dt
                     t2 += dt
@@ -642,8 +627,10 @@ def main(args=None):
             st.detrend('demean')
             st.detrend('linear')
             st.filter(
-                'lowpass', freq=0.5*args.new_sampling_rate,
-                corners=2, zerophase=True)
+                'lowpass',
+                freq=0.5*args.new_sampling_rate,
+                corners=2,
+                zerophase=True)
             st.resample(args.new_sampling_rate)
 
             # Check streams
@@ -659,17 +646,21 @@ def main(args=None):
             # Remove responses
             print("*   -> Removing responses - Seismic data")
             try:
-                sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+                sth.remove_response(
+                    inventory=inv,
+                    pre_filt=args.pre_filt,
+                    output=args.units)
             except Exception:
-                try:
-                    sth.remove_response(inventory=inv, pre_filt=args.pre_filt, output=args.units)
-                except Exception:
-                    print('No station XML found -> Cannot remove response')
+                print("*   -> Inventory not found: Cannot remove instrument "+
+                      "response")
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation,
+                trZ,
+                sta.latitude,
+                sta.longitude,
+                sta.elevation,
                 sta.channel+'Z')
             trZ.write(str(fileZ), format='SAC')
 
@@ -678,10 +669,16 @@ def main(args=None):
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation,
+                    tr1,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
                     sta.channel+'1')
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation,
+                    tr2,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
                     sta.channel+'2')
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
@@ -691,15 +688,19 @@ def main(args=None):
                 stp = st.select(component='H')
                 print("*   -> Removing responses - Pressure data")
                 try:
-                    stp.remove_response(pre_filt=args.pre_filt)
+                    stp.remove_response(
+                        inventory=inv,
+                        pre_filt=args.pre_filt,
+                        output='DEF')
                 except Exception:
-                    try:
-                        stp.remove_response(inventory=inv, pre_filt=args.pre_filt)
-                    except Exception:
-                        print('No station XML found -> Cannot remove response')
+                    print("*   -> Inventory not found: Cannot remove "+
+                          "instrument response")
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation,
+                    trP,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
                     sta.channel[0]+'DH')
                 trP.write(str(fileP), format='SAC')
 
