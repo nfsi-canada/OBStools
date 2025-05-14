@@ -455,7 +455,7 @@ def main(args=None):
                       ".xml not found -> Cannot remove response")
 
         # Establish client for events - Default is 'IRIS''
-        event_client = Client()
+        event_client = FDSN_Client()
 
         # Get catalogue search start time
         if args.startT is None:
@@ -615,6 +615,12 @@ def main(args=None):
                         endtime=t2,
                         attach_response=True)
                     print("*      ...done")
+                    try:
+                        dum = sth.select(component=args.zcomp)[0]
+                    except Exception:
+                        print(" Error: Component ?HZ not found. Try setting " +
+                            "`--zcomp`. Continuing")
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?H? components - "+
@@ -644,6 +650,12 @@ def main(args=None):
                         endtime=t2,
                         attach_response=True)
                     print("*      ...done")
+                    try:
+                        dum = sth.select(component=args.zcomp)[0]
+                    except Exception:
+                        print(" Error: Component ?HZ not found. Try setting " +
+                            "`--zcomp`. Continuing")
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?H? components - "+
@@ -669,6 +681,12 @@ def main(args=None):
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
+                    try:
+                        dum = stp.select(component='H')[0]
+                    except Exception:
+                        print(" Error: Component ?DH not found. " +
+                            "Try setting `--channels=12`. Continuing")
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?DH component - " +
@@ -698,6 +716,12 @@ def main(args=None):
                         endtime=t2,
                         attach_response=True)
                     print("*      ...done")
+                    try:
+                        dum = sth.select(component=args.zcomp)[0]
+                    except Exception:
+                        print(" Error: Component ?HZ not found. Try setting " +
+                            "`--zcomp`. Continuing")
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?H? components - " +
@@ -723,6 +747,13 @@ def main(args=None):
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
+                    try:
+                        dum = stp.select(component='H')[0]
+                    except Exception:
+                        print(" Error: Component ?DH not found. " +
+                            "Try setting `--channels=12`. Continuing")
+                        continue
+
                 except Exception:
                     print(" Error: Unable to download ?DH component - "+
                           "continuing")

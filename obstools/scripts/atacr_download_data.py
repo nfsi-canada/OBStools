@@ -487,6 +487,14 @@ def main(args=None):
                         endtime=t2,
                         attach_response=True)
                     print("*      ...done")
+                    try:
+                        dum = sth.select(component=args.zcomp)[0]
+                    except Exception:
+                        print(" Error: Component ?HZ not found. Try setting " +
+                            "`--zcomp`. Continuing")
+                        t1 += dt
+                        t2 += dt
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?H? components - "+
@@ -523,6 +531,14 @@ def main(args=None):
                         endtime=t2,
                         attach_response=True)
                     print("*      ...done")
+                    try:
+                        dum = sth.select(component=args.zcomp)[0]
+                    except Exception:
+                        print(" Error: Component ?HZ not found. Try setting " +
+                            "`--zcomp`. Continuing")
+                        t1 += dt
+                        t2 += dt
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?H? components - "+
@@ -550,6 +566,14 @@ def main(args=None):
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
+                    try:
+                        dum = stp.select(component='H')[0]
+                    except Exception:
+                        print(" Error: Component ?DH not found. " +
+                            "Try setting `--channels=12`. Continuing")
+                        t1 += dt
+                        t2 += dt
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?DH component - " +
@@ -587,6 +611,14 @@ def main(args=None):
                         endtime=t2,
                         attach_response=True)
                     print("*      ...done")
+                    try:
+                        dum = sth.select(component=args.zcomp)[0]
+                    except Exception:
+                        print(" Error: Component ?HZ not found. Try setting " +
+                            "`--zcomp`. Continuing")
+                        t1 += dt
+                        t2 += dt
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?H? components - "+
@@ -614,6 +646,14 @@ def main(args=None):
                             stp = Stream(traces=stp[0])
                         else:
                             stp = Stream(traces=stp[1])
+                    try:
+                        dum = stp.select(component='H')[0]
+                    except Exception:
+                        print(" Error: Component ?DH not found. " +
+                            "Try setting `--channels=12`. Continuing")
+                        t1 += dt
+                        t2 += dt
+                        continue
 
                 except Exception:
                     print(" Error: Unable to download ?DH component - "+
@@ -641,8 +681,10 @@ def main(args=None):
                 t2 += dt
                 continue
 
-            sth = st.select(component='1') + st.select(component='2') + \
-                st.select(component=args.zcomp)
+            # Extracting seismic data components
+            sth = st.select(component='1') + \
+                  st.select(component='2') + \
+                  st.select(component=args.zcomp)
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
@@ -657,6 +699,7 @@ def main(args=None):
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
+
             trZ = utils.update_stats(
                 trZ,
                 sta.latitude,
@@ -686,7 +729,9 @@ def main(args=None):
 
             # Extract traces - P
             if "P" in args.channels:
+
                 stp = st.select(component='H')
+
                 print("*   -> Removing responses - Pressure data")
                 try:
                     stp.remove_response(
