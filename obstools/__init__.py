@@ -99,7 +99,7 @@ Installing from source
    pip install .
 
 Using local data
-================
+----------------
 
 The various scripts packaged with ``OrientPy`` use FDSN web services
 through and ``ObsPy`` `Client` to load waveform data. For waveform
@@ -111,7 +111,7 @@ archive containing SAC or miniSEED waveform data. Check out the scripts
 ``--dtype`` for more details.
 
 Station Metadata
-----------------
+++++++++++++++++
 
 If you have data stored locally on your drive, it is likely you also
 have a station `XML <https://www.fdsn.org/xml/station/>`_ file
@@ -126,7 +126,7 @@ a dataless SEED file, you can convert it first to `XML` using `this
 tools <https://seiscode.iris.washington.edu/projects/stationxml-converter>`_.
 
 Waveform Data
--------------
++++++++++++++
 
 The SDS folder containing the waveform data has the structure:
 
