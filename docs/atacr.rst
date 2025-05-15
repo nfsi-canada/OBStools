@@ -38,7 +38,7 @@ Compliance is defined as the spectral ratio between pressure and vertical
 displacement data. Compliance noise arises from seafloor deformation due
 to seafloor and water wave effects (including infragravity waves). 
 This is likely the main source of noise in vertical component OBS data. 
-This analysis therefore requires both vertical (``?HZ``) and pressure (``?XH``) data.
+This analysis therefore requires both vertical (``?HZ``) and pressure (``?DH``) data.
 
 **Tilt**
 
@@ -203,7 +203,7 @@ program values or by refining parameters. All of them use a station database pro
 Description
 -----------
 
-Downloads up to four-component (H1, H2, Z and P), day-long seismograms 
+Downloads up to four-component (1, 2, Z and P), day-long seismograms 
 to use in noise corrections of vertical
 component data. Station selection is specified by a network and 
 station code. The database is provided as a ``StDb`` dictionary.
@@ -216,87 +216,81 @@ Usage
     $ atacr_download_data -h
     usage: atacr_download_data [options] <indb>
 
-    Script used to download and pre-process up to four-component (H1, H2, Z and
-    P), day-long seismograms to use in noise corrections of vertical component of
-    OBS data. Data are requested from the internet using the client services
-    framework for a given date range. The stations are processed one by one and
-    the data are stored to disk.
+    Script used to download and pre-process up to four-component (H1, H2, Z and P), day-long
+    seismograms to use in noise corrections of vertical component of OBS data. Data are requested
+    from the internet using the client services framework for a given date range. The stations
+    are processed one by one and the data are stored to disk.
 
     positional arguments:
       indb                  Station Database to process from.
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
-      --keys STKEYS         Specify a comma-separated list of station keys for
-                            which to perform the analysis. These must be contained
-                            within the station database. Partial keys will be used
-                            to match against those in the dictionary. For
-                            instance, providing IU will match with all stations in
-                            the IU network. [Default processes all stations in the
-                            database]
-      -C CHANNELS, --channels CHANNELS
-                            Specify a comma-separated list of channels for which
-                            to perform the transfer function analysis. Possible
-                            options are '12' (for horizontal channels) or 'P' (for
-                            pressure channel). Specifying '12' allows for tilt
-                            correction. Specifying 'P' allows for compliance
-                            correction. [Default looks for both horizontal and
-                            pressure and allows for both tilt AND compliance
-                            corrections]
-      --zcomp ZCOMP         Specify the Vertical Component Channel Identifier.
-                            [Default Z].
-      -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                            False]
+      --keys STKEYS         Specify a comma-separated list of station keys for which to perform
+                            the analysis. These must be contained within the station database.
+                            Partial keys will be used to match against those in the dictionary.
+                            For instance, providing IU will match with all stations in the IU
+                            network. [Default processes all stations in the database]
+      -O, --overwrite       Force the overwriting of pre-existing data. [Default False]
+      -Z ZCOMP, --zcomp ZCOMP
+                            Specify the Vertical Component Channel Identifier. [Default Z].
 
     Server Settings:
       Settings associated with which datacenter to log into.
 
       --server SERVER       Base URL of FDSN web service compatible server (e.g.
-                            “http://service.iris.edu”) or key string for
-                            recognized server (one of 'AUSPASS', 'BGR',
-                            'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', 'GEOFON',
-                            'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP',
-                            'IRIS', 'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU',
-                            'NCEDC', 'NIEP', 'NOA', 'NRCAN', 'ODC', 'ORFEUS',
-                            'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', 'TEXNET',
-                            'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']
-      --user-auth USERAUTH  Authentification Username and Password for the
-                            waveform server (--user-auth='username:authpassword')
-                            to access and download restricted data. [Default no
-                            user and password]
+                            “http://service.iris.edu”) or key string for recognized server (one
+                            of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', 'GEOFON',
+                            'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', 'IRISPH5',
+                            'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', 'NRCAN',
+                            'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC',
+                            'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']
+      --user-auth USERAUTH  Authentification Username and Password for the waveform server
+                            (--user-auth='username:authpassword') to access and download
+                            restricted data. [Default no user and password]
       --eida-token TOKENFILE
-                            Token for EIDA authentication mechanism, see
-                            http://geofon.gfz-
-                            potsdam.de/waveform/archive/auth/index.php. If a token
-                            is provided, argument --user-auth will be ignored.
-                            This mechanism is only available on select EIDA nodes.
-                            The token can be provided in form of the PGP message
-                            as a string, or the filename of a local file with the
+                            Token for EIDA authentication mechanism, see http://geofon.gfz-
+                            potsdam.de/waveform/archive/auth/index.php. If a token is provided,
+                            argument --user-auth will be ignored. This mechanism is only
+                            available on select EIDA nodes. The token can be provided in form of
+                            the PGP message as a string, or the filename of a local file with the
                             PGP message in it. [Default None]
+
+    Local Data Settings:
+      Settings associated with defining and using a local data base of pre-downloaded day-long
+      SAC or MSEED files.
+
+      --local-data LOCALDATA
+                            Specify absolute path to a SeisComP Data Structure (SDS) archive
+                            containing day-long SAC or MSEED files(e.g., --local-
+                            data=/Home/username/Data/SDS). See
+                            https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html
+                            for details on the SDS format. If this option is used, it takes
+                            precedence over the --server-wf settings.
+      --dtype DTYPE         Specify the data archive file type, either SAC or MSEED. Note the
+                            default behaviour is to search for SAC files. Local archive files
+                            must have extensions of '.SAC' or '.MSEED'. These are case dependent,
+                            so specify the correct case here.
 
     Frequency Settings:
       Miscellaneous frequency settings
 
       --sampling-rate NEW_SAMPLING_RATE
                             Specify new sampling rate (float, in Hz). [Default 5.]
-      --units UNITS         Choose the output seismogram units. Options are:
-                            'DISP', 'VEL', 'ACC'. [Default 'DISP']
-      --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
-                            (float, in Hz) for deconvolution pre-filter. [Default
-                            0.001,0.005,45.,50.]
+      --units UNITS         Choose the output seismogram units. Options are: 'DISP', 'VEL',
+                            'ACC'. [Default 'DISP']
+      --pre-filt PRE_FILT   Specify four comma-separated corner frequencies (float, in Hz) for
+                            deconvolution pre-filter. [Default 0.001,0.005,45.,50.]
 
     Time Search Settings:
       Time settings associated with searching for day-long seismograms
 
-      --start STARTT        Specify a UTCDateTime compatible string representing
-                            the start day for the data search. This will override
-                            any station start times. [Default start date for each
-                            station in database]
-      --end ENDT            Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default end date for
-                            each station in database]
-
+      --start STARTT        Specify a UTCDateTime compatible string representing the start day
+                            for the data search. This will override any station start times.
+                            [Default start date for each station in database]
+      --end ENDT            Specify a UTCDateTime compatible string representing the start time
+                            for the event search. This will override any station end times
+                            [Default end date for each station in database]
 
 ``atacr_daily_spectra``
 +++++++++++++++++++++++
@@ -489,8 +483,8 @@ Usage
 
     Script used to calculate transfer functions between various components, to be
     used in cleaning vertical component of OBS data. The noise data can be those
-    obtained from the daily spectra (i.e., from `obs_daily_spectra.py`) or those
-    obtained from the averaged noise spectra (i.e., from `obs_clean_spectra.py`).
+    obtained from the daily spectra (i.e., from `atacr_daily_spectra`) or those
+    obtained from the averaged noise spectra (i.e., from `atacr_clean_spectra`).
     Flags are available to specify the source of data to use as well as the time
     range over which to calculate the transfer functions. The stations are
     processed one by one and the data are stored to disk.
@@ -546,7 +540,7 @@ Usage
 Description
 -----------
 
-Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms 
+Downloads up to four-component (1,2,Z,H), two-hour-long seismograms 
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and 
 station code. The database is provided as a ``StDb`` dictionary.
@@ -559,107 +553,98 @@ Usage
     $ atacr_download_event -h
     usage: atacr_download_event [options] <indb>
 
-    Script used to download and pre-process four-component (H1, H2, Z and P), two-
-    hour-long seismograms for individual events on which to apply the de-noising
-    algorithms. Data are requested from the internet using the client services
-    framework for a given date range. The stations are processed one by one and
-    the data are stored to disk.
+    Script used to download and pre-process four-component (H1, H2, Z and P), two-hour-long
+    seismograms for individual events on which to apply the de-noising algorithms. Data are
+    requested from the internet using the client services framework for a given date range. The
+    stations are processed one by one and the data are stored to disk.
 
     positional arguments:
       indb                  Station Database to process from.
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
-      --keys STKEYS         Specify a comma separated list of station keys for
-                            which to perform the analysis. These must be contained
-                            within the station database. Partial keys will be used
-                            to match against those in the dictionary. For
-                            instance, providing IU will match with all stations in
-                            the IU network [Default processes all stations in the
-                            database]
-      -C CHANNELS, --channels CHANNELS
-                            Specify a comma-separated list of channels for which
-                            to perform the transfer function analysis. Possible
-                            options are '12' (for horizontal channels) or 'P' (for
-                            pressure channel). Specifying '12' allows for tilt
-                            correction. Specifying 'P' allows for compliance
-                            correction. [Default looks for both horizontal and
-                            pressure and allows for both tilt AND compliance
-                            corrections]
-      --zcomp ZCOMP         Specify the Vertical Component Channel Identifier.
-                            [Default Z].
-      -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                            False]
+      --keys STKEYS         Specify a comma separated list of station keys for which to perform
+                            the analysis. These must be contained within the station database.
+                            Partial keys will be used to match against those in the dictionary.
+                            For instance, providing IU will match with all stations in the IU
+                            network [Default processes all stations in the database]
+      -O, --overwrite       Force the overwriting of pre-existing data. [Default False]
+      --zcomp ZCOMP         Specify the Vertical Component Channel Identifier. [Default Z].
 
     Server Settings:
       Settings associated with which datacenter to log into.
 
       --server SERVER       Base URL of FDSN web service compatible server (e.g.
-                            “http://service.iris.edu”) or key string for
-                            recognized server (one of 'AUSPASS', 'BGR',
-                            'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', 'GEOFON',
-                            'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP',
-                            'IRIS', 'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU',
-                            'NCEDC', 'NIEP', 'NOA', 'NRCAN', 'ODC', 'ORFEUS',
-                            'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', 'TEXNET',
-                            'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']
-      --user-auth USERAUTH  Authentification Username and Password for the
-                            waveform server (--user-auth='username:authpassword')
-                            to access and download restricted data. [Default no
-                            user and password]
+                            “http://service.iris.edu”) or key string for recognized server (one
+                            of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', 'GEOFON',
+                            'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', 'IRISPH5',
+                            'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', 'NRCAN',
+                            'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC',
+                            'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']
+      --user-auth USERAUTH  Authentification Username and Password for the waveform server
+                            (--user-auth='username:authpassword') to access and download
+                            restricted data. [Default no user and password]
       --eida-token TOKENFILE
-                            Token for EIDA authentication mechanism, see
-                            http://geofon.gfz-
-                            potsdam.de/waveform/archive/auth/index.php. If a token
-                            is provided, argument --user-auth will be ignored.
-                            This mechanism is only available on select EIDA nodes.
-                            The token can be provided in form of the PGP message
-                            as a string, or the filename of a local file with the
+                            Token for EIDA authentication mechanism, see http://geofon.gfz-
+                            potsdam.de/waveform/archive/auth/index.php. If a token is provided,
+                            argument --user-auth will be ignored. This mechanism is only
+                            available on select EIDA nodes. The token can be provided in form of
+                            the PGP message as a string, or the filename of a local file with the
                             PGP message in it. [Default None]
-                            
+
+    Local Data Settings:
+      Settings associated with defining and using a local data base of pre-downloaded day-long
+      SAC or MSEED files.
+
+      --local-data LOCALDATA
+                            Specify absolute path to a SeisComP Data Structure (SDS) archive
+                            containing day-long SAC or MSEED files(e.g., --local-
+                            data=/Home/username/Data/SDS). See
+                            https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html
+                            for details on the SDS format. If this option is used, it takes
+                            precedence over the --server-wf settings.
+      --dtype DTYPE         Specify the data archive file type, either SAC or MSEED. Note the
+                            default behaviour is to search for SAC files. Local archive files
+                            must have extensions of '.SAC' or '.MSEED'. These are case dependent,
+                            so specify the correct case here.
+
     Frequency Settings:
       Miscellaneous frequency settings
 
       --sampling-rate NEW_SAMPLING_RATE
                             Specify new sampling rate (float, in Hz). [Default 5.]
-      --units UNITS         Choose the output seismogram units. Options are:
-                            'DISP', 'VEL', 'ACC'. [Default 'DISP']
-      --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
-                            (float, in Hz) for deconvolution pre-filter. [Default
-                            0.001,0.005,45.,50.]
-      --window WINDOW       Specify window length in seconds. Default value is
-                            highly recommended. Program may not be stable for
-                            large deviations from default value. [Default 7200.
-                            (or 2 hours)]
+      --units UNITS         Choose the output seismogram units. Options are: 'DISP', 'VEL',
+                            'ACC'. [Default 'DISP']
+      --pre-filt PRE_FILT   Specify four comma-separated corner frequencies (float, in Hz) for
+                            deconvolution pre-filter. [Default 0.001,0.005,45.,50.]
+      --window WINDOW       Specify window length in seconds. Default value is highly
+                            recommended. Program may not be stable for large deviations from
+                            default value. [Default 7200. (or 2 hours)]
 
     Event Settings:
-      Settings associated with refining the events to include in matching
-      station pairs
+      Settings associated with refining the events to include in matching station pairs
 
-      --start STARTT        Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station start times. [Default start date
-                            of each station in database]
-      --end ENDT            Specify a UTCDateTime compatible string representing
-                            the start time for the event search. This will
-                            override any station end times [Default end date of
-                            each station in database]
-      --reverse-order, -R   Reverse order of events. Default behaviour starts at
-                            oldest event and works towards most recent. Specify
-                            reverse order and instead the program will start with
-                            the most recent events and work towards older
-      --min-mag MINMAG      Specify the minimum magnitude of event for which to
-                            search. [Default 5.5]
-      --max-mag MAXMAG      Specify the maximum magnitude of event for which to
-                            search. [Default None, i.e. no limit]
+      --start STARTT        Specify a UTCDateTime compatible string representing the start time
+                            for the event search. This will override any station start times.
+                            [Default start date of each station in database]
+      --end ENDT            Specify a UTCDateTime compatible string representing the start time
+                            for the event search. This will override any station end times
+                            [Default end date of each station in database]
+      --reverse-order, -R   Reverse order of events. Default behaviour starts at oldest event and
+                            works towards most recent. Specify reverse order and instead the
+                            program will start with the most recent events and work towards older
+      --min-mag MINMAG      Specify the minimum magnitude of event for which to search. [Default
+                            5.5]
+      --max-mag MAXMAG      Specify the maximum magnitude of event for which to search. [Default
+                            None, i.e. no limit]
 
     Geometry Settings:
       Settings associatd with the event-station geometries
 
-      --min-dist MINDIST    Specify the minimum great circle distance (degrees)
-                            between the station and event. [Default 30]
-      --max-dist MAXDIST    Specify the maximum great circle distance (degrees)
-                            between the station and event. [Default 120]
+      --min-dist MINDIST    Specify the minimum great circle distance (degrees) between the
+                            station and event. [Default 30]
+      --max-dist MAXDIST    Specify the maximum great circle distance (degrees) between the
+                            station and event. [Default 120]
 
 ``atacr_correct_event``
 +++++++++++++++++++++++
@@ -683,8 +668,8 @@ Usage
     Script used to extract transfer functions between various components, and use
     them to clean vertical component of OBS data for selected events. The noise
     data can be those obtained from the daily spectra (i.e., from
-    `obs_daily_spectra.py`) or those obtained from the averaged noise spectra
-    (i.e., from `obs_clean_spectra.py`). Flags are available to specify the source
+    `atacr_daily_spectra`) or those obtained from the averaged noise spectra
+    (i.e., from `atacr_clean_spectra`). Flags are available to specify the source
     of data to use as well as the time range for given events. The stations are
     processed one by one and the data are stored to disk in a new 'CORRECTED'
     folder.
@@ -763,17 +748,7 @@ M08A and send the prompt to a logfile
 
 .. code-block::
 
-   $ query_fdsn_stdb -N 7D -C ?H? -S M08A M08A > logfile
-
-.. note::
-
-    If you are using a *Z shell* (as opposed to a *Bourne Shell* or 
-    other types of shells) on the terminal,
-    this command above will fail due to the presence of the question marks for 
-    pattern matching. To find out, just type `ps -p $$`, which will return
-    `zsh` under the `CMD` field if you are using a Z shell. In this case, just
-    enclose the `?H?` in single or double quotes (e.g., 
-    `query_fdsn_stdb.py -N 7D -C "?H?" -S M08A M08A > logfile`) 
+   $ query_fdsn_stdb -N 7D -S M08A M08A > logfile
 
 To check the station info for M08A, use the program ``ls_stdb``:
 
@@ -798,10 +773,9 @@ To check the station info for M08A, use the program ``ls_stdb``:
 ++++++++++++++++++++++
 
 We wish to download one month of data for the station M08A for March 2012. 
-The various options above allow us to select the additional channels to use
-(e.g., ``-C 12,P`` for both horizontal and pressure data - which is the default
-setting). Default frequency settings for data pre-processing match those of
-the Matlab ``ATaCR`` software and can therefore be ignored when calling the program.
+The program will search for and download all available (1,2,Z,H) data.
+Default frequency settings for data pre-processing match those of
+the Matlab ``ATaCR`` software.
 Since the file ``M08A.pkl`` contains only one station, it is not necessary to specify a
 key. This option would be useful if the database contained several stations
 and we were only interested in downloading data for M08A. In this case, we would
@@ -812,7 +786,7 @@ to specify the dates for which data will be downloaded.
 If you change your mind about the pre-processing options, you can always re-run the
 following line with the option ``-O``, which will overwrite the data saved to disk.
 
-To download all broadband seismic and pressure data, simply type in a terminal:
+To download all available data, simply type in a terminal:
 
 .. code-block::
 
@@ -822,7 +796,18 @@ An example log printed on the terminal will look like:
 
 .. code-block::
 
-    Path to DATA/7D.M08A/ doesn`t exist - creating it
+    ###########################################################################
+    #      _                     _                 _        _       _         #
+    #   __| | _____      ___ __ | | ___   __ _  __| |    __| | __ _| |_ __ _  #
+    #  / _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _` |/ _` | __/ _` | #
+    # | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  | (_| | (_| | || (_| | #
+    #  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\__,_|\__,_|\__\__,_| #
+    #                                              |_____|                    #
+    #                                                                         #
+    ###########################################################################
+
+
+    Path to DATA/7D.M08A doesn't exist - creating it
 
     |===============================================|
     |===============================================|
@@ -839,15 +824,25 @@ An example log printed on the terminal will look like:
     |   Start: 2012-03-01                           |
     |   End:   2012-04-01                           |
 
-    ***********************************************************
-    * Downloading day-long data for key 7D.M08A and day 2012.61
+    ************************************************************
+    * Downloading day-long data for key 7D.M08A and day 2012.061
     *
-    * Channels selected: ['12', 'P'] and vertical
-    *   2012.061.*SAC                                 
-    *   -> Downloading Seismic data... 
+    *   2012.061.*.SAC
+    *   -> Downloading BH1 data... 
     *      ...done
-    *   -> Downloading Pressure data...
+    *   -> Downloading BH2 data... 
     *      ...done
+    *   -> Downloading BHZ data... 
+    *      ...done
+    *   -> Downloading ?DH data...
+    *      ...done
+    * Start times are not all close to true start: 
+    *   BH1 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+    *   BH2 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+    *   BHZ 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+    *   BDH 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+    *   True start: 2012-03-01T00:00:00.000000Z
+    * -> Shifting traces to true start
     *   -> Removing responses - Seismic data
      WARNING: FIR normalized: sum[coef]=9.767192E-01;     
      WARNING: FIR normalized: sum[coef]=9.767192E-01;     
@@ -855,12 +850,13 @@ An example log printed on the terminal will look like:
     *   -> Removing responses - Pressure data
      WARNING: FIR normalized: sum[coef]=9.767192E-01;     
 
-    ***********************************************************
-    * Downloading day-long data for key 7D.M08A and day 2012.62
+    ************************************************************
+    * Downloading day-long data for key 7D.M08A and day 2012.062
     *
-    * Channels selected: ['12', 'P'] and vertical
-    *   2012.062.*SAC                                 
-    *   -> Downloading Seismic data... 
+    *   2012.062.*.SAC
+    *   -> Downloading BH1 data... 
+    *      ...done
+    *   -> Downloading BH2 data... 
 
     ...
 
@@ -873,7 +869,7 @@ This is where all day-long files will be stored on disk.
 
 For this step, there are several Parameter Settings that can be tuned. Once again,
 the default values are the ones used to reproduce the results of the Matlab
-ATaCR software and can be left un-changed. The Time Search Settings can be used
+ATaCR software. The Time Search Settings can be used
 to look at a subset of the available day-long data files. Here these options 
 can be ignored since we wish to look at all the availble data that we just downloaded. 
 We can therefore type in a terminal:
@@ -881,6 +877,17 @@ We can therefore type in a terminal:
 .. code-block:: 
 
     $ atacr_daily_spectra M08A.pkl
+
+    #################################################################
+    #      _       _ _                               _              #
+    #   __| | __ _(_) |_   _     ___ _ __   ___  ___| |_ _ __ __ _  #
+    #  / _` |/ _` | | | | | |   / __| '_ \ / _ \/ __| __| '__/ _` | #
+    # | (_| | (_| | | | |_| |   \__ \ |_) |  __/ (__| |_| | | (_| | #
+    #  \__,_|\__,_|_|_|\__, |___|___/ .__/ \___|\___|\__|_|  \__,_| #
+    #                  |___/_____|  |_|                             #
+    #                                                               #
+    #################################################################
+
 
     Path to SPECTRA/7D.M08A/ doesn`t exist - creating it
 
@@ -960,6 +967,17 @@ therefore using all available data) and plot the results, we can type in a termi
 .. code-block::
 
     $ atacr_clean_spectra --figQC --figAverage --figCoh --figCross M08A.pkl
+
+    ###################################################################
+    #       _                                          _              #
+    #   ___| | ___  __ _ _ __      ___ _ __   ___  ___| |_ _ __ __ _  #
+    #  / __| |/ _ \/ _` | '_ \    / __| '_ \ / _ \/ __| __| '__/ _` | #
+    # | (__| |  __/ (_| | | | |   \__ \ |_) |  __/ (__| |_| | | (_| | #
+    #  \___|_|\___|\__,_|_| |_|___|___/ .__/ \___|\___|\__|_|  \__,_| #
+    #                        |_____|  |_|                             #
+    #                                                                 #
+    ###################################################################
+
 
     Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
 
@@ -1094,6 +1112,17 @@ In this case we do not need to specify any option and type in a terminal:
 
     $ atacr_transfer_functions M08A.pkl
 
+    #######################################################################################
+    #  _                        __             __                  _   _                  #
+    # | |_ _ __ __ _ _ __  ___ / _| ___ _ __  / _|_   _ _ __   ___| |_(_) ___  _ __  ___  #
+    # | __| '__/ _` | '_ \/ __| |_ / _ \ '__|| |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __| #
+    # | |_| | | (_| | | | \__ \  _|  __/ |   |  _| |_| | | | | (__| |_| | (_) | | | \__ \ #
+    #  \__|_|  \__,_|_| |_|___/_|  \___|_|___|_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/ #
+    #                                   |_____|                                           #
+    #                                                                                     #
+    #######################################################################################
+
+
     Path to TF_STA/7D.M08A/ doesn't exist - creating it
      
     |===============================================|
@@ -1155,8 +1184,19 @@ Vanuatu earthquake (be conservative with the options), type in a terminal:
 
     $ atacr_download_event --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
 
-    Path to EVENTS/7D.M08A/ doesn`t exist - creating it
-     
+    ###############################################################################
+    #      _                     _                 _                         _    #
+    #   __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #
+    #  / _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ '_ \| __| #
+    # | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #
+    #  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #
+    #                                              |_____|                        #
+    #                                                                             #
+    ###############################################################################
+
+
+    Path to EVENTS/7D.M08A doesn't exist - creating it
+
     |===============================================|
     |===============================================|
     |                       M08A                    |
@@ -1165,8 +1205,8 @@ Vanuatu earthquake (be conservative with the options), type in a terminal:
     |  Station: 7D.M08A                             |
     |      Channel: BH; Locations: --               |
     |      Lon: -124.90; Lat:  44.12                |
-    |      Start time: 2011-10-20 00:00:00          |
-    |      End time:   2012-07-18 23:59:59          |
+    |      Start time: 2011-10-20 23:50:00          |
+    |      End time:   2012-07-18 23:06:00          |
     |-----------------------------------------------|
     | Searching Possible events:                    |
     |   Start: 2012-03-08 00:00:00                  |
@@ -1174,27 +1214,36 @@ Vanuatu earthquake (be conservative with the options), type in a terminal:
     |   Mag:   6.3 - 6.7                            |
     | ...                                           |
     |  Found     1 possible events                  |
-     
-    ****************************************************
-    * (1/1):  20120309_070953
+
+    ************************************************************
+    * #(1/1):  20120309_070953
     *   Origin Time: 2012-03-09 07:09:53
     *   Lat: -19.22; Lon:  169.75
     *   Dep:  33.70; Mag: 6.6
-    *     M08A  -> Ev: 9651.91 km;   86.80 deg; 239.43;  40.95
-
-    * Channels selected: ['12', 'P'] and vertical
-    *   2012.069.07.09                                     
-    *   -> Downloading Seismic data... 
+    *   Dist: 9651.91 km;   86.80 deg
+    *   2012.069.07.09*.SAC
+    *   -> Downloading BH1 data... 
     *      ...done
-    *   -> Downloading Pressure data...
-         ...done
+    *   -> Downloading BH2 data... 
+    *      ...done
+    *   -> Downloading BHZ data... 
+    *      ...done
+    *   -> Downloading ?DH data...
+    *      ...done
+    * Start times are not all close to true start: 
+    *   BH1 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+    *   BH2 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+    *   BHZ 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+    *   BDH 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+    *   True start: 2012-03-09T07:09:53.320000Z
+    * -> Shifting traces to true start
     *   -> Removing responses - Seismic data
      WARNING: FIR normalized: sum[coef]=9.767192E-01;     
      WARNING: FIR normalized: sum[coef]=9.767192E-01;     
      WARNING: FIR normalized: sum[coef]=9.767192E-01;     
     *   -> Removing responses - Pressure data
-     WARNING: FIR normalized: sum[coef]=9.767192E-01;  
- 
+     WARNING: FIR normalized: sum[coef]=9.767192E-01; 
+
 The data are stored as an ``EventStream`` object, saved to disk in the
 newly created folder ``EVENTS/7D.M08A/``. 
 
@@ -1211,7 +1260,18 @@ the final Figures 11 and 12, specify the ``--figRaw`` and ``--figClean`` options
 
     $ atacr_correct_event --figRaw --figClean M08A.pkl
 
- 
+    ##################################################################
+    #                               _                           _    #
+    #   ___ ___  _ __ _ __ ___  ___| |_     _____   _____ _ __ | |_  #
+    #  / __/ _ \| '__| '__/ _ \/ __| __|   / _ \ \ / / _ \ '_ \| __| #
+    # | (_| (_) | |  | | |  __/ (__| |_   |  __/\ V /  __/ | | | |_  #
+    #  \___\___/|_|  |_|  \___|\___|\__|___\___| \_/ \___|_| |_|\__| #
+    #                                 |_____|                        #
+    #                                                                #
+    ##################################################################
+
+     
+     
     |===============================================|
     |===============================================|
     |                       M08A                    |
@@ -1220,8 +1280,8 @@ the final Figures 11 and 12, specify the ``--figRaw`` and ``--figClean`` options
     |  Station: 7D.M08A                             |
     |      Channel: BH; Locations: --               |
     |      Lon: -124.90; Lat:  44.12                |
-    |      Start time: 2011-10-20 00:00:00          |
-    |      End time:   2012-07-18 23:59:59          |
+    |      Start time: 2011-10-20 23:50:00          |
+    |      End time:   2012-07-18 23:06:00          |
     |-----------------------------------------------|
     TF_STA/7D.M08A/2011.293-2012.200.transfunc.pkl file found - applying transfer functions
     TF_STA/7D.M08A/2012.069.transfunc.pkl file found - applying transfer functions

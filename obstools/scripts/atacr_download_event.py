@@ -25,29 +25,25 @@
 
 # Import modules and functions
 import numpy as np
-import os.path
 import pickle
 import stdb
-from obspy.clients.fdsn import Client
+import copy
+
+from obspy.clients.fdsn import Client as FDSN_Client
+from obspy.clients.filesystem.sds import Client as SDS_Client
 from obspy.geodetics.base import gps2dist_azimuth as epi
 from obspy.geodetics import kilometer2degrees as k2d
-from obspy.core import Stream, UTCDateTime
-from obstools.atacr import utils, EventStream
-from pathlib import Path
+from obspy import Stream, UTCDateTime, read_inventory
 
+from obstools.atacr import utils, EventStream
+
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from numpy import nan
+import os.path as osp
 
 
 def get_event_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_download_event.py` that
-    accompany this package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",
@@ -79,18 +75,12 @@ def get_event_arguments(argv=None):
         "all stations in the IU network [Default processes " +
         "all stations in the database]")
     parser.add_argument(
-        "-C", "--channels",
-        action="store",
-        type=str,
-        dest="channels",
-        default="",
-        help="Specify a comma-separated list of channels for " +
-        "which to perform the transfer function analysis. " +
-        "Possible options are '12' (for horizontal channels) or 'P' " +
-        "(for pressure channel). Specifying '12' allows " +
-        "for tilt correction. Specifying 'P' allows for compliance " +
-        "correction. [Default '12,P' looks for both horizontal and " +
-        "pressure and allows for both tilt AND compliance corrections]")
+        "-O", "--overwrite",
+        action="store_true",
+        dest="ovr",
+        default=False,
+        help="Force the overwriting of pre-existing data. " +
+        "[Default False]")
     parser.add_argument(
         "--zcomp", 
         dest="zcomp",
@@ -98,13 +88,6 @@ def get_event_arguments(argv=None):
         default="Z",
         help="Specify the Vertical Component Channel Identifier. "+
         "[Default Z].")
-    parser.add_argument(
-        "-O", "--overwrite",
-        action="store_true",
-        dest="ovr",
-        default=False,
-        help="Force the overwriting of pre-existing data. " +
-        "[Default False]")
 
     # Server Settings
     ServerGroup = parser.add_argument_group(
@@ -131,8 +114,8 @@ def get_event_arguments(argv=None):
         dest="userauth",
         default=None,
         help="Authentification Username and Password for the " +
-            "waveform server (--user-auth='username:authpassword') to access " +
-            "and download restricted data. [Default no user and password]")
+        "waveform server (--user-auth='username:authpassword') to access " +
+        "and download restricted data. [Default no user and password]")
     ServerGroup.add_argument(
         "--eida-token", 
         action="store", 
@@ -140,11 +123,41 @@ def get_event_arguments(argv=None):
         dest="tokenfile", 
         default=None, 
         help="Token for EIDA authentication mechanism, see " +
-            "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
-            "If a token is provided, argument --user-auth will be ignored. "
-            "This mechanism is only available on select EIDA nodes. The token can "
-            "be provided in form of the PGP message as a string, or the filename of "
-            "a local file with the PGP message in it. [Default None]")
+        "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
+        "If a token is provided, argument --user-auth will be ignored. "
+        "This mechanism is only available on select EIDA nodes. The token can "
+        "be provided in form of the PGP message as a string, or the filename of "
+        "a local file with the PGP message in it. [Default None]")
+
+    # Use local data directory
+    DataGroup = parser.add_argument_group(
+        title="Local Data Settings",
+        description="Settings associated with defining " +
+        "and using a local data base of pre-downloaded " +
+        "day-long SAC or MSEED files.")
+    DataGroup.add_argument(
+        "--local-data",
+        action="store",
+        type=str,
+        dest="localdata",
+        default=None,
+        help="Specify absolute path to a SeisComP Data Structure (SDS) " +
+        "archive containing day-long SAC or MSEED files" +
+        "(e.g., --local-data=/Home/username/Data/SDS). " +
+        "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
+        "for details on the SDS format. If this option is used, it takes " +
+        "precedence over the --server settings.")
+    DataGroup.add_argument(
+        "--dtype",
+        action="store",
+        type=str,
+        dest="dtype",
+        default='MSEED',
+        help="Specify the data archive file type, either SAC " +
+        " or MSEED. Note the default behaviour is to search for " +
+        "SAC files. Local archive files must have extensions of " +
+        "'.SAC'  or '.MSEED'. These are case dependent, so specify " +
+        "the correct case here.")
 
     # Constants Settings
     FreqGroup = parser.add_argument_group(
@@ -275,16 +288,6 @@ def get_event_arguments(argv=None):
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
 
-    # create channel list
-    if len(args.channels) > 0:
-        args.channels = args.channels.split(',')
-    else:
-        args.channels = ['12', 'P']
-
-    for cha in args.channels:
-        if cha not in ['12', 'P']:
-            parser.error("Error: Channel not recognized " + str(cha))
-
     # construct start time
     if len(args.startT) > 0:
         try:
@@ -322,9 +325,16 @@ def get_event_arguments(argv=None):
         else:
             args.userauth = [None, None]
 
+    # Check Datatype specification
+    if args.dtype.upper() not in ['MSEED', 'SAC']:
+        parser.error(
+            "Error: Local Data Archive must be of types 'SAC'" +
+            "or MSEED. These must match the file extensions for " +
+            " the archived data.")
+
     if args.units not in ['DISP', 'VEL', 'ACC']:
         msg = ("Error: invalid --units argument. Choose among "
-            "'DISP', 'VEL', or 'ACC'")
+               "'DISP', 'VEL', or 'ACC'")
         parser.error(msg)
 
     if args.pre_filt is None:
@@ -334,13 +344,25 @@ def get_event_arguments(argv=None):
         args.pre_filt = sorted(args.pre_filt)
         if (len(args.pre_filt)) != 4:
             msg = ("Error: --pre-filt should contain 4 "
-                "comma-separated floats")
+                   "comma-separated floats")
             parser.error(msg)
 
     return args
 
 
 def main(args=None):
+
+    print()
+    print("###############################################################################")
+    print("#      _                     _                 _                         _    #")
+    print("#   __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #")
+    print("#  / _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ '_ \| __| #")
+    print("# | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #")
+    print("#  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #")
+    print("#                                              |_____|                        #")
+    print("#                                                                             #")
+    print("###############################################################################")
+    print()
 
     if args is None:
         # Run Input Parser
@@ -377,18 +399,33 @@ def main(args=None):
         # Define path to see if it exists
         eventpath = Path('EVENTS') / Path(stkey)
         if not eventpath.is_dir():
-            print('\nPath to '+str(eventpath)+' doesn`t exist - creating it')
+            print("\nPath to "+str(eventpath)+
+                  " doesn't exist - creating it")
             eventpath.mkdir(parents=True)
 
         # Establish client
-        client = Client(
-            base_url=args.server,
-            user=args.userauth[0],
-            password=args.userauth[1],
-            eida_token=args.tokenfile)
+        inv = None
+        if args.localdata is None:
+            client = FDSN_Client(
+                base_url=args.server,
+                user=args.userauth[0],
+                password=args.userauth[1],
+                eida_token=args.tokenfile)
+        # Use local client for SDS
+        else:
+            client = SDS_Client(
+                args.localdata,
+                format=args.dtype)
+            # Try loading the station XML to remove response
+            xmlfile, ext = osp.splitext(args.indb)
+            try:
+                inv = read_inventory(xmlfile+".xml")
+            except Exception:
+                print("\nStation XML file " + xmlfile +
+                      ".xml not found -> Cannot remove response")
 
         # Establish client for events - Default is 'IRIS''
-        event_client = Client()
+        event_client = FDSN_Client()
 
         # Get catalogue search start time
         if args.startT is None:
@@ -405,13 +442,14 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
+        if "--" in tlocs:
+            sta.location = ['']
 
         # Update Display
         print("\n|===============================================|")
@@ -447,14 +485,15 @@ def main(args=None):
 
         # Get catalogue using deployment start and end
         cat = event_client.get_events(
-            starttime=tstart, endtime=tend,
-            minmagnitude=args.minmag, maxmagnitude=args.maxmag)
+            starttime=tstart,
+            endtime=tend,
+            minmagnitude=args.minmag,
+            maxmagnitude=args.maxmag)
 
         # Total number of events in Catalogue
         nevtT = len(cat)
-        print(
-            "|  Found {0:5d}".format(nevtT) +
-            " possible events                  |")
+        print("|  Found {0:5d}".format(nevtT) +
+              " possible events                  |")
 
         # Select order of processing
         ievs = range(0, nevtT)
@@ -480,24 +519,18 @@ def main(args=None):
 
             # Display Event Info
             print("\n"+"*"*60)
-            print(
-                "* #({0:d}/{1:d}):  {2:13s}".format(
-                    inum+1, nevtT, time.strftime("%Y%m%d_%H%M%S")))
-            print(
-                "*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
-            print(
-                "*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
-            print(
-                "*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
-            print(
-                "*   Dist: {0:7.2f} km; {1:7.2f} deg".format(
-                    epi_dist, gac))
+            print("* #({0:d}/{1:d}):  {2:13s}".format(
+                inum+1, nevtT, time.strftime("%Y%m%d_%H%M%S")))
+            print("*   Origin Time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
+            print("*   Lat: {0:6.2f}; Lon: {1:7.2f}".format(lat, lon))
+            print("*   Dep: {0:6.2f}; Mag: {1:3.1f}".format(dep/1000., mag))
+            print("*   Dist: {0:7.2f} km; {1:7.2f} deg".format(
+                epi_dist, gac))
 
             # If distance outside of distance range:
             if not (gac > args.mindist and gac < args.maxdist):
-                print(
-                    "\n*   -> Event outside epicentral distance " +
-                    "range - continuing")
+                print("\n*   -> Event outside epicentral distance " +
+                      "range - continuing")
                 continue
 
             t1 = time
@@ -520,148 +553,127 @@ def main(args=None):
             # Pressure channel
             fileP = eventpath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
 
-            print("\n* Channels selected: " +
-                  str(args.channels)+' and vertical')
-
-            # If data file exists, continue
-            if filename.exists():
+            # If data files exist, continue
+            exist = file1.exists()+file2.exists()+fileZ.exists()+fileP.exists()
+            if exist > 0:
                 if not args.ovr:
-                    print("*")
-                    print("*   "+str(filename))
-                    print("*   -> File already exists - continuing")
+                    print("*   "+tstamp+"*.SAC")
+                    print("*   -> Files already exist. Continuing")
                     continue
 
-            if "P" not in args.channels:
-
-                # Number of channels
-                ncomp = 3
-
-                # Comma-separated list of channels for Client
-                channels = sta.channel.upper() + '1,' + \
-                    sta.channel.upper() + '2,' + \
-                    sta.channel.upper() + args.zcomp
-
-                # Get waveforms from client
+            print("*   "+tstamp+"*.SAC")
+            # Get waveforms from client, one channel at a time
+            try:
+                cha = sta.channel.upper() + '1'
+                print("*   -> Downloading "+cha+" data... ")
+                st1 = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel=cha,
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
                 try:
-                    print("*   "+tstamp +
-                          "                                     ")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                    dum = st1.select(component='1')[0]
                     print("*      ...done")
                 except Exception:
-                    print(
-                        " Error: Unable to download ?H? components - " +
-                        "continuing")
+                    print("*      Warning: Component "+cha+" not found. Continuing")
                     continue
 
-                st = sth
+            except Exception:
+                print(" Client exception: Unable to download "+cha+" component. "+
+                      "Continuing")
+                continue
 
-            elif "12" not in args.channels:
-
-                # Number of channels
-                ncomp = 2
-
-                # Comma-separated list of channels for Client
-                channels = sta.channel.upper() + args.zcomp
-
-                # Get waveforms from client
+            try:
+                cha = sta.channel.upper() + '2'
+                print("*   -> Downloading "+cha+" data... ")
+                st2 = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel=cha,
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
                 try:
-                    print("*   "+tstamp +
-                          "                                     ")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                    dum = st2.select(component='2')[0]
                     print("*      ...done")
                 except Exception:
-                    print(
-                        " Error: Unable to download ?H? components - " +
-                        "continuing")
-                    continue
-                try:
-                    print("*   -> Downloading Pressure data...")
-                    stp = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='?DH',
-                        starttime=t1, endtime=t2, attach_response=True)
-                    print("*      ...done")
-                    if len(stp) > 1:
-                        print("WARNING: There are more than one ?DH trace")
-                        print("*   -> Keeping the highest sampling rate")
-                        print(
-                            "*   -> Renaming channel to " +
-                            sta.channel[0] + "DH")
-                        if stp[0].stats.sampling_rate > \
-                                stp[1].stats.sampling_rate:
-                            stp = Stream(traces=stp[0])
-                        else:
-                            stp = Stream(traces=stp[1])
-                except Exception:
-                    print(" Error: Unable to download ?DH component - " +
-                          "continuing")
+                    print("*      Warning: Component "+cha+" not found. Continuing")
                     continue
 
-                st = sth + stp
+            except Exception:
+                print(" Client exception: Unable to download "+cha+" component. "+
+                      "Continuing")
+                continue
 
-            else:
-
-                # Comma-separated list of channels for Client
-                ncomp = 4
-
-                # Comma-separated list of channels for Client
-                channels = sta.channel.upper() + '1,' + \
-                    sta.channel.upper() + '2,' + \
-                    sta.channel.upper() + args.zcomp
-
-                # Get waveforms from client
+            try:
+                cha = sta.channel.upper() + args.zcomp
+                print("*   -> Downloading "+cha+" data... ")
+                stz = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel=cha,
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
                 try:
-                    print("*   "+tstamp +
-                          "                                     ")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel=channels,
-                        starttime=t1, endtime=t2, attach_response=True)
+                    dum = stz.select(component=args.zcomp)[0]
                     print("*      ...done")
                 except Exception:
-                    print(
-                        " Error: Unable to download ?H? components - " +
-                        "continuing")
-                    continue
-                try:
-                    print("*   -> Downloading Pressure data...")
-                    stp = client.get_waveforms(
-                        network=sta.network, station=sta.station,
-                        location=sta.location[0], channel='?DH',
-                        starttime=t1, endtime=t2, attach_response=True)
-                    print("     ...done")
-                    if len(stp) > 1:
-                        print("WARNING: There are more than one ?DH trace")
-                        print("*   -> Keeping the highest sampling rate")
-                        print(
-                            "*   -> Renaming channel to " +
-                            sta.channel[0] + "DH")
-                        if stp[0].stats.sampling_rate > \
-                                stp[1].stats.sampling_rate:
-                            stp = Stream(traces=stp[0])
-                        else:
-                            stp = Stream(traces=stp[1])
-                except Exception:
-                    print(" Error: Unable to download ?DH component - " +
-                          "continuing")
+                    print("*      Warning: Component "+cha+" not found. "+
+                        "Continuing")
                     continue
 
-                st = sth + stp
+            except Exception:
+                print(" Client exception: Unable to download "+cha+
+                      " component. Try setting `--zcomp`. Continuing.")
+                continue
+
+            try:
+                print("*   -> Downloading ?DH data...")
+                stp = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel='?DH',
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
+                if len(stp) > 1:
+                    print("WARNING: There are more than one ?DH trace")
+                    print("*   -> Keeping the highest sampling rate")
+                    print("*   -> Renaming channel to "+sta.channel[0]+"DH")
+                    if stp[0].stats.sampling_rate > \
+                            stp[1].stats.sampling_rate:
+                        stp = Stream(traces=stp[0])
+                    else:
+                        stp = Stream(traces=stp[1])
+                try:
+                    dum = stp.select(component='H')[0]
+                    print("*      ...done")
+                except Exception:
+                    print("*      Warning: Component ?DH not found. Continuing")
+                    continue
+
+            except Exception:
+                print(" Client exception: Unable to download ?DH component. "+
+                      "Continuing")
+                continue
+
+            st = st1.merge() + st2.merge() + stz.merge() + stp.merge()
 
             # Detrend, filter
             st.detrend('demean')
             st.detrend('linear')
-            st.filter('lowpass', freq=0.5*args.new_sampling_rate,
-                      corners=2, zerophase=True)
+            st.filter(
+                'lowpass',
+                freq=0.5*args.new_sampling_rate,
+                corners=2,
+                zerophase=True)
             st.resample(args.new_sampling_rate)
 
             # Check streams
@@ -674,42 +686,77 @@ def main(args=None):
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
-            sth.remove_response(pre_filt=args.pre_filt, output=args.units)
+            try:
+                sth.remove_response(
+                    inventory=inv,
+                    pre_filt=args.pre_filt,
+                    output=args.units)
+            except Exception:
+                print("*   -> Inventory not found: Cannot remove instrument "+
+                      "response")
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
             trZ = utils.update_stats(
-                trZ, sta.latitude, sta.longitude, sta.elevation,
-                sta.channel+'Z', evla=lat, evlo=lon)
+                trZ,
+                sta.latitude,
+                sta.longitude,
+                sta.elevation,
+                sta.channel+'Z',
+                evla=lat,
+                evlo=lon)
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces and write out in SAC format
             # Seismic channels
-            if "12" in args.channels:
+            try:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
-                    tr1, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel+'1', evla=lat, evlo=lon)
+                    tr1,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
+                    sta.channel+'1',
+                    evla=lat,
+                    evlo=lon)
                 tr2 = utils.update_stats(
-                    tr2, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel+'2', evla=lat, evlo=lon)
+                    tr2,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
+                    sta.channel+'2',
+                    evla=lat,
+                    evlo=lon)
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
+            except Exception:
+                pass
 
             # Pressure channel
-            if "P" in args.channels:
+            try:
                 stp = st.select(component='H')
                 print("*   -> Removing responses - Pressure data")
-                stp.remove_response(pre_filt=args.pre_filt)
+                try:
+                    stp.remove_response(
+                        inventory=inv,
+                        pre_filt=args.pre_filt,
+                        output='DEF')
+                except Exception:
+                    print("*   -> Inventory not found: Cannot remove "+
+                          "instrument response")
                 trP = stp[0]
                 trP = utils.update_stats(
-                    trP, sta.latitude, sta.longitude, sta.elevation,
-                    sta.channel[0]+'DH', evla=lat, evlo=lon)
+                    trP,
+                    sta.latitude,
+                    sta.longitude,
+                    sta.elevation,
+                    sta.channel[0]+'DH',
+                    evla=lat,
+                    evlo=lon)
                 trP.write(str(fileP), format='SAC')
-
-            else:
-                stp = Stream()
+            except Exception:
+                pass
 
             # # Write out EventStream object
             # eventstream = EventStream(sta, sth, stp)

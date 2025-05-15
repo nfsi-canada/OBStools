@@ -25,26 +25,21 @@
 
 # Import modules and functions
 import numpy as np
-from obspy import UTCDateTime
 import pickle
 import stdb
+import copy
+
+from obspy import UTCDateTime
+
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plotting
-from pathlib import Path
 
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from numpy import nan
 
 
 def get_transfer_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_transfer_functions.py` that accompanies
-    this package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",
@@ -53,9 +48,9 @@ def get_transfer_arguments(argv=None):
         "components, to be used in cleaning vertical " +
         "component of OBS data. The noise data can be " +
         "those obtained from the daily spectra (i.e., " +
-        "from `obs_daily_spectra.py`) or those obtained " +
+        "from `atacr_daily_spectra`) or those obtained " +
         "from the averaged noise spectra (i.e., from " +
-        "`obs_clean_spectra.py`). Flags are available " +
+        "`atacr_clean_spectra`). Flags are available " +
         "to specify the source of data to use as well as " +
         "the time range over which to calculate the " +
         "transfer functions. The stations are processed " +
@@ -203,6 +198,18 @@ def get_transfer_arguments(argv=None):
 
 def main(args=None):
 
+    print()
+    print("#######################################################################################")
+    print("#  _                        __             __                  _   _                  #")
+    print("# | |_ _ __ __ _ _ __  ___ / _| ___ _ __  / _|_   _ _ __   ___| |_(_) ___  _ __  ___  #")
+    print("# | __| '__/ _` | '_ \/ __| |_ / _ \ '__|| |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __| #")
+    print("# | |_| | | (_| | | | \__ \  _|  __/ |   |  _| |_| | | | | (__| |_| | (_) | | | \__ \ #")
+    print("#  \__|_|  \__,_|_| |_|___/_|  \___|_|___|_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/ #")
+    print("#                                   |_____|                                           #")
+    print("#                                                                                     #")
+    print("#######################################################################################")
+    print()
+
     if args is None:
         # Run Input Parser
         args = get_transfer_arguments()
@@ -284,13 +291,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print(" ")

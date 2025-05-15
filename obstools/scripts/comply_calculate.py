@@ -26,25 +26,21 @@
 # -*- coding: utf-8 -*-
 # Import modules and functions
 import numpy as np
-from obspy import UTCDateTime
 import pickle
 import stdb
+import copy
+
+from obspy import UTCDateTime
+
 from obstools.atacr import Rotation, plotting
 from obstools.comply import Comply
+
 from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from numpy import nan
 
 
 def get_comply_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_transfer functions.py` that accompanies
-    this package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <Station Database>",
@@ -52,9 +48,9 @@ def get_comply_arguments(argv=None):
         "to calculate compliance functions between various " +
         "components. The noise data can be " +
         "those obtained from the daily spectra (i.e., " +
-        "from `atacr_daily_spectra.py`) or those obtained " +
+        "from `atacr_daily_spectra`) or those obtained " +
         "from the averaged noise spectra (i.e., from " +
-        "`atacr_clean_spectra.py`). Flags are available " +
+        "`atacr_clean_spectra`). Flags are available " +
         "to specify the source of data to use as well as " +
         "the time range over which to calculate the " +
         "transfer functions. The stations are processed " +
@@ -222,6 +218,18 @@ def get_comply_arguments(argv=None):
 
 def main(args=None):
 
+    print()
+    print("#################################################################################")
+    print("#                            _                    _            _       _        #")
+    print("#   ___ ___  _ __ ___  _ __ | |_   _     ___ __ _| | ___ _   _| | __ _| |_ ___  #")
+    print("#  / __/ _ \| '_ ` _ \| '_ \| | | | |   / __/ _` | |/ __| | | | |/ _` | __/ _ \ #")
+    print("# | (_| (_) | | | | | | |_) | | |_| |  | (_| (_| | | (__| |_| | | (_| | ||  __/ #")
+    print("#  \___\___/|_| |_| |_| .__/|_|\__, |___\___\__,_|_|\___|\__,_|_|\__,_|\__\___| #")
+    print("#                     |_|      |___/_____|                                      #")
+    print("#                                                                               #")
+    print("#################################################################################")
+    print()
+
     if args is None:
         # Run Input Parser
         args = get_comply_arguments()
@@ -303,13 +311,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print(" ")
