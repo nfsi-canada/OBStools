@@ -72,32 +72,19 @@ def get_daylong_arguments(argv=None):
         "in the IU network. " +
         "[Default processes all stations in the database]")
     parser.add_argument(
-        "-C", "--channels",
-        action="store",
-        type=str,
-        dest="channels",
-        default="",
-        help="Specify a comma-separated list of channels for " +
-        "which to perform the transfer function analysis. " +
-        "Possible options are '12' (for horizontal channels 1 and 2) " +
-        "and/or 'P' (for pressure channel). Specifying '12' allows " +
-        "for tilt correction. Specifying 'P' allows for compliance " +
-        "correction. [Default '12,P' looks for both horizontal and " +
-        "pressure and allows for both tilt AND compliance corrections]")
-    parser.add_argument(
-        "--zcomp",
-        dest="zcomp",
-        type=str,
-        default="Z",
-        help="Specify the Vertical Component Channel Identifier. " +
-        "[Default Z].")
-    parser.add_argument(
         "-O", "--overwrite",
         action="store_true",
         dest="ovr",
         default=False,
         help="Force the overwriting of pre-existing data. " +
         "[Default False]")
+    parser.add_argument(
+        "-Z", "--zcomp",
+        dest="zcomp",
+        type=str,
+        default="Z",
+        help="Specify the Vertical Component Channel Identifier. " +
+        "[Default Z].")
 
     # Server Settings
     ServerGroup = parser.add_argument_group(
@@ -233,15 +220,6 @@ def get_daylong_arguments(argv=None):
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
 
-    # create channel list
-    if len(args.channels) > 0:
-        args.channels = args.channels.split(',')
-    else:
-        args.channels = ["12", "P"]
-    for cha in args.channels:
-        if cha not in ["12", "P"]:
-            parser.error("Error: Channel not recognized " + str(cha))
-
     # construct start time
     if len(args.startT) > 0:
         try:
@@ -361,7 +339,7 @@ def main(args=None):
         inv = None
         if args.localdata is None:
             client = FDSN_Client(
-                base_url=args.server_wf,
+                base_url=args.server,
                 user=args.userauth[0],
                 password=args.userauth[1],
                 eida_token=args.tokenfile)
@@ -442,7 +420,6 @@ def main(args=None):
             print("* Downloading day-long data for key {0} and day {1}.{2:03d}".format(
                 stkey, t1.year, t1.julday))
             print("*")
-            print("* Channels selected: "+str(args.channels)+' and vertical')
 
             # Define file names (to check if files already exist)
             # Horizontal 1 channel
@@ -454,208 +431,136 @@ def main(args=None):
             # Pressure channel
             fileP = datapath / (tstamp+'.'+sta.channel[0]+'DH.SAC')
 
-            if "P" not in args.channels:
-
-                # If data files exist, continue
-                if fileZ.exists() and file1.exists() and file2.exists():
-                    if not args.ovr:
-                        print("*   " +tstamp+"*SAC")
-                        print("*   -> Files already exist, continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
-                channels = sta.channel.upper()+'[1,2,'+args.zcomp+']'
-
-                # Get waveforms from client
-                try:
-                    print("*   "+tstamp+"*SAC")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(
-                        network=sta.network,
-                        station=sta.station,
-                        location=sta.location[0],
-                        channel=channels,
-                        starttime=t1,
-                        endtime=t2,
-                        attach_response=True)
-                    print("*      ...done")
-                    try:
-                        dum = sth.select(component=args.zcomp)[0]
-                    except Exception:
-                        print(" Error: Component ?HZ not found. Try setting " +
-                            "`--zcomp`. Continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
-                except Exception:
-                    print(" Error: Unable to download ?H? components - "+
-                          "continuing")
+            # If data files exist, continue
+            exist = file1.exists()+file2.exists()+fileZ.exists()+fileP.exists()
+            if exist > 0:
+                if not args.ovr:
+                    print("*   "+tstamp+"*.SAC")
+                    print("*   -> Files already exist. Continuing")
                     t1 += dt
                     t2 += dt
                     continue
 
-                st = sth.merge()
-
-            elif "12" not in args.channels:
-
-                # If data files exist, continue
-                if fileZ.exists() and fileP.exists():
-                    if not args.ovr:
-                        print("*   "+tstamp+"*SAC")
-                        print("*   -> Files already exist, continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
-                channels = sta.channel.upper() + args.zcomp
-
-                # Get waveforms from client
+            print("*   "+tstamp +"*.SAC")
+            # Get waveforms from client, one channel at a time
+            try:
+                cha = sta.channel.upper() + '1'
+                print("*   -> Downloading "+cha+" data... ")
+                st1 = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel=cha,
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
                 try:
-                    print("*   "+tstamp+"*SAC")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(
-                        network=sta.network,
-                        station=sta.station,
-                        location=sta.location[0],
-                        channel=channels,
-                        starttime=t1,
-                        endtime=t2,
-                        attach_response=True)
+                    dum = st1.select(component='1')[0]
                     print("*      ...done")
-                    try:
-                        dum = sth.select(component=args.zcomp)[0]
-                    except Exception:
-                        print(" Error: Component ?HZ not found. Try setting " +
-                            "`--zcomp`. Continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
                 except Exception:
-                    print(" Error: Unable to download ?H? components - "+
-                          "continuing")
-                    t1 += dt
-                    t2 += dt
-                    continue
-                try:
-                    print("*   -> Downloading Pressure data...")
-                    stp = client.get_waveforms(
-                        network=sta.network,
-                        station=sta.station,
-                        location=sta.location[0],
-                        channel='?DH',
-                        starttime=t1,
-                        endtime=t2,
-                        attach_response=True)
-                    print("*      ...done")
-                    if len(stp) > 1:
-                        print("WARNING: There are more than one ?DH trace")
-                        print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
-                        if stp[0].stats.sampling_rate > \
-                                stp[1].stats.sampling_rate:
-                            stp = Stream(traces=stp[0])
-                        else:
-                            stp = Stream(traces=stp[1])
-                    try:
-                        dum = stp.select(component='H')[0]
-                    except Exception:
-                        print(" Error: Component ?DH not found. " +
-                            "Try setting `--channels=12`. Continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
-                except Exception:
-                    print(" Error: Unable to download ?DH component - " +
-                          "continuing")
+                    print("*      Warning: Component "+cha+" not found. Continuing")
                     t1 += dt
                     t2 += dt
                     continue
 
-                st = sth.merge() + stp.merge()
+            except Exception:
+                print(" Client exception: Unable to download "+cha+" component. "+
+                      "Continuing")
+                t1 += dt
+                t2 += dt
+                continue
 
-            else:
-
-                # If data files exist, continue
-                if (fileZ.exists() and file1.exists() and
-                        file2.exists() and fileP.exists()):
-                    if not args.ovr:
-                        print("*   "+tstamp+"*SAC")
-                        print("*   -> Files already exist, "+"continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
-                channels = sta.channel.upper()+'[1,2'+args.zcomp+']'
-
-                # Get waveforms from client
+            try:
+                cha = sta.channel.upper() + '2'
+                print("*   -> Downloading "+cha+" data... ")
+                st2 = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel=cha,
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
                 try:
-                    print("*   "+tstamp +"*SAC")
-                    print("*   -> Downloading Seismic data... ")
-                    sth = client.get_waveforms(
-                        network=sta.network,
-                        station=sta.station,
-                        location=sta.location[0],
-                        channel=channels,
-                        starttime=t1,
-                        endtime=t2,
-                        attach_response=True)
+                    dum = st2.select(component='2')[0]
                     print("*      ...done")
-                    try:
-                        dum = sth.select(component=args.zcomp)[0]
-                    except Exception:
-                        print(" Error: Component ?HZ not found. Try setting " +
-                            "`--zcomp`. Continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
                 except Exception:
-                    print(" Error: Unable to download ?H? components - "+
-                          "continuing")
-                    t1 += dt
-                    t2 += dt
-                    continue
-                try:
-                    print("*   -> Downloading Pressure data...")
-                    stp = client.get_waveforms(
-                        network=sta.network,
-                        station=sta.station,
-                        location=sta.location[0],
-                        channel='?DH',
-                        starttime=t1,
-                        endtime=t2,
-                        attach_response=True)
-                    print("*      ...done")
-                    if len(stp) > 1:
-                        print("WARNING: There are more than one ?DH trace")
-                        print("*   -> Keeping the highest sampling rate")
-                        print("*   -> Renaming channel to "+sta.channel[0]+"DH")
-                        if stp[0].stats.sampling_rate > \
-                                stp[1].stats.sampling_rate:
-                            stp = Stream(traces=stp[0])
-                        else:
-                            stp = Stream(traces=stp[1])
-                    try:
-                        dum = stp.select(component='H')[0]
-                    except Exception:
-                        print(" Error: Component ?DH not found. " +
-                            "Try setting `--channels=12`. Continuing")
-                        t1 += dt
-                        t2 += dt
-                        continue
-
-                except Exception:
-                    print(" Error: Unable to download ?DH component - "+
-                          "continuing")
+                    print("*      Warning: Component "+cha+" not found. Continuing")
                     t1 += dt
                     t2 += dt
                     continue
 
-                st = sth.merge() + stp.merge()
+            except Exception:
+                print(" Client exception: Unable to download "+cha+" component. "+
+                      "Continuing")
+                t1 += dt
+                t2 += dt
+                continue
+                
+            try:
+                cha = sta.channel.upper() + args.zcomp
+                print("*   -> Downloading "+cha+" data... ")
+                stz = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel=cha,
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
+                try:
+                    dum = stz.select(component=args.zcomp)[0]
+                    print("*      ...done")
+                except Exception:
+                    print("*      Warning: Component "+cha+" not found. "+
+                        "Continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+            except Exception:
+                print(" Client exception: Unable to download "+cha+
+                      " component. Try setting `--zcomp`. Continuing.")
+                t1 += dt
+                t2 += dt
+                continue
+                
+            try:
+                print("*   -> Downloading ?DH data...")
+                stp = client.get_waveforms(
+                    network=sta.network,
+                    station=sta.station,
+                    location=sta.location[0],
+                    channel='?DH',
+                    starttime=t1,
+                    endtime=t2,
+                    attach_response=True)
+                if len(stp) > 1:
+                    print("WARNING: There are more than one ?DH trace")
+                    print("*   -> Keeping the highest sampling rate")
+                    print("*   -> Renaming channel to "+sta.channel[0]+"DH")
+                    if stp[0].stats.sampling_rate > \
+                            stp[1].stats.sampling_rate:
+                        stp = Stream(traces=stp[0])
+                    else:
+                        stp = Stream(traces=stp[1])
+                try:
+                    dum = stp.select(component='H')[0]
+                    print("*      ...done")
+                except Exception:
+                    print("*      Warning: Component ?DH not found. Continuing")
+                    t1 += dt
+                    t2 += dt
+                    continue
+
+            except Exception:
+                print(" Client exception: Unable to download ?DH component. "+
+                      "Continuing")
+                t1 += dt
+                t2 += dt
+                continue
+
+            st = st1.merge() + st2.merge() + stz.merge() + stp.merge()
 
             # Detrend, filter
             st.detrend('demean')
@@ -702,7 +607,7 @@ def main(args=None):
             trZ.write(str(fileZ), format='SAC')
 
             # Extract traces - H
-            if "12" in args.channels:
+            try:
                 tr1 = sth.select(component='1')[0]
                 tr2 = sth.select(component='2')[0]
                 tr1 = utils.update_stats(
@@ -719,9 +624,11 @@ def main(args=None):
                     sta.channel+'2')
                 tr1.write(str(file1), format='SAC')
                 tr2.write(str(file2), format='SAC')
+            except Exception:
+                pass
 
             # Extract traces - P
-            if "P" in args.channels:
+            try:
 
                 stp = st.select(component='H')
 
@@ -742,6 +649,8 @@ def main(args=None):
                     sta.elevation,
                     sta.channel[0]+'DH')
                 trP.write(str(fileP), format='SAC')
+            except Exception:
+                pass
 
             t1 += dt
             t2 += dt

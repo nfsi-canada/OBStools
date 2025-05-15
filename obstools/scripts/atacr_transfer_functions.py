@@ -48,9 +48,9 @@ def get_transfer_arguments(argv=None):
         "components, to be used in cleaning vertical " +
         "component of OBS data. The noise data can be " +
         "those obtained from the daily spectra (i.e., " +
-        "from `obs_daily_spectra.py`) or those obtained " +
+        "from `atacr_daily_spectra`) or those obtained " +
         "from the averaged noise spectra (i.e., from " +
-        "`obs_clean_spectra.py`). Flags are available " +
+        "`atacr_clean_spectra`). Flags are available " +
         "to specify the source of data to use as well as " +
         "the time range over which to calculate the " +
         "transfer functions. The stations are processed " +
