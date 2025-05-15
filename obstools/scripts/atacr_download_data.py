@@ -143,7 +143,7 @@ def get_daylong_arguments(argv=None):
         "(e.g., --local-data=/Home/username/Data/SDS). " +
         "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
         "for details on the SDS format. If this option is used, it takes " +
-        "precedence over the --server-wf settings.")
+        "precedence over the --server settings.")
     DataGroup.add_argument(
         "--dtype",
         action="store",
