@@ -24,17 +24,18 @@
 
 
 # Import modules and functions
-import os
 import numpy as np
 import pickle
 import stdb
-from obstools.atacr import utils, DayNoise
-from pathlib import Path
+import copy
 
+from obspy import UTCDateTime
+
+from obstools.atacr import utils, DayNoise
+
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from obspy import UTCDateTime
-from numpy import nan
 
 
 def get_dailyspec_arguments(argv=None):
@@ -287,6 +288,18 @@ def get_dailyspec_arguments(argv=None):
 
 def main(args=None):
 
+    print()
+    print("#################################################################")
+    print("#      _       _ _                               _              #")
+    print("#   __| | __ _(_) |_   _     ___ _ __   ___  ___| |_ _ __ __ _  #")
+    print("#  / _` |/ _` | | | | | |   / __| '_ \ / _ \/ __| __| '__/ _` | #")
+    print("# | (_| | (_| | | | |_| |   \__ \ |_) |  __/ (__| |_| | | (_| | #")
+    print("#  \__,_|\__,_|_|_|\__, |___|___/ .__/ \___|\___|\__|_|  \__,_| #")
+    print("#                  |___/_____|  |_|                             #")
+    print("#                                                               #")
+    print("#################################################################")
+    print()
+
     if args is None:
         # Run Input Parser
         args = get_dailyspec_arguments()
@@ -355,13 +368,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print("\n|===============================================|")

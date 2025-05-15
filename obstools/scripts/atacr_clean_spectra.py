@@ -27,14 +27,16 @@
 import numpy as np
 import pickle
 import stdb
+import copy
+
+from obspy import UTCDateTime
+
 from obstools.atacr import StaNoise, Power, Cross, Rotation
 from obstools.atacr import utils, plotting
-from pathlib import Path
 
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from obspy import UTCDateTime
-from numpy import nan
 
 
 def get_cleanspec_arguments(argv=None):
@@ -243,6 +245,18 @@ def get_cleanspec_arguments(argv=None):
 
 def main(args=None):
 
+    print()
+    print("###################################################################")
+    print("#       _                                          _              #")
+    print("#   ___| | ___  __ _ _ __      ___ _ __   ___  ___| |_ _ __ __ _  #")
+    print("#  / __| |/ _ \/ _` | '_ \    / __| '_ \ / _ \/ __| __| '__/ _` | #")
+    print("# | (__| |  __/ (_| | | | |   \__ \ |_) |  __/ (__| |_| | | (_| | #")
+    print("#  \___|_|\___|\__,_|_| |_|___|___/ .__/ \___|\___|\__|_|  \__,_| #")
+    print("#                        |_____|  |_|                             #")
+    print("#                                                                 #")
+    print("###################################################################")
+    print()
+
     if args is None:
         # Run Input Parser
         args = get_cleanspec_arguments()
@@ -312,13 +326,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print("\n|===============================================|")

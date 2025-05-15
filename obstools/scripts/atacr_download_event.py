@@ -28,7 +28,6 @@ import numpy as np
 import pickle
 import stdb
 import copy
-import os.path as osp
 
 from obspy.clients.fdsn import Client as FDSN_Client
 from obspy.clients.filesystem.sds import Client as SDS_Client
@@ -41,6 +40,7 @@ from obstools.atacr import utils, EventStream
 from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
+import os.path as osp
 
 
 def get_event_arguments(argv=None):
@@ -383,15 +383,15 @@ def get_event_arguments(argv=None):
 def main(args=None):
 
     print()
-    print("########################################################################################################")
-    print("#        _                      _                     _                 _                         _    #")
-    print("#   __ _| |_ __ _  ___ _ __  __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #")
-    print("#  / _` | __/ _` |/ __| '__|/ _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ '_ \| __| #")
-    print("# | (_| | || (_| | (__| |  | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #")
-    print("#  \__,_|\__\__,_|\___|_|___\__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #")
-    print("#                      |_____|                                          |_____|                        #")
-    print("#                                                                                                      #")
-    print("########################################################################################################")
+    print("###############################################################################")
+    print("#      _                     _                 _                         _    #")
+    print("#   __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #")
+    print("#  / _` |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ '_ \| __| #")
+    print("# | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #")
+    print("#  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #")
+    print("#                                              |_____|                        #")
+    print("#                                                                             #")
+    print("###############################################################################")
     print()
 
     if args is None:
