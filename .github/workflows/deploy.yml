@@ -53,22 +53,22 @@ jobs:
       #     pytest -v --cov=obstools ../obstools/tests/
       #     bash <(curl -s https://codecov.io/bash)
 
-      - name: Make docs
-        if: matrix.python-version == '3.12' 
-        shell: bash -l {0}
-        run: |
-          cd docs
-          conda install sphinx
-          pip install sphinx_rtd_theme
-          make html
-          touch _build/html/.nojekyll
-          cd ..
+      # - name: Make docs
+      #   if: matrix.python-version == '3.12' 
+      #   shell: bash -l {0}
+      #   run: |
+      #     cd docs
+      #     conda install sphinx
+      #     pip install sphinx_rtd_theme
+      #     make html
+      #     touch _build/html/.nojekyll
+      #     cd ..
 
-      - name: Deploy 🚀
-        if: matrix.python-version == '3.12' 
-        uses: JamesIves/github-pages-deploy-action@3.7.1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: docs/_build/html # The folder the action should deploy.
-          CLEAN: true # Automatically remove deleted files from the deploy branch
+      # - name: Deploy 🚀
+      #   if: matrix.python-version == '3.12' 
+      #   uses: JamesIves/github-pages-deploy-action@3.7.1
+      #   with:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     BRANCH: gh-pages # The branch the action should deploy to.
+      #     FOLDER: docs/_build/html # The folder the action should deploy.
+      #     CLEAN: true # Automatically remove deleted files from the deploy branch
