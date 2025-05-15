@@ -40,13 +40,6 @@ from os.path import exists as exist
 
 
 def get_correct_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_correct_event.py` that accompanies this
-    package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",

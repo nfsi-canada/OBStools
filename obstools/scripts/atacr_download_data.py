@@ -42,13 +42,6 @@ import os.path as osp
 
 
 def get_daylong_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_download_data.py` that accompany this
-    package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",

@@ -44,13 +44,6 @@ import os.path as osp
 
 
 def get_event_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_download_event.py` that
-    accompany this package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",

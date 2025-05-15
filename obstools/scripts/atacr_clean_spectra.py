@@ -40,13 +40,6 @@ from os.path import exists as exist
 
 
 def get_cleanspec_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_clean_spectra.py` that accompany this
-    package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",
