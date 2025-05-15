@@ -48,9 +48,9 @@ def get_correct_arguments(argv=None):
         "components, and use them to clean vertical " +
         "component of OBS data for selected events. The " +
         "noise data can be those obtained from the daily " +
-        "spectra (i.e., from `obs_daily_spectra.py`) "
+        "spectra (i.e., from `atacr_daily_spectra`) "
         "or those obtained from the averaged noise spectra " +
-        "(i.e., from `obs_clean_spectra.py`). Flags are " +
+        "(i.e., from `atacr_clean_spectra`). Flags are " +
         "available to specify the source of data to use as " +
         "well as the time range for given events. "
         "The stations are processed one by one and the " +

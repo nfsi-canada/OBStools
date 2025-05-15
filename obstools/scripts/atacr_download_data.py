@@ -47,7 +47,7 @@ def get_daylong_arguments(argv=None):
         usage="%(prog)s [options] <indb>",
         description="Script used " +
         "to download and pre-process up to four-component " +
-        "(H1, H2, Z and P), day-long seismograms to use in " +
+        "(1,2,Z,H), day-long seismograms to use in " +
         "noise corrections of vertical component of OBS data. " +
         "Data are requested from the internet using the client " +
         "services framework for a given date range. The stations " +
