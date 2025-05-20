@@ -408,9 +408,8 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
     phi = np.arange(0., 360., 10.)
     coh = np.zeros(len(phi))
     ph = np.zeros(len(phi))
-    cZZ = np.abs(
-        np.mean(ftZ[goodwins, :] * \
-            np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
+    cZZ = np.abs(np.mean(ftZ[goodwins, :] *
+                         np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
 
     for i, d in enumerate(phi):
 
@@ -486,6 +485,10 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
     phase_value = rph[ind[0]][0]
     coh_value = rcoh[ind[0]][0]
     tilt = rphi[ind[0]][0]
+    if tilt > 360.:
+        tilt -= 360.
+    elif tilt < 0:
+        tilt += 360.
 
     # Now calculate spectra at tilt direction
     ftH = rotate_dir(ft1, ft2, tilt)
