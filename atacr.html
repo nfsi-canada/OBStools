@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ATaCR &mdash; Home 0.2.0 documentation</title>
+  <title>ATaCR &mdash; Home 0.2.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/documentation_options.js?v=37f418d5"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -52,6 +52,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="obstools.html">Licence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="obstools.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obstools.html#using-local-data">Using local data</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="current">
@@ -204,7 +205,7 @@ channels.</p>
 displacement data. Compliance noise arises from seafloor deformation due
 to seafloor and water wave effects (including infragravity waves).
 This is likely the main source of noise in vertical component OBS data.
-This analysis therefore requires both vertical (<code class="docutils literal notranslate"><span class="pre">?HZ</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?XH</span></code>) data.</p>
+This analysis therefore requires both vertical (<code class="docutils literal notranslate"><span class="pre">?HZ</span></code>) and pressure (<code class="docutils literal notranslate"><span class="pre">?DH</span></code>) data.</p>
 <p><strong>Tilt</strong></p>
 <p>Tilt noise arises from OBS stations that are not perfectly leveled, and
 therefore the horizontal seafloor deformation leaks onto the vertical
@@ -278,7 +279,7 @@ using the accompanying scripts <code class="docutils literal notranslate"><span 
 <h4>DayNoise<a class="headerlink" href="#daynoise" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">DayNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7200.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">DayNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7200.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#DayNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.DayNoise" title="Link to this definition"></a></dt>
 <dd><p>A DayNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters. The available methods carry out the quality
@@ -443,7 +444,7 @@ components.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.QC_daily_spectra">
-<span class="sig-name descname"><span class="pre">QC_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">QC_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#DayNoise.QC_daily_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="Link to this definition"></a></dt>
 <dd><p>Method to determine daily time windows for which the spectra are
 anomalous and should be discarded in the calculation of the
 transfer functions.</p>
@@ -521,7 +522,7 @@ figure</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.average_daily_spectra">
-<span class="sig-name descname"><span class="pre">average_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_coh_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">average_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreqs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.005,</span> <span class="pre">0.035]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_coh_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#DayNoise.average_daily_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Link to this definition"></a></dt>
 <dd><p>Method to average the daily spectra for good windows. By default, the
 method will attempt to calculate the azimuth of maximum coherence
 between horizontal components and the vertical component (for maximum
@@ -531,6 +532,8 @@ function calculations.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>calc_rotation</strong> (<em>boolean</em>) – Whether or not to calculate the tilt direction</p></li>
+<li><p><strong>tiltfreqs</strong> (<em>list</em>) – Two floats representing the frequency band at which the tilt is
+calculated</p></li>
 <li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
 spectra</p></li>
 <li><p><strong>fig_coh_ph</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the maximum coherence
@@ -597,7 +600,7 @@ figure</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.DayNoise.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#DayNoise.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.DayNoise.save" title="Link to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -632,7 +635,7 @@ figure</p>
 <h4>StaNoise<a class="headerlink" href="#stanoise" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">StaNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">daylist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">StaNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">daylist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#StaNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.StaNoise" title="Link to this definition"></a></dt>
 <dd><p>A StaNoise object contains attributes that associate
 three-component raw (or deconvolved) traces, metadata information
 and window parameters.</p>
@@ -712,7 +715,7 @@ is deleted from memory</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.init">
-<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.init" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#StaNoise.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.StaNoise.init" title="Link to this definition"></a></dt>
 <dd><p>Method to initialize the <cite>StaNoise</cite> object. This method is used to
 unpack the spectral quantities from the original
 <a class="reference internal" href="#obstools.atacr.classes.DayNoise" title="obstools.atacr.classes.DayNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">DayNoise</span></code></a> objects and allow the
@@ -797,8 +800,8 @@ the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.direc">
-<span class="sig-name descname"><span class="pre">direc</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.direc" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.phi">
+<span class="sig-name descname"><span class="pre">phi</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.phi" title="Link to this definition"></a></dt>
 <dd><p>Array of azimuths used in determining the tilt direction</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -860,7 +863,7 @@ been called.</p>
 <span class="gr">AttributeError</span>: <span class="n">&#39;StaNoise&#39; object has no attribute &#39;daylist&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;initialized&#39;, &#39;c11&#39;, &#39;c22&#39;, &#39;cZZ&#39;, &#39;cPP&#39;, &#39;c12&#39;, &#39;c1Z&#39;,</span>
-<span class="go">&#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;direc&#39;, &#39;tilt&#39;, &#39;f&#39;,</span>
+<span class="go">&#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;phi&#39;, &#39;tilt&#39;, &#39;f&#39;,</span>
 <span class="go">&#39;nwins&#39;, &#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
 </pre></div>
 </div>
@@ -868,7 +871,7 @@ been called.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.QC_sta_spectra">
-<span class="sig-name descname"><span class="pre">QC_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">QC_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.004,</span> <span class="pre">0.2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_QC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#StaNoise.QC_sta_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.StaNoise.QC_sta_spectra" title="Link to this definition"></a></dt>
 <dd><p>Method to determine the days (for given time window) for which the
 spectra are anomalous and should be discarded in the calculation of
 the long-term transfer functions.</p>
@@ -914,7 +917,7 @@ debugging</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.average_sta_spectra">
-<span class="sig-name descname"><span class="pre">average_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">average_sta_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#StaNoise.average_sta_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.StaNoise.average_sta_spectra" title="Link to this definition"></a></dt>
 <dd><p>Method to average the daily station spectra for good windows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -973,7 +976,7 @@ final figure</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#StaNoise.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.StaNoise.save" title="Link to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1008,7 +1011,7 @@ final figure</p>
 <h4>TFNoise<a class="headerlink" href="#tfnoise" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.TFNoise">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">TFNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">TFNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objnoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#TFNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.TFNoise" title="Link to this definition"></a></dt>
 <dd><p>A TFNoise object contains attributes that store the transfer function
 information from multiple components (and component combinations).</p>
 <div class="admonition note">
@@ -1102,12 +1105,12 @@ object will not initialize.</p>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.TFNoise.TfDict">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TfDict</span></span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.TfDict" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TfDict</span></span><a class="reference internal" href="_modules/obstools/atacr/classes.html#TFNoise.TfDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.TFNoise.TfDict" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.TFNoise.transfer_func">
-<span class="sig-name descname"><span class="pre">transfer_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfer_func" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transfer_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#TFNoise.transfer_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.TFNoise.transfer_func" title="Link to this definition"></a></dt>
 <dd><p>Method to calculate transfer functions between multiple
 components (and component combinations) from the averaged
 (daily or station-averaged) noise spectra.</p>
@@ -1151,7 +1154,7 @@ components (and component combinations) from the averaged
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.TFNoise.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.TFNoise.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#TFNoise.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.TFNoise.save" title="Link to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1197,7 +1200,7 @@ components (and component combinations) from the averaged
 <h4>EventStream<a class="headerlink" href="#eventstream" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">EventStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr1=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr2=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trZ=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trP=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">EventStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr1=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr2=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trZ=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trP=&lt;obspy.core.trace.Trace</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct=False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#EventStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.EventStream" title="Link to this definition"></a></dt>
 <dd><p>An EventStream object contains attributes that store station-event
 metadata and methods for applying the transfer functions to the various
 components and produce corrected/cleaned vertical components.</p>
@@ -1342,12 +1345,12 @@ components. This is determined during initialization.</p>
 </figure>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.CorrectDict">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CorrectDict</span></span><a class="headerlink" href="#obstools.atacr.classes.EventStream.CorrectDict" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CorrectDict</span></span><a class="reference internal" href="_modules/obstools/atacr/classes.html#EventStream.CorrectDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.EventStream.CorrectDict" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.correct_data">
-<span class="sig-name descname"><span class="pre">correct_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfnoise</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream.correct_data" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">correct_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfnoise</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#EventStream.correct_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.EventStream.correct_data" title="Link to this definition"></a></dt>
 <dd><p>Method to apply transfer functions between multiple components (and
 component combinations) to produce corrected/cleaned vertical
 components.</p>
@@ -1428,7 +1431,7 @@ event windows.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.EventStream.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.EventStream.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#EventStream.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.EventStream.save" title="Link to this definition"></a></dt>
 <dd><p>Method to save the object to file using <cite>~Pickle</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1460,7 +1463,7 @@ save the final object</p>
 <h4>Power<a class="headerlink" href="#power" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Power">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c11</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c22</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cZZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cPP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Power" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c11</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c22</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cZZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cPP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#Power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.Power" title="Link to this definition"></a></dt>
 <dd><p>Container for power spectra for each component, with any shape</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Power.c11">
@@ -1513,7 +1516,7 @@ save the final object</p>
 <h4>Cross<a class="headerlink" href="#cross" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Cross">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c12</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cZP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Cross" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c12</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c1P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cZP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#Cross"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.Cross" title="Link to this definition"></a></dt>
 <dd><p>Container for cross-power spectra for each component pairs, with any shape</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Cross.c12">
@@ -1588,7 +1591,7 @@ save the final object</p>
 <h4>Rotation<a class="headerlink" href="#rotation" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cHH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cHH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#Rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Link to this definition"></a></dt>
 <dd><p>Container for rotated spectra, with any shape</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.cHH">
@@ -1679,8 +1682,8 @@ save the final object</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.direc">
-<span class="sig-name descname"><span class="pre">direc</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.direc" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.phi">
+<span class="sig-name descname"><span class="pre">phi</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.phi" title="Link to this definition"></a></dt>
 <dd><p>Directions for which the coherence is calculated</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1699,7 +1702,7 @@ save the final object</p>
 class methods of <cite>~obstools.atacr.classes</cite>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.traceshift">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">traceshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.traceshift" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">traceshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#traceshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.traceshift" title="Link to this definition"></a></dt>
 <dd><p>Function to shift traces in time given travel time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1719,7 +1722,7 @@ class methods of <cite>~obstools.atacr.classes</cite>.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.QC_streams">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">QC_streams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.QC_streams" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">QC_streams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#QC_streams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.QC_streams" title="Link to this definition"></a></dt>
 <dd><p>Function for quality control of traces, which compares the
 start and end times that were requested, as well as the total n
 length of the traces.</p>
@@ -1743,7 +1746,7 @@ length of the traces.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.update_stats">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">update_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stla</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evla</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evlo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.update_stats" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">update_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stla</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evla</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evlo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#update_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.update_stats" title="Link to this definition"></a></dt>
 <dd><p>Function to include SAC metadata to <code class="xref py py-class docutils literal notranslate"><span class="pre">Trace</span></code> objects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1768,7 +1771,7 @@ length of the traces.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.get_data">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.get_data" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.get_data" title="Link to this definition"></a></dt>
 <dd><p>Function to grab all available noise data given a path and data time range</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1790,7 +1793,7 @@ empty traces for missing components.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.get_event">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">get_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.get_event" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">get_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#get_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.get_event" title="Link to this definition"></a></dt>
 <dd><p>Function to grab all available earthquake data given a path and data time
 range</p>
 <dl class="field-list simple">
@@ -1813,7 +1816,7 @@ empty traces for missing components.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.calculate_tilt">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goodwins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.005,</span> <span class="pre">0.035]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.calculate_tilt" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goodwins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreqs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#calculate_tilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.calculate_tilt" title="Link to this definition"></a></dt>
 <dd><p>Determines tilt direction from maximum coherence between rotated H1 and Z.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1826,7 +1829,7 @@ empty traces for missing components.</p>
 <li><p><strong>goodwins</strong> (<em>list</em>) – List of booleans representing whether a window is good (True) or not
 (False). This attribute is returned from the method
 <a class="reference internal" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="obstools.atacr.classes.DayNoise.QC_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_daily_spectra()</span></code></a></p></li>
-<li><p><strong>tiltfreq</strong> (<em>list</em><em>, </em><em>optional</em>) – Two floats representing the frequency band at which the tilt is
+<li><p><strong>tiltfreqs</strong> (<em>list</em>) – Two floats representing the frequency band at which the tilt is
 calculated</p></li>
 </ul>
 </dd>
@@ -1838,7 +1841,7 @@ calculated</p></li>
 directions (azimuths)</p></li>
 <li><p><strong>ph</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase value between rotated H and Z components, as a function of
 directions (azimuths)</p></li>
-<li><p><strong>direc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of directions (azimuths) considered</p></li>
+<li><p><strong>phi</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of directions (azimuths) considered</p></li>
 <li><p><strong>tilt</strong> (<em>float</em>) – Direction (azimuth) of maximum coherence between rotated H1 and Z</p></li>
 <li><p><strong>coh_value</strong> (<em>float</em>) – Coherence value at tilt direction</p></li>
 <li><p><strong>phase_value</strong> (<em>float</em>) – Phase value at tilt direction</p></li>
@@ -1850,7 +1853,7 @@ directions (azimuths)</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.smooth">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.smooth" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.smooth" title="Link to this definition"></a></dt>
 <dd><p>Function to smooth power spectral density functions from the convolution
 of a boxcar function with the PSD</p>
 <dl class="field-list simple">
@@ -1872,7 +1875,7 @@ of a boxcar function with the PSD</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.admittance">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">admittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gxx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.admittance" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">admittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gxx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#admittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.admittance" title="Link to this definition"></a></dt>
 <dd><p>Calculates admittance between two components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1892,7 +1895,7 @@ of a boxcar function with the PSD</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.coherence">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">coherence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gxx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gyy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.coherence" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">coherence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gxx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Gyy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#coherence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.coherence" title="Link to this definition"></a></dt>
 <dd><p>Calculates coherence between two components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1913,7 +1916,7 @@ of a boxcar function with the PSD</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.phase">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.utils.phase" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.phase" title="Link to this definition"></a></dt>
 <dd><p>Calculates phase angle between two components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1935,7 +1938,7 @@ of a boxcar function with the PSD</p>
 of the analysis at various final and intermediate steps.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_QC">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_QC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_QC" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_QC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_QC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_QC" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the Quality-Control step of the analysis. This function
 is used in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite> scripts.</p>
 <dl class="field-list simple">
@@ -1954,7 +1957,7 @@ is used in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectr
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_average">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_average" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_average" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the averaged spectra (those qualified as ‘good’ in the
 QC step). This function is used
 in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite> scripts.</p>
@@ -1975,7 +1978,7 @@ in both the <cite>atacr_daily_spectra</cite> or <cite>atacr_clean_spectra</cite>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_av_cross">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_av_cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_av_cross" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_av_cross</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_av_cross"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_av_cross" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the averaged cross-spectra (those qualified as ‘good’ in
 the QC step). This function is used in the <cite>atacr_daily_spectra</cite> script.</p>
 <dl class="field-list simple">
@@ -1996,7 +1999,7 @@ Otherwise semilogx</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_coh_ph">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_coh_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_coh_ph" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_coh_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_coh_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_coh_ph" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the coherence and phase between the rotated H and Z
 components, used to characterize the tilt direction.</p>
 <dl class="field-list simple">
@@ -2012,7 +2015,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_TF">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_TF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_trfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_trfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_TF" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_TF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_trfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_trfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_TF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_TF" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2030,7 +2033,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_comply">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_comply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sta_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_comply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_comply" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the transfer functions available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2050,7 +2053,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_event_raw">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_raw" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_event_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_event_raw" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the raw (although bandpassed) seismograms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2065,7 +2068,7 @@ components, used to characterize the tilt direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_event_corrected">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_corrected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obstools.atacr.plotting.fig_event_corrected" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_event_corrected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.006666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_event_corrected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_event_corrected" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the corrected vertical component seismograms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2099,7 +2102,7 @@ program values or by refining parameters. All of them use a station database pro
 <h3><code class="docutils literal notranslate"><span class="pre">atacr_download_data</span></code><a class="headerlink" href="#atacr-download-data" title="Link to this heading"></a></h3>
 <section id="description">
 <h4>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h4>
-<p>Downloads up to four-component (H1, H2, Z and P), day-long seismograms
+<p>Downloads up to four-component (1, 2, Z and P), day-long seismograms
 to use in noise corrections of vertical
 component data. Station selection is specified by a network and
 station code. The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
@@ -2107,88 +2110,94 @@ station code. The database is provided as a <code class="docutils literal notran
 <section id="usage">
 <h4>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data -h
+
+###########################################################################
+#      _                     _                 _        _       _         #
+#   __| | _____      ___ __ | | ___   __ _  __| |    __| | __ _| |_ __ _  #
+#  / _` |/ _ \ \ /\ / / &#39;_ \| |/ _ \ / _` |/ _` |   / _` |/ _` | __/ _` | #
+# | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  | (_| | (_| | || (_| | #
+#  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\__,_|\__,_|\__\__,_| #
+#                                              |_____|                    #
+#                                                                         #
+###########################################################################
+
 usage: atacr_download_data [options] &lt;indb&gt;
 
-Script used to download and pre-process up to four-component (H1, H2, Z and
-P), day-long seismograms to use in noise corrections of vertical component of
-OBS data. Data are requested from the internet using the client services
-framework for a given date range. The stations are processed one by one and
-the data are stored to disk.
+Script used to download and pre-process up to four-component (H1, H2, Z and P), day-long
+seismograms to use in noise corrections of vertical component of OBS data. Data are requested
+from the internet using the client services framework for a given date range. The stations
+are processed one by one and the data are stored to disk.
 
 positional arguments:
   indb                  Station Database to process from.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  --keys STKEYS         Specify a comma-separated list of station keys for
-                        which to perform the analysis. These must be contained
-                        within the station database. Partial keys will be used
-                        to match against those in the dictionary. For
-                        instance, providing IU will match with all stations in
-                        the IU network. [Default processes all stations in the
-                        database]
-  -C CHANNELS, --channels CHANNELS
-                        Specify a comma-separated list of channels for which
-                        to perform the transfer function analysis. Possible
-                        options are &#39;12&#39; (for horizontal channels) or &#39;P&#39; (for
-                        pressure channel). Specifying &#39;12&#39; allows for tilt
-                        correction. Specifying &#39;P&#39; allows for compliance
-                        correction. [Default looks for both horizontal and
-                        pressure and allows for both tilt AND compliance
-                        corrections]
-  --zcomp ZCOMP         Specify the Vertical Component Channel Identifier.
-                        [Default Z].
-  -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                        False]
+  --keys STKEYS         Specify a comma-separated list of station keys for which to perform
+                        the analysis. These must be contained within the station database.
+                        Partial keys will be used to match against those in the dictionary.
+                        For instance, providing IU will match with all stations in the IU
+                        network. [Default processes all stations in the database]
+  -O, --overwrite       Force the overwriting of pre-existing data. [Default False]
+  -Z ZCOMP, --zcomp ZCOMP
+                        Specify the Vertical Component Channel Identifier. [Default Z].
 
 Server Settings:
   Settings associated with which datacenter to log into.
 
   --server SERVER       Base URL of FDSN web service compatible server (e.g.
-                        “http://service.iris.edu”) or key string for
-                        recognized server (one of &#39;AUSPASS&#39;, &#39;BGR&#39;,
-                        &#39;EARTHSCOPE&#39;, &#39;EIDA&#39;, &#39;EMSC&#39;, &#39;ETH&#39;, &#39;GEOFON&#39;,
-                        &#39;GEONET&#39;, &#39;GFZ&#39;, &#39;ICGC&#39;, &#39;IESDMC&#39;, &#39;INGV&#39;, &#39;IPGP&#39;,
-                        &#39;IRIS&#39;, &#39;IRISPH5&#39;, &#39;ISC&#39;, &#39;KNMI&#39;, &#39;KOERI&#39;, &#39;LMU&#39;,
-                        &#39;NCEDC&#39;, &#39;NIEP&#39;, &#39;NOA&#39;, &#39;NRCAN&#39;, &#39;ODC&#39;, &#39;ORFEUS&#39;,
-                        &#39;RASPISHAKE&#39;, &#39;RESIF&#39;, &#39;RESIFPH5&#39;, &#39;SCEDC&#39;, &#39;TEXNET&#39;,
-                        &#39;UIB-NORSAR&#39;, &#39;USGS&#39;, &#39;USP&#39;). [Default &#39;IRIS&#39;]
-  --user-auth USERAUTH  Authentification Username and Password for the
-                        waveform server (--user-auth=&#39;username:authpassword&#39;)
-                        to access and download restricted data. [Default no
-                        user and password]
+                        “http://service.iris.edu”) or key string for recognized server (one
+                        of &#39;AUSPASS&#39;, &#39;BGR&#39;, &#39;EARTHSCOPE&#39;, &#39;EIDA&#39;, &#39;EMSC&#39;, &#39;ETH&#39;, &#39;GEOFON&#39;,
+                        &#39;GEONET&#39;, &#39;GFZ&#39;, &#39;ICGC&#39;, &#39;IESDMC&#39;, &#39;INGV&#39;, &#39;IPGP&#39;, &#39;IRIS&#39;, &#39;IRISPH5&#39;,
+                        &#39;ISC&#39;, &#39;KNMI&#39;, &#39;KOERI&#39;, &#39;LMU&#39;, &#39;NCEDC&#39;, &#39;NIEP&#39;, &#39;NOA&#39;, &#39;NRCAN&#39;,
+                        &#39;ODC&#39;, &#39;ORFEUS&#39;, &#39;RASPISHAKE&#39;, &#39;RESIF&#39;, &#39;RESIFPH5&#39;, &#39;SCEDC&#39;,
+                        &#39;TEXNET&#39;, &#39;UIB-NORSAR&#39;, &#39;USGS&#39;, &#39;USP&#39;). [Default &#39;IRIS&#39;]
+  --user-auth USERAUTH  Authentification Username and Password for the waveform server
+                        (--user-auth=&#39;username:authpassword&#39;) to access and download
+                        restricted data. [Default no user and password]
   --eida-token TOKENFILE
-                        Token for EIDA authentication mechanism, see
-                        http://geofon.gfz-
-                        potsdam.de/waveform/archive/auth/index.php. If a token
-                        is provided, argument --user-auth will be ignored.
-                        This mechanism is only available on select EIDA nodes.
-                        The token can be provided in form of the PGP message
-                        as a string, or the filename of a local file with the
+                        Token for EIDA authentication mechanism, see http://geofon.gfz-
+                        potsdam.de/waveform/archive/auth/index.php. If a token is provided,
+                        argument --user-auth will be ignored. This mechanism is only
+                        available on select EIDA nodes. The token can be provided in form of
+                        the PGP message as a string, or the filename of a local file with the
                         PGP message in it. [Default None]
+
+Local Data Settings:
+  Settings associated with defining and using a local data base of pre-downloaded day-long
+  SAC or MSEED files.
+
+  --local-data LOCALDATA
+                        Specify absolute path to a SeisComP Data Structure (SDS) archive
+                        containing day-long SAC or MSEED files(e.g., --local-
+                        data=/Home/username/Data/SDS). See
+                        https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html
+                        for details on the SDS format. If this option is used, it takes
+                        precedence over the --server-wf settings.
+  --dtype DTYPE         Specify the data archive file type, either SAC or MSEED. Note the
+                        default behaviour is to search for SAC files. Local archive files
+                        must have extensions of &#39;.SAC&#39; or &#39;.MSEED&#39;. These are case dependent,
+                        so specify the correct case here.
 
 Frequency Settings:
   Miscellaneous frequency settings
 
   --sampling-rate NEW_SAMPLING_RATE
                         Specify new sampling rate (float, in Hz). [Default 5.]
-  --units UNITS         Choose the output seismogram units. Options are:
-                        &#39;DISP&#39;, &#39;VEL&#39;, &#39;ACC&#39;. [Default &#39;DISP&#39;]
-  --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
-                        (float, in Hz) for deconvolution pre-filter. [Default
-                        0.001,0.005,45.,50.]
+  --units UNITS         Choose the output seismogram units. Options are: &#39;DISP&#39;, &#39;VEL&#39;,
+                        &#39;ACC&#39;. [Default &#39;DISP&#39;]
+  --pre-filt PRE_FILT   Specify four comma-separated corner frequencies (float, in Hz) for
+                        deconvolution pre-filter. [Default 0.001,0.005,45.,50.]
 
 Time Search Settings:
   Time settings associated with searching for day-long seismograms
 
-  --start STARTT        Specify a UTCDateTime compatible string representing
-                        the start day for the data search. This will override
-                        any station start times. [Default start date for each
-                        station in database]
-  --end ENDT            Specify a UTCDateTime compatible string representing
-                        the start time for the event search. This will
-                        override any station end times [Default end date for
-                        each station in database]
+  --start STARTT        Specify a UTCDateTime compatible string representing the start day
+                        for the data search. This will override any station start times.
+                        [Default start date for each station in database]
+  --end ENDT            Specify a UTCDateTime compatible string representing the start time
+                        for the event search. This will override any station end times
+                        [Default end date for each station in database]
 </pre></div>
 </div>
 </section>
@@ -2205,6 +2214,17 @@ is provided as a <code class="docutils literal notranslate"><span class="pre">St
 <section id="id3">
 <h4>Usage<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra -h
+
+#################################################################
+#      _       _ _                               _              #
+#   __| | __ _(_) |_   _     ___ _ __   ___  ___| |_ _ __ __ _  #
+#  / _` |/ _` | | | | | |   / __| &#39;_ \ / _ \/ __| __| &#39;__/ _` | #
+# | (_| | (_| | | | |_| |   \__ \ |_) |  __/ (__| |_| | | (_| | #
+#  \__,_|\__,_|_|_|\__, |___|___/ .__/ \___|\___|\__|_|  \__,_| #
+#                  |___/_____|  |_|                             #
+#                                                               #
+#################################################################
+
 usage: atacr_daily_spectra [options] &lt;indb&gt;
 
 Script used to extract shorter windows from the day-long seismograms,
@@ -2250,9 +2270,11 @@ Parameter Settings:
                      (or 30 percent)]
   --minwin MINWIN    Specify minimum number of &#39;good&#39; windows in any given day
                      to continue with analysis. [Default 10]
-  --freq-band PD     Specify comma-separated frequency limits (float, in Hz)
-                     over which to calculate spectral features used in
-                     flagging the bad windows. [Default 0.004,2.0]
+  --flag-freqs PD    Specify comma-separated frequency limits (float, in Hz) over which to
+                     calculate spectral features used in flagging the bad windows. [Default
+                     0.004,2.0]
+  --tilt-freqs TF    Specify comma-separated frequency limits (float, in Hz) over which to
+                     calculate tilt. [Default 0.005,0.035]
   --tolerance TOL    Specify parameter for tolerance threshold. If spectrum &gt;
                      std*tol, window is flagged as bad. [Default 2.0]
   --alpha ALPHA      Specify confidence level for f-test, for iterative
@@ -2295,6 +2317,17 @@ The database is provided as a <code class="docutils literal notranslate"><span c
 <section id="id5">
 <h4>Usage<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra -h
+
+###################################################################
+#       _                                          _              #
+#   ___| | ___  __ _ _ __      ___ _ __   ___  ___| |_ _ __ __ _  #
+#  / __| |/ _ \/ _` | &#39;_ \    / __| &#39;_ \ / _ \/ __| __| &#39;__/ _` | #
+# | (__| |  __/ (_| | | | |   \__ \ |_) |  __/ (__| |_| | | (_| | #
+#  \___|_|\___|\__,_|_| |_|___|___/ .__/ \___|\___|\__|_|  \__,_| #
+#                        |_____|  |_|                             #
+#                                                                 #
+###################################################################
+
 usage: atacr_clean_spectra [options] &lt;indb&gt;
 
 Script used to extract daily spectra calculated from `obs_daily_spectra.py`
@@ -2330,9 +2363,9 @@ Time Search Settings:
 Parameter Settings:
   Miscellaneous default values and settings
 
-  --freq-band PD   Specify comma-separated frequency limits (float, in Hz)
-                   over which to calculate spectral features used in flagging
-                   the days/windows. [Default 0.004,2.0]
+  --flag-freqs PD  Specify comma-separated frequency limits (float, in Hz) over which to
+                   calculate spectral features used in flagging the days/windows. [Default
+                   0.004,2.0]
   --tolerance TOL  Specify parameter for tolerance threshold. If spectrum &gt;
                    std*tol, window is flagged as bad. [Default 1.5]
   --alpha ALPHA    Confidence level for f-test, for iterative flagging of
@@ -2370,12 +2403,23 @@ provided as a <code class="docutils literal notranslate"><span class="pre">StDb<
 <section id="id7">
 <h4>Usage<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions -h
+
+#######################################################################################
+#  _                        __             __                  _   _                  #
+# | |_ _ __ __ _ _ __  ___ / _| ___ _ __  / _|_   _ _ __   ___| |_(_) ___  _ __  ___  #
+# | __| &#39;__/ _` | &#39;_ \/ __| |_ / _ \ &#39;__|| |_| | | | &#39;_ \ / __| __| |/ _ \| &#39;_ \/ __| #
+# | |_| | | (_| | | | \__ \  _|  __/ |   |  _| |_| | | | | (__| |_| | (_) | | | \__ \ #
+#  \__|_|  \__,_|_| |_|___/_|  \___|_|___|_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/ #
+#                                   |_____|                                           #
+#                                                                                     #
+#######################################################################################
+
 usage: atacr_transfer_functions [options] &lt;indb&gt;
 
 Script used to calculate transfer functions between various components, to be
 used in cleaning vertical component of OBS data. The noise data can be those
-obtained from the daily spectra (i.e., from `obs_daily_spectra.py`) or those
-obtained from the averaged noise spectra (i.e., from `obs_clean_spectra.py`).
+obtained from the daily spectra (i.e., from `atacr_daily_spectra`) or those
+obtained from the averaged noise spectra (i.e., from `atacr_clean_spectra`).
 Flags are available to specify the source of data to use as well as the time
 range over which to calculate the transfer functions. The stations are
 processed one by one and the data are stored to disk.
@@ -2432,7 +2476,7 @@ Figure Settings:
 <h3><code class="docutils literal notranslate"><span class="pre">atacr_download_event</span></code><a class="headerlink" href="#atacr-download-event" title="Link to this heading"></a></h3>
 <section id="id8">
 <h4>Description<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
-<p>Downloads up to four-component (H1, H2, Z and P), two-hour-long seismograms
+<p>Downloads up to four-component (1,2,Z,H), two-hour-long seismograms
 for individual seismic events to use in noise corrections of vertical
 component data. Station selection is specified by a network and
 station code. The database is provided as a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> dictionary.</p>
@@ -2440,109 +2484,111 @@ station code. The database is provided as a <code class="docutils literal notran
 <section id="id9">
 <h4>Usage<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event -h
+
+###############################################################################
+#      _                     _                 _                         _    #
+#   __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #
+#  / _` |/ _ \ \ /\ / / &#39;_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ &#39;_ \| __| #
+# | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #
+#  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #
+#                                              |_____|                        #
+#                                                                             #
+###############################################################################
+
 usage: atacr_download_event [options] &lt;indb&gt;
 
-Script used to download and pre-process four-component (H1, H2, Z and P), two-
-hour-long seismograms for individual events on which to apply the de-noising
-algorithms. Data are requested from the internet using the client services
-framework for a given date range. The stations are processed one by one and
-the data are stored to disk.
+Script used to download and pre-process four-component (H1, H2, Z and P), two-hour-long
+seismograms for individual events on which to apply the de-noising algorithms. Data are
+requested from the internet using the client services framework for a given date range. The
+stations are processed one by one and the data are stored to disk.
 
 positional arguments:
   indb                  Station Database to process from.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  --keys STKEYS         Specify a comma separated list of station keys for
-                        which to perform the analysis. These must be contained
-                        within the station database. Partial keys will be used
-                        to match against those in the dictionary. For
-                        instance, providing IU will match with all stations in
-                        the IU network [Default processes all stations in the
-                        database]
-  -C CHANNELS, --channels CHANNELS
-                        Specify a comma-separated list of channels for which
-                        to perform the transfer function analysis. Possible
-                        options are &#39;12&#39; (for horizontal channels) or &#39;P&#39; (for
-                        pressure channel). Specifying &#39;12&#39; allows for tilt
-                        correction. Specifying &#39;P&#39; allows for compliance
-                        correction. [Default looks for both horizontal and
-                        pressure and allows for both tilt AND compliance
-                        corrections]
-  --zcomp ZCOMP         Specify the Vertical Component Channel Identifier.
-                        [Default Z].
-  -O, --overwrite       Force the overwriting of pre-existing data. [Default
-                        False]
+  --keys STKEYS         Specify a comma separated list of station keys for which to perform
+                        the analysis. These must be contained within the station database.
+                        Partial keys will be used to match against those in the dictionary.
+                        For instance, providing IU will match with all stations in the IU
+                        network [Default processes all stations in the database]
+  -O, --overwrite       Force the overwriting of pre-existing data. [Default False]
+  --zcomp ZCOMP         Specify the Vertical Component Channel Identifier. [Default Z].
 
 Server Settings:
   Settings associated with which datacenter to log into.
 
   --server SERVER       Base URL of FDSN web service compatible server (e.g.
-                        “http://service.iris.edu”) or key string for
-                        recognized server (one of &#39;AUSPASS&#39;, &#39;BGR&#39;,
-                        &#39;EARTHSCOPE&#39;, &#39;EIDA&#39;, &#39;EMSC&#39;, &#39;ETH&#39;, &#39;GEOFON&#39;,
-                        &#39;GEONET&#39;, &#39;GFZ&#39;, &#39;ICGC&#39;, &#39;IESDMC&#39;, &#39;INGV&#39;, &#39;IPGP&#39;,
-                        &#39;IRIS&#39;, &#39;IRISPH5&#39;, &#39;ISC&#39;, &#39;KNMI&#39;, &#39;KOERI&#39;, &#39;LMU&#39;,
-                        &#39;NCEDC&#39;, &#39;NIEP&#39;, &#39;NOA&#39;, &#39;NRCAN&#39;, &#39;ODC&#39;, &#39;ORFEUS&#39;,
-                        &#39;RASPISHAKE&#39;, &#39;RESIF&#39;, &#39;RESIFPH5&#39;, &#39;SCEDC&#39;, &#39;TEXNET&#39;,
-                        &#39;UIB-NORSAR&#39;, &#39;USGS&#39;, &#39;USP&#39;). [Default &#39;IRIS&#39;]
-  --user-auth USERAUTH  Authentification Username and Password for the
-                        waveform server (--user-auth=&#39;username:authpassword&#39;)
-                        to access and download restricted data. [Default no
-                        user and password]
+                        “http://service.iris.edu”) or key string for recognized server (one
+                        of &#39;AUSPASS&#39;, &#39;BGR&#39;, &#39;EARTHSCOPE&#39;, &#39;EIDA&#39;, &#39;EMSC&#39;, &#39;ETH&#39;, &#39;GEOFON&#39;,
+                        &#39;GEONET&#39;, &#39;GFZ&#39;, &#39;ICGC&#39;, &#39;IESDMC&#39;, &#39;INGV&#39;, &#39;IPGP&#39;, &#39;IRIS&#39;, &#39;IRISPH5&#39;,
+                        &#39;ISC&#39;, &#39;KNMI&#39;, &#39;KOERI&#39;, &#39;LMU&#39;, &#39;NCEDC&#39;, &#39;NIEP&#39;, &#39;NOA&#39;, &#39;NRCAN&#39;,
+                        &#39;ODC&#39;, &#39;ORFEUS&#39;, &#39;RASPISHAKE&#39;, &#39;RESIF&#39;, &#39;RESIFPH5&#39;, &#39;SCEDC&#39;,
+                        &#39;TEXNET&#39;, &#39;UIB-NORSAR&#39;, &#39;USGS&#39;, &#39;USP&#39;). [Default &#39;IRIS&#39;]
+  --user-auth USERAUTH  Authentification Username and Password for the waveform server
+                        (--user-auth=&#39;username:authpassword&#39;) to access and download
+                        restricted data. [Default no user and password]
   --eida-token TOKENFILE
-                        Token for EIDA authentication mechanism, see
-                        http://geofon.gfz-
-                        potsdam.de/waveform/archive/auth/index.php. If a token
-                        is provided, argument --user-auth will be ignored.
-                        This mechanism is only available on select EIDA nodes.
-                        The token can be provided in form of the PGP message
-                        as a string, or the filename of a local file with the
+                        Token for EIDA authentication mechanism, see http://geofon.gfz-
+                        potsdam.de/waveform/archive/auth/index.php. If a token is provided,
+                        argument --user-auth will be ignored. This mechanism is only
+                        available on select EIDA nodes. The token can be provided in form of
+                        the PGP message as a string, or the filename of a local file with the
                         PGP message in it. [Default None]
+
+Local Data Settings:
+  Settings associated with defining and using a local data base of pre-downloaded day-long
+  SAC or MSEED files.
+
+  --local-data LOCALDATA
+                        Specify absolute path to a SeisComP Data Structure (SDS) archive
+                        containing day-long SAC or MSEED files(e.g., --local-
+                        data=/Home/username/Data/SDS). See
+                        https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html
+                        for details on the SDS format. If this option is used, it takes
+                        precedence over the --server-wf settings.
+  --dtype DTYPE         Specify the data archive file type, either SAC or MSEED. Note the
+                        default behaviour is to search for SAC files. Local archive files
+                        must have extensions of &#39;.SAC&#39; or &#39;.MSEED&#39;. These are case dependent,
+                        so specify the correct case here.
 
 Frequency Settings:
   Miscellaneous frequency settings
 
   --sampling-rate NEW_SAMPLING_RATE
                         Specify new sampling rate (float, in Hz). [Default 5.]
-  --units UNITS         Choose the output seismogram units. Options are:
-                        &#39;DISP&#39;, &#39;VEL&#39;, &#39;ACC&#39;. [Default &#39;DISP&#39;]
-  --pre-filt PRE_FILT   Specify four comma-separated corner frequencies
-                        (float, in Hz) for deconvolution pre-filter. [Default
-                        0.001,0.005,45.,50.]
-  --window WINDOW       Specify window length in seconds. Default value is
-                        highly recommended. Program may not be stable for
-                        large deviations from default value. [Default 7200.
-                        (or 2 hours)]
+  --units UNITS         Choose the output seismogram units. Options are: &#39;DISP&#39;, &#39;VEL&#39;,
+                        &#39;ACC&#39;. [Default &#39;DISP&#39;]
+  --pre-filt PRE_FILT   Specify four comma-separated corner frequencies (float, in Hz) for
+                        deconvolution pre-filter. [Default 0.001,0.005,45.,50.]
+  --window WINDOW       Specify window length in seconds. Default value is highly
+                        recommended. Program may not be stable for large deviations from
+                        default value. [Default 7200. (or 2 hours)]
 
 Event Settings:
-  Settings associated with refining the events to include in matching
-  station pairs
+  Settings associated with refining the events to include in matching station pairs
 
-  --start STARTT        Specify a UTCDateTime compatible string representing
-                        the start time for the event search. This will
-                        override any station start times. [Default start date
-                        of each station in database]
-  --end ENDT            Specify a UTCDateTime compatible string representing
-                        the start time for the event search. This will
-                        override any station end times [Default end date of
-                        each station in database]
-  --reverse-order, -R   Reverse order of events. Default behaviour starts at
-                        oldest event and works towards most recent. Specify
-                        reverse order and instead the program will start with
-                        the most recent events and work towards older
-  --min-mag MINMAG      Specify the minimum magnitude of event for which to
-                        search. [Default 5.5]
-  --max-mag MAXMAG      Specify the maximum magnitude of event for which to
-                        search. [Default None, i.e. no limit]
+  --start STARTT        Specify a UTCDateTime compatible string representing the start time
+                        for the event search. This will override any station start times.
+                        [Default start date of each station in database]
+  --end ENDT            Specify a UTCDateTime compatible string representing the start time
+                        for the event search. This will override any station end times
+                        [Default end date of each station in database]
+  --reverse-order, -R   Reverse order of events. Default behaviour starts at oldest event and
+                        works towards most recent. Specify reverse order and instead the
+                        program will start with the most recent events and work towards older
+  --min-mag MINMAG      Specify the minimum magnitude of event for which to search. [Default
+                        5.5]
+  --max-mag MAXMAG      Specify the maximum magnitude of event for which to search. [Default
+                        None, i.e. no limit]
 
 Geometry Settings:
   Settings associatd with the event-station geometries
 
-  --min-dist MINDIST    Specify the minimum great circle distance (degrees)
-                        between the station and event. [Default 30]
-  --max-dist MAXDIST    Specify the maximum great circle distance (degrees)
-                        between the station and event. [Default 120]
+  --min-dist MINDIST    Specify the minimum great circle distance (degrees) between the
+                        station and event. [Default 30]
+  --max-dist MAXDIST    Specify the maximum great circle distance (degrees) between the
+                        station and event. [Default 120]
 </pre></div>
 </div>
 </section>
@@ -2559,13 +2605,24 @@ a single day (from <code class="docutils literal notranslate"><span class="pre">
 <section id="id11">
 <h4>Usage<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event -h
+
+##################################################################
+#                               _                           _    #
+#   ___ ___  _ __ _ __ ___  ___| |_     _____   _____ _ __ | |_  #
+#  / __/ _ \| &#39;__| &#39;__/ _ \/ __| __|   / _ \ \ / / _ \ &#39;_ \| __| #
+# | (_| (_) | |  | | |  __/ (__| |_   |  __/\ V /  __/ | | | |_  #
+#  \___\___/|_|  |_|  \___|\___|\__|___\___| \_/ \___|_| |_|\__| #
+#                                 |_____|                        #
+#                                                                #
+##################################################################
+
 usage: atacr_correct_event [options] &lt;indb&gt;
 
 Script used to extract transfer functions between various components, and use
 them to clean vertical component of OBS data for selected events. The noise
 data can be those obtained from the daily spectra (i.e., from
-`obs_daily_spectra.py`) or those obtained from the averaged noise spectra
-(i.e., from `obs_clean_spectra.py`). Flags are available to specify the source
+`atacr_daily_spectra`) or those obtained from the averaged noise spectra
+(i.e., from `atacr_clean_spectra`). Flags are available to specify the source
 of data to use as well as the time range for given events. The stations are
 processed one by one and the data are stored to disk in a new &#39;CORRECTED&#39;
 folder.
@@ -2643,18 +2700,8 @@ Vanuatu on March 9, 2012.</p>
 <p>All the scripts provided require a <code class="docutils literal notranslate"><span class="pre">StDb</span></code> database containing station
 information and metadata. Let’s first create this database for station
 M08A and send the prompt to a logfile</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb -N 7D -C ?H? -S M08A M08A &gt; logfile
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ query_fdsn_stdb -N 7D -S M08A M08A &gt; logfile
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you are using a <em>Z shell</em> (as opposed to a <em>Bourne Shell</em> or
-other types of shells) on the terminal,
-this command above will fail due to the presence of the question marks for
-pattern matching. To find out, just type <cite>ps -p $$</cite>, which will return
-<cite>zsh</cite> under the <cite>CMD</cite> field if you are using a Z shell. In this case, just
-enclose the <cite>?H?</cite> in single or double quotes (e.g.,
-<cite>query_fdsn_stdb.py -N 7D -C “?H?” -S M08A M08A &gt; logfile</cite>)</p>
 </div>
 <p>To check the station info for M08A, use the program <code class="docutils literal notranslate"><span class="pre">ls_stdb</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ls_stdb M08A.pkl
@@ -2677,10 +2724,9 @@ enclose the <cite>?H?</cite> in single or double quotes (e.g.,
 <section id="download-noise-data">
 <h3>1. Download noise data<a class="headerlink" href="#download-noise-data" title="Link to this heading"></a></h3>
 <p>We wish to download one month of data for the station M08A for March 2012.
-The various options above allow us to select the additional channels to use
-(e.g., <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">12,P</span></code> for both horizontal and pressure data - which is the default
-setting). Default frequency settings for data pre-processing match those of
-the Matlab <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> software and can therefore be ignored when calling the program.
+The program will search for and download all available (1,2,Z,H) data.
+Default frequency settings for data pre-processing match those of
+the Matlab <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code> software.
 Since the file <code class="docutils literal notranslate"><span class="pre">M08A.pkl</span></code> contains only one station, it is not necessary to specify a
 key. This option would be useful if the database contained several stations
 and we were only interested in downloading data for M08A. In this case, we would
@@ -2689,12 +2735,23 @@ The only required options at this point are the <code class="docutils literal no
 to specify the dates for which data will be downloaded.</p>
 <p>If you change your mind about the pre-processing options, you can always re-run the
 following line with the option <code class="docutils literal notranslate"><span class="pre">-O</span></code>, which will overwrite the data saved to disk.</p>
-<p>To download all broadband seismic and pressure data, simply type in a terminal:</p>
+<p>To download all available data, simply type in a terminal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_data --start=2012-03-01 --end=2012-04-01 M08A.pkl
 </pre></div>
 </div>
 <p>An example log printed on the terminal will look like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Path to DATA/7D.M08A/ doesn`t exist - creating it
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>###########################################################################
+#      _                     _                 _        _       _         #
+#   __| | _____      ___ __ | | ___   __ _  __| |    __| | __ _| |_ __ _  #
+#  / _` |/ _ \ \ /\ / / &#39;_ \| |/ _ \ / _` |/ _` |   / _` |/ _` | __/ _` | #
+# | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  | (_| | (_| | || (_| | #
+#  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\__,_|\__,_|\__\__,_| #
+#                                              |_____|                    #
+#                                                                         #
+###########################################################################
+
+
+Path to DATA/7D.M08A doesn&#39;t exist - creating it
 
 |===============================================|
 |===============================================|
@@ -2711,15 +2768,25 @@ following line with the option <code class="docutils literal notranslate"><span 
 |   Start: 2012-03-01                           |
 |   End:   2012-04-01                           |
 
-***********************************************************
-* Downloading day-long data for key 7D.M08A and day 2012.61
+************************************************************
+* Downloading day-long data for key 7D.M08A and day 2012.061
 *
-* Channels selected: [&#39;12&#39;, &#39;P&#39;] and vertical
-*   2012.061.*SAC
-*   -&gt; Downloading Seismic data...
+*   2012.061.*.SAC
+*   -&gt; Downloading BH1 data...
 *      ...done
-*   -&gt; Downloading Pressure data...
+*   -&gt; Downloading BH2 data...
 *      ...done
+*   -&gt; Downloading BHZ data...
+*      ...done
+*   -&gt; Downloading ?DH data...
+*      ...done
+* Start times are not all close to true start:
+*   BH1 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+*   BH2 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+*   BHZ 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+*   BDH 2012-03-01T00:00:00.017800Z 2012-03-01T23:59:58.017800Z
+*   True start: 2012-03-01T00:00:00.000000Z
+* -&gt; Shifting traces to true start
 *   -&gt; Removing responses - Seismic data
  WARNING: FIR normalized: sum[coef]=9.767192E-01;
  WARNING: FIR normalized: sum[coef]=9.767192E-01;
@@ -2727,12 +2794,13 @@ following line with the option <code class="docutils literal notranslate"><span 
 *   -&gt; Removing responses - Pressure data
  WARNING: FIR normalized: sum[coef]=9.767192E-01;
 
-***********************************************************
-* Downloading day-long data for key 7D.M08A and day 2012.62
+************************************************************
+* Downloading day-long data for key 7D.M08A and day 2012.062
 *
-* Channels selected: [&#39;12&#39;, &#39;P&#39;] and vertical
-*   2012.062.*SAC
-*   -&gt; Downloading Seismic data...
+*   2012.062.*.SAC
+*   -&gt; Downloading BH1 data...
+*      ...done
+*   -&gt; Downloading BH2 data...
 
 ...
 </pre></div>
@@ -2745,11 +2813,22 @@ This is where all day-long files will be stored on disk.</p>
 <h3>2. QC for daily spectral averages<a class="headerlink" href="#qc-for-daily-spectral-averages" title="Link to this heading"></a></h3>
 <p>For this step, there are several Parameter Settings that can be tuned. Once again,
 the default values are the ones used to reproduce the results of the Matlab
-ATaCR software and can be left un-changed. The Time Search Settings can be used
+ATaCR software. The Time Search Settings can be used
 to look at a subset of the available day-long data files. Here these options
 can be ignored since we wish to look at all the availble data that we just downloaded.
 We can therefore type in a terminal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_daily_spectra M08A.pkl
+
+#################################################################
+#      _       _ _                               _              #
+#   __| | __ _(_) |_   _     ___ _ __   ___  ___| |_ _ __ __ _  #
+#  / _` |/ _` | | | | | |   / __| &#39;_ \ / _ \/ __| __| &#39;__/ _` | #
+# | (_| | (_| | | | |_| |   \__ \ |_) |  __/ (__| |_| | | (_| | #
+#  \__,_|\__,_|_|_|\__, |___|___/ .__/ \___|\___|\__|_|  \__,_| #
+#                  |___/_____|  |_|                             #
+#                                                               #
+#################################################################
+
 
 Path to SPECTRA/7D.M08A/ doesn`t exist - creating it
 
@@ -2821,6 +2900,17 @@ but further include the option of plotting the averaged cross-spectral propertie
 To calculate a single station average for the entire month of March 2012 (and
 therefore using all available data) and plot the results, we can type in a terminal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra --figQC --figAverage --figCoh --figCross M08A.pkl
+
+###################################################################
+#       _                                          _              #
+#   ___| | ___  __ _ _ __      ___ _ __   ___  ___| |_ _ __ __ _  #
+#  / __| |/ _ \/ _` | &#39;_ \    / __| &#39;_ \ / _ \/ __| __| &#39;__/ _` | #
+# | (__| |  __/ (_| | | | |   \__ \ |_) |  __/ (__| |_| | | (_| | #
+#  \___|_|\___|\__,_|_| |_|___|___/ .__/ \___|\___|\__|_|  \__,_| #
+#                        |_____|  |_|                             #
+#                                                                 #
+###################################################################
+
 
 Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
 
@@ -2939,6 +3029,17 @@ the following may also be possible (if all components are available):</p>
 In this case we do not need to specify any option and type in a terminal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_transfer_functions M08A.pkl
 
+#######################################################################################
+#  _                        __             __                  _   _                  #
+# | |_ _ __ __ _ _ __  ___ / _| ___ _ __  / _|_   _ _ __   ___| |_(_) ___  _ __  ___  #
+# | __| &#39;__/ _` | &#39;_ \/ __| |_ / _ \ &#39;__|| |_| | | | &#39;_ \ / __| __| |/ _ \| &#39;_ \/ __| #
+# | |_| | | (_| | | | \__ \  _|  __/ |   |  _| |_| | | | | (__| |_| | (_) | | | \__ \ #
+#  \__|_|  \__,_|_| |_|___/_|  \___|_|___|_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/ #
+#                                   |_____|                                           #
+#                                                                                     #
+#######################################################################################
+
+
 Path to TF_STA/7D.M08A/ doesn&#39;t exist - creating it
 
 |===============================================|
@@ -2994,7 +3095,18 @@ against.</p>
 Vanuatu earthquake (be conservative with the options), type in a terminal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_download_event --min-mag=6.3 --max-mag=6.7 --start=2012-03-08 --end=2012-03-10 M08A.pkl
 
-Path to EVENTS/7D.M08A/ doesn`t exist - creating it
+###############################################################################
+#      _                     _                 _                         _    #
+#   __| | _____      ___ __ | | ___   __ _  __| |    _____   _____ _ __ | |_  #
+#  / _` |/ _ \ \ /\ / / &#39;_ \| |/ _ \ / _` |/ _` |   / _ \ \ / / _ \ &#39;_ \| __| #
+# | (_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  |  __/\ V /  __/ | | | |_  #
+#  \__,_|\___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|___\___| \_/ \___|_| |_|\__| #
+#                                              |_____|                        #
+#                                                                             #
+###############################################################################
+
+
+Path to EVENTS/7D.M08A doesn&#39;t exist - creating it
 
 |===============================================|
 |===============================================|
@@ -3004,8 +3116,8 @@ Path to EVENTS/7D.M08A/ doesn`t exist - creating it
 |  Station: 7D.M08A                             |
 |      Channel: BH; Locations: --               |
 |      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20 00:00:00          |
-|      End time:   2012-07-18 23:59:59          |
+|      Start time: 2011-10-20 23:50:00          |
+|      End time:   2012-07-18 23:06:00          |
 |-----------------------------------------------|
 | Searching Possible events:                    |
 |   Start: 2012-03-08 00:00:00                  |
@@ -3014,19 +3126,28 @@ Path to EVENTS/7D.M08A/ doesn`t exist - creating it
 | ...                                           |
 |  Found     1 possible events                  |
 
-****************************************************
-* (1/1):  20120309_070953
+************************************************************
+* #(1/1):  20120309_070953
 *   Origin Time: 2012-03-09 07:09:53
 *   Lat: -19.22; Lon:  169.75
 *   Dep:  33.70; Mag: 6.6
-*     M08A  -&gt; Ev: 9651.91 km;   86.80 deg; 239.43;  40.95
-
-* Channels selected: [&#39;12&#39;, &#39;P&#39;] and vertical
-*   2012.069.07.09
-*   -&gt; Downloading Seismic data...
+*   Dist: 9651.91 km;   86.80 deg
+*   2012.069.07.09*.SAC
+*   -&gt; Downloading BH1 data...
 *      ...done
-*   -&gt; Downloading Pressure data...
-     ...done
+*   -&gt; Downloading BH2 data...
+*      ...done
+*   -&gt; Downloading BHZ data...
+*      ...done
+*   -&gt; Downloading ?DH data...
+*      ...done
+* Start times are not all close to true start:
+*   BH1 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+*   BH2 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+*   BHZ 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+*   BDH 2012-03-09T07:09:53.336000Z 2012-03-09T09:09:52.336000Z
+*   True start: 2012-03-09T07:09:53.320000Z
+* -&gt; Shifting traces to true start
 *   -&gt; Removing responses - Seismic data
  WARNING: FIR normalized: sum[coef]=9.767192E-01;
  WARNING: FIR normalized: sum[coef]=9.767192E-01;
@@ -3047,6 +3168,17 @@ be saved to disk in a new folder called <code class="docutils literal notranslat
 the final Figures 11 and 12, specify the <code class="docutils literal notranslate"><span class="pre">--figRaw</span></code> and <code class="docutils literal notranslate"><span class="pre">--figClean</span></code> options:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_correct_event --figRaw --figClean M08A.pkl
 
+##################################################################
+#                               _                           _    #
+#   ___ ___  _ __ _ __ ___  ___| |_     _____   _____ _ __ | |_  #
+#  / __/ _ \| &#39;__| &#39;__/ _ \/ __| __|   / _ \ \ / / _ \ &#39;_ \| __| #
+# | (_| (_) | |  | | |  __/ (__| |_   |  __/\ V /  __/ | | | |_  #
+#  \___\___/|_|  |_|  \___|\___|\__|___\___| \_/ \___|_| |_|\__| #
+#                                 |_____|                        #
+#                                                                #
+##################################################################
+
+
 
 |===============================================|
 |===============================================|
@@ -3056,8 +3188,8 @@ the final Figures 11 and 12, specify the <code class="docutils literal notransla
 |  Station: 7D.M08A                             |
 |      Channel: BH; Locations: --               |
 |      Lon: -124.90; Lat:  44.12                |
-|      Start time: 2011-10-20 00:00:00          |
-|      End time:   2012-07-18 23:59:59          |
+|      Start time: 2011-10-20 23:50:00          |
+|      End time:   2012-07-18 23:06:00          |
 |-----------------------------------------------|
 TF_STA/7D.M08A/2011.293-2012.200.transfunc.pkl file found - applying transfer functions
 TF_STA/7D.M08A/2012.069.transfunc.pkl file found - applying transfer functions

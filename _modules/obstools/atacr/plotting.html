@@ -1,0 +1,859 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>obstools.atacr.plotting &mdash; Home 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Home
+              <img src="../../../_static/obstools_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../links.html">GitHub Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../links.html#references">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../obstools.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../obstools.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../obstools.html#using-local-data">Using local data</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../atacr.html">ATaCR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../comply.html">Comply</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Home</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">obstools.atacr.plotting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for obstools.atacr.plotting</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2019 Pascal Audet &amp; Helen Janiszewski</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of OBStools.</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
+<span class="c1"># all copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:mod:`~obstools.plot` contains several functions for plotting the results</span>
+<span class="sd">of the analysis at various final and intermediate steps.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obstools.atacr</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obspy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Trace</span>
+
+
+<div class="viewcode-block" id="fig_QC">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_QC">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_QC</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">gooddays</span><span class="p">,</span> <span class="n">ncomp</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the Quality-Control step of the analysis. This function</span>
+<span class="sd">    is used in both the `atacr_daily_spectra` or `atacr_clean_spectra` scripts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Frequency axis (in Hz)</span>
+<span class="sd">    power : :class:`~obstools.classes.Power`</span>
+<span class="sd">        Container for the Power spectra</span>
+<span class="sd">    gooddays : List</span>
+<span class="sd">        List of booleans representing whether a window is good (True) or not</span>
+<span class="sd">        (False)</span>
+<span class="sd">    ncomp : int</span>
+<span class="sd">        Number of components used in analysis (can be 2, 3 or 4)</span>
+<span class="sd">    key : str</span>
+<span class="sd">        String corresponding to the station key under analysis</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sl_c11</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">c11</span>
+    <span class="n">sl_c22</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">c22</span>
+    <span class="n">sl_cZZ</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">cZZ</span>
+    <span class="n">sl_cPP</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">cPP</span>
+
+    <span class="k">if</span> <span class="n">ncomp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">sls</span> <span class="o">=</span> <span class="p">[</span><span class="n">sl_cZZ</span><span class="p">,</span> <span class="n">sl_cPP</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HZ component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;HP component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">ncomp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">sls</span> <span class="o">=</span> <span class="p">[</span><span class="n">sl_c11</span><span class="p">,</span> <span class="n">sl_c22</span><span class="p">,</span> <span class="n">sl_cZZ</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H1 component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;H2 component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;HZ component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sls</span> <span class="o">=</span> <span class="p">[</span><span class="n">sl_c11</span><span class="p">,</span> <span class="n">sl_c22</span><span class="p">,</span> <span class="n">sl_cZZ</span><span class="p">,</span> <span class="n">sl_cPP</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H1 component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;H2 component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;HZ component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;HP component, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="c1"># Extract only positive frequencies</span>
+    <span class="n">faxis</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sls</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">ncomp</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">sl</span><span class="p">[:,</span> <span class="n">gooddays</span><span class="p">][</span><span class="n">faxis</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">gooddays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">sl</span><span class="p">[:,</span> <span class="o">~</span><span class="n">gooddays</span><span class="p">][</span><span class="n">faxis</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sls</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_average">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_average">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_average</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">bad</span><span class="p">,</span> <span class="n">gooddays</span><span class="p">,</span> <span class="n">ncomp</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the averaged spectra (those qualified as &#39;good&#39; in the</span>
+<span class="sd">    QC step). This function is used</span>
+<span class="sd">    in both the `atacr_daily_spectra` or `atacr_clean_spectra` scripts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Frequency axis (in Hz)</span>
+<span class="sd">    power : :class:`~obstools.classes.Power`</span>
+<span class="sd">        Container for the Power spectra</span>
+<span class="sd">    bad : :class:`~obstools.classes.Power`</span>
+<span class="sd">        Container for the *bad* Power spectra</span>
+<span class="sd">    gooddays : List</span>
+<span class="sd">        List of booleans representing whether a window is good (True) or not</span>
+<span class="sd">        (False)</span>
+<span class="sd">    ncomp : int</span>
+<span class="sd">        Number of components used in analysis (can be 2, 3 or 4)</span>
+<span class="sd">    key : str</span>
+<span class="sd">        String corresponding to the station key under analysis</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">c11</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">c11</span>
+    <span class="n">c22</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">c22</span>
+    <span class="n">cZZ</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">cZZ</span>
+    <span class="n">cPP</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">cPP</span>
+    <span class="n">bc11</span> <span class="o">=</span> <span class="n">bad</span><span class="o">.</span><span class="n">c11</span>
+    <span class="n">bc22</span> <span class="o">=</span> <span class="n">bad</span><span class="o">.</span><span class="n">c22</span>
+    <span class="n">bcZZ</span> <span class="o">=</span> <span class="n">bad</span><span class="o">.</span><span class="n">cZZ</span>
+    <span class="n">bcPP</span> <span class="o">=</span> <span class="n">bad</span><span class="o">.</span><span class="n">cPP</span>
+
+    <span class="k">if</span> <span class="n">ncomp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">ccs</span> <span class="o">=</span> <span class="p">[</span><span class="n">cZZ</span><span class="p">,</span> <span class="n">cPP</span><span class="p">]</span>
+        <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcZZ</span><span class="p">,</span> <span class="n">bcPP</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Average HZ, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;Average HP, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">ncomp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">ccs</span> <span class="o">=</span> <span class="p">[</span><span class="n">c11</span><span class="p">,</span> <span class="n">c22</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">]</span>
+        <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc11</span><span class="p">,</span> <span class="n">bc22</span><span class="p">,</span> <span class="n">bcZZ</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Average H1, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;Average H2, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;Average HZ, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ccs</span> <span class="o">=</span> <span class="p">[</span><span class="n">c11</span><span class="p">,</span> <span class="n">c22</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">,</span> <span class="n">cPP</span><span class="p">]</span>
+        <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc11</span><span class="p">,</span> <span class="n">bc22</span><span class="p">,</span> <span class="n">bcZZ</span><span class="p">,</span> <span class="n">bcPP</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Average H1, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;Average H2, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;Average HZ, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">,</span>
+                 <span class="s1">&#39;Average HP, Station: &#39;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="c1"># Extract only positive frequencies</span>
+    <span class="n">faxis</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">bc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ccs</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">ncomp</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span>
+            <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">utils</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cc</span><span class="p">)[</span><span class="n">faxis</span><span class="p">],</span> <span class="mi">50</span><span class="p">),</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">gooddays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">utils</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">bc</span><span class="p">)[</span><span class="n">faxis</span><span class="p">],</span> <span class="mi">50</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ccs</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_av_cross">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_av_cross">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_av_cross</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">gooddays</span><span class="p">,</span> <span class="n">ftype</span><span class="p">,</span> <span class="n">ncomp</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the averaged cross-spectra (those qualified as &#39;good&#39; in</span>
+<span class="sd">    the QC step). This function is used in the `atacr_daily_spectra` script.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Frequency axis (in Hz)</span>
+<span class="sd">    field : :class:`~obstools.classes.Rotation`</span>
+<span class="sd">        Container for the Power spectra</span>
+<span class="sd">    gooddays : List</span>
+<span class="sd">        List of booleans representing whether a window is good (True) or not</span>
+<span class="sd">        (False)</span>
+<span class="sd">    ftype : str</span>
+<span class="sd">        Type of plot to be displayed. If ftype is Admittance, plot is loglog.</span>
+<span class="sd">        Otherwise semilogx</span>
+<span class="sd">    key : str</span>
+<span class="sd">        String corresponding to the station key under analysis</span>
+<span class="sd">    **kwargs : None</span>
+<span class="sd">        Keyword arguments to modify plot</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Extract only positive frequencies</span>
+    <span class="n">faxis</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">ncomp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">fieldZP</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">cZP</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">fieldZP</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;: ZP&#39;</span><span class="p">]</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">2.667</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">ncomp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">field12</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c12</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field1Z</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c1Z</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field2Z</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c2Z</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field12</span><span class="p">,</span> <span class="n">field1Z</span><span class="p">,</span> <span class="n">field2Z</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;: 12&#39;</span><span class="p">,</span> <span class="s1">&#39;: 1Z&#39;</span><span class="p">,</span> <span class="s1">&#39;: 2Z&#39;</span><span class="p">]</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fieldZP</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">cZP</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field12</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c12</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field1Z</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c1Z</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field2Z</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c2Z</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field1P</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c1P</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">field2P</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">c2P</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field12</span><span class="p">,</span> <span class="n">field1Z</span><span class="p">,</span> <span class="n">field1P</span><span class="p">,</span> <span class="n">field2Z</span><span class="p">,</span> <span class="n">field2P</span><span class="p">,</span> <span class="n">fieldZP</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;: 12&#39;</span><span class="p">,</span> <span class="s1">&#39;: 1Z&#39;</span><span class="p">,</span> <span class="s1">&#39;: 1P&#39;</span><span class="p">,</span> <span class="s1">&#39;: 2Z&#39;</span><span class="p">,</span> <span class="s1">&#39;: 2P&#39;</span><span class="p">,</span> <span class="s1">&#39;: ZP&#39;</span><span class="p">]</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Extact field</span>
+        <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;Admittance&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">field</span><span class="p">[:,</span> <span class="n">gooddays</span><span class="p">][</span><span class="n">faxis</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">gooddays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">field</span><span class="p">[:,</span> <span class="o">~</span><span class="n">gooddays</span><span class="p">][</span><span class="n">faxis</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">field</span><span class="p">[:,</span> <span class="n">gooddays</span><span class="p">][</span><span class="n">faxis</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">gooddays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">field</span><span class="p">[:,</span> <span class="o">~</span><span class="n">gooddays</span><span class="p">][</span><span class="n">faxis</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ftype</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">ftype</span><span class="o">+</span><span class="n">title</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_coh_ph">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_coh_ph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_coh_ph</span><span class="p">(</span><span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">direc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the coherence and phase between the rotated H and Z</span>
+<span class="sd">    components, used to characterize the tilt direction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coh : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Coherence between rotated H and Z components</span>
+<span class="sd">    ph : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Phase between rotated H and Z components</span>
+<span class="sd">    direc : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Directions considered in maximizing coherence between H and Z</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">cividis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">coh</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">co</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">)):</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">direc</span><span class="p">,</span> <span class="n">co</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">direc</span><span class="p">,</span> <span class="n">p</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Coherence&#39;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Phase&#39;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle from H1&#39;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle from H1&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">direc</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">direc</span><span class="p">,</span> <span class="n">ph</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_TF">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_TF">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_TF</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">day_trfs</span><span class="p">,</span> <span class="n">day_list</span><span class="p">,</span> <span class="n">sta_trfs</span><span class="p">,</span> <span class="n">sta_list</span><span class="p">,</span> <span class="n">skey</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the transfer functions available.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Frequency axis (in Hz)</span>
+<span class="sd">    day_trfs : Dict</span>
+<span class="sd">        Dictionary containing the transfer functions for the daily averages</span>
+<span class="sd">    day_list : Dict</span>
+<span class="sd">        Dictionary containing the list of daily transfer functions</span>
+<span class="sd">    sta_trfs : Dict</span>
+<span class="sd">        Dictionary containing the transfer functions for the station averages</span>
+<span class="sd">    sta_list : Dict</span>
+<span class="sd">        Dictionary containing the list of average transfer functions</span>
+<span class="sd">    skey : str</span>
+<span class="sd">        String corresponding to the station key under analysis</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mtick</span>
+
+    <span class="c1"># Extract only positive frequencies</span>
+    <span class="n">faxis</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="c1"># Get max number of TFs to plot</span>
+    <span class="n">ntf</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">day_list</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sta_list</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="c1"># Define all possible compbinations</span>
+    <span class="n">tf_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ZP&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;Z1&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;Z2-1&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+               <span class="s1">&#39;ZP-21&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;ZH&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;ZP-H&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">ntf</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">1.33333333</span><span class="o">*</span><span class="n">ntf</span><span class="p">))</span>
+
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tf_list</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">day_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">sta_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">continue</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">ntf</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">day_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">day_trfs</span><span class="p">)):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">day_trfs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;TF_&#39;</span><span class="o">+</span><span class="n">key</span><span class="p">][</span><span class="n">faxis</span><span class="p">]),</span>
+                    <span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sta_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sta_trfs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;TF_&#39;</span><span class="o">+</span><span class="n">key</span><span class="p">][</span><span class="n">faxis</span><span class="p">]),</span>
+                <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-20</span><span class="p">,</span> <span class="mf">1.e0</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Transfer Function: ZP&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;Z1&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-5</span><span class="p">,</span> <span class="mf">1.e5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Transfer Function: Z1&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;Z2-1&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-5</span><span class="p">,</span> <span class="mf">1.e5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Transfer Function: Z2-1&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-21&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-20</span><span class="p">,</span> <span class="mf">1.e0</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Transfer Function: ZP-21&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZH&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e10</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Transfer Function: ZH&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-H&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-20</span><span class="p">,</span> <span class="mf">1.e0</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Transfer Function: ZP-H&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_comply">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_comply">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_comply</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">day_comps</span><span class="p">,</span> <span class="n">day_list</span><span class="p">,</span> <span class="n">sta_comps</span><span class="p">,</span> <span class="n">sta_list</span><span class="p">,</span> <span class="n">skey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">elev</span><span class="o">=-</span><span class="mf">1000.</span><span class="p">,</span> <span class="n">f_0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the transfer functions available.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Frequency axis (in Hz)</span>
+<span class="sd">    day_comps : Dict</span>
+<span class="sd">        Dictionary containing the compliance functions for the daily averages</span>
+<span class="sd">    day_list : Dict</span>
+<span class="sd">        Dictionary containing the list of daily transfer functions</span>
+<span class="sd">    sta_comps : Dict</span>
+<span class="sd">        Dictionary containing the compliance functions for the station averages</span>
+<span class="sd">    sta_list : Dict</span>
+<span class="sd">        Dictionary containing the list of average transfer functions</span>
+<span class="sd">    skey : str</span>
+<span class="sd">        String corresponding to the station key under analysis</span>
+<span class="sd">    elev : float</span>
+<span class="sd">        Station elevation in meters (OBS stations have negative elevations)</span>
+<span class="sd">    f_0 : float</span>
+<span class="sd">        Lowest frequency to consider in plot (Hz)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mtick</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+    <span class="c1"># Extract only positive frequencies</span>
+    <span class="n">faxis</span> <span class="o">=</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="c1"># Positive station elevation for frequency limit calc</span>
+    <span class="n">elev</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="o">*</span><span class="n">elev</span>
+
+    <span class="c1"># Calculate theoretical frequency limit for infra-gravity waves</span>
+    <span class="n">f_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">9.81</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">elev</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+
+    <span class="c1"># Define all possible combinations</span>
+    <span class="n">comp_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ZP&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;ZP-21&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;ZP-H&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+
+    <span class="c1"># Get max number of subplot</span>
+    <span class="n">nkeys_day</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">day_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">comp_list</span><span class="p">)</span>
+    <span class="n">nkeys_sta</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sta_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">comp_list</span><span class="p">)</span>
+    <span class="n">ncomps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nkeys_day</span><span class="p">,</span> <span class="n">nkeys_sta</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ncomps</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">1.33333333</span><span class="o">*</span><span class="n">ncomps</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comp_list</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">day_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">sta_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">continue</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">ncomps</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">j</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_offset_text</span><span class="p">()</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">day_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="n">compliance_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">coherence_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">day_comps</span><span class="p">)):</span>
+                <span class="n">compliance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">day_comps</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">coherence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">day_comps</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">compliance</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">compliance_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compliance</span><span class="p">)</span>
+                    <span class="n">coherence_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coherence</span><span class="p">)</span>
+            <span class="n">compliance_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">compliance_list</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">compliance_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">compliance_list</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">coherence_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coherence_list</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">coherence_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coherence_list</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> 
+                <span class="n">compliance_mean</span><span class="p">[</span><span class="n">faxis</span><span class="p">]</span><span class="o">-</span><span class="n">compliance_std</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> 
+                <span class="n">compliance_mean</span><span class="p">[</span><span class="n">faxis</span><span class="p">]</span><span class="o">+</span><span class="n">compliance_std</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> 
+                <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\pm$ Std daily&#39;</span>
+                <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">compliance_mean</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span> 
+                <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean daily&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">f_0</span><span class="p">,</span> <span class="n">f_c</span><span class="p">)</span>
+            <span class="n">ytop</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">compliance_mean</span><span class="p">[(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">f_0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">f_c</span><span class="p">)])</span>
+            <span class="n">ybot</span> <span class="o">=</span> <span class="mi">0</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">compliance_mean</span><span class="p">[(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">f_0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">f_c</span><span class="p">)])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ybot</span><span class="p">,</span> <span class="n">ytop</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sta_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sta_comps</span><span class="p">)):</span>
+                <span class="n">compliance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sta_comps</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                    <span class="n">compliance</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                    <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sta average&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Compliance: ZP&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-21&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Compliance: ZP-21&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-H&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Compliance: ZP-H&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">f_0</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">f_0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">f_c</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+        <span class="n">handles</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+        <span class="n">by_label</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">handles</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">by_label</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">by_label</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">ncomps</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">j</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">day_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="c1"># for i in range(len(day_comps)):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                <span class="n">coherence_mean</span><span class="p">[</span><span class="n">faxis</span><span class="p">]</span><span class="o">-</span><span class="n">coherence_std</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                <span class="n">coherence_mean</span><span class="p">[</span><span class="n">faxis</span><span class="p">]</span><span class="o">+</span><span class="n">coherence_std</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span>
+                <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                <span class="n">coherence_mean</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span>
+                <span class="n">c</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sta_list</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sta_comps</span><span class="p">)):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">[</span><span class="n">faxis</span><span class="p">],</span> 
+                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sta_comps</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">faxis</span><span class="p">]),</span>
+                    <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Coherence: ZP&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-21&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Coherence: ZP-21&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-H&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">skey</span><span class="o">+</span><span class="s1">&#39; Coherence: ZP-H&#39;</span><span class="p">,</span>
+                         <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">f_0</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">f_0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">f_c</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()</span>
+    <span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_event_raw">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_event_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_event_raw</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mf">150.</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">2.</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the raw (although bandpassed) seismograms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evstream : :class:`~obtsools.classes.EventStream`</span>
+<span class="sd">        Container for the event stream data</span>
+<span class="sd">    fmin : float</span>
+<span class="sd">        Low frequency corner (in Hz)</span>
+<span class="sd">    fmax : float</span>
+<span class="sd">        High frequency corner (in Hz)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">obspy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>
+
+    <span class="c1"># Unpack traces</span>
+    <span class="n">tr1</span> <span class="o">=</span> <span class="n">evstream</span><span class="o">.</span><span class="n">tr1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">tr2</span> <span class="o">=</span> <span class="n">evstream</span><span class="o">.</span><span class="n">tr2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">trZ</span> <span class="o">=</span> <span class="n">evstream</span><span class="o">.</span><span class="n">trZ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">trP</span> <span class="o">=</span> <span class="n">evstream</span><span class="o">.</span><span class="n">trP</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">st</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">traces</span><span class="o">=</span><span class="p">[</span><span class="n">tr</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="p">[</span><span class="n">tr1</span><span class="p">,</span> <span class="n">tr2</span><span class="p">,</span> <span class="n">trZ</span><span class="p">,</span> <span class="n">trP</span><span class="p">]</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">)])</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sr</span> <span class="o">=</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sampling_rate</span>
+
+    <span class="n">taxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">,</span> <span class="mf">1.</span><span class="o">/</span><span class="n">sr</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span>
+                 <span class="s1">&#39;: Z&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr1</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">7200.</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: 1&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: 2&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trP</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr1</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">trP</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: P&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time since earthquake (sec)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+
+
+<div class="viewcode-block" id="fig_event_corrected">
+<a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_event_corrected">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_event_corrected</span><span class="p">(</span><span class="n">evstream</span><span class="p">,</span> <span class="n">TF_list</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mf">150.</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">2.</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to plot the corrected vertical component seismograms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evstream : :class:`~obtsools.classes.EventStream`</span>
+<span class="sd">        Container for the event stream data</span>
+<span class="sd">    Tf_list : list</span>
+<span class="sd">        List of Dictionary elements of transfer functions used</span>
+<span class="sd">        for plotting the corrected vertical component.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Unpack vertical trace and filter</span>
+    <span class="n">trZ</span> <span class="o">=</span> <span class="n">evstream</span><span class="o">.</span><span class="n">trZ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">trZ</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sr</span> <span class="o">=</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sampling_rate</span>
+    <span class="n">taxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">,</span> <span class="mf">1.</span><span class="o">/</span><span class="n">sr</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">611</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">TF_list</span><span class="p">[</span><span class="s1">&#39;Z1&#39;</span><span class="p">]:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">evstream</span><span class="o">.</span><span class="n">correct</span><span class="p">[</span><span class="s1">&#39;Z1&#39;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span>
+              <span class="s1">&#39;: Z1&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">612</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">TF_list</span><span class="p">[</span><span class="s1">&#39;Z2-1&#39;</span><span class="p">]:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">evstream</span><span class="o">.</span><span class="n">correct</span><span class="p">[</span><span class="s1">&#39;Z2-1&#39;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: Z2-1&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">613</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">TF_list</span><span class="p">[</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">]:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">evstream</span><span class="o">.</span><span class="n">correct</span><span class="p">[</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: ZP-21&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">614</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">TF_list</span><span class="p">[</span><span class="s1">&#39;ZH&#39;</span><span class="p">]:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">evstream</span><span class="o">.</span><span class="n">correct</span><span class="p">[</span><span class="s1">&#39;ZH&#39;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: ZH&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">615</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">TF_list</span><span class="p">[</span><span class="s1">&#39;ZP-H&#39;</span><span class="p">]:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">evstream</span><span class="o">.</span><span class="n">correct</span><span class="p">[</span><span class="s1">&#39;ZP-H&#39;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: ZP-H&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">616</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">taxis</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">TF_list</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">]:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">evstream</span><span class="o">.</span><span class="n">correct</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="s1">&#39;bandpass&#39;</span><span class="p">,</span> <span class="n">freqmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">freqmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">zerophase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">evstream</span><span class="o">.</span><span class="n">tstamp</span> <span class="o">+</span> <span class="s1">&#39;: ZP&#39;</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="n">trZ</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="o">/</span><span class="n">sr</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time since earthquake (sec)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plt</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Pascal Audet, Helen Janiszewski.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

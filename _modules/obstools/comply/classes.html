@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>obstools.comply.classes &mdash; Home 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Home
+              <img src="../../../_static/obstools_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../links.html">GitHub Repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../links.html#references">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../obstools.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../obstools.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../obstools.html#using-local-data">Using local data</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../atacr.html">ATaCR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../comply.html">Comply</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Home</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">obstools.comply.classes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for obstools.comply.classes</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2019 Pascal Audet &amp; Helen Janiszewski</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of OBStools.</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
+<span class="c1"># all copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obstools.atacr</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">DayNoise</span><span class="p">,</span> <span class="n">StaNoise</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Comply">
+<a class="viewcode-back" href="../../../comply.html#obstools.comply.classes.Comply">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Comply</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Comply object contains attributes that calculate and store the</span>
+<span class="sd">    compliance and coherence functions for the available channels.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    The object is initialized with either a processed</span>
+<span class="sd">    :class:`~obstools.atacr.classes.DayNoise` or</span>
+<span class="sd">    :class:`~obstools.atacr.classes.StaNoise` object. Each individual</span>
+<span class="sd">    spectral quantity is unpacked as an object attribute, but all of them</span>
+<span class="sd">    are discarded as the object is saved to disk.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    elev : float</span>
+<span class="sd">        Station elevation in meters (OBS stations have negative elevations)</span>
+<span class="sd">    f : :class:`~numpy.ndarray`</span>
+<span class="sd">        Frequency axis for corresponding time sampling parameters</span>
+<span class="sd">    c11 : `numpy.ndarray`</span>
+<span class="sd">        Power spectra for component `H1`. Other identical attributes are</span>
+<span class="sd">        available for the power, cross and rotated spectra:</span>
+<span class="sd">        [11, 12, 1Z, 1P, 22, 2Z, 2P, ZZ, ZP, PP, HH, HZ, HP]</span>
+<span class="sd">    tf_list : Dict</span>
+<span class="sd">        Dictionary of possible transfer functions from the available</span>
+<span class="sd">        components (obtained from the</span>
+<span class="sd">        :class:`~obstools.atacr.classes.DayNoise` or the</span>
+<span class="sd">        :class:`~obstools.atacr.classes.StaNoise` noise objects)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objnoise</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elev</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="n">elev</span><span class="p">,</span> <span class="n">objnoise</span><span class="p">]):</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Error: Initializing EventStream object with None values - &quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;aborting&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">objnoise</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">objnoise</span><span class="p">,</span> <span class="n">DayNoise</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">objnoise</span><span class="p">,</span> <span class="n">StaNoise</span><span class="p">)):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error: A TFNoise object must be initialized with only &quot;</span> <span class="o">+</span>\
+                <span class="s2">&quot;one of type DayNoise or StaNoise object&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">av</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Error: Noise object has not been processed (QC and &quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;averaging) - aborting&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">elevation</span> <span class="o">=</span> <span class="n">elev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c11</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">c11</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c22</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">c22</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">cZZ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">cPP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cHH</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">cHH</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cHZ</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">cHZ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cHP</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">cHP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c12</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c12</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c1Z</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c1Z</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c1P</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c1P</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c2Z</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c2Z</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c2P</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c2P</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cZP</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">cZP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tf_list</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">tf_list</span>
+
+<div class="viewcode-block" id="Comply.ComplyDict">
+<a class="viewcode-back" href="../../../comply.html#obstools.comply.classes.Comply.ComplyDict">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ComplyDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="Comply.calculate_compliance">
+<a class="viewcode-back" href="../../../comply.html#obstools.comply.classes.Comply.calculate_compliance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_compliance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to calculate compliance and coherence functions from the</span>
+<span class="sd">        averaged (daily or station-averaged) noise spectra.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        complyfunc : Dict</span>
+<span class="sd">            Container Dictionary for all possible compliance and</span>
+<span class="sd">            coherence functions</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        Calculate compliance and coherence functions for a DayNoise object.</span>
+<span class="sd">        In these examples, station elevation is extracted from the IRIS</span>
+<span class="sd">        metadata aggregator site: http://ds.iris.edu/mda/7D/M08A/</span>
+
+<span class="sd">        &gt;&gt;&gt; from obstools.atacr import DayNoise</span>
+<span class="sd">        &gt;&gt;&gt; from obstools.comply import Comply</span>
+<span class="sd">        &gt;&gt;&gt; daynoise = DayNoise(&#39;demo&#39;)</span>
+<span class="sd">        Uploading demo data - March 04, 2012, station 7D.M08A</span>
+<span class="sd">        &gt;&gt;&gt; daynoise.QC_daily_spectra()</span>
+<span class="sd">        &gt;&gt;&gt; daynoise.average_daily_spectra()</span>
+<span class="sd">        &gt;&gt;&gt; daycomply = Comply(objnoise=daynoise, elev=-126.4)</span>
+<span class="sd">        &gt;&gt;&gt; daycomply.calculate_compliance()</span>
+<span class="sd">        &gt;&gt;&gt; tfnoise.complyfunc.keys()</span>
+<span class="sd">        dict_keys([&#39;ZP&#39;, &#39;ZP-21&#39;, &#39;ZP-H&#39;])</span>
+
+<span class="sd">        Calculate compliance and coherence functions for a StaNoise object</span>
+
+<span class="sd">        &gt;&gt;&gt; from obstools.atacr import StaNoise</span>
+<span class="sd">        &gt;&gt;&gt; from obstools.comply import Comply</span>
+<span class="sd">        &gt;&gt;&gt; stanoise = StaNoise(&#39;demo&#39;)</span>
+<span class="sd">        Uploading demo data - March 01 to 04, 2012, station 7D.M08A</span>
+<span class="sd">        &gt;&gt;&gt; stanoise.QC_sta_spectra()</span>
+<span class="sd">        &gt;&gt;&gt; stanoise.average_sta_spectra()</span>
+<span class="sd">        &gt;&gt;&gt; stacomply = Comply(objnoise=stanoise, elev=-126.4)</span>
+<span class="sd">        &gt;&gt;&gt; stacomply.calculate_compliance()</span>
+<span class="sd">        &gt;&gt;&gt; stacomply.complyfunc.keys()</span>
+<span class="sd">        dict_keys([&#39;ZP&#39;, &#39;ZP-21&#39;])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">wavenumber</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">H</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function to approximate wavenumber from dispersion relation</span>
+
+<span class="sd">            H is depth below the seafloor, in meters</span>
+<span class="sd">            omega is a vector of positive angular frequencies</span>
+
+<span class="sd">            Stephen G. Mosher, 2020</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.polynomial</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">poly</span>
+
+            <span class="n">g</span> <span class="o">=</span> <span class="mf">9.79329</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+
+            <span class="c1"># Approximations for k when k*H is very large (deep case) or</span>
+            <span class="c1"># very small (shallow case)</span>
+            <span class="n">k_deep</span> <span class="o">=</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">g</span>
+            <span class="n">k_shal</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">H</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Alternatively, we can use a rational approximation to</span>
+<span class="sd">            tanh(x) to solve k for any omega. This approximation gives</span>
+<span class="sd">            a quartic equation, we take the positive real roots as the</span>
+<span class="sd">            value of k we&#39;re interested in. The rational approximation</span>
+<span class="sd">            being used is always better than the shallow approximation.</span>
+<span class="sd">            However, it&#39;s only better than the deep approximation if</span>
+<span class="sd">            k*H &lt; 2.96. Therefore, we keep the solutions to k we find,</span>
+<span class="sd">            using the rational approximation for k*H &lt; 2.96 and use the</span>
+<span class="sd">            deep water approximation to solve for k otherwise. The</span>
+<span class="sd">            average error is just under 1% and the maximum error is</span>
+<span class="sd">            2.5%.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">omega</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">om</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">omega</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">a0</span> <span class="o">=</span> <span class="o">-</span><span class="mi">27</span> <span class="o">*</span> <span class="n">om</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">g</span>    <span class="c1"># constant terms</span>
+                    <span class="n">a1</span> <span class="o">=</span> <span class="mf">0.</span>                 <span class="c1"># no linear terms</span>
+                    <span class="n">a2</span> <span class="o">=</span> <span class="mi">27</span> <span class="o">*</span> <span class="n">H</span> <span class="o">-</span> <span class="p">(</span><span class="mi">9</span> <span class="o">*</span> <span class="n">om</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">H</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">g</span>     <span class="c1"># quadratic terms</span>
+                    <span class="n">a3</span> <span class="o">=</span> <span class="mf">0.</span>                 <span class="c1"># no cubic terms</span>
+                    <span class="n">a4</span> <span class="o">=</span> <span class="n">H</span><span class="o">**</span><span class="mi">3</span>           <span class="c1"># quartic terms</span>
+
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">Polynomial</span><span class="p">([</span><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">])</span>
+                    <span class="n">solu</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">Polynomial</span><span class="o">.</span><span class="n">roots</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="n">positive_roots</span> <span class="o">=</span> <span class="n">solu</span><span class="p">[</span><span class="n">solu</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+                    <span class="n">real_positive_root</span> <span class="o">=</span> \
+                        <span class="n">positive_roots</span><span class="p">[</span><span class="n">positive_roots</span><span class="o">.</span><span class="n">imag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">real_positive_root</span>
+
+            <span class="c1"># For k*H &gt;= 2.96, prefer the deep approximation above</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wavenumber</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">k_deep</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">wavenumber</span> <span class="o">*</span> <span class="n">H</span> <span class="o">&gt;</span> <span class="mf">2.96</span><span class="p">:</span>
+                    <span class="n">k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">k_deep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">k</span>
+
+        <span class="c1"># Calculate wavenumber - careful here, elevation is negative</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">wavenumber</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">elevation</span><span class="p">)</span>
+
+        <span class="c1"># Initialize empty dictionary</span>
+        <span class="n">complyfunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ComplyDict</span><span class="p">()</span>
+
+        <span class="c1"># Cycle through all available transfer functions in the objnoise</span>
+        <span class="c1"># object</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_list</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">admit_ZP</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">admittance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cZP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span><span class="p">)</span>
+                    <span class="n">compl_ZP</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">admit_ZP</span>
+                    <span class="n">coh_ZP</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cZP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span><span class="p">)</span>
+                    <span class="n">complyfunc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;ZP&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">compl_ZP</span><span class="p">,</span> <span class="n">coh_ZP</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-21&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">lc1cZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c1Z</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">c11</span>
+                    <span class="n">lc1c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c12</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">c11</span>
+                    <span class="n">lc1cP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c1P</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">c11</span>
+
+                    <span class="n">coh_12</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c12</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c11</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c22</span><span class="p">)</span>
+                    <span class="n">coh_1P</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c1P</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c11</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span><span class="p">)</span>
+                    <span class="n">coh_1Z</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c1Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c11</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span><span class="p">)</span>
+
+                    <span class="n">gc2c2_c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c22</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_12</span><span class="p">)</span>
+                    <span class="n">gcPcP_c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_1P</span><span class="p">)</span>
+                    <span class="n">gcZcZ_c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_1Z</span><span class="p">)</span>
+
+                    <span class="n">gc2cZ_c1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c2Z</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">lc1c2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">c1Z</span><span class="p">)</span>
+                    <span class="n">gcPcZ_c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZP</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">lc1cP</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">c1Z</span><span class="p">)</span>
+
+                    <span class="n">gc2cP_c1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c2P</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">lc1c2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">c1P</span><span class="p">)</span>
+
+                    <span class="n">lc2cP_c1</span> <span class="o">=</span> <span class="n">gc2cP_c1</span><span class="o">/</span><span class="n">gc2c2_c1</span>
+                    <span class="n">lc2cZ_c1</span> <span class="o">=</span> <span class="n">gc2cZ_c1</span><span class="o">/</span><span class="n">gc2c2_c1</span>
+
+                    <span class="n">coh_c2cP_c1</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="n">gc2cP_c1</span><span class="p">,</span> <span class="n">gc2c2_c1</span><span class="p">,</span>
+                                                  <span class="n">gcPcP_c1</span><span class="p">)</span>
+                    <span class="n">coh_c2cZ_c1</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="n">gc2cZ_c1</span><span class="p">,</span> <span class="n">gc2c2_c1</span><span class="p">,</span>
+                                                  <span class="n">gcZcZ_c1</span><span class="p">)</span>
+
+                    <span class="n">gcPcP_c1c2</span> <span class="o">=</span> <span class="n">gcPcP_c1</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_c2cP_c1</span><span class="p">)</span>
+                    <span class="n">gcPcZ_c1c2</span> <span class="o">=</span> <span class="n">gcPcZ_c1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">lc2cP_c1</span><span class="p">)</span><span class="o">*</span><span class="n">gc2cZ_c1</span>
+                    <span class="n">gcZcZ_c1c2</span> <span class="o">=</span> <span class="n">gcZcZ_c1</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_c2cZ_c1</span><span class="p">)</span>
+
+                    <span class="n">admit_ZP_21</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">admittance</span><span class="p">(</span>
+                        <span class="n">gcPcZ_c1c2</span><span class="p">,</span> <span class="n">gcPcP_c1c2</span><span class="p">)</span>
+                    <span class="n">compl_ZP_21</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">admit_ZP_21</span>
+                    <span class="n">coh_ZP_21</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span>
+                        <span class="n">gcPcZ_c1c2</span><span class="p">,</span> <span class="n">gcPcP_c1c2</span><span class="p">,</span> <span class="n">gcZcZ_c1c2</span><span class="p">)</span>
+
+                    <span class="n">complyfunc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">compl_ZP_21</span><span class="p">,</span> <span class="n">coh_ZP_21</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ZP-H&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">lcHcP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cHP</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">cHH</span>
+
+                    <span class="n">coh_HP</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cHP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cHH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span><span class="p">)</span>
+                    <span class="n">coh_HZ</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cHZ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cHH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span><span class="p">)</span>
+
+                    <span class="n">gcPcP_cH</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_HP</span><span class="p">)</span>
+                    <span class="n">gcZcZ_cH</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">coh_HZ</span><span class="p">)</span>
+                    <span class="n">gcPcZ_cH</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZP</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">lcHcP</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">cHZ</span><span class="p">)</span>
+
+                    <span class="n">admit_ZP_H</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">admittance</span><span class="p">(</span><span class="n">gcPcZ_cH</span><span class="p">,</span> <span class="n">gcPcP_cH</span><span class="p">)</span>
+                    <span class="n">compl_ZP_H</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">admit_ZP_H</span>
+                    <span class="n">coh_ZP_H</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="n">gcPcZ_cH</span><span class="p">,</span> <span class="n">gcPcP_cH</span><span class="p">,</span> <span class="n">gcZcZ_cH</span><span class="p">)</span>
+
+                    <span class="n">complyfunc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;ZP-H&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">compl_ZP_H</span><span class="p">,</span> <span class="n">coh_ZP_H</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span> <span class="o">=</span> <span class="n">complyfunc</span></div>
+
+
+<div class="viewcode-block" id="Comply.save">
+<a class="viewcode-back" href="../../../comply.html#obstools.comply.classes.Comply.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;pkl&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to save the object to file using `~Pickle`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            File name</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        Following from the example outlined in method</span>
+<span class="sd">        :func:`~obstools.comply.classes.Comply.calculate_compliance`, we simply</span>
+<span class="sd">        save the final object</span>
+
+<span class="sd">        &gt;&gt;&gt; daycomply.save(&#39;daycomply_demo.pkl&#39;)</span>
+
+<span class="sd">        Check that object has been saved</span>
+
+<span class="sd">        &gt;&gt;&gt; import glob</span>
+<span class="sd">        &gt;&gt;&gt; glob.glob(&quot;./daycomply_demo.pkl&quot;)</span>
+<span class="sd">        [&#39;./daycomply_demo.pkl&#39;]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: saving before having calculated the compliance &quot;</span> <span class="o">+</span>
+                  <span class="s2">&quot;and coherence functions&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span> <span class="o">==</span> <span class="s1">&#39;pkl&#39;</span><span class="p">:</span>
+
+            <span class="c1"># Remove traces to save disk space</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c11</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c22</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZZ</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cPP</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cHH</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cHZ</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cHP</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c12</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1Z</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1P</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2Z</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2P</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cZP</span>
+
+            <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">form</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">form</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+            <span class="k">if</span> <span class="s1">&#39;ZP-H&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s1">&#39;Frequency&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+                     <span class="s1">&#39;Compliance ZP&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;Coherence ZP&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                     <span class="s1">&#39;Compliance ZP-21&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;Coherence ZP-21&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                     <span class="s1">&#39;Compliance ZP-H&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP-H&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;Coherence ZP-H&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP-H&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]})</span>
+            <span class="k">elif</span> <span class="s1">&#39;ZP-21&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s1">&#39;Frequency&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+                     <span class="s1">&#39;Compliance ZP&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;Coherence ZP&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                     <span class="s1">&#39;Compliance ZP-21&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;Coherence ZP-21&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP-21&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s1">&#39;Frequency&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+                     <span class="s1">&#39;Compliance ZP&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;Coherence ZP&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complyfunc</span><span class="p">[</span><span class="s1">&#39;ZP&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]})</span>
+
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span>
+                      <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">form</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Pascal Audet, Helen Janiszewski.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
