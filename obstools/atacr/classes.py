@@ -110,13 +110,13 @@ class Rotation(object):
         Maximum coherence
     phase_value : float
         Phase at maximum coherence
-    direc : :class:`~numpy.ndarray`
+    phi : :class:`~numpy.ndarray`
         Directions for which the coherence is calculated
 
     """
 
     def __init__(self, cHH=None, cHZ=None, cHP=None, coh=None, ph=None,
-                 tilt=None, coh_value=None, phase_value=None, direc=None):
+                 tilt=None, coh_value=None, phase_value=None, phi=None):
 
         self.cHH = cHH
         self.cHZ = cHZ
@@ -126,7 +126,7 @@ class Rotation(object):
         self.tilt = tilt
         self.coh_value = coh_value
         self.phase_value = phase_value
-        self.direc = direc
+        self.phi = phi
 
 
 class DayNoise(object):
@@ -519,34 +519,34 @@ class DayNoise(object):
             dsl_psdP = sl_psdP[ff, :] - np.mean(sl_psdP[ff, :], axis=0)
             dsls = [dsl_psd1, dsl_psd2, dsl_psdZ, dsl_psdP]
 
-        if self.ncomp == 2:
-            plt.figure(2)
-            plt.subplot(2, 1, 1)
-            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-            plt.subplot(2, 1, 2)
-            plt.semilogx(f, sl_psdP, 'k', lw=0.5)
-            plt.tight_layout()
-        elif self.ncomp == 3:
-            plt.figure(2)
-            plt.subplot(3, 1, 1)
-            plt.semilogx(f, sl_psd1, 'r', lw=0.5)
-            plt.subplot(3, 1, 2)
-            plt.semilogx(f, sl_psd2, 'b', lw=0.5)
-            plt.subplot(3, 1, 3)
-            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-            plt.tight_layout()
-        else:
-            plt.figure(2)
-            plt.subplot(4, 1, 1)
-            plt.semilogx(f, sl_psd1, 'r', lw=0.5)
-            plt.subplot(4, 1, 2)
-            plt.semilogx(f, sl_psd2, 'b', lw=0.5)
-            plt.subplot(4, 1, 3)
-            plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
-            plt.subplot(4, 1, 4)
-            plt.semilogx(f, sl_psdP, 'k', lw=0.5)
-            plt.tight_layout()
         if debug:
+            if self.ncomp == 2:
+                plt.figure(2)
+                plt.subplot(2, 1, 1)
+                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+                plt.subplot(2, 1, 2)
+                plt.semilogx(f, sl_psdP, 'k', lw=0.5)
+                plt.tight_layout()
+            elif self.ncomp == 3:
+                plt.figure(2)
+                plt.subplot(3, 1, 1)
+                plt.semilogx(f, sl_psd1, 'r', lw=0.5)
+                plt.subplot(3, 1, 2)
+                plt.semilogx(f, sl_psd2, 'b', lw=0.5)
+                plt.subplot(3, 1, 3)
+                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+                plt.tight_layout()
+            else:
+                plt.figure(2)
+                plt.subplot(4, 1, 1)
+                plt.semilogx(f, sl_psd1, 'r', lw=0.5)
+                plt.subplot(4, 1, 2)
+                plt.semilogx(f, sl_psd2, 'b', lw=0.5)
+                plt.subplot(4, 1, 3)
+                plt.semilogx(f, sl_psdZ, 'g', lw=0.5)
+                plt.subplot(4, 1, 4)
+                plt.semilogx(f, sl_psdP, 'k', lw=0.5)
+                plt.tight_layout()
             plt.show()
 
         # Cycle through to kill high-std-norm windows
@@ -616,8 +616,9 @@ class DayNoise(object):
 
         self.QC = True
 
-    def average_daily_spectra(self, calc_rotation=True, fig_average=False,
-                              fig_coh_ph=False, save=None, form='png'):
+    def average_daily_spectra(self, calc_rotation=True, tiltfreqs=[0.005, 0.035],
+                              fig_average=False, fig_coh_ph=False, save=None,
+                              form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
         method will attempt to calculate the azimuth of maximum coherence
@@ -629,6 +630,9 @@ class DayNoise(object):
         ----------
         calc_rotation : boolean
             Whether or not to calculate the tilt direction
+        tiltfreqs : list
+            Two floats representing the frequency band at which the tilt is
+            calculated
         fig_average : boolean
             Whether or not to produce a figure showing the average daily
             spectra
@@ -774,15 +778,15 @@ class DayNoise(object):
                 plot.show()
 
         if calc_rotation and self.ncomp >= 3:
-            cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value = \
+            cHH, cHZ, cHP, coh, ph, phi, tilt, coh_value, phase_value = \
                 utils.calculate_tilt(
                     self.ft1, self.ft2, self.ftZ, self.ftP, self.f,
-                    self.goodwins)
+                    self.goodwins, tiltfreqs)
             self.rotation = Rotation(
-                cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, direc)
+                cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, phi)
 
             if fig_coh_ph:
-                plot = plotting.fig_coh_ph(coh, ph, direc)
+                plot = plotting.fig_coh_ph(coh, ph, phi)
 
                 # Save or show figure
                 if save:
@@ -1018,7 +1022,7 @@ class StaNoise(object):
             are available for
             the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
             2P, ZZ, ZP, PP, HH, HZ, HP]
-        direc : `numpy.ndarray`
+        phi : `numpy.ndarray`
             Array of azimuths used in determining the tilt direction
         tilt : float
             Tilt direction from maximum coherence between rotated `H1` and
@@ -1050,7 +1054,7 @@ class StaNoise(object):
         AttributeError: 'StaNoise' object has no attribute 'daylist'
         >>> stanoise.__dict__.keys()
         dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z',
-        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'direc', 'tilt', 'f',
+        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'phi', 'tilt', 'f',
         'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
@@ -1082,7 +1086,7 @@ class StaNoise(object):
         self.cHH = np.array([dn.rotation.cHH for dn in self.daylist]).T
         self.cHZ = np.array([dn.rotation.cHZ for dn in self.daylist]).T
         self.cHP = np.array([dn.rotation.cHP for dn in self.daylist]).T
-        self.direc = self.daylist[0].rotation.direc
+        self.phi = self.daylist[0].rotation.phi
         self.tilt = self.daylist[0].rotation.tilt
         self.f = self.daylist[0].f
         self.nwins = np.array([np.sum(dn.goodwins) for dn in self.daylist])
@@ -1193,34 +1197,34 @@ class StaNoise(object):
             dsl_cPP = sl_cPP[ff, :] - np.mean(sl_cPP[ff, :], axis=0)
             dsls = [dsl_c11, dsl_c22, dsl_cZZ, dsl_cPP]
 
-        if self.ncomp == 2:
-            plt.figure(2)
-            plt.subplot(2, 1, 1)
-            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
-            plt.subplot(2, 1, 2)
-            plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
-            plt.tight_layout()
-        elif self.ncomp == 3:
-            plt.figure(2)
-            plt.subplot(3, 1, 1)
-            plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
-            plt.subplot(3, 1, 2)
-            plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
-            plt.subplot(3, 1, 3)
-            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
-            plt.tight_layout()
-        else:
-            plt.figure(2)
-            plt.subplot(4, 1, 1)
-            plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
-            plt.subplot(4, 1, 2)
-            plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
-            plt.subplot(4, 1, 3)
-            plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
-            plt.subplot(4, 1, 4)
-            plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
-            plt.tight_layout()
         if debug:
+            if self.ncomp == 2:
+                plt.figure(2)
+                plt.subplot(2, 1, 1)
+                plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
+                plt.subplot(2, 1, 2)
+                plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
+                plt.tight_layout()
+            elif self.ncomp == 3:
+                plt.figure(2)
+                plt.subplot(3, 1, 1)
+                plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
+                plt.subplot(3, 1, 2)
+                plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
+                plt.subplot(3, 1, 3)
+                plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
+                plt.tight_layout()
+            else:
+                plt.figure(2)
+                plt.subplot(4, 1, 1)
+                plt.semilogx(self.f[faxis], sl_c11[faxis], 'r', lw=0.5)
+                plt.subplot(4, 1, 2)
+                plt.semilogx(self.f[faxis], sl_c22[faxis], 'b', lw=0.5)
+                plt.subplot(4, 1, 3)
+                plt.semilogx(self.f[faxis], sl_cZZ[faxis], 'g', lw=0.5)
+                plt.subplot(4, 1, 4)
+                plt.semilogx(self.f[faxis], sl_cPP[faxis], 'k', lw=0.5)
+                plt.tight_layout()
             plt.show()
 
         # Cycle through to kill high-std-norm windows

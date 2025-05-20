@@ -109,7 +109,7 @@ def get_cleanspec_arguments(argv=None):
         description="Miscellaneous default values " +
         "and settings")
     ConstGroup.add_argument(
-        "--freq-band",
+        "--flag-freqs",
         action="store",
         type=str,
         dest="pd",
@@ -572,9 +572,9 @@ def main(args=None):
             else:
                 plot.show()
 
-        if args.fig_coh_ph and stanoise.direc is not None:
+        if args.fig_coh_ph and stanoise.phi is not None:
             fname = stkey + '.' + 'coh_ph'
-            plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.direc)
+            plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.phi)
             if plotpath:
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),

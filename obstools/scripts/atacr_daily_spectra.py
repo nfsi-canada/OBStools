@@ -137,7 +137,7 @@ def get_dailyspec_arguments(argv=None):
         "in any given day to continue with analysis. " +
         "[Default 10]")
     ConstGroup.add_argument(
-        "--freq-band",
+        "--flag-freqs",
         action="store",
         type=str,
         dest="pd",
@@ -146,6 +146,15 @@ def get_dailyspec_arguments(argv=None):
         "(float, in Hz) over which to calculate spectral " +
         "features used in flagging the bad windows. " +
         "[Default 0.004,2.0]")
+    ConstGroup.add_argument(
+        "--tilt-freqs",
+        action="store",
+        type=str,
+        dest="tf",
+        default=None,
+        help="Specify comma-separated frequency limits " +
+        "(float, in Hz) over which to calculate tilt. " +
+        "[Default 0.005,0.035]")
     ConstGroup.add_argument(
         "--tolerance",
         action="store",
@@ -273,7 +282,18 @@ def get_dailyspec_arguments(argv=None):
         args.pd = sorted(args.pd)
         if (len(args.pd)) != 2:
             raise(Exception(
-                "Error: --freq-band should contain 2 " +
+                "Error: --flag-freqs should contain 2 " +
+                "comma-separated floats"))
+
+    # Check input frequency band
+    if args.tf is None:
+        args.tf = [0.005, 0.035]
+    else:
+        args.tf = [float(val) for val in args.tf.split(',')]
+        args.tf = sorted(args.tf)
+        if (len(args.pd)) != 2:
+            raise(Exception(
+                "Error: --tilt-freqs should contain 2 " +
                 "comma-separated floats"))
 
     return args
@@ -438,6 +458,7 @@ def main(args=None):
             # Average spectra for good windows
             daynoise.average_daily_spectra(
                 calc_rotation=args.calc_rotation,
+                tiltfreqs=args.tf,
                 fig_average=args.fig_average,
                 fig_coh_ph=args.fig_coh_ph,
                 save=plotpath, form=args.form)

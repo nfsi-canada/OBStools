@@ -365,7 +365,7 @@ def get_event(eventpath, tstart, tend):
     return tr1, tr2, trZ, trP
 
 
-def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
+def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
     """
     Determines tilt direction from maximum coherence between rotated H1 and Z.
 
@@ -379,7 +379,7 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
         List of booleans representing whether a window is good (True) or not
         (False). This attribute is returned from the method
         :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
-    tiltfreq : list, optional
+    tiltfreqs : list
         Two floats representing the frequency band at which the tilt is
         calculated
 
@@ -394,7 +394,7 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     ph : :class:`~numpy.ndarray`
         Phase value between rotated H and Z components, as a function of
         directions (azimuths)
-    direc : :class:`~numpy.ndarray`
+    phi : :class:`~numpy.ndarray`
         Array of directions (azimuths) considered
     tilt : float
         Direction (azimuth) of maximum coherence between rotated H1 and Z
@@ -405,16 +405,18 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
 
     """
 
-    direc = np.arange(0., 360., 10.)
-    coh = np.zeros(len(direc))
-    ph = np.zeros(len(direc))
-    cZZ = np.abs(np.mean(ftZ[goodwins, :] *
-                         np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
+    phi = np.arange(0., 360., 10.)
+    coh = np.zeros(len(phi))
+    ph = np.zeros(len(phi))
+    cZZ = np.abs(
+        np.mean(ftZ[goodwins, :] * \
+            np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
 
-    for i, d in enumerate(direc):
+    for i, d in enumerate(phi):
 
-        # Rotate horizontals
-        ftH = rotate_dir(ft1, ft2, d)
+        # Rotate horizontals - clockwise from 1
+        # components 1, 2 correspond to y, x in the cartesian plane
+        ftH = rotate_dir(ft2, ft1, d)
 
         # Get transfer functions
         cHH = np.abs(np.mean(ftH[goodwins, :] *
@@ -426,8 +428,8 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
         Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        coh[i] = np.mean(Co[(f > tiltfreq[0]) & (f < tiltfreq[1])])
-        ph[i] = np.pi/2. - np.mean(Ph[(f > tiltfreq[0]) & (f < tiltfreq[1])])
+        coh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+        ph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
 
     # Index where coherence is max
     ind = np.argwhere(coh == coh.max())
@@ -435,17 +437,34 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     # Phase and direction at maximum coherence
     phase_value = ph[ind[0]][0]
     coh_value = coh[ind[0]][0]
-    tilt = direc[ind[0]][0]
+    tilt = phi[ind[0]][0]
+
+    # Phase has to be close to zero:
+    # Check phase std near max coherence
+    start = max(0, ind[0][0] - 1)
+    end = min(len(ph), ind[0][0] + 2)
+    phase_std = np.std(ph[start:end])
+    # print('Tilt at Maximum coherence = ', tilt)
+    # print('Phase at Maximum coherence = ', phase_value)
+    # print('Phase std near Maximum coherence = ', phase_std)
+
+    if phase_std > 0.1:
+        tilt += 180.
+    if tilt > 360.:
+        tilt -= 360.
+
+    # print('Tilt corrected = ', tilt)
 
     # Refine search
-    rdirec = np.arange(direc[ind[0]][0]-10., direc[ind[0]][0]+10., 1.)
-    rcoh = np.zeros(len(direc))
-    rph = np.zeros(len(direc))
+    rphi = np.arange(tilt-10., tilt+10., 1.)
+    rcoh = np.zeros(len(rphi))
+    rph = np.zeros(len(rphi))
 
-    for i, d in enumerate(rdirec):
+    for i, d in enumerate(rphi):
 
-        # Rotate horizontals
-        ftH = rotate_dir(ft1, ft2, d)
+        # Rotate horizontals - clockwise from 1
+        # components 1, 2 correspond to y, x in the cartesian plane
+        ftH = rotate_dir(ft2, ft1, d)
 
         # Get transfer functions
         cHH = np.abs(np.mean(ftH[goodwins, :] *
@@ -457,8 +476,8 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
         Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        rcoh[i] = np.mean(Co[(f > tiltfreq[0]) & (f < tiltfreq[1])])
-        rph[i] = np.pi/2. - np.mean(Ph[(f > tiltfreq[0]) & (f < tiltfreq[1])])
+        rcoh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+        rph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
 
     # Index where coherence is max
     ind = np.argwhere(rcoh == rcoh.max())
@@ -466,15 +485,7 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     # Phase and direction at maximum coherence
     phase_value = rph[ind[0]][0]
     coh_value = rcoh[ind[0]][0]
-    tilt = rdirec[ind[0]][0]
-
-    # Phase has to be close to zero - otherwise add pi
-    if phase_value > 0.5*np.pi:
-        tilt += 180.
-    if tilt > 360.:
-        tilt -= 360.
-
-    # print('Maximum coherence for tilt = ', tilt)
+    tilt = rphi[ind[0]][0]
 
     # Now calculate spectra at tilt direction
     ftH = rotate_dir(ft1, ft2, tilt)
@@ -489,7 +500,7 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreq=[0.005, 0.035]):
     else:
         cHP = None
 
-    return cHH, cHZ, cHP, coh, ph, direc, tilt, coh_value, phase_value
+    return cHH, cHZ, cHP, coh, ph, phi, tilt, coh_value, phase_value
 
 
 def smooth(data, nd, axis=0):
@@ -601,16 +612,16 @@ def phase(Gxy):
         return None
 
 
-def rotate_dir(tr1, tr2, direc):
+def rotate_dir(x, y, theta):
 
-    d = -direc*np.pi/180.+np.pi/2.
-    rot_mat = np.array([[np.cos(d), -np.sin(d)],
-                        [np.sin(d), np.cos(d)]])
+    d = -theta*np.pi/180.
+    rot_mat = [[np.cos(d), -np.sin(d)],
+               [np.sin(d), np.cos(d)]]
 
-    v12 = np.array([tr2, tr1])
-    vxy = np.tensordot(rot_mat, v12, axes=1)
-    tr_2 = vxy[0, :]
-    tr_1 = vxy[1, :]
+    vxy = [x, y]
+    vxy_rotated = np.tensordot(rot_mat, vxy, axes=1)
+    tr_2 = vxy_rotated[0]
+    tr_1 = vxy_rotated[1]
 
     return tr_1
 
