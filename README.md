@@ -12,7 +12,7 @@ can be used through command-line scripts.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4281480.svg)](https://doi.org/10.5281/zenodo.4281480)
 [![build](https://github.com/nfsi-canada/OBStools/workflows/Build/badge.svg)](https://github.com/nfsi-canada/OBStools/actions)
-[![codecov](https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg)](https://codecov.io/gh/nfsi-canada/OBStools)
+<!-- [![codecov](https://codecov.io/gh/nfsi-canada/OBStools/branch/master/graph/badge.svg)](https://codecov.io/gh/nfsi-canada/OBStools) -->
 
 Installation, API documentation, scripts and tutorials are described at https://nfsi-canada.github.io/OBStools/
 

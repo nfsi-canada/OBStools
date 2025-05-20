@@ -24,27 +24,21 @@
 
 
 # Import modules and functions
-import os
 import numpy as np
 import pickle
 import stdb
-from obstools.atacr import utils, DayNoise
-from pathlib import Path
+import copy
 
+from obspy import UTCDateTime
+
+from obstools.atacr import utils, DayNoise
+
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from obspy import UTCDateTime
-from numpy import nan
 
 
 def get_dailyspec_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_daily_spectra.py` that accompany this
-    package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",
@@ -143,7 +137,7 @@ def get_dailyspec_arguments(argv=None):
         "in any given day to continue with analysis. " +
         "[Default 10]")
     ConstGroup.add_argument(
-        "--freq-band",
+        "--flag-freqs",
         action="store",
         type=str,
         dest="pd",
@@ -152,6 +146,15 @@ def get_dailyspec_arguments(argv=None):
         "(float, in Hz) over which to calculate spectral " +
         "features used in flagging the bad windows. " +
         "[Default 0.004,2.0]")
+    ConstGroup.add_argument(
+        "--tilt-freqs",
+        action="store",
+        type=str,
+        dest="tf",
+        default=None,
+        help="Specify comma-separated frequency limits " +
+        "(float, in Hz) over which to calculate tilt. " +
+        "[Default 0.005,0.035]")
     ConstGroup.add_argument(
         "--tolerance",
         action="store",
@@ -279,13 +282,36 @@ def get_dailyspec_arguments(argv=None):
         args.pd = sorted(args.pd)
         if (len(args.pd)) != 2:
             raise(Exception(
-                "Error: --freq-band should contain 2 " +
+                "Error: --flag-freqs should contain 2 " +
+                "comma-separated floats"))
+
+    # Check input frequency band
+    if args.tf is None:
+        args.tf = [0.005, 0.035]
+    else:
+        args.tf = [float(val) for val in args.tf.split(',')]
+        args.tf = sorted(args.tf)
+        if (len(args.pd)) != 2:
+            raise(Exception(
+                "Error: --tilt-freqs should contain 2 " +
                 "comma-separated floats"))
 
     return args
 
 
 def main(args=None):
+
+    print()
+    print("#################################################################")
+    print("#      _       _ _                               _              #")
+    print("#   __| | __ _(_) |_   _     ___ _ __   ___  ___| |_ _ __ __ _  #")
+    print("#  / _` |/ _` | | | | | |   / __| '_ \ / _ \/ __| __| '__/ _` | #")
+    print("# | (_| | (_| | | | |_| |   \__ \ |_) |  __/ (__| |_| | | (_| | #")
+    print("#  \__,_|\__,_|_|_|\__, |___|___/ .__/ \___|\___|\__|_|  \__,_| #")
+    print("#                  |___/_____|  |_|                             #")
+    print("#                                                               #")
+    print("#################################################################")
+    print()
 
     if args is None:
         # Run Input Parser
@@ -355,13 +381,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print("\n|===============================================|")
@@ -433,6 +458,7 @@ def main(args=None):
             # Average spectra for good windows
             daynoise.average_daily_spectra(
                 calc_rotation=args.calc_rotation,
+                tiltfreqs=args.tf,
                 fig_average=args.fig_average,
                 fig_coh_ph=args.fig_coh_ph,
                 save=plotpath, form=args.form)

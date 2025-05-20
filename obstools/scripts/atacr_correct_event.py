@@ -25,26 +25,21 @@
 
 # Import modules and functions
 import numpy as np
-from obspy import UTCDateTime, Stream
 import pickle
 import stdb
+import copy
+
+from obspy import UTCDateTime, Stream
+
 from obstools.atacr import EventStream
 from obstools.atacr import utils, plotting
-from pathlib import Path
 
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from numpy import nan
 
 
 def get_correct_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_correct_event.py` that accompanies this
-    package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",
@@ -53,9 +48,9 @@ def get_correct_arguments(argv=None):
         "components, and use them to clean vertical " +
         "component of OBS data for selected events. The " +
         "noise data can be those obtained from the daily " +
-        "spectra (i.e., from `obs_daily_spectra.py`) "
+        "spectra (i.e., from `atacr_daily_spectra`) "
         "or those obtained from the averaged noise spectra " +
-        "(i.e., from `obs_clean_spectra.py`). Flags are " +
+        "(i.e., from `atacr_clean_spectra`). Flags are " +
         "available to specify the source of data to use as " +
         "well as the time range for given events. "
         "The stations are processed one by one and the " +
@@ -229,6 +224,18 @@ def get_correct_arguments(argv=None):
 
 def main(args=None):
 
+    print()
+    print("##################################################################")
+    print("#                               _                           _    #")
+    print("#   ___ ___  _ __ _ __ ___  ___| |_     _____   _____ _ __ | |_  #")
+    print("#  / __/ _ \| '__| '__/ _ \/ __| __|   / _ \ \ / / _ \ '_ \| __| #")
+    print("# | (_| (_) | |  | | |  __/ (__| |_   |  __/\ V /  __/ | | | |_  #")
+    print("#  \___\___/|_|  |_|  \___|\___|\__|___\___| \_/ \___|_| |_|\__| #")
+    print("#                                 |_____|                        #")
+    print("#                                                                #")
+    print("##################################################################")
+    print()
+
     if args is None:
         # Run Input Parser
         args = get_correct_arguments()
@@ -297,13 +304,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print(" ")

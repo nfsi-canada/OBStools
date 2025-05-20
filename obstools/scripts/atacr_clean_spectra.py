@@ -27,24 +27,19 @@
 import numpy as np
 import pickle
 import stdb
+import copy
+
+from obspy import UTCDateTime
+
 from obstools.atacr import StaNoise, Power, Cross, Rotation
 from obstools.atacr import utils, plotting
-from pathlib import Path
 
+from pathlib import Path
 from argparse import ArgumentParser
 from os.path import exists as exist
-from obspy import UTCDateTime
-from numpy import nan
 
 
 def get_cleanspec_arguments(argv=None):
-    """
-    Get Options from :class:`~optparse.OptionParser` objects.
-
-    Calling options for the script `obs_clean_spectra.py` that accompany this
-    package.
-
-    """
 
     parser = ArgumentParser(
         usage="%(prog)s [options] <indb>",
@@ -114,7 +109,7 @@ def get_cleanspec_arguments(argv=None):
         description="Miscellaneous default values " +
         "and settings")
     ConstGroup.add_argument(
-        "--freq-band",
+        "--flag-freqs",
         action="store",
         type=str,
         dest="pd",
@@ -243,6 +238,18 @@ def get_cleanspec_arguments(argv=None):
 
 def main(args=None):
 
+    print()
+    print("###################################################################")
+    print("#       _                                          _              #")
+    print("#   ___| | ___  __ _ _ __      ___ _ __   ___  ___| |_ _ __ __ _  #")
+    print("#  / __| |/ _ \/ _` | '_ \    / __| '_ \ / _ \/ __| __| '__/ _` | #")
+    print("# | (__| |  __/ (_| | | | |   \__ \ |_) |  __/ (__| |_| | | (_| | #")
+    print("#  \___|_|\___|\__,_|_| |_|___|___/ .__/ \___|\___|\__|_|  \__,_| #")
+    print("#                        |_____|  |_|                             #")
+    print("#                                                                 #")
+    print("###################################################################")
+    print()
+
     if args is None:
         # Run Input Parser
         args = get_cleanspec_arguments()
@@ -312,13 +319,12 @@ def main(args=None):
             continue
 
         # Temporary print locations
-        tlocs = sta.location
+        tlocs = copy.copy(sta.location)
         if len(tlocs) == 0:
             tlocs = ['']
         for il in range(0, len(tlocs)):
             if len(tlocs[il]) == 0:
-                tlocs[il] = "--"
-        sta.location = tlocs
+                tlocs.append("--")
 
         # Update Display
         print("\n|===============================================|")
@@ -566,9 +572,9 @@ def main(args=None):
             else:
                 plot.show()
 
-        if args.fig_coh_ph and stanoise.direc is not None:
+        if args.fig_coh_ph and stanoise.phi is not None:
             fname = stkey + '.' + 'coh_ph'
-            plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.direc)
+            plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.phi)
             if plotpath:
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
