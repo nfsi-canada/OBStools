@@ -354,9 +354,11 @@ Usage
                          (or 30 percent)]
       --minwin MINWIN    Specify minimum number of 'good' windows in any given day
                          to continue with analysis. [Default 10]
-      --freq-band PD     Specify comma-separated frequency limits (float, in Hz)
-                         over which to calculate spectral features used in
-                         flagging the bad windows. [Default 0.004,2.0]
+      --flag-freqs PD    Specify comma-separated frequency limits (float, in Hz) over which to
+                         calculate spectral features used in flagging the bad windows. [Default
+                         0.004,2.0]
+      --tilt-freqs TF    Specify comma-separated frequency limits (float, in Hz) over which to
+                         calculate tilt. [Default 0.005,0.035]
       --tolerance TOL    Specify parameter for tolerance threshold. If spectrum >
                          std*tol, window is flagged as bad. [Default 2.0]
       --alpha ALPHA      Specify confidence level for f-test, for iterative
@@ -437,9 +439,9 @@ Usage
     Parameter Settings:
       Miscellaneous default values and settings
 
-      --freq-band PD   Specify comma-separated frequency limits (float, in Hz)
-                       over which to calculate spectral features used in flagging
-                       the days/windows. [Default 0.004,2.0]
+      --flag-freqs PD  Specify comma-separated frequency limits (float, in Hz) over which to
+                       calculate spectral features used in flagging the days/windows. [Default
+                       0.004,2.0]
       --tolerance TOL  Specify parameter for tolerance threshold. If spectrum >
                        std*tol, window is flagged as bad. [Default 1.5]
       --alpha ALPHA    Confidence level for f-test, for iterative flagging of
