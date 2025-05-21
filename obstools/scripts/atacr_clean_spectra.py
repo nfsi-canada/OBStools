@@ -162,11 +162,11 @@ def get_cleanspec_arguments(argv=None):
         help="Plot daily average figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
-        "--figCoh",
+        "--figTilt",
         action="store_true",
-        dest="fig_coh_ph",
+        dest="fig_tilt",
         default=False,
-        help="Plot Coherence and Phase figure. " +
+        help="Plot coherence, phase and tilt direction figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--figCross",
@@ -349,6 +349,7 @@ def main(args=None):
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
         fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
+        filetilt = avstpath / (dstart+dend+'tilt.csv')
 
         if fileavst.exists():
             if not args.ovr:
@@ -383,14 +384,19 @@ def main(args=None):
         # Initialize StaNoise object
         stanoise = StaNoise()
 
+        # Date + tilt list
+        date_list = []
+        tilt_list = []
+        coh_list = []
+
         # Loop through each day withing time range
         while t1 < tend:
 
             year = str(t1.year).zfill(4)
             jday = str(t1.julday).zfill(3)
 
-            tstamp = year+'.'+jday+'.'
-            filespec = specpath / (tstamp + 'spectra.pkl')
+            tstamp = year+'.'+jday
+            filespec = specpath / (tstamp + '.spectra.pkl')
 
             # Load file if it exists
             if filespec.exists():
@@ -401,6 +407,9 @@ def main(args=None):
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()
+                tilt_list.append(daynoise.rotation.tilt)
+                date_list.append(t1.date)
+                coh_list.append(daynoise.rotation.coh_value)
                 stanoise += daynoise
             else:
                 t1 += 3600.*24.
@@ -526,21 +535,31 @@ def main(args=None):
                    ad_2Z_all, ad_2P_all, ad_ZP_all)
 
         # Quality control to identify outliers
-        stanoise.QC_sta_spectra(pd=args.pd, tol=args.tol, alpha=args.alpha,
-                                fig_QC=args.fig_QC, debug=args.debug,
-                                save=plotpath, form=args.form)
+        stanoise.QC_sta_spectra(
+            pd=args.pd,
+            tol=args.tol,
+            alpha=args.alpha,
+            fig_QC=args.fig_QC,
+            debug=args.debug,
+            save=plotpath,
+            form=args.form)
 
         # Average spectra for good days
         stanoise.average_sta_spectra(
             fig_average=args.fig_average,
-            save=plotpath, form=args.form)
+            save=plotpath,
+            form=args.form)
 
         if args.fig_av_cross:
             fname = stkey + '.' + 'av_coherence'
             plot = plotting.fig_av_cross(
-                stanoise.f, coh, stanoise.gooddays,
-                'Coherence', stanoise.ncomp, key=stkey, lw=0.5)
-            # if plotpath.is_dir():
+                stanoise.f,
+                coh, stanoise.gooddays,
+                'Coherence',
+                stanoise.ncomp,
+                key=stkey,
+                lw=0.5)
+
             if plotpath:
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
@@ -550,8 +569,13 @@ def main(args=None):
 
             fname = stkey + '.' + 'av_admittance'
             plot = plotting.fig_av_cross(
-                stanoise.f, ad, stanoise.gooddays,
-                'Admittance', stanoise.ncomp, key=stkey, lw=0.5)
+                stanoise.f,
+                ad,
+                stanoise.gooddays,
+                'Admittance',
+                stanoise.ncomp,
+                key=stkey,
+                lw=0.5)
 
             if plotpath:
                 plot.savefig(
@@ -562,8 +586,14 @@ def main(args=None):
 
             fname = stkey + '.' + 'av_phase'
             plot = plotting.fig_av_cross(
-                stanoise.f, ph, stanoise.gooddays,
-                'Phase', stanoise.ncomp, key=stkey, marker=',', lw=0)
+                stanoise.f,
+                ph,
+                stanoise.gooddays,
+                'Phase',
+                stanoise.ncomp,
+                key=stkey,
+                marker=',',
+                lw=0)
 
             if plotpath:
                 plot.savefig(
@@ -572,9 +602,15 @@ def main(args=None):
             else:
                 plot.show()
 
-        if args.fig_coh_ph and stanoise.phi is not None:
+        if args.fig_tilt and stanoise.phi is not None:
             fname = stkey + '.' + 'coh_ph'
-            plot = plotting.fig_coh_ph(coh_all, ph_all, stanoise.phi)
+            plot = plotting.fig_coh_ph(
+                coh_all,
+                ph_all,
+                stanoise.phi,
+                tilt_list,
+                date_list)
+
             if plotpath:
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
@@ -583,7 +619,23 @@ def main(args=None):
                 plot.show()
 
         # Save to file
+        print()
+        print("* Clean station spectra saved to: ")
+        print("*   "+str(fileavst))
         stanoise.save(fileavst)
+
+        # Write out events
+        print()
+        print("* Tilt direction and coherence as function of time saved to: ")
+        print("*   "+str(filetilt))
+        print()
+        fid = open(filetilt, 'w')
+        fid.writelines("Date, Tilt dir. (deg from H1), Max coherehce\n")
+        for i in range(len(tilt_list)):
+            line1 = "{0},{1:.0f},{2:.2f}\n".format(
+                date_list[i], tilt_list[i], coh_list[i])
+            fid.writelines(line1.replace(" ", ""))
+        fid.close()
 
 
 if __name__ == "__main__":

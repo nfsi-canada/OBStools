@@ -27,6 +27,7 @@ of the analysis at various final and intermediate steps.
 
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
 from obstools.atacr import utils
 from obspy import Trace
 
@@ -237,7 +238,7 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     return plt
 
 
-def fig_coh_ph(coh, ph, direc):
+def fig_coh_ph(coh, ph, direc, tilt, date):
     """
     Function to plot the coherence and phase between the rotated H and Z
     components, used to characterize the tilt direction.
@@ -250,22 +251,53 @@ def fig_coh_ph(coh, ph, direc):
         Phase between rotated H and Z components
     direc : :mod:`~numpy.ndarray`
         Directions considered in maximizing coherence between H and Z
+    date : list
+        List of datetime dates for plotting as function of time
+    tilt : list
+        List of tilt azimuths determined for each date
 
     """
 
     colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
     if coh.ndim > 1:
-        f, (ax1, ax2) = plt.subplots(1, 2)
-        for i, (co, p) in enumerate(zip(coh, ph)):
+
+        meantilt = np.mean(tilt)
+        stdetilt = np.std(tilt, ddof=1)/np.sqrt(coh.shape[0])
+        mediantilt = np.median(tilt)
+
+        plt.rcParams['date.converter'] = 'concise'
+        f = plt.figure(layout='constrained')
+        gs = GridSpec(4, 2, figure=f)
+        ax1 = f.add_subplot(gs[0:-2, 0])
+        ax2 = f.add_subplot(gs[0:-2, 1])
+        ax3 = f.add_subplot(gs[2, :])
+        ax4 = f.add_subplot(gs[3, :])
+        ax3.axhline(
+            meantilt,
+            ls='--',
+            label=r'Mean: {0:.0f} $\pm$ {1:.1f}'.format(meantilt, stdetilt))
+        ax3.axhline(
+            mediantilt,
+            ls=':',
+            label='Median: {0:.0f}'.format(mediantilt))
+        for i, (co, p, d, t) in enumerate(zip(coh, ph, date, tilt)):
+            mcoh = np.max(co)
             ax1.plot(direc, co, c=colors[i])
             ax2.plot(direc, p*180./np.pi, c=colors[i])
-        ax1.set_ylabel('Coherence')
+            ax3.plot(d, t, 'o', c=colors[i])
+            ax4.plot(d, mcoh, 'o', c=colors[i])
+        ax1.set_ylabel('Coherence Z-H1')
         ax1.set_ylim((0, 1.))
-        ax2.set_ylabel('Phase')
-        ax1.set_xlabel('Angle from H1')
-        ax2.set_xlabel('Angle from H1')
-        plt.tight_layout()
+        ax1.set_xlabel('Angle clockwise from H1 (deg)')
+        ax2.set_ylabel('Phase Z-H1')
+        ax2.set_xlabel('Angle clockwise from H1 (deg)')
+        ax3.legend(loc='best', fontsize=8)
+        ax3.set_xticklabels([])
+        ax3.set_ylabel('Tilt dir. (deg)')
+        ax3.set_ylim(-10, 190)
+        ax4.set_ylabel('Coherence')
+        ax4.set_ylim(-0.1, 1.1)
 
     else:
         plt.figure()
