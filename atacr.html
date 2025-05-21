@@ -1999,7 +1999,7 @@ Otherwise semilogx</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_coh_ph">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_coh_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_coh_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_coh_ph" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_coh_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_coh_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_coh_ph" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the coherence and phase between the rotated H and Z
 components, used to characterize the tilt direction.</p>
 <dl class="field-list simple">
@@ -2008,6 +2008,8 @@ components, used to characterize the tilt direction.</p>
 <li><p><strong>coh</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Coherence between rotated H and Z components</p></li>
 <li><p><strong>ph</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase between rotated H and Z components</p></li>
 <li><p><strong>direc</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Directions considered in maximizing coherence between H and Z</p></li>
+<li><p><strong>date</strong> (<em>list</em>) – List of datetime dates for plotting as function of time</p></li>
+<li><p><strong>tilt</strong> (<em>list</em>) – List of tilt azimuths determined for each date</p></li>
 </ul>
 </dd>
 </dl>
@@ -2378,7 +2380,7 @@ Figure Settings:
   --debug          Plot intermediate steps for debugging. [Default does not
                    plot figure]
   --figAverage     Plot daily average figure. [Default does not plot figure]
-  --figCoh         Plot Coherence and Phase figure. [Default does not plot
+  --figTilt        Plot coherence, phase and tilt direction figure. [Default does not plot
                    figure]
   --figCross       Plot cross-spectra figure. [Default does not plot figure]
   --save-fig       Set this option if you wish to save the figure(s). [Default
@@ -2899,7 +2901,7 @@ averages. Parameter settings are similar to those used in <code class="docutils 
 but further include the option of plotting the averaged cross-spectral properties.
 To calculate a single station average for the entire month of March 2012 (and
 therefore using all available data) and plot the results, we can type in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra --figQC --figAverage --figCoh --figCross M08A.pkl
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ atacr_clean_spectra --figQC --figAverage --figTilt --figCross M08A.pkl
 
 ###################################################################
 #       _                                          _              #
@@ -2935,10 +2937,15 @@ Path to AVG_STA/7D.M08A/ doesn`t exist - creating it
 *   -&gt; file SPECTRA/7D.M08A/2012.062.spectra.pkl found - loading
 
 ...
+
+* Clean station spectra saved to:
+*   AVG_STA/7D.M08A/2011.293-2012.200.avg_sta.pkl
+
+* Tilt direction as function of time saved to:
+*   AVG_STA/7D.M08A/2011.293-2012.200.tilt.csv
 </pre></div>
 </div>
-<p>And so on until all <code class="docutils literal notranslate"><span class="pre">DayNoise</span></code> objects are averaged into a <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code>
-object, which is saved to a newly created folder called <code class="docutils literal notranslate"><span class="pre">AVG_STA/7D.M08A/</span></code>.</p>
+<p>The new <code class="docutils literal notranslate"><span class="pre">StaNoise</span></code> object and the daily tilt directions are saved to a newly created folder called <code class="docutils literal notranslate"><span class="pre">AVG_STA/7D.M08A/</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you don’t specify the options <code class="docutils literal notranslate"><span class="pre">--start</span></code> and <code class="docutils literal notranslate"><span class="pre">--end</span></code>, the object
@@ -2958,9 +2965,13 @@ or per month, etc.). For example:</p>
 </figure>
 <p>Figure 4: The orientation of maximum coherence between the vertical and the two
 horizontal components for M08A during March 2012. (Left) Coherence as a function
-of angle from the H1 component. (Right) Phase as a function of the angle. In this
-example, the coherence is low indicating the absence of dominant, uni-directional tilt
-noise.</p>
+of angle from the H1 component. (Right) Phase as a function of the angle.
+(Bottom) Tilt direction measured from the H1 component as a function of time.
+In this example, the coherence is low indicating low tilt noise.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the MATLAB version of <code class="docutils literal notranslate"><span class="pre">ATaCR</span></code>, the “Angle from H1” (Figure 4 in the manual) corresponds to a counter-clockwise rotation of H1 and H2, and the orientation is chosen at the lowest phase. Here, the angle corresponds to a clockwise rotation and the estimate is chosen to lie between 0 and 180 degrees. There is therefore a 225-degree difference between those two estimates, and the plots are mirrored.</p>
+</div>
 <figure class="align-center">
 <img alt="_images/Figure_6.png" src="_images/Figure_6.png" />
 </figure>

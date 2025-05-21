@@ -402,7 +402,7 @@
     <span class="c1"># Find out how many events from Z.SAC files</span>
     <span class="n">eventfiles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">eventpath</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*Z.SAC&#39;</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">eventfiles</span><span class="p">:</span>
-        <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No event found in folder &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">eventpath</span><span class="p">)))</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No event found in folder &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">eventpath</span><span class="p">))</span>
 
     <span class="c1"># Extract events from time stamps</span>
     <span class="n">prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">eventfiles</span><span class="p">]</span>
@@ -509,9 +509,8 @@
     <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">360.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">)</span>
     <span class="n">coh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
     <span class="n">ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
-    <span class="n">cZZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> \
-            <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+    <span class="n">cZZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
 
@@ -553,6 +552,8 @@
         <span class="n">tilt</span> <span class="o">+=</span> <span class="mf">180.</span>
     <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">360.</span><span class="p">:</span>
         <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">360.</span>
+    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">180.</span><span class="p">:</span>
+        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">180.</span>
 
     <span class="c1"># print(&#39;Tilt corrected = &#39;, tilt)</span>
 
@@ -587,6 +588,12 @@
     <span class="n">phase_value</span> <span class="o">=</span> <span class="n">rph</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">coh_value</span> <span class="o">=</span> <span class="n">rcoh</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">tilt</span> <span class="o">=</span> <span class="n">rphi</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">360.</span><span class="p">:</span>
+        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">360.</span>
+    <span class="k">elif</span> <span class="n">tilt</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">tilt</span> <span class="o">+=</span> <span class="mf">360.</span>
+    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">180.</span><span class="p">:</span>
+        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">180.</span>
 
     <span class="c1"># Now calculate spectra at tilt direction</span>
     <span class="n">ftH</span> <span class="o">=</span> <span class="n">rotate_dir</span><span class="p">(</span><span class="n">ft1</span><span class="p">,</span> <span class="n">ft2</span><span class="p">,</span> <span class="n">tilt</span><span class="p">)</span>
@@ -728,16 +735,14 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rotate_dir</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
 
-    <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="n">theta</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span>
-    <span class="n">rot_mat</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">)],</span>
-               <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">)]]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">theta</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span>
+    <span class="n">rot_mat</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">)],</span>
+               <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">)]]</span>
 
     <span class="n">vxy</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
     <span class="n">vxy_rotated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">vxy</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">tr_2</span> <span class="o">=</span> <span class="n">vxy_rotated</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">tr_1</span> <span class="o">=</span> <span class="n">vxy_rotated</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">tr_1</span>
+    <span class="k">return</span> <span class="n">vxy_rotated</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ftest</span><span class="p">(</span><span class="n">res1</span><span class="p">,</span> <span class="n">pars1</span><span class="p">,</span> <span class="n">res2</span><span class="p">,</span> <span class="n">pars2</span><span class="p">):</span>
