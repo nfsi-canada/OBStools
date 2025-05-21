@@ -271,14 +271,14 @@ def main(args=None):
         # Path where transfer functions will be located
         transpath = Path('TF_STA') / stkey
         if not transpath.is_dir():
-            raise(Exception("Path to "+str(transpath) +
-                            " doesn`t exist - aborting"))
+            raise Exception("Path to "+str(transpath) +
+                            " doesn`t exist - aborting")
 
         # Path where event data are located
         eventpath = Path('EVENTS') / stkey
         if not eventpath.is_dir():
-            raise(Exception("Path to "+str(eventpath) +
-                            " doesn`t exist - aborting"))
+            raise Exception("Path to "+str(eventpath) +
+                            " doesn`t exist - aborting")
 
         # Path where plots will be saved
         if args.saveplot:
@@ -341,8 +341,8 @@ def main(args=None):
 
         # Check if folders contain anything
         if not trans_files:
-            raise(Exception("There are no transfer functions in folder " +
-                            str(transpath)))
+            raise Exception("There are no transfer functions in folder " +
+                            str(transpath))
 
         # Cycle through available data
         for tr1, tr2, trZ, trP in zip(trE1, trE2, trEZ, trEP):

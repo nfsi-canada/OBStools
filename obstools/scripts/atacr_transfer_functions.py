@@ -246,8 +246,8 @@ def main(args=None):
             # Path where spectra are located
             specpath = Path('SPECTRA') / stkey
             if not specpath.is_dir():
-                raise(Exception(
-                    "Path to "+str(specpath)+" doesn't exist - aborting"))
+                raise Exception(
+                    "Path to "+str(specpath)+" doesn't exist - aborting")
 
         if not args.skip_clean:
             # Path where average spectra will be saved
@@ -367,10 +367,6 @@ def main(args=None):
                 # Save daily transfer functions to file
                 daytransfer.save(filename)
 
-        # Create empty daynoise if not loaded
-        # else:
-        #     XXX
-
         if not args.skip_clean:
 
             # Cycle through available files
@@ -404,10 +400,6 @@ def main(args=None):
 
                 # Save average transfer functions to file
                 statransfer.save(filename)
-
-        # Create empty stanoise if not loaded
-        # else:
-            # XXX
 
         if args.fig_TF:
             fname = stkey + '.' + 'transfer_functions'

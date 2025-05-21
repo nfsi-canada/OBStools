@@ -82,11 +82,11 @@ def get_event_arguments(argv=None):
         help="Force the overwriting of pre-existing data. " +
         "[Default False]")
     parser.add_argument(
-        "--zcomp", 
+        "--zcomp",
         dest="zcomp",
         type=str,
         default="Z",
-        help="Specify the Vertical Component Channel Identifier. "+
+        help="Specify the Vertical Component Channel Identifier. " +
         "[Default Z].")
 
     # Server Settings
@@ -102,11 +102,11 @@ def get_event_arguments(argv=None):
         default="IRIS",
         help="Base URL of FDSN web service compatible "
         "server (e.g. “http://service.iris.edu”) or key string for recognized "
-        "server (one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', 'ETH', "
-        "'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', 'IRIS', "
-        "'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', 'NOA', "
-        "'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', 'SCEDC', "
-        "'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
+        "server (one of 'AUSPASS', 'BGR', 'EARTHSCOPE', 'EIDA', 'EMSC', "
+        "'ETH', 'GEOFON', 'GEONET', 'GFZ', 'ICGC', 'IESDMC', 'INGV', 'IPGP', "
+        "'IRIS', 'IRISPH5', 'ISC', 'KNMI', 'KOERI', 'LMU', 'NCEDC', 'NIEP', "
+        "'NOA', 'NRCAN', 'ODC', 'ORFEUS', 'RASPISHAKE', 'RESIF', 'RESIFPH5', "
+        "'SCEDC', 'TEXNET', 'UIB-NORSAR', 'USGS', 'USP'). [Default 'IRIS']")
     ServerGroup.add_argument(
         "--user-auth",
         action="store",
@@ -117,17 +117,17 @@ def get_event_arguments(argv=None):
         "waveform server (--user-auth='username:authpassword') to access " +
         "and download restricted data. [Default no user and password]")
     ServerGroup.add_argument(
-        "--eida-token", 
-        action="store", 
+        "--eida-token",
+        action="store",
         type=str,
-        dest="tokenfile", 
-        default=None, 
+        dest="tokenfile",
+        default=None,
         help="Token for EIDA authentication mechanism, see " +
         "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
         "If a token is provided, argument --user-auth will be ignored. "
         "This mechanism is only available on select EIDA nodes. The token can "
-        "be provided in form of the PGP message as a string, or the filename of "
-        "a local file with the PGP message in it. [Default None]")
+        "be provided in form of the PGP message as a string, or the filename "
+        "of a local file with the PGP message in it. [Default None]")
 
     # Use local data directory
     DataGroup = parser.add_argument_group(
@@ -143,8 +143,8 @@ def get_event_arguments(argv=None):
         default=None,
         help="Specify absolute path to a SeisComP Data Structure (SDS) " +
         "archive containing day-long SAC or MSEED files" +
-        "(e.g., --local-data=/Home/username/Data/SDS). " +
-        "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
+        "(e.g., --local-data=/Home/username/Data/SDS). See " +
+        "https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
         "for details on the SDS format. If this option is used, it takes " +
         "precedence over the --server settings.")
     DataGroup.add_argument(
@@ -317,8 +317,8 @@ def get_event_arguments(argv=None):
         if args.userauth is not None:
             tt = args.userauth.split(':')
             if not len(tt) == 2:
-                msg = ("Error: Incorrect Username and Password Strings for User "
-                       "Authentification")
+                msg = ("Error: Incorrect Username and Password Strings " +
+                       "for User Authentification")
                 parser.error(msg)
             else:
                 args.userauth = tt
@@ -399,7 +399,7 @@ def main(args=None):
         # Define path to see if it exists
         eventpath = Path('EVENTS') / Path(stkey)
         if not eventpath.is_dir():
-            print("\nPath to "+str(eventpath)+
+            print("\nPath to "+str(eventpath) +
                   " doesn't exist - creating it")
             eventpath.mkdir(parents=True)
 
@@ -578,12 +578,13 @@ def main(args=None):
                     dum = st1.select(component='1')[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component "+cha+" not found. Continuing")
+                    print("*      Warning: Component " + cha + " not found. " +
+                          "Continuing")
                     continue
 
             except Exception:
-                print(" Client exception: Unable to download "+cha+" component. "+
-                      "Continuing")
+                print(" Client exception: Unable to download " + cha +
+                      " component. Continuing")
                 continue
 
             try:
@@ -601,12 +602,13 @@ def main(args=None):
                     dum = st2.select(component='2')[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component "+cha+" not found. Continuing")
+                    print("*      Warning: Component " + cha +
+                          " not found. Continuing")
                     continue
 
             except Exception:
-                print(" Client exception: Unable to download "+cha+" component. "+
-                      "Continuing")
+                print(" Client exception: Unable to download " + cha +
+                      " component. Continuing")
                 continue
 
             try:
@@ -624,12 +626,12 @@ def main(args=None):
                     dum = stz.select(component=args.zcomp)[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component "+cha+" not found. "+
-                        "Continuing")
+                    print("*      Warning: Component " + cha +
+                          " not found. Continuing")
                     continue
 
             except Exception:
-                print(" Client exception: Unable to download "+cha+
+                print(" Client exception: Unable to download " + cha +
                       " component. Try setting `--zcomp`. Continuing.")
                 continue
 
@@ -656,12 +658,13 @@ def main(args=None):
                     dum = stp.select(component='H')[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component ?DH not found. Continuing")
+                    print("*      Warning: Component ?DH not found. " +
+                          "Continuing")
                     continue
 
             except Exception:
-                print(" Client exception: Unable to download ?DH component. "+
-                      "Continuing")
+                print(" Client exception: Unable to download ?DH " +
+                      "component. Continuing")
                 continue
 
             st = st1.merge() + st2.merge() + stz.merge() + stp.merge()
@@ -692,8 +695,8 @@ def main(args=None):
                     pre_filt=args.pre_filt,
                     output=args.units)
             except Exception:
-                print("*   -> Inventory not found: Cannot remove instrument "+
-                      "response")
+                print("*   -> Inventory not found: Cannot remove " +
+                      "instrument response")
 
             # Extract traces - Z
             trZ = sth.select(component=args.zcomp)[0]
@@ -743,7 +746,7 @@ def main(args=None):
                         pre_filt=args.pre_filt,
                         output='DEF')
                 except Exception:
-                    print("*   -> Inventory not found: Cannot remove "+
+                    print("*   -> Inventory not found: Cannot remove " +
                           "instrument response")
                 trP = stp[0]
                 trP = utils.update_stats(
@@ -757,10 +760,6 @@ def main(args=None):
                 trP.write(str(fileP), format='SAC')
             except Exception:
                 pass
-
-            # # Write out EventStream object
-            # eventstream = EventStream(sta, sth, stp)
-            # eventstream.save(filename)
 
 
 if __name__ == "__main__":

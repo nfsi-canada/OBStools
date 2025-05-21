@@ -266,8 +266,8 @@ def main(args=None):
             # Path where spectra are located
             specpath = Path('SPECTRA') / stkey
             if not specpath.is_dir():
-                raise(Exception(
-                    "Path to "+str(specpath)+" doesn't exist - aborting"))
+                raise Exception(
+                    "Path to "+str(specpath)+" doesn't exist - aborting")
 
         if not args.skip_clean:
             # Path where average spectra will be saved

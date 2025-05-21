@@ -281,9 +281,9 @@ def get_dailyspec_arguments(argv=None):
         args.pd = [float(val) for val in args.pd.split(',')]
         args.pd = sorted(args.pd)
         if (len(args.pd)) != 2:
-            raise(Exception(
+            raise Exception(
                 "Error: --flag-freqs should contain 2 " +
-                "comma-separated floats"))
+                "comma-separated floats")
 
     # Check input frequency band
     if args.tf is None:
@@ -292,9 +292,9 @@ def get_dailyspec_arguments(argv=None):
         args.tf = [float(val) for val in args.tf.split(',')]
         args.tf = sorted(args.tf)
         if (len(args.pd)) != 2:
-            raise(Exception(
+            raise Exception(
                 "Error: --tilt-freqs should contain 2 " +
-                "comma-separated floats"))
+                "comma-separated floats")
 
     return args
 

@@ -229,9 +229,9 @@ def get_cleanspec_arguments(argv=None):
         args.pd = [float(val) for val in args.pd.split(',')]
         args.pd = sorted(args.pd)
         if (len(args.pd)) != 2:
-            raise(Exception(
+            raise Exception(
                 "Error: --freq-band should contain 2 " +
-                "comma-separated floats"))
+                "comma-separated floats")
 
     return args
 
@@ -285,9 +285,9 @@ def main(args=None):
         # Path where spectra are located
         specpath = Path('SPECTRA') / stkey
         if not specpath.is_dir():
-            raise(Exception(
+            raise Exception(
                 "Path to " + str(specpath) +
-                " doesn`t exist - aborting"))
+                " doesn`t exist - aborting")
 
         # Path where average spectra will be saved
         avstpath = Path('AVG_STA') / stkey
@@ -564,6 +564,7 @@ def main(args=None):
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
                     dpi=300, bbox_inches='tight', format=args.form)
+                plot.close()
             else:
                 plot.show()
 
@@ -581,6 +582,7 @@ def main(args=None):
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
                     dpi=300, bbox_inches='tight', format=args.form)
+                plot.close()
             else:
                 plot.show()
 
@@ -599,6 +601,7 @@ def main(args=None):
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
                     dpi=300, bbox_inches='tight', format=args.form)
+                plot.close()
             else:
                 plot.show()
 
@@ -615,6 +618,7 @@ def main(args=None):
                 plot.savefig(
                     str(plotpath / (fname + '.' + args.form)),
                     dpi=300, bbox_inches='tight', format=args.form)
+                plot.close()
             else:
                 plot.show()
 
@@ -630,9 +634,9 @@ def main(args=None):
         print("*   "+str(filetilt))
         print()
         fid = open(filetilt, 'w')
-        fid.writelines("Date, Tilt dir. (deg from H1), Max coherehce\n")
+        fid.writelines("Date, Tilt dir. (deg CW from H1), Max coherence\n")
         for i in range(len(tilt_list)):
-            line1 = "{0},{1:.0f},{2:.2f}\n".format(
+            line1 = "{0},{1:4.1f},{2:4.2f}\n".format(
                 date_list[i], tilt_list[i], coh_list[i])
             fid.writelines(line1.replace(" ", ""))
         fid.close()

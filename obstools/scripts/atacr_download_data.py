@@ -331,7 +331,7 @@ def main(args=None):
         # Define path to see if it exists
         datapath = Path('DATA') / Path(stkey)
         if not datapath.is_dir():
-            print("\nPath to "+str(datapath)+
+            print("\nPath to "+str(datapath) +
                   " doesn't exist - creating it")
             datapath.mkdir(parents=True)
 
@@ -361,6 +361,8 @@ def main(args=None):
             tstart = sta.startdate
         else:
             tstart = args.startT
+
+        tstart = UTCDateTime(tstart.year, tstart.month, tstart.day)
 
         # Get catalogue search end time
         if args.endT is None:
@@ -458,17 +460,14 @@ def main(args=None):
                     dum = st1.select(component='1')[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component "+cha+" not found. Continuing")
-                    t1 += dt
-                    t2 += dt
-                    continue
+                    print("*      Warning: Component " + cha + " not found. " +
+                          "Continuing")
+                    pass
 
             except Exception:
-                print(" Client exception: Unable to download "+cha+" component. "+
-                      "Continuing")
-                t1 += dt
-                t2 += dt
-                continue
+                print(" Client exception: Unable to download " + cha +
+                      " component. Continuing")
+                pass
 
             try:
                 cha = sta.channel.upper() + '2'
@@ -485,18 +484,15 @@ def main(args=None):
                     dum = st2.select(component='2')[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component "+cha+" not found. Continuing")
-                    t1 += dt
-                    t2 += dt
-                    continue
+                    print("*      Warning: Component " + cha + " not found. " +
+                          "Continuing")
+                    pass
 
             except Exception:
-                print(" Client exception: Unable to download "+cha+" component. "+
-                      "Continuing")
-                t1 += dt
-                t2 += dt
-                continue
-                
+                print(" Client exception: Unable to download " + cha +
+                      " component. Continuing")
+                pass
+
             try:
                 cha = sta.channel.upper() + args.zcomp
                 print("*   -> Downloading "+cha+" data... ")
@@ -512,19 +508,14 @@ def main(args=None):
                     dum = stz.select(component=args.zcomp)[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component "+cha+" not found. "+
-                        "Continuing")
-                    t1 += dt
-                    t2 += dt
-                    continue
+                    print("*      Warning: Component " + cha + " not found. " +
+                          "Continuing")
 
             except Exception:
-                print(" Client exception: Unable to download "+cha+
+                print(" Client exception: Unable to download " + cha +
                       " component. Try setting `--zcomp`. Continuing.")
-                t1 += dt
-                t2 += dt
-                continue
-                
+                pass
+
             try:
                 print("*   -> Downloading ?DH data...")
                 stp = client.get_waveforms(
@@ -548,19 +539,21 @@ def main(args=None):
                     dum = stp.select(component='H')[0]
                     print("*      ...done")
                 except Exception:
-                    print("*      Warning: Component ?DH not found. Continuing")
-                    t1 += dt
-                    t2 += dt
-                    continue
+                    print("*      Warning: Component ?DH not found. " +
+                          "Continuing")
 
             except Exception:
-                print(" Client exception: Unable to download ?DH component. "+
+                print(" Client exception: Unable to download ?DH component. " +
                       "Continuing")
-                t1 += dt
-                t2 += dt
-                continue
+                pass
 
-            st = st1.merge() + st2.merge() + stz.merge() + stp.merge()
+            st = (st1.merge(fill_value='latest') +
+                  st2.merge(fill_value='latest') +
+                  stz.merge(fill_value='latest') +
+                  stp.merge(fill_value='latest'))
+            if len(st) < 2:
+                raise Exception("Error: number of available traces is: " +
+                                str(len(st)))
 
             # Detrend, filter
             st.detrend('demean')
