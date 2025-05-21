@@ -267,31 +267,37 @@ def fig_coh_ph(coh, ph, direc, tilt, date):
         mediantilt = np.median(tilt)
 
         plt.rcParams['date.converter'] = 'concise'
-        f = plt.figure()
-        gs = GridSpec(3, 2, figure=f)
-        ax1 = f.add_subplot(gs[0:-1, 0])
-        ax2 = f.add_subplot(gs[0:-1, 1])
+        f = plt.figure(layout='constrained')
+        gs = GridSpec(4, 2, figure=f)
+        ax1 = f.add_subplot(gs[0:-2, 0])
+        ax2 = f.add_subplot(gs[0:-2, 1])
         ax3 = f.add_subplot(gs[2, :])
+        ax4 = f.add_subplot(gs[3, :])
         ax3.axhline(
-            np.mean(tilt),
+            meantilt,
             ls='--',
-            label='Mean: {0:.0f} $\pm$ {1:.1f}'.format(meantilt, stdetilt))
+            label=r'Mean: {0:.0f} $\pm$ {1:.1f}'.format(meantilt, stdetilt))
         ax3.axhline(
-            np.median(tilt),
+            mediantilt,
             ls=':',
-            label='Median: {0:.0f}'.format(np.median(tilt)))
+            label='Median: {0:.0f}'.format(mediantilt))
         for i, (co, p, d, t) in enumerate(zip(coh, ph, date, tilt)):
+            mcoh = np.max(co)
             ax1.plot(direc, co, c=colors[i])
             ax2.plot(direc, p*180./np.pi, c=colors[i])
             ax3.plot(d, t, 'o', c=colors[i])
-        ax3.legend(loc='best', fontsize=8)
+            ax4.plot(d, mcoh, 'o', c=colors[i])
         ax1.set_ylabel('Coherence Z-H1')
         ax1.set_ylim((0, 1.))
-        ax2.set_ylabel('Phase Z-H1')
-        ax3.set_ylabel('Tilt direction (deg)')
         ax1.set_xlabel('Angle clockwise from H1 (deg)')
+        ax2.set_ylabel('Phase Z-H1')
         ax2.set_xlabel('Angle clockwise from H1 (deg)')
-        plt.tight_layout()
+        ax3.legend(loc='best', fontsize=8)
+        ax3.set_xticklabels([])
+        ax3.set_ylabel('Tilt dir. (deg)')
+        ax3.set_ylim(-10, 190)
+        ax4.set_ylabel('Coherence')
+        ax4.set_ylim(-0.1, 1.1)
 
     else:
         plt.figure()

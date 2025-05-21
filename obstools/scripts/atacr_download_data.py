@@ -414,7 +414,7 @@ def main(args=None):
         while t2 <= tend:
 
             # Time stamp
-            tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)+'.'
+            tstamp = str(t1.year).zfill(4)+'.'+str(t1.julday).zfill(3)
 
             print("\n"+"*"*60)
             print("* Downloading day-long data for key {0} and day {1}.{2:03d}".format(
@@ -441,7 +441,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-            print("*   "+tstamp +"*.SAC")
+            print("*   " + tstamp + ".*.SAC")
             # Get waveforms from client, one channel at a time
             try:
                 cha = sta.channel.upper() + '1'

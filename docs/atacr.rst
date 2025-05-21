@@ -487,7 +487,7 @@ Usage
       --debug          Plot intermediate steps for debugging. [Default does not
                        plot figure]
       --figAverage     Plot daily average figure. [Default does not plot figure]
-      --figCoh         Plot Coherence and Phase figure. [Default does not plot
+      --figTilt        Plot coherence, phase and tilt direction figure. [Default does not plot
                        figure]
       --figCross       Plot cross-spectra figure. [Default does not plot figure]
       --save-fig       Set this option if you wish to save the figure(s). [Default
@@ -1034,7 +1034,7 @@ therefore using all available data) and plot the results, we can type in a termi
 
 .. code-block::
 
-    $ atacr_clean_spectra --figQC --figAverage --figCoh --figCross M08A.pkl
+    $ atacr_clean_spectra --figQC --figAverage --figTilt --figCross M08A.pkl
 
     ###################################################################
     #       _                                          _              #
@@ -1071,8 +1071,13 @@ therefore using all available data) and plot the results, we can type in a termi
 
     ...
 
-And so on until all ``DayNoise`` objects are averaged into a ``StaNoise`` 
-object, which is saved to a newly created folder called ``AVG_STA/7D.M08A/``.
+    * Clean station spectra saved to: 
+    *   AVG_STA/7D.M08A/2011.293-2012.200.avg_sta.pkl
+
+    * Tilt direction as function of time saved to: 
+    *   AVG_STA/7D.M08A/2011.293-2012.200.tilt.csv
+
+The new ``StaNoise`` object and the daily tilt directions are saved to a newly created folder called ``AVG_STA/7D.M08A/``.
 
 .. note ::
 
@@ -1095,9 +1100,13 @@ Several figures are also produced, including Figures 4, 6-9.
 
 Figure 4: The orientation of maximum coherence between the vertical and the two
 horizontal components for M08A during March 2012. (Left) Coherence as a function
-of angle from the H1 component. (Right) Phase as a function of the angle. In this
-example, the coherence is low indicating the absence of dominant, uni-directional tilt
-noise.
+of angle from the H1 component. (Right) Phase as a function of the angle. 
+(Bottom) Tilt direction measured from the H1 component as a function of time. 
+In this example, the coherence is low indicating low tilt noise.
+
+.. note ::
+
+    In the MATLAB version of ``ATaCR``, the "Angle from H1" (Figure 4 in the manual) corresponds to a counter-clockwise rotation of H1 and H2, and the orientation is chosen at the lowest phase. Here, the angle corresponds to a clockwise rotation and the estimate is chosen to lie between 0 and 180 degrees. There is therefore a 225-degree difference between those two estimates, and the plots are mirrored.
 
 .. figure:: ../obstools/examples/figures/Figure_6.png
    :align: center

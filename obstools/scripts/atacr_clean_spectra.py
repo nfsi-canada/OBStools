@@ -166,7 +166,7 @@ def get_cleanspec_arguments(argv=None):
         action="store_true",
         dest="fig_tilt",
         default=False,
-        help="Plot Coherence, phase and tilt direction figure. " +
+        help="Plot coherence, phase and tilt direction figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--figCross",
@@ -349,7 +349,7 @@ def main(args=None):
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
         fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
-        filetilt = avstpath / (dstart+dend+'tilt.txt')
+        filetilt = avstpath / (dstart+dend+'tilt.csv')
 
         if fileavst.exists():
             if not args.ovr:
@@ -387,6 +387,7 @@ def main(args=None):
         # Date + tilt list
         date_list = []
         tilt_list = []
+        coh_list = []
 
         # Loop through each day withing time range
         while t1 < tend:
@@ -408,6 +409,7 @@ def main(args=None):
                 file.close()
                 tilt_list.append(daynoise.rotation.tilt)
                 date_list.append(t1.date)
+                coh_list.append(daynoise.rotation.coh_value)
                 stanoise += daynoise
             else:
                 t1 += 3600.*24.
@@ -624,13 +626,14 @@ def main(args=None):
 
         # Write out events
         print()
-        print("* Tilt direction as function of time saved to: ")
+        print("* Tilt direction and coherence as function of time saved to: ")
         print("*   "+str(filetilt))
         print()
         fid = open(filetilt, 'w')
-        fid.writelines("Date, Tilt azimuth (deg from H1)\n")
+        fid.writelines("Date, Tilt dir. (deg from H1), Max coherehce\n")
         for i in range(len(tilt_list)):
-            line1 = "{0},{1:.0f}\n".format(date_list[i], tilt_list[i])
+            line1 = "{0},{1:.0f},{2:.2f}\n".format(
+                date_list[i], tilt_list[i], coh_list[i])
             fid.writelines(line1.replace(" ", ""))
         fid.close()
 

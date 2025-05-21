@@ -304,7 +304,7 @@ def get_event(eventpath, tstart, tend):
     # Find out how many events from Z.SAC files
     eventfiles = list(eventpath.glob('*Z.SAC'))
     if not eventfiles:
-        raise(Exception("No event found in folder "+str(eventpath)))
+        raise Exception("No event found in folder "+str(eventpath))
 
     # Extract events from time stamps
     prefix = [file.name.split('.') for file in eventfiles]
@@ -451,6 +451,8 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
         tilt += 180.
     if tilt > 360.:
         tilt -= 360.
+    if tilt > 180.:
+        tilt -= 180.
 
     # print('Tilt corrected = ', tilt)
 
@@ -489,6 +491,8 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
         tilt -= 360.
     elif tilt < 0:
         tilt += 360.
+    if tilt > 180.:
+        tilt -= 180.
 
     # Now calculate spectra at tilt direction
     ftH = rotate_dir(ft1, ft2, tilt)
@@ -617,16 +621,14 @@ def phase(Gxy):
 
 def rotate_dir(x, y, theta):
 
-    d = -theta*np.pi/180.
-    rot_mat = [[np.cos(d), -np.sin(d)],
-               [np.sin(d), np.cos(d)]]
+    d = theta*np.pi/180.
+    rot_mat = [[np.cos(d), np.sin(d)],
+               [-np.sin(d), np.cos(d)]]
 
     vxy = [x, y]
     vxy_rotated = np.tensordot(rot_mat, vxy, axes=1)
-    tr_2 = vxy_rotated[0]
-    tr_1 = vxy_rotated[1]
 
-    return tr_1
+    return vxy_rotated[1]
 
 
 def ftest(res1, pars1, res2, pars2):
