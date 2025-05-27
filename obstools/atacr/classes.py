@@ -146,7 +146,7 @@ class DayNoise(object):
     Attributes
     ----------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. 
+        Corresponding trace objects for components H1, H2, HZ and HP.
         Traces can be empty (i.e., ``Trace()``) for missing components.
     window : float
         Length of time window in seconds
@@ -222,8 +222,8 @@ class DayNoise(object):
         # Check that all traces are valid Trace objects
         for tr in [tr1, tr2, trZ, trP]:
             if not isinstance(tr, Trace):
-                raise(Exception("Error initializing DayNoise object - "
-                                + str(tr)+" is not a Trace object"))
+                raise Exception("Error initializing DayNoise object - "
+                                + str(tr)+" is not a Trace object")
 
         # Unpack everything
         self.tr1 = tr1
@@ -552,9 +552,9 @@ class DayNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
-        indwin = np.argwhere(goodwins == True)
+        indwin = np.argwhere(goodwins is True)
 
-        while moveon == False:
+        while moveon is False:
 
             ubernorm = np.empty((self.ncomp, np.sum(goodwins)))
             for ind_u, dsl in enumerate(dsls):
@@ -588,11 +588,11 @@ class DayNoise(object):
                 self.goodwins = goodwins
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill == False)].T[0]
+            trypenalty = penalty[np.argwhere(kill is False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                goodwins[indwin[kill == True]] = False
-                indwin = np.argwhere(goodwins == True)
+                goodwins[indwin[kill is True]] = False
+                indwin = np.argwhere(goodwins is True)
                 moveon = False
             else:
                 moveon = True
@@ -616,8 +616,11 @@ class DayNoise(object):
 
         self.QC = True
 
-    def average_daily_spectra(self, calc_rotation=True, tiltfreqs=[0.005, 0.035],
-                              fig_average=False, fig_coh_ph=False, save=None,
+    def average_daily_spectra(self, calc_rotation=True,
+                              tiltfreqs=[0.005, 0.035],
+                              fig_average=False,
+                              fig_coh_ph=False,
+                              ave=None,
                               form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
@@ -786,7 +789,7 @@ class DayNoise(object):
                 cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, phi)
 
             if fig_coh_ph:
-                plot = plotting.fig_coh_ph(coh, ph, phi)
+                plot = plotting.fig_coh_ph(coh, ph, phi, tilt)
 
                 # Save or show figure
                 if save:
@@ -1062,9 +1065,9 @@ class StaNoise(object):
         # First, check that the StaNoise object contains at least two
         # DayNoise objects
         if len(self.daylist) < 2:
-            raise(Exception(
+            raise Exception(
                 "StaNoise requires at least two DayNoise objects to execute " +
-                "its methods"))
+                "its methods")
 
         for dn in self.daylist:
             if not dn.QC:
@@ -1158,9 +1161,9 @@ class StaNoise(object):
         """
 
         if self.initialized:
-            raise(Exception("Object has been initialized already - " +
+            raise Exception("Object has been initialized already - " +
                             "list of DayNoise objects has been lost and " +
-                            "method cannot proceed"))
+                            "method cannot proceed")
         else:
             self.init()
 
@@ -1230,9 +1233,9 @@ class StaNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         gooddays = np.repeat([True], self.cZZ.shape[1])
-        indwin = np.argwhere(gooddays == True)
+        indwin = np.argwhere(gooddays is True)
 
-        while moveon == False:
+        while moveon is False:
             ubernorm = np.empty((self.ncomp, np.sum(gooddays)))
             for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(gooddays))
@@ -1266,11 +1269,11 @@ class StaNoise(object):
                 self.QC = True
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill == False)].T[0]
+            trypenalty = penalty[np.argwhere(killis False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                gooddays[indwin[kill == True]] = False
-                indwin = np.argwhere(gooddays == True)
+                gooddays[indwin[kill is True]] = False
+                indwin = np.argwhere(gooddays is True)
                 moveon = False
             else:
                 moveon = True
@@ -1553,9 +1556,9 @@ class TFNoise(object):
             raise TypeError(msg)
 
         if not objnoise.av:
-            raise(Exception(
+            raise Exception(
                 "Error: Noise object has not been processed (QC and " +
-                "averaging) - aborting"))
+                "averaging) - aborting")
 
         self.f = objnoise.f
         self.c11 = objnoise.power.c11
@@ -1695,7 +1698,7 @@ class TFNoise(object):
                     transfunc.add('ZP-H', tf_ZP_H)
 
             else:
-                raise(Exception('Incorrect key'))
+                raise Exception('Incorrect key')
 
             self.transfunc = transfunc
 
@@ -1843,9 +1846,9 @@ class EventStream(object):
 
         ncomp = np.sum([np.any(tr.data) for tr in [tr1, tr2, trZ, trP]])
         if ncomp <= 1 or len(trZ.data) == 0:
-            raise(Exception(
+            raise Exception(
                 "Incorrect initialization of EventStream object: " +
-                "missing a vertical component or too few components"))
+                "missing a vertical component or too few components")
 
         self.tr1 = tr1
         self.tr2 = tr2
@@ -1964,9 +1967,8 @@ class EventStream(object):
         """
 
         if not tfnoise.transfunc:
-            raise(
-                Exception("Error: Object TFNoise has no transfunc " +
-                          "attribute - aborting"))
+            raise Exception("Error: Object TFNoise has no transfunc " +
+                            "attribute - aborting")
 
         correct = self.CorrectDict()
 
