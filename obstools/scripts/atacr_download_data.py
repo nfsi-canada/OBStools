@@ -443,7 +443,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-            print("*   " + tstamp + ".*.SAC")
+            print("*   " + tstamp + ".*.SAC\n")
             # Get waveforms from client, one channel at a time
             try:
                 cha = sta.channel.upper() + '1'
@@ -547,6 +547,7 @@ def main(args=None):
                       "Continuing")
                 pass
 
+            print("*   -> Merging streams")
             st = (st1.merge(fill_value='latest') +
                   st2.merge(fill_value='latest') +
                   stz.merge(fill_value='latest') +
@@ -555,6 +556,7 @@ def main(args=None):
                 raise Exception("Error: number of available traces is: " +
                                 str(len(st)))
 
+            print("*   -> Resampling")
             # Detrend, filter
             st.detrend('demean')
             st.detrend('linear')
@@ -566,6 +568,7 @@ def main(args=None):
             st.resample(args.new_sampling_rate)
 
             # Check streams
+            print("*   -> Performing QC")
             is_ok, st = utils.QC_streams(t1, t2, st)
             if not is_ok:
                 t1 += dt
@@ -573,9 +576,9 @@ def main(args=None):
                 continue
 
             # Extracting seismic data components
-            sth = st.select(component='1') + \
-                  st.select(component='2') + \
-                  st.select(component=args.zcomp)
+            sth = (st.select(component='1') +
+                   st.select(component='2') +
+                   st.select(component=args.zcomp))
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
@@ -589,8 +592,8 @@ def main(args=None):
                       "response")
 
             # Extract traces - Z
+            print("*   -> Updating seismic metadata and writing files")
             trZ = sth.select(component=args.zcomp)[0]
-
             trZ = utils.update_stats(
                 trZ,
                 sta.latitude,
@@ -623,18 +626,19 @@ def main(args=None):
             # Extract traces - P
             try:
 
-                stp = st.select(component='H')
+                trP = stp.select(component='H')[0]
 
                 print("*   -> Removing responses - Pressure data")
                 try:
-                    stp.remove_response(
+                    trP.remove_response(
                         inventory=inv,
                         pre_filt=args.pre_filt,
                         output='DEF')
                 except Exception:
-                    print("*   -> Inventory not found: Cannot remove "+
-                          "instrument response")
-                trP = stp[0]
+                    print("*   -> Inventory not found: Cannot " +
+                          "remove instrument response")
+
+                print("*   -> Updating pressure metadata and writing file")
                 trP = utils.update_stats(
                     trP,
                     sta.latitude,
@@ -643,6 +647,8 @@ def main(args=None):
                     sta.channel[0]+'DH')
                 trP.write(str(fileP), format='SAC')
             except Exception:
+                print("*   -> No pressure data to write. " +
+                      "Continuing")
                 pass
 
             t1 += dt
