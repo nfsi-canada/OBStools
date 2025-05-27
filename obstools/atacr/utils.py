@@ -108,12 +108,12 @@ def QC_streams(start, end, st):
 
     # Check start times
     if not np.all([tr.stats.starttime == start for tr in st]):
-        print("* Start times are not all close to true start: ")
-        [print("*   "+tr.stats.channel+" " +
+        print("*      Start times are not all close to true start: ")
+        [print("*        "+tr.stats.channel+" " +
                str(tr.stats.starttime)+" " +
                str(tr.stats.endtime)) for tr in st]
-        print("*   True start: "+str(start))
-        print("* -> Shifting traces to true start")
+        print("*        True start: "+str(start))
+        print("*   -> Shifting traces to true start")
         delay = [tr.stats.starttime - start for tr in st]
         st_shifted = Stream(
             traces=[traceshift(tr, dt) for tr, dt in zip(st, delay)])
@@ -124,8 +124,8 @@ def QC_streams(start, end, st):
     try:
         st.trim(start, end-dt, fill_value=0., pad=True)
     except Exception:
-        print("* Unable to trim")
-        print("* -> Skipping")
+        print("*   Unable to trim")
+        print("*   -> Skipping")
         print("**************************************************")
         return False, None
 
@@ -133,18 +133,18 @@ def QC_streams(start, end, st):
     # and sampling rates are all equal and traces have been trimmed
     sr = st[0].stats.sampling_rate
     if not np.allclose([tr.stats.npts for tr in st[1:]], st[0].stats.npts):
-        print("* Lengths are incompatible: ")
-        [print("*     "+str(tr.stats.npts)) for tr in st]
-        print("* -> Skipping")
+        print("*   Lengths are incompatible: ")
+        [print("*       "+str(tr.stats.npts)) for tr in st]
+        print("*   -> Skipping")
         print("**************************************************")
 
         return False, None
 
     elif not np.allclose([st[0].stats.npts], int((end - start)*sr), atol=1):
-        print("* Length is too short: ")
-        print("*    "+str(st[0].stats.npts) +
+        print("*   Length is too short: ")
+        print("*      "+str(st[0].stats.npts) +
               " ~= "+str(int((end - start)*sr)))
-        print("* -> Skipping")
+        print("*   -> Skipping")
         print("**************************************************")
 
         return False, None
@@ -427,8 +427,13 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
         Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        coh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
-        ph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+        try:
+            coh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+            ph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+        except Exception:
+            print('Exception')
+            coh[i] = 0.
+            ph[i] = 0.
 
     # Index where coherence is max
     ind = np.argwhere(coh == coh.max())
@@ -443,9 +448,6 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
     start = max(0, ind[0][0] - 1)
     end = min(len(ph), ind[0][0] + 2)
     phase_std = np.std(ph[start:end])
-    # print('Tilt at Maximum coherence = ', tilt)
-    # print('Phase at Maximum coherence = ', phase_value)
-    # print('Phase std near Maximum coherence = ', phase_std)
 
     if phase_std > 0.1:
         tilt += 180.
@@ -477,8 +479,15 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
         Ph = phase(cHZ)
 
         # Calculate coherence over frequency band
-        rcoh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
-        rph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+        try:
+            rcoh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+            rph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+        except Exception:
+            print("* Warning: problems in the Tilt calculations. " +
+                  "Setting coherence and phase between Z and rotated H " +
+                  "to 0.")
+            rcoh[i] = 0.
+            rph[i] = 0.
 
     # Index where coherence is max
     ind = np.argwhere(rcoh == rcoh.max())
