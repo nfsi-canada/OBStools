@@ -238,7 +238,7 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     return plt
 
 
-def fig_coh_ph(coh, ph, direc, tilt, date):
+def fig_coh_ph(coh, ph, direc, tilt, date=None):
     """
     Function to plot the coherence and phase between the rotated H and Z
     components, used to characterize the tilt direction.
@@ -295,14 +295,14 @@ def fig_coh_ph(coh, ph, direc, tilt, date):
         ax3.legend(loc='best', fontsize=8)
         ax3.set_xticklabels([])
         ax3.set_ylabel('Tilt dir. (deg)')
-        ax3.set_ylim(-10, 190)
+        ax3.set_ylim(-10, 370)
         ax4.set_ylabel('Coherence')
         ax4.set_ylim(-0.1, 1.1)
 
     else:
         plt.figure()
         plt.subplot(121)
-        plt.plot(direc, coh, c=colors[0])
+        plt.plot(direc, coh, c=colors[0], label='Tilt: '+str(tilt))
         plt.ylim((0, 1.))
         plt.subplot(122)
         plt.plot(direc, ph*180./np.pi, c=colors[0])
