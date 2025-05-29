@@ -637,14 +637,15 @@ def main(args=None):
 
         # Write out events
         print()
-        print("* Tilt direction and coherence as function of time saved to: ")
+        print("* Tilt orientation and coherence as function of time saved to: ")
         print("*   "+str(filetilt))
         print()
         fid = open(filetilt, 'w')
-        fid.writelines("Date, Tilt dir. (deg CW from H1), Max coherence\n")
+        fid.writelines("Date, Tilt dir. (deg CW from H1), " +
+                       "Tilt ang. (deg CW from H1), Max coherence\n")
         for i in range(len(tiltdir_list)):
-            line1 = "{0},{1:4.1f},{2:4.2f}\n".format(
-                date_list[i], tiltdir_list[i], coh_list[i])
+            line1 = "{0},{1:4.1f},{2:4.2f},{3:4.2f}\n".format(
+                date_list[i], tiltdir_list[i], tiltang_list[i], coh_list[i])
             fid.writelines(line1.replace(" ", ""))
         fid.close()
 
