@@ -193,31 +193,41 @@
 <span class="sd">    cHP : :class:`~numpy.ndarray`</span>
 <span class="sd">        Cross-power spectral density for components H and P (any shape)</span>
 <span class="sd">    coh : :class:`~numpy.ndarray`</span>
-<span class="sd">        Coherence between horizontal components</span>
+<span class="sd">        Coherence between horizontal-vertical components</span>
 <span class="sd">    ph : :class:`~numpy.ndarray`</span>
-<span class="sd">        Phase of cross-power spectrum between horizontal components</span>
-<span class="sd">    tilt : float</span>
-<span class="sd">        Angle (azimuth) of tilt axis</span>
+<span class="sd">        Phase of cross-power spectrum between horizontal-vertical components</span>
+<span class="sd">    ad : :class:`~numpy.ndarray`</span>
+<span class="sd">        Admittance between horizontal-vertical components</span>
+<span class="sd">    tilt_dir : float</span>
+<span class="sd">        Azimuth of the tilt axis</span>
+<span class="sd">    tilt_ang : float</span>
+<span class="sd">        Angle of the tilt axis</span>
 <span class="sd">    coh_value : float</span>
 <span class="sd">        Maximum coherence</span>
 <span class="sd">    phase_value : float</span>
 <span class="sd">        Phase at maximum coherence</span>
+<span class="sd">    admit_value : float</span>
+<span class="sd">        Admittance value at maximum coherence</span>
 <span class="sd">    phi : :class:`~numpy.ndarray`</span>
 <span class="sd">        Directions for which the coherence is calculated</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cHH</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cHZ</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cHP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ph</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">tilt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coh_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phase_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">ad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coh_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">phase_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">admit_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cHH</span> <span class="o">=</span> <span class="n">cHH</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cHZ</span> <span class="o">=</span> <span class="n">cHZ</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cHP</span> <span class="o">=</span> <span class="n">cHP</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coh</span> <span class="o">=</span> <span class="n">coh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ph</span> <span class="o">=</span> <span class="n">ph</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tilt</span> <span class="o">=</span> <span class="n">tilt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ad</span> <span class="o">=</span> <span class="n">ad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilt_dir</span> <span class="o">=</span> <span class="n">tilt_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilt_ang</span> <span class="o">=</span> <span class="n">tilt_ang</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coh_value</span> <span class="o">=</span> <span class="n">coh_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phase_value</span> <span class="o">=</span> <span class="n">phase_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">admit_value</span> <span class="o">=</span> <span class="n">admit_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span></div>
 
 
@@ -241,7 +251,7 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object</span>
-<span class="sd">        Corresponding trace objects for components H1, H2, HZ and HP. </span>
+<span class="sd">        Corresponding trace objects for components H1, H2, HZ and HP.</span>
 <span class="sd">        Traces can be empty (i.e., ``Trace()``) for missing components.</span>
 <span class="sd">    window : float</span>
 <span class="sd">        Length of time window in seconds</span>
@@ -317,8 +327,8 @@
         <span class="c1"># Check that all traces are valid Trace objects</span>
         <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="p">[</span><span class="n">tr1</span><span class="p">,</span> <span class="n">tr2</span><span class="p">,</span> <span class="n">trZ</span><span class="p">,</span> <span class="n">trP</span><span class="p">]:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">Trace</span><span class="p">):</span>
-                <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error initializing DayNoise object - &quot;</span>
-                                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; is not a Trace object&quot;</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error initializing DayNoise object - &quot;</span>
+                                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; is not a Trace object&quot;</span><span class="p">)</span>
 
         <span class="c1"># Unpack everything</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tr1</span> <span class="o">=</span> <span class="n">tr1</span>
@@ -716,15 +726,19 @@
 
 <div class="viewcode-block" id="DayNoise.average_daily_spectra">
 <a class="viewcode-back" href="../../../atacr.html#obstools.atacr.classes.DayNoise.average_daily_spectra">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">average_daily_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc_rotation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="o">=</span><span class="p">[</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.035</span><span class="p">],</span>
-                              <span class="n">fig_average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fig_coh_ph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">average_daily_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc_rotation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">tiltfreqs</span><span class="o">=</span><span class="p">[</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.035</span><span class="p">],</span>
+                              <span class="n">fig_average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">fig_tilt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">fig_trf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                               <span class="n">form</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to average the daily spectra for good windows. By default, the</span>
-<span class="sd">        method will attempt to calculate the azimuth of maximum coherence</span>
-<span class="sd">        between horizontal components and the vertical component (for maximum</span>
-<span class="sd">        tilt direction), and use the rotated horizontals in the transfer</span>
-<span class="sd">        function calculations.</span>
+<span class="sd">        method will attempt to calculate the tilt orientation from the</span>
+<span class="sd">        maximum coherence between component H1 and the vertical component HZ</span>
+<span class="sd">        and use the rotated horizontals in the transfer function calculations</span>
+<span class="sd">        for tilt noise removal.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -736,9 +750,14 @@
 <span class="sd">        fig_average : boolean</span>
 <span class="sd">            Whether or not to produce a figure showing the average daily</span>
 <span class="sd">            spectra</span>
-<span class="sd">        fig_coh_ph : boolean</span>
+<span class="sd">        fig_tilt : boolean</span>
 <span class="sd">            Whether or not to produce a figure showing the maximum coherence</span>
-<span class="sd">            between H and Z</span>
+<span class="sd">            and phase between H1 and HZ as function of azimuth measured CW</span>
+<span class="sd">            from H1</span>
+<span class="sd">        fig_trf : boolean</span>
+<span class="sd">            Whether or not to produce a figure showing the components of the</span>
+<span class="sd">            complex transfer function between H1 and HZ measured at the tilt</span>
+<span class="sd">            direction</span>
 <span class="sd">        save : :class:`~pathlib.Path` object</span>
 <span class="sd">            Relative path to figures folder</span>
 <span class="sd">        form : str</span>
@@ -878,19 +897,23 @@
                 <span class="n">plot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">calc_rotation</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncomp</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span> <span class="o">=</span> \
+            <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tkey</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="s1">&#39;trf.&#39;</span> <span class="o">+</span> <span class="n">form</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="n">save</span> <span class="o">/</span> <span class="n">fname</span>
+            <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">admit_value</span> <span class="o">=</span> \
                 <span class="n">utils</span><span class="o">.</span><span class="n">calculate_tilt</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">ft1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ft2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftZ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">goodwins</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">goodwins</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="p">,</span> <span class="n">fig_trf</span><span class="o">=</span><span class="n">fig_trf</span><span class="p">,</span> <span class="n">savefig</span><span class="o">=</span><span class="n">fname</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span>
-                <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">tilt</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+                <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">admit_value</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">fig_coh_ph</span><span class="p">:</span>
-                <span class="n">plot</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">fig_coh_ph</span><span class="p">(</span><span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fig_tilt</span><span class="p">:</span>
+                <span class="n">plot</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">fig_tilt</span><span class="p">(</span>
+                    <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">)</span>
 
                 <span class="c1"># Save or show figure</span>
                 <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
-                    <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tkey</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="s1">&#39;coh_ph.&#39;</span> <span class="o">+</span> <span class="n">form</span>
+                    <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tkey</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="s1">&#39;tilt.&#39;</span> <span class="o">+</span> <span class="n">form</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
                         <span class="n">fname</span> <span class="o">=</span> <span class="n">save</span> <span class="o">/</span> <span class="n">fname</span>
                     <span class="n">plot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
@@ -1133,8 +1156,11 @@
 <span class="sd">            2P, ZZ, ZP, PP, HH, HZ, HP]</span>
 <span class="sd">        phi : `numpy.ndarray`</span>
 <span class="sd">            Array of azimuths used in determining the tilt direction</span>
-<span class="sd">        tilt : float</span>
+<span class="sd">        tilt_dir : float</span>
 <span class="sd">            Tilt direction from maximum coherence between rotated `H1` and</span>
+<span class="sd">            `HZ` components</span>
+<span class="sd">        tilt_ang : float</span>
+<span class="sd">            Tilt angle from maximum coherence between rotated `H1` and</span>
 <span class="sd">            `HZ` components</span>
 <span class="sd">        QC : bool</span>
 <span class="sd">            Whether or not the method</span>
@@ -1163,17 +1189,17 @@
 <span class="sd">        AttributeError: &#39;StaNoise&#39; object has no attribute &#39;daylist&#39;</span>
 <span class="sd">        &gt;&gt;&gt; stanoise.__dict__.keys()</span>
 <span class="sd">        dict_keys([&#39;initialized&#39;, &#39;c11&#39;, &#39;c22&#39;, &#39;cZZ&#39;, &#39;cPP&#39;, &#39;c12&#39;, &#39;c1Z&#39;,</span>
-<span class="sd">        &#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;phi&#39;, &#39;tilt&#39;, &#39;f&#39;,</span>
-<span class="sd">        &#39;nwins&#39;, &#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
+<span class="sd">        &#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;phi&#39;, &#39;tilt_dir&#39;,</span>
+<span class="sd">        &#39;tilt_ang&#39;, &#39;f&#39;, &#39;nwins&#39;, &#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># First, check that the StaNoise object contains at least two</span>
         <span class="c1"># DayNoise objects</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;StaNoise requires at least two DayNoise objects to execute &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;its methods&quot;</span><span class="p">))</span>
+                <span class="s2">&quot;its methods&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">dn</span><span class="o">.</span><span class="n">QC</span><span class="p">:</span>
@@ -1196,7 +1222,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cHZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dn</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">cHZ</span> <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cHP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dn</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">cHP</span> <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">phi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tilt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">tilt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilt_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">tilt_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilt_ang</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">tilt_ang</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nwins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dn</span><span class="o">.</span><span class="n">goodwins</span><span class="p">)</span> <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ncomp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">dn</span><span class="o">.</span><span class="n">ncomp</span> <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">daylist</span><span class="p">])</span>
@@ -1270,9 +1297,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Object has been initialized already - &quot;</span> <span class="o">+</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Object has been initialized already - &quot;</span> <span class="o">+</span>
                             <span class="s2">&quot;list of DayNoise objects has been lost and &quot;</span> <span class="o">+</span>
-                            <span class="s2">&quot;method cannot proceed&quot;</span><span class="p">))</span>
+                            <span class="s2">&quot;method cannot proceed&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
@@ -1356,21 +1383,16 @@
 
             <span class="n">penalty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ubernorm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ncomp</span><span class="p">):</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gooddays</span><span class="p">)),</span> <span class="n">detrend</span><span class="p">(</span>
-                    <span class="n">ubernorm</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ncomp</span><span class="p">):</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gooddays</span><span class="p">)),</span> <span class="n">detrend</span><span class="p">(</span>
+                        <span class="n">ubernorm</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gooddays</span><span class="p">)),</span>
-                     <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ubernorm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gooddays</span><span class="p">)),</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ubernorm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
             <span class="n">kill</span> <span class="o">=</span> <span class="n">penalty</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">penalty</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">kill</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1675,9 +1697,9 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">av</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;Error: Noise object has not been processed (QC and &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;averaging) - aborting&quot;</span><span class="p">))</span>
+                <span class="s2">&quot;averaging) - aborting&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c11</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">c11</span>
@@ -1822,7 +1844,7 @@
                     <span class="n">transfunc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;ZP-H&#39;</span><span class="p">,</span> <span class="n">tf_ZP_H</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Incorrect key&#39;</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Incorrect key&#39;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">transfunc</span> <span class="o">=</span> <span class="n">transfunc</span></div>
 
@@ -1977,9 +1999,9 @@
 
         <span class="n">ncomp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="p">[</span><span class="n">tr1</span><span class="p">,</span> <span class="n">tr2</span><span class="p">,</span> <span class="n">trZ</span><span class="p">,</span> <span class="n">trP</span><span class="p">]])</span>
         <span class="k">if</span> <span class="n">ncomp</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">trZ</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;Incorrect initialization of EventStream object: &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;missing a vertical component or too few components&quot;</span><span class="p">))</span>
+                <span class="s2">&quot;missing a vertical component or too few components&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tr1</span> <span class="o">=</span> <span class="n">tr1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tr2</span> <span class="o">=</span> <span class="n">tr2</span>
@@ -2103,9 +2125,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">tfnoise</span><span class="o">.</span><span class="n">transfunc</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span>
-                <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error: Object TFNoise has no transfunc &quot;</span> <span class="o">+</span>
-                          <span class="s2">&quot;attribute - aborting&quot;</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error: Object TFNoise has no transfunc &quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;attribute - aborting&quot;</span><span class="p">)</span>
 
         <span class="n">correct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CorrectDict</span><span class="p">()</span>
 

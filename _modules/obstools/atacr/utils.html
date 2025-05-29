@@ -114,6 +114,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">circmean</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">obspy.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Trace</span><span class="p">,</span> <span class="n">AttribDict</span><span class="p">,</span> <span class="n">UTCDateTime</span>
 
@@ -197,12 +198,12 @@
 
     <span class="c1"># Check start times</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">==</span> <span class="n">start</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st</span><span class="p">]):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* Start times are not all close to true start: &quot;</span><span class="p">)</span>
-        <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   &quot;</span><span class="o">+</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span><span class="o">+</span><span class="s2">&quot; &quot;</span> <span class="o">+</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*      Start times are not all close to true start: &quot;</span><span class="p">)</span>
+        <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*        &quot;</span><span class="o">+</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span><span class="o">+</span><span class="s2">&quot; &quot;</span> <span class="o">+</span>
                <span class="nb">str</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span> <span class="o">+</span>
                <span class="nb">str</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">endtime</span><span class="p">))</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   True start: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">start</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* -&gt; Shifting traces to true start&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*        True start: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">start</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   -&gt; Shifting traces to true start&quot;</span><span class="p">)</span>
         <span class="n">delay</span> <span class="o">=</span> <span class="p">[</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">-</span> <span class="n">start</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st</span><span class="p">]</span>
         <span class="n">st_shifted</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
             <span class="n">traces</span><span class="o">=</span><span class="p">[</span><span class="n">traceshift</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="k">for</span> <span class="n">tr</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">st</span><span class="p">,</span> <span class="n">delay</span><span class="p">)])</span>
@@ -213,8 +214,8 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">st</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">-</span><span class="n">dt</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* Unable to trim&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* -&gt; Skipping&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   Unable to trim&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   -&gt; Skipping&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;**************************************************&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
 
@@ -222,18 +223,18 @@
     <span class="c1"># and sampling rates are all equal and traces have been trimmed</span>
     <span class="n">sr</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sampling_rate</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* Lengths are incompatible: &quot;</span><span class="p">)</span>
-        <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*     &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="p">))</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* -&gt; Skipping&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   Lengths are incompatible: &quot;</span><span class="p">)</span>
+        <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*       &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="p">))</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   -&gt; Skipping&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;**************************************************&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
 
     <span class="k">elif</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">([</span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="p">],</span> <span class="nb">int</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">*</span><span class="n">sr</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* Length is too short: &quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*    &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="p">)</span> <span class="o">+</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   Length is too short: &quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*      &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">npts</span><span class="p">)</span> <span class="o">+</span>
               <span class="s2">&quot; ~= &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">*</span><span class="n">sr</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* -&gt; Skipping&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*   -&gt; Skipping&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;**************************************************&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
@@ -466,9 +467,11 @@
 
 <div class="viewcode-block" id="calculate_tilt">
 <a class="viewcode-back" href="../../../atacr.html#obstools.atacr.utils.calculate_tilt">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calculate_tilt</span><span class="p">(</span><span class="n">ft1</span><span class="p">,</span> <span class="n">ft2</span><span class="p">,</span> <span class="n">ftZ</span><span class="p">,</span> <span class="n">ftP</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">goodwins</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_tilt</span><span class="p">(</span><span class="n">ft1</span><span class="p">,</span> <span class="n">ft2</span><span class="p">,</span> <span class="n">ftZ</span><span class="p">,</span> <span class="n">ftP</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">goodwins</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="p">,</span>
+                   <span class="n">fig_trf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">savefig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Determines tilt direction from maximum coherence between rotated H1 and Z.</span>
+<span class="sd">    Determines tilt orientation from the maximum coherence between</span>
+<span class="sd">    rotated H1 and Z.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -481,8 +484,15 @@
 <span class="sd">        (False). This attribute is returned from the method</span>
 <span class="sd">        :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`</span>
 <span class="sd">    tiltfreqs : list</span>
-<span class="sd">        Two floats representing the frequency band at which the tilt is</span>
-<span class="sd">        calculated</span>
+<span class="sd">        Two floats representing the frequency band at which the mean</span>
+<span class="sd">        coherence, phase and admittance are calculated to determine the</span>
+<span class="sd">        tile orientation</span>
+<span class="sd">    fig_trf : boolean</span>
+<span class="sd">        Whether or not to show the components of the complex transfer function</span>
+<span class="sd">        as a function of frequency, shown at the maximum coherence between</span>
+<span class="sd">        rotated H1 and Z.</span>
+<span class="sd">    savefig : :class:`~pathlib.Path` object</span>
+<span class="sd">        Relative path to figures folder</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -490,27 +500,43 @@
 <span class="sd">        Arrays of power and cross-spectral density functions of components HH</span>
 <span class="sd">        (rotated H1 in direction of maximum tilt), HZ, and HP</span>
 <span class="sd">    coh : :class:`~numpy.ndarray`</span>
-<span class="sd">        Coherence value between rotated H and Z components, as a function of</span>
-<span class="sd">        directions (azimuths)</span>
+<span class="sd">        Mean coherence value between rotated H and Z components,</span>
+<span class="sd">        as a function of azimuth CW from H1</span>
 <span class="sd">    ph : :class:`~numpy.ndarray`</span>
-<span class="sd">        Phase value between rotated H and Z components, as a function of</span>
-<span class="sd">        directions (azimuths)</span>
+<span class="sd">        Mean phase value between rotated H and Z components,</span>
+<span class="sd">        as a function of azimuth CW from H1</span>
+<span class="sd">    ad : :class:`~numpy.ndarray`</span>
+<span class="sd">        Mean admittance value between rotated H and Z components,</span>
+<span class="sd">        as a function of azimuth CW from H1</span>
 <span class="sd">    phi : :class:`~numpy.ndarray`</span>
-<span class="sd">        Array of directions (azimuths) considered</span>
-<span class="sd">    tilt : float</span>
-<span class="sd">        Direction (azimuth) of maximum coherence between rotated H1 and Z</span>
+<span class="sd">        Array of azimuths CW from H1 considered</span>
+<span class="sd">    tilt_dir : float</span>
+<span class="sd">        Tilt direction (azimuth CW from H1) at maximum coherence</span>
+<span class="sd">        between rotated H1 and Z</span>
+<span class="sd">    tilt_ang : float</span>
+<span class="sd">        Tilt angle (down from HZ/3) at maximum coherence</span>
+<span class="sd">        between rotated H1 and Z</span>
 <span class="sd">    coh_value : float</span>
-<span class="sd">        Coherence value at tilt direction</span>
+<span class="sd">        Mean coherence value at tilt direction</span>
 <span class="sd">    phase_value : float</span>
-<span class="sd">        Phase value at tilt direction</span>
+<span class="sd">        Mean phase value at tilt direction</span>
+<span class="sd">    admit_value : float</span>
+<span class="sd">        Mean admittance value at tilt direction</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># frequencies considered in averaging</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Mean of Z PSD - this one doesn&#39;t change with angle from H1</span>
+    <span class="n">cZZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+
+    <span class="c1"># Initialize arrays</span>
     <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">360.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">)</span>
     <span class="n">coh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
     <span class="n">ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
-    <span class="n">cZZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span>
-                         <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+    <span class="n">ad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
 
@@ -525,41 +551,48 @@
                       <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
 
         <span class="n">Co</span> <span class="o">=</span> <span class="n">coherence</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">)</span>
-        <span class="n">Ph</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="p">)</span>
+        <span class="n">Ad</span> <span class="o">=</span> <span class="n">admittance</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">)</span>
+        <span class="n">Ph</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="o">/</span><span class="n">cHH</span><span class="p">)</span>
 
         <span class="c1"># Calculate coherence over frequency band</span>
-        <span class="n">coh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Co</span><span class="p">[(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
-        <span class="n">ph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ph</span><span class="p">[(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">coh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Co</span><span class="p">[</span><span class="n">freqs</span><span class="p">])</span>
+            <span class="n">ad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs</span><span class="p">])</span>
+            <span class="n">ph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">circmean</span><span class="p">(</span>
+                <span class="n">Ph</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span>
+                <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+                <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Exception&#39;</span><span class="p">)</span>
+            <span class="n">coh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">ad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">ph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
 
     <span class="c1"># Index where coherence is max</span>
     <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">coh</span> <span class="o">==</span> <span class="n">coh</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
-    <span class="c1"># Phase and direction at maximum coherence</span>
+    <span class="c1"># Phase, angle and direction at maximum coherence</span>
     <span class="n">phase_value</span> <span class="o">=</span> <span class="n">ph</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">admit_value</span> <span class="o">=</span> <span class="n">ad</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">coh_value</span> <span class="o">=</span> <span class="n">coh</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">tilt</span> <span class="o">=</span> <span class="n">phi</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tilt_dir</span> <span class="o">=</span> <span class="n">phi</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tilt_ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">admit_value</span><span class="p">)</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
-    <span class="c1"># Phase has to be close to zero:</span>
-    <span class="c1"># Check phase std near max coherence</span>
+    <span class="c1"># Phase has to be close to zero: ***Not true?***</span>
+    <span class="c1"># Check phase near max coherence and 180 deg apart</span>
     <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ph</span><span class="p">),</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">phase_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ph</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
-    <span class="c1"># print(&#39;Tilt at Maximum coherence = &#39;, tilt)</span>
-    <span class="c1"># print(&#39;Phase at Maximum coherence = &#39;, phase_value)</span>
-    <span class="c1"># print(&#39;Phase std near Maximum coherence = &#39;, phase_std)</span>
 
-    <span class="k">if</span> <span class="n">phase_std</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
-        <span class="n">tilt</span> <span class="o">+=</span> <span class="mf">180.</span>
-    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">360.</span><span class="p">:</span>
-        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">360.</span>
-    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">180.</span><span class="p">:</span>
-        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">180.</span>
-
-    <span class="c1"># print(&#39;Tilt corrected = &#39;, tilt)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">phase_value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">tilt_dir</span> <span class="o">+=</span> <span class="mf">180.</span>
+    <span class="k">if</span> <span class="n">tilt_dir</span> <span class="o">&gt;</span> <span class="mf">360.</span><span class="p">:</span>
+        <span class="n">tilt_dir</span> <span class="o">-=</span> <span class="mf">360.</span>
 
     <span class="c1"># Refine search</span>
-    <span class="n">rphi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tilt</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="n">tilt</span><span class="o">+</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+    <span class="n">rphi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tilt_dir</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="o">+</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
     <span class="n">rcoh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rphi</span><span class="p">))</span>
+    <span class="n">rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rphi</span><span class="p">))</span>
     <span class="n">rph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rphi</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rphi</span><span class="p">):</span>
@@ -575,40 +608,94 @@
                       <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
 
         <span class="n">Co</span> <span class="o">=</span> <span class="n">coherence</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">)</span>
-        <span class="n">Ph</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="p">)</span>
+        <span class="n">Ad</span> <span class="o">=</span> <span class="n">admittance</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">)</span>
+        <span class="n">Ph</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="o">/</span><span class="n">cHH</span><span class="p">)</span>
 
         <span class="c1"># Calculate coherence over frequency band</span>
-        <span class="n">rcoh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Co</span><span class="p">[(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
-        <span class="n">rph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ph</span><span class="p">[(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">tiltfreqs</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rcoh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Co</span><span class="p">[</span><span class="n">freqs</span><span class="p">])</span>
+            <span class="n">rad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs</span><span class="p">])</span>
+            <span class="n">rph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">circmean</span><span class="p">(</span>
+                <span class="n">Ph</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span>
+                <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+                <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;* Warning: problems in the Tilt calculations. &quot;</span> <span class="o">+</span>
+                  <span class="s2">&quot;Setting coherence and phase between Z and rotated H &quot;</span> <span class="o">+</span>
+                  <span class="s2">&quot;to 0.&quot;</span><span class="p">)</span>
+            <span class="n">rcoh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">rad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">rph</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
 
     <span class="c1"># Index where coherence is max</span>
     <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">rcoh</span> <span class="o">==</span> <span class="n">rcoh</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
     <span class="c1"># Phase and direction at maximum coherence</span>
     <span class="n">phase_value</span> <span class="o">=</span> <span class="n">rph</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">admit_value</span> <span class="o">=</span> <span class="n">rad</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">coh_value</span> <span class="o">=</span> <span class="n">rcoh</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">tilt</span> <span class="o">=</span> <span class="n">rphi</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">360.</span><span class="p">:</span>
-        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">360.</span>
-    <span class="k">elif</span> <span class="n">tilt</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">tilt</span> <span class="o">+=</span> <span class="mf">360.</span>
-    <span class="k">if</span> <span class="n">tilt</span> <span class="o">&gt;</span> <span class="mf">180.</span><span class="p">:</span>
-        <span class="n">tilt</span> <span class="o">-=</span> <span class="mf">180.</span>
+    <span class="n">tilt_dir</span> <span class="o">=</span> <span class="n">rphi</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tilt_ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">admit_value</span><span class="p">)</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
     <span class="c1"># Now calculate spectra at tilt direction</span>
-    <span class="n">ftH</span> <span class="o">=</span> <span class="n">rotate_dir</span><span class="p">(</span><span class="n">ft1</span><span class="p">,</span> <span class="n">ft2</span><span class="p">,</span> <span class="n">tilt</span><span class="p">)</span>
+    <span class="n">ftH</span> <span class="o">=</span> <span class="n">rotate_dir</span><span class="p">(</span><span class="n">ft2</span><span class="p">,</span> <span class="n">ft1</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">)</span>
 
     <span class="c1"># Get transfer functions</span>
     <span class="n">cHH</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftH</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span>
                          <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftH</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
-    <span class="n">cHZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftH</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+    <span class="n">cHZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftH</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftZ</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">ftP</span><span class="p">):</span>
         <span class="n">cHP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ftH</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span>
                       <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftP</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">cHP</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">return</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span></div>
+    <span class="k">if</span> <span class="n">fig_trf</span><span class="p">:</span>
+        <span class="n">freqs2</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="c1"># Re-calculate the components of the transfer function</span>
+        <span class="n">Ad</span> <span class="o">=</span> <span class="n">admittance</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">)</span>
+        <span class="n">Co</span> <span class="o">=</span> <span class="n">coherence</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">)</span>
+        <span class="n">Ph</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="o">/</span><span class="n">cHH</span><span class="p">)</span>
+
+        <span class="c1"># Figure</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">))</span>
+
+        <span class="c1"># First is coherence</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">Co</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">Co</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Co</span><span class="p">[</span><span class="n">freqs</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Coherence&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Second is admittance</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs2</span><span class="p">]),</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs</span><span class="p">]),</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs</span><span class="p">])))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;log(Admittance)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Third is phase</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">Ph</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">Ph</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">circmean</span><span class="p">(</span><span class="n">Ph</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Phase shift (cycles)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">savefig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">savefig</span><span class="p">),</span>
+                <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+                <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">admit_value</span></div>
 
 
 
@@ -659,7 +746,7 @@
 <span class="sd">    Calculates admittance between two components</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ---------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    Gxy : :class:`~numpy.ndarray`</span>
 <span class="sd">        Cross spectral density function of `x` and `y`</span>
 <span class="sd">    Gxx : :class:`~numpy.ndarray`</span>
@@ -686,7 +773,7 @@
 <span class="sd">    Calculates coherence between two components</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ---------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    Gxy : :class:`~numpy.ndarray`</span>
 <span class="sd">        Cross spectral density function of `x` and `y`</span>
 <span class="sd">    Gxx : :class:`~numpy.ndarray`</span>
@@ -712,10 +799,10 @@
 <a class="viewcode-back" href="../../../atacr.html#obstools.atacr.utils.phase">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">phase</span><span class="p">(</span><span class="n">Gxy</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates phase angle between two components</span>
+<span class="sd">    Calculates phase angle between real and imaginary components</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ---------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    Gxy : :class:`~numpy.ndarray`</span>
 <span class="sd">        Cross spectral density function of `x` and `y`</span>
 
@@ -739,8 +826,7 @@
     <span class="n">rot_mat</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">)],</span>
                <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">)]]</span>
 
-    <span class="n">vxy</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
-    <span class="n">vxy_rotated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">vxy</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">vxy_rotated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">vxy_rotated</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 

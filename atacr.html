@@ -90,7 +90,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_QC"><code class="docutils literal notranslate"><span class="pre">fig_QC()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_average"><code class="docutils literal notranslate"><span class="pre">fig_average()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_av_cross"><code class="docutils literal notranslate"><span class="pre">fig_av_cross()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_coh_ph"><code class="docutils literal notranslate"><span class="pre">fig_coh_ph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_tilt"><code class="docutils literal notranslate"><span class="pre">fig_tilt()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_TF"><code class="docutils literal notranslate"><span class="pre">fig_TF()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_comply"><code class="docutils literal notranslate"><span class="pre">fig_comply()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.plotting.fig_event_raw"><code class="docutils literal notranslate"><span class="pre">fig_event_raw()</span></code></a></li>
@@ -522,12 +522,12 @@ figure</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="obstools.atacr.classes.DayNoise.average_daily_spectra">
-<span class="sig-name descname"><span class="pre">average_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreqs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.005,</span> <span class="pre">0.035]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_coh_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#DayNoise.average_daily_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">average_daily_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreqs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.005,</span> <span class="pre">0.035]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_trf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#DayNoise.average_daily_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.DayNoise.average_daily_spectra" title="Link to this definition"></a></dt>
 <dd><p>Method to average the daily spectra for good windows. By default, the
-method will attempt to calculate the azimuth of maximum coherence
-between horizontal components and the vertical component (for maximum
-tilt direction), and use the rotated horizontals in the transfer
-function calculations.</p>
+method will attempt to calculate the tilt orientation from the
+maximum coherence between component H1 and the vertical component HZ
+and use the rotated horizontals in the transfer function calculations
+for tilt noise removal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -536,8 +536,12 @@ function calculations.</p>
 calculated</p></li>
 <li><p><strong>fig_average</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the average daily
 spectra</p></li>
-<li><p><strong>fig_coh_ph</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the maximum coherence
-between H and Z</p></li>
+<li><p><strong>fig_tilt</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the maximum coherence
+and phase between H1 and HZ as function of azimuth measured CW
+from H1</p></li>
+<li><p><strong>fig_trf</strong> (<em>boolean</em>) – Whether or not to produce a figure showing the components of the
+complex transfer function between H1 and HZ measured at the tilt
+direction</p></li>
 <li><p><strong>save</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> object) – Relative path to figures folder</p></li>
 <li><p><strong>form</strong> (<em>str</em>) – File format (e.g., ‘png’, ‘jpg’, ‘eps’)</p></li>
 </ul>
@@ -811,9 +815,21 @@ the power, cross and rotated spectra: [11, 12, 1Z, 1P, 22, 2Z,
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.tilt">
-<span class="sig-name descname"><span class="pre">tilt</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.tilt" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.tilt_dir">
+<span class="sig-name descname"><span class="pre">tilt_dir</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.tilt_dir" title="Link to this definition"></a></dt>
 <dd><p>Tilt direction from maximum coherence between rotated <cite>H1</cite> and
+<cite>HZ</cite> components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obstools.atacr.classes.StaNoise.tilt_ang">
+<span class="sig-name descname"><span class="pre">tilt_ang</span></span><a class="headerlink" href="#obstools.atacr.classes.StaNoise.tilt_ang" title="Link to this definition"></a></dt>
+<dd><p>Tilt angle from maximum coherence between rotated <cite>H1</cite> and
 <cite>HZ</cite> components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -863,8 +879,8 @@ been called.</p>
 <span class="gr">AttributeError</span>: <span class="n">&#39;StaNoise&#39; object has no attribute &#39;daylist&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stanoise</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;initialized&#39;, &#39;c11&#39;, &#39;c22&#39;, &#39;cZZ&#39;, &#39;cPP&#39;, &#39;c12&#39;, &#39;c1Z&#39;,</span>
-<span class="go">&#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;phi&#39;, &#39;tilt&#39;, &#39;f&#39;,</span>
-<span class="go">&#39;nwins&#39;, &#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
+<span class="go">&#39;c1P&#39;, &#39;c2Z&#39;, &#39;c2P&#39;, &#39;cZP&#39;, &#39;cHH&#39;, &#39;cHZ&#39;, &#39;cHP&#39;, &#39;phi&#39;, &#39;tilt_dir&#39;,</span>
+<span class="go">&#39;tilt_ang&#39;, &#39;f&#39;, &#39;nwins&#39;, &#39;ncomp&#39;, &#39;key&#39;, &#39;tf_list&#39;, &#39;QC&#39;, &#39;av&#39;])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1591,7 +1607,7 @@ save the final object</p>
 <h4>Rotation<a class="headerlink" href="#rotation" title="Link to this heading"></a></h4>
 <dl class="py class">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cHH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#Rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obstools.atacr.classes.</span></span><span class="sig-name descname"><span class="pre">Rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cHH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cHP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_ang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admit_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/classes.html#Rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.classes.Rotation" title="Link to this definition"></a></dt>
 <dd><p>Container for rotated spectra, with any shape</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.cHH">
@@ -1629,7 +1645,7 @@ save the final object</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.coh">
 <span class="sig-name descname"><span class="pre">coh</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.coh" title="Link to this definition"></a></dt>
-<dd><p>Coherence between horizontal components</p>
+<dd><p>Coherence between horizontal-vertical components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -1640,7 +1656,7 @@ save the final object</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.ph">
 <span class="sig-name descname"><span class="pre">ph</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.ph" title="Link to this definition"></a></dt>
-<dd><p>Phase of cross-power spectrum between horizontal components</p>
+<dd><p>Phase of cross-power spectrum between horizontal-vertical components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -1649,9 +1665,31 @@ save the final object</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.tilt">
-<span class="sig-name descname"><span class="pre">tilt</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt" title="Link to this definition"></a></dt>
-<dd><p>Angle (azimuth) of tilt axis</p>
+<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.ad">
+<span class="sig-name descname"><span class="pre">ad</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.ad" title="Link to this definition"></a></dt>
+<dd><p>Admittance between horizontal-vertical components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.tilt_dir">
+<span class="sig-name descname"><span class="pre">tilt_dir</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt_dir" title="Link to this definition"></a></dt>
+<dd><p>Azimuth of the tilt axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.tilt_ang">
+<span class="sig-name descname"><span class="pre">tilt_ang</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.tilt_ang" title="Link to this definition"></a></dt>
+<dd><p>Angle of the tilt axis</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -1674,6 +1712,17 @@ save the final object</p>
 <dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.phase_value">
 <span class="sig-name descname"><span class="pre">phase_value</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.phase_value" title="Link to this definition"></a></dt>
 <dd><p>Phase at maximum coherence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obstools.atacr.classes.Rotation.admit_value">
+<span class="sig-name descname"><span class="pre">admit_value</span></span><a class="headerlink" href="#obstools.atacr.classes.Rotation.admit_value" title="Link to this definition"></a></dt>
+<dd><p>Admittance value at maximum coherence</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -1816,8 +1865,9 @@ empty traces for missing components.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.calculate_tilt">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goodwins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreqs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#calculate_tilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.calculate_tilt" title="Link to this definition"></a></dt>
-<dd><p>Determines tilt direction from maximum coherence between rotated H1 and Z.</p>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goodwins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiltfreqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_trf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#calculate_tilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.calculate_tilt" title="Link to this definition"></a></dt>
+<dd><p>Determines tilt orientation from the maximum coherence between
+rotated H1 and Z.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1829,22 +1879,33 @@ empty traces for missing components.</p>
 <li><p><strong>goodwins</strong> (<em>list</em>) – List of booleans representing whether a window is good (True) or not
 (False). This attribute is returned from the method
 <a class="reference internal" href="#obstools.atacr.classes.DayNoise.QC_daily_spectra" title="obstools.atacr.classes.DayNoise.QC_daily_spectra"><code class="xref py py-func docutils literal notranslate"><span class="pre">QC_daily_spectra()</span></code></a></p></li>
-<li><p><strong>tiltfreqs</strong> (<em>list</em>) – Two floats representing the frequency band at which the tilt is
-calculated</p></li>
+<li><p><strong>tiltfreqs</strong> (<em>list</em>) – Two floats representing the frequency band at which the mean
+coherence, phase and admittance are calculated to determine the
+tile orientation</p></li>
+<li><p><strong>fig_trf</strong> (<em>boolean</em>) – Whether or not to show the components of the complex transfer function
+as a function of frequency, shown at the maximum coherence between
+rotated H1 and Z.</p></li>
+<li><p><strong>savefig</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> object) – Relative path to figures folder</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>cHH, cHZ, cHP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Arrays of power and cross-spectral density functions of components HH
 (rotated H1 in direction of maximum tilt), HZ, and HP</p></li>
-<li><p><strong>coh</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Coherence value between rotated H and Z components, as a function of
-directions (azimuths)</p></li>
-<li><p><strong>ph</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase value between rotated H and Z components, as a function of
-directions (azimuths)</p></li>
-<li><p><strong>phi</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of directions (azimuths) considered</p></li>
-<li><p><strong>tilt</strong> (<em>float</em>) – Direction (azimuth) of maximum coherence between rotated H1 and Z</p></li>
-<li><p><strong>coh_value</strong> (<em>float</em>) – Coherence value at tilt direction</p></li>
-<li><p><strong>phase_value</strong> (<em>float</em>) – Phase value at tilt direction</p></li>
+<li><p><strong>coh</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Mean coherence value between rotated H and Z components,
+as a function of azimuth CW from H1</p></li>
+<li><p><strong>ph</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Mean phase value between rotated H and Z components,
+as a function of azimuth CW from H1</p></li>
+<li><p><strong>ad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Mean admittance value between rotated H and Z components,
+as a function of azimuth CW from H1</p></li>
+<li><p><strong>phi</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of azimuths CW from H1 considered</p></li>
+<li><p><strong>tilt_dir</strong> (<em>float</em>) – Tilt direction (azimuth CW from H1) at maximum coherence
+between rotated H1 and Z</p></li>
+<li><p><strong>tilt_ang</strong> (<em>float</em>) – Tilt angle (down from HZ/3) at maximum coherence
+between rotated H1 and Z</p></li>
+<li><p><strong>coh_value</strong> (<em>float</em>) – Mean coherence value at tilt direction</p></li>
+<li><p><strong>phase_value</strong> (<em>float</em>) – Mean phase value at tilt direction</p></li>
+<li><p><strong>admit_value</strong> (<em>float</em>) – Mean admittance value at tilt direction</p></li>
 </ul>
 </p>
 </dd>
@@ -1917,7 +1978,7 @@ of a boxcar function with the PSD</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.utils.phase">
 <span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gxy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.phase" title="Link to this definition"></a></dt>
-<dd><p>Calculates phase angle between two components</p>
+<dd><p>Calculates phase angle between real and imaginary components</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>Gxy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Cross spectral density function of <cite>x</cite> and <cite>y</cite></p>
@@ -1998,18 +2059,20 @@ Otherwise semilogx</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="obstools.atacr.plotting.fig_coh_ph">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_coh_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_coh_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_coh_ph" title="Link to this definition"></a></dt>
-<dd><p>Function to plot the coherence and phase between the rotated H and Z
-components, used to characterize the tilt direction.</p>
+<dt class="sig sig-object py" id="obstools.atacr.plotting.fig_tilt">
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_ang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_tilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_tilt" title="Link to this definition"></a></dt>
+<dd><p>Function to plot the coherence, phase and admittance between the rotated
+H and Z components, used to characterize the tilt orientation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coh</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Coherence between rotated H and Z components</p></li>
 <li><p><strong>ph</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase between rotated H and Z components</p></li>
+<li><p><strong>ad</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Admittance between rotated H and Z components</p></li>
 <li><p><strong>direc</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Directions considered in maximizing coherence between H and Z</p></li>
+<li><p><strong>tilt_dir</strong> (<em>list</em>) – List of tilt directions determined for each date</p></li>
+<li><p><strong>tilt_ang</strong> (<em>list</em>) – List of tilt angles determined for each date</p></li>
 <li><p><strong>date</strong> (<em>list</em>) – List of datetime dates for plotting as function of time</p></li>
-<li><p><strong>tilt</strong> (<em>list</em>) – List of tilt azimuths determined for each date</p></li>
 </ul>
 </dd>
 </dl>
