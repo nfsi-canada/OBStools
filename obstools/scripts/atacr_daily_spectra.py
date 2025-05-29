@@ -194,13 +194,6 @@ def get_dailyspec_arguments(argv=None):
         title='Figure Settings',
         description="Flags for plotting figures")
     FigureGroup.add_argument(
-        "--figQC",
-        action="store_true",
-        dest="fig_QC",
-        default=False,
-        help="Plot Quality-Control figure. " +
-        "[Default does not plot figure]")
-    FigureGroup.add_argument(
         "--debug",
         action="store_true",
         dest="debug",
@@ -208,19 +201,35 @@ def get_dailyspec_arguments(argv=None):
         help="Plot intermediate steps for debugging. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
+        "--figQC",
+        action="store_true",
+        dest="fig_QC",
+        default=False,
+        help="Plot Quality-Control figure to visualize good vs bad windows. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
         "--figAverage",
         action="store_true",
         dest="fig_average",
         default=False,
-        help="Plot daily average figure. " +
-        "[Default does not plot figure]")
+        help="Plot daily average figure calculated by taking the mean of " +
+        "good or bad windows. [Default does not plot figure]")
     FigureGroup.add_argument(
-        "--figCoh",
+        "--figTilt",
         action="store_true",
-        dest="fig_coh_ph",
+        dest="fig_tilt",
         default=False,
-        help="Plot Coherence and Phase figure. " +
-        "[Default does not plot figure]")
+        help="Plot mean coherence and phase figure as function of azimuth" +
+        "measured clockwise from H1. [Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figTFcomp",
+        action="store_true",
+        dest="fig_trf",
+        default=False,
+        help="Plot components of the transfer function between rotated " +
+        "H1 and HZ at the tilt direction. Use this option to determine " +
+        "the frequencies to use in determining the tilt orientation " +
+        "(option --tilt-freqs). [Default does not plot figure]")
     FigureGroup.add_argument(
         "--save-fig",
         action="store_true",
@@ -442,9 +451,14 @@ def main(args=None):
 
             # Quality control to identify outliers
             daynoise.QC_daily_spectra(
-                pd=args.pd, tol=args.tol, alpha=args.alpha,
-                smooth=args.smooth, fig_QC=args.fig_QC,
-                save=plotpath, form=args.form, debug=args.debug)
+                pd=args.pd,
+                tol=args.tol,
+                alpha=args.alpha,
+                smooth=args.smooth,
+                fig_QC=args.fig_QC,
+                save=plotpath,
+                form=args.form,
+                debug=args.debug)
 
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
@@ -460,8 +474,10 @@ def main(args=None):
                 calc_rotation=args.calc_rotation,
                 tiltfreqs=args.tf,
                 fig_average=args.fig_average,
-                fig_coh_ph=args.fig_coh_ph,
-                save=plotpath, form=args.form)
+                fig_tilt=args.fig_tilt,
+                fig_trf=args.fig_trf,
+                save=plotpath,
+                form=args.form)
 
             # Save to file
             daynoise.save(filename)

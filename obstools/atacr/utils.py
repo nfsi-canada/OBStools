@@ -30,6 +30,7 @@ import os
 import math
 import numpy as np
 import fnmatch
+from scipy.stats import circmean
 from matplotlib import pyplot as plt
 from obspy.core import read, Stream, Trace, AttribDict, UTCDateTime
 
@@ -365,9 +366,11 @@ def get_event(eventpath, tstart, tend):
     return tr1, tr2, trZ, trP
 
 
-def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
+def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs,
+                   fig_trf=False, savefig=None):
     """
-    Determines tilt direction from maximum coherence between rotated H1 and Z.
+    Determines tilt orientation from the maximum coherence between
+    rotated H1 and Z.
 
     Parameters
     ----------
@@ -380,8 +383,15 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
         (False). This attribute is returned from the method
         :func:`~obstools.atacr.classes.DayNoise.QC_daily_spectra`
     tiltfreqs : list
-        Two floats representing the frequency band at which the tilt is
-        calculated
+        Two floats representing the frequency band at which the mean
+        coherence, phase and admittance are calculated to determine the
+        tile orientation
+    fig_trf : boolean
+        Whether or not to show the components of the complex transfer function
+        as a function of frequency, shown at the maximum coherence between
+        rotated H1 and Z.
+    savefig : :class:`~pathlib.Path` object
+        Relative path to figures folder
 
     Returns
     -------
@@ -389,27 +399,43 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
         Arrays of power and cross-spectral density functions of components HH
         (rotated H1 in direction of maximum tilt), HZ, and HP
     coh : :class:`~numpy.ndarray`
-        Coherence value between rotated H and Z components, as a function of
-        directions (azimuths)
+        Mean coherence value between rotated H and Z components,
+        as a function of azimuth CW from H1
     ph : :class:`~numpy.ndarray`
-        Phase value between rotated H and Z components, as a function of
-        directions (azimuths)
+        Mean phase value between rotated H and Z components,
+        as a function of azimuth CW from H1
+    ad : :class:`~numpy.ndarray`
+        Mean admittance value between rotated H and Z components,
+        as a function of azimuth CW from H1
     phi : :class:`~numpy.ndarray`
-        Array of directions (azimuths) considered
-    tilt : float
-        Direction (azimuth) of maximum coherence between rotated H1 and Z
+        Array of azimuths CW from H1 considered
+    tilt_dir : float
+        Tilt direction (azimuth CW from H1) at maximum coherence
+        between rotated H1 and Z
+    tilt_ang : float
+        Tilt angle (down from HZ/3) at maximum coherence
+        between rotated H1 and Z
     coh_value : float
-        Coherence value at tilt direction
+        Mean coherence value at tilt direction
     phase_value : float
-        Phase value at tilt direction
+        Mean phase value at tilt direction
+    admit_value : float
+        Mean admittance value at tilt direction
 
     """
 
+    # frequencies considered in averaging
+    freqs = (f > tiltfreqs[0]) & (f < tiltfreqs[1])
+
+    # Mean of Z PSD - this one doesn't change with angle from H1
+    cZZ = np.abs(np.mean(ftZ[goodwins, :] *
+                         np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
+
+    # Initialize arrays
     phi = np.arange(0., 360., 10.)
     coh = np.zeros(len(phi))
     ph = np.zeros(len(phi))
-    cZZ = np.abs(np.mean(ftZ[goodwins, :] *
-                         np.conj(ftZ[goodwins, :]), axis=0))[0:len(f)]
+    ad = np.zeros(len(phi))
 
     for i, d in enumerate(phi):
 
@@ -424,43 +450,48 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
                       np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
 
         Co = coherence(cHZ, cHH, cZZ)
-        Ph = phase(cHZ)
+        Ad = admittance(cHZ, cHH)
+        Ph = phase(cHZ/cHH)
 
         # Calculate coherence over frequency band
         try:
-            coh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
-            ph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+            coh[i] = np.mean(Co[freqs])
+            ad[i] = np.mean(Ad[freqs])
+            ph[i] = circmean(
+                Ph[freqs],
+                high=np.pi,
+                low=-np.pi)
         except Exception:
             print('Exception')
             coh[i] = 0.
+            ad[i] = 0.
             ph[i] = 0.
 
     # Index where coherence is max
     ind = np.argwhere(coh == coh.max())
 
-    # Phase and direction at maximum coherence
+    # Phase, angle and direction at maximum coherence
     phase_value = ph[ind[0]][0]
+    admit_value = ad[ind[0]][0]
     coh_value = coh[ind[0]][0]
-    tilt = phi[ind[0]][0]
+    tilt_dir = phi[ind[0]][0]
+    tilt_ang = np.arctan(admit_value)*180./np.pi
 
-    # Phase has to be close to zero:
-    # Check phase std near max coherence
+    # Phase has to be close to zero: ***Not true?***
+    # Check phase near max coherence and 180 deg apart
     start = max(0, ind[0][0] - 1)
     end = min(len(ph), ind[0][0] + 2)
     phase_std = np.std(ph[start:end])
 
-    if phase_std > 0.1:
-        tilt += 180.
-    if tilt > 360.:
-        tilt -= 360.
-    if tilt > 180.:
-        tilt -= 180.
-
-    # print('Tilt corrected = ', tilt)
+    if np.abs(phase_value) > np.pi/2:
+        tilt_dir += 180.
+    if tilt_dir > 360.:
+        tilt_dir -= 360.
 
     # Refine search
-    rphi = np.arange(tilt-10., tilt+10., 1.)
+    rphi = np.arange(tilt_dir-10., tilt_dir+10., 1.)
     rcoh = np.zeros(len(rphi))
+    rad = np.zeros(len(rphi))
     rph = np.zeros(len(rphi))
 
     for i, d in enumerate(rphi):
@@ -476,17 +507,23 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
                       np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
 
         Co = coherence(cHZ, cHH, cZZ)
-        Ph = phase(cHZ)
+        Ad = admittance(cHZ, cHH)
+        Ph = phase(cHZ/cHH)
 
         # Calculate coherence over frequency band
         try:
-            rcoh[i] = np.mean(Co[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
-            rph[i] = np.mean(Ph[(f > tiltfreqs[0]) & (f < tiltfreqs[1])])
+            rcoh[i] = np.mean(Co[freqs])
+            rad[i] = np.mean(Ad[freqs])
+            rph[i] = circmean(
+                Ph[freqs],
+                high=np.pi,
+                low=-np.pi)
         except Exception:
             print("* Warning: problems in the Tilt calculations. " +
                   "Setting coherence and phase between Z and rotated H " +
                   "to 0.")
             rcoh[i] = 0.
+            rad[i] = 0.
             rph[i] = 0.
 
     # Index where coherence is max
@@ -494,29 +531,70 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs):
 
     # Phase and direction at maximum coherence
     phase_value = rph[ind[0]][0]
+    admit_value = rad[ind[0]][0]
     coh_value = rcoh[ind[0]][0]
-    tilt = rphi[ind[0]][0]
-    if tilt > 360.:
-        tilt -= 360.
-    elif tilt < 0:
-        tilt += 360.
-    if tilt > 180.:
-        tilt -= 180.
+    tilt_dir = rphi[ind[0]][0]
+    tilt_ang = np.arctan(admit_value)*180./np.pi
 
     # Now calculate spectra at tilt direction
-    ftH = rotate_dir(ft1, ft2, tilt)
+    ftH = rotate_dir(ft2, ft1, tilt_dir)
 
     # Get transfer functions
     cHH = np.abs(np.mean(ftH[goodwins, :] *
                          np.conj(ftH[goodwins, :]), axis=0))[0:len(f)]
-    cHZ = np.mean(ftH[goodwins, :]*np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
+    cHZ = np.mean(ftH[goodwins, :] *
+                  np.conj(ftZ[goodwins, :]), axis=0)[0:len(f)]
     if np.any(ftP):
         cHP = np.mean(ftH[goodwins, :] *
                       np.conj(ftP[goodwins, :]), axis=0)[0:len(f)]
     else:
         cHP = None
 
-    return cHH, cHZ, cHP, coh, ph, phi, tilt, coh_value, phase_value
+    if fig_trf:
+        freqs2 = (f > 0.) & (f < 0.1)
+
+        # Re-calculate the components of the transfer function
+        Ad = admittance(cHZ, cHH)
+        Co = coherence(cHZ, cHH, cZZ)
+        Ph = phase(cHZ/cHH)
+
+        # Figure
+        fig = plt.figure(figsize=(8, 2.5))
+
+        # First is coherence
+        plt.subplot(131)
+        plt.plot(f[freqs2], Co[freqs2], '.')
+        plt.plot(f[freqs], Co[freqs], '.')
+        plt.axhline(np.mean(Co[freqs]))
+        plt.ylabel('Coherence')
+        plt.xlabel('Frequency (Hz)')
+
+        # Second is admittance
+        plt.subplot(132)
+        plt.plot(f[freqs2], np.log10(Ad[freqs2]), '.')
+        plt.plot(f[freqs], np.log10(Ad[freqs]), '.')
+        plt.axhline(np.log10(np.mean(Ad[freqs])))
+        plt.ylabel('log(Admittance)')
+        plt.xlabel('Frequency (Hz)')
+
+        # Third is phase
+        plt.subplot(133)
+        plt.plot(f[freqs2], Ph[freqs2], '.')
+        plt.plot(f[freqs], Ph[freqs], '.')
+        plt.axhline(circmean(Ph[freqs], low=-np.pi, high=np.pi))
+        plt.ylabel('Phase shift (cycles)')
+        plt.xlabel('Frequency (Hz)')
+
+        plt.tight_layout()
+        if savefig is not None:
+            plt.savefig(
+                str(savefig),
+                dpi=300,
+                bbox_inches='tight',
+                format=form)
+        plt.show()
+
+    return cHH, cHZ, cHP, coh, ph, ad, phi, tilt_dir, tilt_ang, coh_value, phase_value, admit_value
 
 
 def smooth(data, nd, axis=0):
@@ -561,7 +639,7 @@ def admittance(Gxy, Gxx):
     Calculates admittance between two components
 
     Parameters
-    ---------
+    ----------
     Gxy : :class:`~numpy.ndarray`
         Cross spectral density function of `x` and `y`
     Gxx : :class:`~numpy.ndarray`
@@ -585,7 +663,7 @@ def coherence(Gxy, Gxx, Gyy):
     Calculates coherence between two components
 
     Parameters
-    ---------
+    ----------
     Gxy : :class:`~numpy.ndarray`
         Cross spectral density function of `x` and `y`
     Gxx : :class:`~numpy.ndarray`
@@ -608,10 +686,10 @@ def coherence(Gxy, Gxx, Gyy):
 
 def phase(Gxy):
     """
-    Calculates phase angle between two components
+    Calculates phase angle between real and imaginary components
 
     Parameters
-    ---------
+    ----------
     Gxy : :class:`~numpy.ndarray`
         Cross spectral density function of `x` and `y`
 
@@ -634,8 +712,7 @@ def rotate_dir(x, y, theta):
     rot_mat = [[np.cos(d), np.sin(d)],
                [-np.sin(d), np.cos(d)]]
 
-    vxy = [x, y]
-    vxy_rotated = np.tensordot(rot_mat, vxy, axes=1)
+    vxy_rotated = np.tensordot(rot_mat, [x, y], axes=1)
 
     return vxy_rotated[1]
 

@@ -101,31 +101,41 @@ class Rotation(object):
     cHP : :class:`~numpy.ndarray`
         Cross-power spectral density for components H and P (any shape)
     coh : :class:`~numpy.ndarray`
-        Coherence between horizontal components
+        Coherence between horizontal-vertical components
     ph : :class:`~numpy.ndarray`
-        Phase of cross-power spectrum between horizontal components
-    tilt : float
-        Angle (azimuth) of tilt axis
+        Phase of cross-power spectrum between horizontal-vertical components
+    ad : :class:`~numpy.ndarray`
+        Admittance between horizontal-vertical components
+    tilt_dir : float
+        Azimuth of the tilt axis
+    tilt_ang : float
+        Angle of the tilt axis
     coh_value : float
         Maximum coherence
     phase_value : float
         Phase at maximum coherence
+    admit_value : float
+        Admittance value at maximum coherence
     phi : :class:`~numpy.ndarray`
         Directions for which the coherence is calculated
 
     """
 
     def __init__(self, cHH=None, cHZ=None, cHP=None, coh=None, ph=None,
-                 tilt=None, coh_value=None, phase_value=None, phi=None):
+                 ad=None, tilt_dir=None, tilt_ang=None, coh_value=None,
+                 phase_value=None, admit_value=None, phi=None):
 
         self.cHH = cHH
         self.cHZ = cHZ
         self.cHP = cHP
         self.coh = coh
         self.ph = ph
-        self.tilt = tilt
+        self.ad = ad
+        self.tilt_dir = tilt_dir
+        self.tilt_ang = tilt_ang
         self.coh_value = coh_value
         self.phase_value = phase_value
+        self.admit_value = admit_value
         self.phi = phi
 
 
@@ -552,9 +562,9 @@ class DayNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         goodwins = np.repeat([True], len(t))
-        indwin = np.argwhere(goodwins is True)
+        indwin = np.argwhere(goodwins == True)
 
-        while moveon is False:
+        while moveon == False:
 
             ubernorm = np.empty((self.ncomp, np.sum(goodwins)))
             for ind_u, dsl in enumerate(dsls):
@@ -588,11 +598,11 @@ class DayNoise(object):
                 self.goodwins = goodwins
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(kill is False)].T[0]
+            trypenalty = penalty[np.argwhere(kill == False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                goodwins[indwin[kill is True]] = False
-                indwin = np.argwhere(goodwins is True)
+                goodwins[indwin[kill == True]] = False
+                indwin = np.argwhere(goodwins == True)
                 moveon = False
             else:
                 moveon = True
@@ -619,15 +629,16 @@ class DayNoise(object):
     def average_daily_spectra(self, calc_rotation=True,
                               tiltfreqs=[0.005, 0.035],
                               fig_average=False,
-                              fig_coh_ph=False,
-                              ave=None,
+                              fig_tilt=False,
+                              fig_trf=False,
+                              save=None,
                               form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
-        method will attempt to calculate the azimuth of maximum coherence
-        between horizontal components and the vertical component (for maximum
-        tilt direction), and use the rotated horizontals in the transfer
-        function calculations.
+        method will attempt to calculate the tilt orientation from the
+        maximum coherence between component H1 and the vertical component HZ
+        and use the rotated horizontals in the transfer function calculations
+        for tilt noise removal.
 
         Parameters
         ----------
@@ -639,9 +650,14 @@ class DayNoise(object):
         fig_average : boolean
             Whether or not to produce a figure showing the average daily
             spectra
-        fig_coh_ph : boolean
+        fig_tilt : boolean
             Whether or not to produce a figure showing the maximum coherence
-            between H and Z
+            and phase between H1 and HZ as function of azimuth measured CW
+            from H1
+        fig_trf : boolean
+            Whether or not to produce a figure showing the components of the
+            complex transfer function between H1 and HZ measured at the tilt
+            direction
         save : :class:`~pathlib.Path` object
             Relative path to figures folder
         form : str
@@ -781,19 +797,23 @@ class DayNoise(object):
                 plot.show()
 
         if calc_rotation and self.ncomp >= 3:
-            cHH, cHZ, cHP, coh, ph, phi, tilt, coh_value, phase_value = \
+            fname = self.key + '.' + self.tkey + '.' + 'trf.' + form
+            if isinstance(save, Path):
+                fname = save / fname
+            cHH, cHZ, cHP, coh, ph, ad, phi, tilt_dir, tilt_ang, coh_value, phase_value, admit_value = \
                 utils.calculate_tilt(
                     self.ft1, self.ft2, self.ftZ, self.ftP, self.f,
-                    self.goodwins, tiltfreqs)
+                    self.goodwins, tiltfreqs, fig_trf=fig_trf, savefig=fname)
             self.rotation = Rotation(
-                cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, phi)
+                cHH, cHZ, cHP, coh, ph, ad, tilt_dir, tilt_ang, coh_value, phase_value, admit_value, phi)
 
-            if fig_coh_ph:
-                plot = plotting.fig_coh_ph(coh, ph, phi, tilt)
+            if fig_tilt:
+                plot = plotting.fig_tilt(
+                    coh, ph, ad, phi, tilt_dir, tilt_ang)
 
                 # Save or show figure
                 if save:
-                    fname = self.key + '.' + self.tkey + '.' + 'coh_ph.' + form
+                    fname = self.key + '.' + self.tkey + '.' + 'tilt.' + form
                     if isinstance(save, Path):
                         fname = save / fname
                     plot.savefig(
@@ -1027,8 +1047,11 @@ class StaNoise(object):
             2P, ZZ, ZP, PP, HH, HZ, HP]
         phi : `numpy.ndarray`
             Array of azimuths used in determining the tilt direction
-        tilt : float
+        tilt_dir : float
             Tilt direction from maximum coherence between rotated `H1` and
+            `HZ` components
+        tilt_ang : float
+            Tilt angle from maximum coherence between rotated `H1` and
             `HZ` components
         QC : bool
             Whether or not the method
@@ -1057,8 +1080,8 @@ class StaNoise(object):
         AttributeError: 'StaNoise' object has no attribute 'daylist'
         >>> stanoise.__dict__.keys()
         dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z',
-        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'phi', 'tilt', 'f',
-        'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
+        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'phi', 'tilt_dir',
+        'tilt_ang', 'f', 'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
 
@@ -1090,7 +1113,8 @@ class StaNoise(object):
         self.cHZ = np.array([dn.rotation.cHZ for dn in self.daylist]).T
         self.cHP = np.array([dn.rotation.cHP for dn in self.daylist]).T
         self.phi = self.daylist[0].rotation.phi
-        self.tilt = self.daylist[0].rotation.tilt
+        self.tilt_dir = self.daylist[0].rotation.tilt_dir
+        self.tilt_ang = self.daylist[0].rotation.tilt_ang
         self.f = self.daylist[0].f
         self.nwins = np.array([np.sum(dn.goodwins) for dn in self.daylist])
         self.ncomp = np.min([dn.ncomp for dn in self.daylist])
@@ -1233,9 +1257,9 @@ class StaNoise(object):
         # Cycle through to kill high-std-norm windows
         moveon = False
         gooddays = np.repeat([True], self.cZZ.shape[1])
-        indwin = np.argwhere(gooddays is True)
+        indwin = np.argwhere(gooddays == True)
 
-        while moveon is False:
+        while moveon == False:
             ubernorm = np.empty((self.ncomp, np.sum(gooddays)))
             for ind_u, dsl in enumerate(dsls):
                 normvar = np.zeros(np.sum(gooddays))
@@ -1247,21 +1271,16 @@ class StaNoise(object):
 
             penalty = np.sum(ubernorm, axis=0)
 
-            plt.figure(4)
-            for i in range(self.ncomp):
-                plt.plot(range(0, np.sum(gooddays)), detrend(
-                    ubernorm, type='constant')[i], 'o-')
             if debug:
+                plt.figure(4)
+                for i in range(self.ncomp):
+                    plt.plot(range(0, np.sum(gooddays)), detrend(
+                        ubernorm, type='constant')[i], 'o-')
                 plt.show()
-            else:
-                plt.close(4)
-            plt.figure(5)
-            plt.plot(range(0, np.sum(gooddays)),
-                     np.sum(ubernorm, axis=0), 'o-')
-            if debug:
+                plt.figure(5)
+                plt.plot(range(0, np.sum(gooddays)),
+                         np.sum(ubernorm, axis=0), 'o-')
                 plt.show()
-            else:
-                plt.close(5)
 
             kill = penalty > tol*np.std(penalty)
             if np.sum(kill) == 0:
@@ -1269,11 +1288,11 @@ class StaNoise(object):
                 self.QC = True
                 moveon = True
 
-            trypenalty = penalty[np.argwhere(killis False)].T[0]
+            trypenalty = penalty[np.argwhere(kill == False)].T[0]
 
             if utils.ftest(penalty, 1, trypenalty, 1) < alpha:
-                gooddays[indwin[kill is True]] = False
-                indwin = np.argwhere(gooddays is True)
+                gooddays[indwin[kill == True]] = False
+                indwin = np.argwhere(gooddays == True)
                 moveon = False
             else:
                 moveon = True

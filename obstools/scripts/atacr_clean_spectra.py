@@ -141,18 +141,18 @@ def get_cleanspec_arguments(argv=None):
         title='Figure Settings',
         description="Flags for plotting figures")
     FigureGroup.add_argument(
-        "--figQC",
-        action="store_true",
-        dest="fig_QC",
-        default=False,
-        help="Plot Quality-Control figure. " +
-        "[Default does not plot figure]")
-    FigureGroup.add_argument(
         "--debug",
         action="store_true",
         dest="debug",
         default=False,
         help="Plot intermediate steps for debugging. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figQC",
+        action="store_true",
+        dest="fig_QC",
+        default=False,
+        help="Plot Quality-Control figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--figAverage",
@@ -166,7 +166,7 @@ def get_cleanspec_arguments(argv=None):
         action="store_true",
         dest="fig_tilt",
         default=False,
-        help="Plot coherence, phase and tilt direction figure. " +
+        help="Plot coherence, phase and tilt orientation figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--figCross",
@@ -358,6 +358,7 @@ def main(args=None):
 
         # Containers for power and cross spectra
         coh_all = []
+        ad_all = []
         ph_all = []
         coh_12_all = []
         coh_1Z_all = []
@@ -386,7 +387,8 @@ def main(args=None):
 
         # Date + tilt list
         date_list = []
-        tilt_list = []
+        tiltdir_list = []
+        tiltang_list = []
         coh_list = []
 
         # Loop through each day withing time range
@@ -407,7 +409,8 @@ def main(args=None):
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()
-                tilt_list.append(daynoise.rotation.tilt)
+                tiltdir_list.append(daynoise.rotation.tilt_dir)
+                tiltang_list.append(daynoise.rotation.tilt_ang)
                 date_list.append(t1.date)
                 coh_list.append(daynoise.rotation.coh_value)
                 stanoise += daynoise
@@ -416,6 +419,7 @@ def main(args=None):
                 continue
 
             coh_all.append(daynoise.rotation.coh)
+            ad_all.append(daynoise.rotation.ad)
             ph_all.append(daynoise.rotation.ph)
 
             # Coherence
@@ -506,6 +510,7 @@ def main(args=None):
 
         # Convert to numpy arrays
         coh_all = np.array(coh_all)
+        ad_all = np.array(ad_all)
         ph_all = np.array(ph_all)
         coh_12_all = np.array(coh_12_all)
         coh_1Z_all = np.array(coh_1Z_all)
@@ -607,11 +612,13 @@ def main(args=None):
 
         if args.fig_tilt and stanoise.phi is not None:
             fname = stkey + '.' + 'coh_ph'
-            plot = plotting.fig_coh_ph(
+            plot = plotting.fig_tilt(
                 coh_all,
                 ph_all,
+                ad_all,
                 stanoise.phi,
-                tilt_list,
+                tiltdir_list,
+                tiltang_list,
                 date_list)
 
             if plotpath:
@@ -635,9 +642,9 @@ def main(args=None):
         print()
         fid = open(filetilt, 'w')
         fid.writelines("Date, Tilt dir. (deg CW from H1), Max coherence\n")
-        for i in range(len(tilt_list)):
+        for i in range(len(tiltdir_list)):
             line1 = "{0},{1:4.1f},{2:4.2f}\n".format(
-                date_list[i], tilt_list[i], coh_list[i])
+                date_list[i], tiltdir_list[i], coh_list[i])
             fid.writelines(line1.replace(" ", ""))
         fid.close()
 
