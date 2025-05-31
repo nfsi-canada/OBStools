@@ -30,6 +30,7 @@ from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
 from obstools.atacr import utils
 from obspy import Trace
+from scipy.stats import circmean
 
 
 def fig_QC(f, power, gooddays, ncomp, key=''):
@@ -238,10 +239,11 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     return plt
 
 
-def fig_tilt(coh, ph, ad, direc, tilt_dir, tilt_ang, date=None):
+def fig_tilt_date(coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     """
     Function to plot the coherence, phase and admittance between the rotated
-    H and Z components, used to characterize the tilt orientation.
+    H and Z components, used to characterize the tilt orientation, for
+    a range of dates.
 
     Parameters
     ----------
@@ -251,7 +253,7 @@ def fig_tilt(coh, ph, ad, direc, tilt_dir, tilt_ang, date=None):
         Phase between rotated H and Z components
     ad : :mod:`~numpy.ndarray`
         Admittance between rotated H and Z components
-    direc : :mod:`~numpy.ndarray`
+    phi : :mod:`~numpy.ndarray`
         Directions considered in maximizing coherence between H and Z
     tilt_dir : list
         List of tilt directions determined for each date
@@ -264,79 +266,162 @@ def fig_tilt(coh, ph, ad, direc, tilt_dir, tilt_ang, date=None):
 
     colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
-    if coh.ndim > 1:
+    # tilt stats
+    meantiltdir = np.mean(tilt_dir)
+    stdetiltdir = np.std(tilt_dir, ddof=1)/np.sqrt(coh.shape[0])
+    mediantiltdir = np.median(tilt_dir)
+    meantiltang = np.mean(tilt_ang)
+    stdetiltang = np.std(tilt_ang, ddof=1)/np.sqrt(coh.shape[0])
+    mediantiltang = np.median(tilt_ang)
 
-        # tilt stats
-        meantiltdir = np.mean(tilt_dir)
-        stdetiltdir = np.std(tilt_dir, ddof=1)/np.sqrt(coh.shape[0])
-        mediantiltdir = np.median(tilt_dir)
-        meantiltang = np.mean(tilt_ang)
-        stdetiltang = np.std(tilt_ang, ddof=1)/np.sqrt(coh.shape[0])
-        mediantiltang = np.median(tilt_ang)
+    plt.rcParams['date.converter'] = 'concise'
+    f = plt.figure(layout='constrained')
+    gs = GridSpec(5, 3, figure=f)
+    ax11 = f.add_subplot(gs[0:-3, 0])
+    ax12 = f.add_subplot(gs[0:-3, 1])
+    ax13 = f.add_subplot(gs[0:-3, 2])
+    ax2 = f.add_subplot(gs[2, :])
+    ax3 = f.add_subplot(gs[3, :])
+    ax4 = f.add_subplot(gs[4, :])
+    ax2.axhline(
+        meantiltdir,
+        ls='--',
+        label=r'Mean: {0:.0f} $\pm$ {1:.0f}'.format(
+            meantiltdir, stdetiltdir))
+    ax2.axhline(
+        mediantiltdir,
+        ls=':',
+        label='Median: {0:.0f}'.format(mediantiltdir))
+    ax3.axhline(
+        meantiltang,
+        ls='--',
+        label=r'Mean: {0:.2f} $\pm$ {1:.2f}'.format(
+            meantiltang, stdetiltang))
+    ax3.axhline(
+        mediantiltang,
+        ls=':',
+        label='Median: {0:.2f}'.format(mediantiltang))
+    for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
+        mcoh = np.max(co)
+        ax11.plot(phi, co, c=colors[i])
+        ax12.plot(phi, p*180./np.pi, c=colors[i])
+        ax13.plot(phi, a, c=colors[i])
+        ax2.plot(d, td, 'o', c=colors[i])
+        ax3.plot(d, ta, 'o', c=colors[i])
+        ax4.plot(d, mcoh, 'o', c=colors[i])
+    ax11.set_ylabel('Coherence')
+    ax11.set_ylim((0, 1.))
+    ax11.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax12.set_ylabel('Phase')
+    ax12.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax13.set_ylabel('Admittance')
+    ax13.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax2.legend(loc='best', fontsize=8)
+    ax2.set_xticklabels([])
+    ax2.set_ylabel('Tilt dir. ($^{\circ}$)')
+    ax2.set_ylim(-10, 370)
+    ax3.legend(loc='best', fontsize=8)
+    ax3.set_xticklabels([])
+    ax3.set_ylabel('Tilt angle ($^{\circ}$)')
+    # ax3.set_ylim(0., 5.0)
+    ax4.set_ylabel('Coherence')
+    ax4.set_ylim(-0.1, 1.1)
 
-        plt.rcParams['date.converter'] = 'concise'
-        f = plt.figure(layout='constrained')
-        gs = GridSpec(5, 3, figure=f)
-        ax11 = f.add_subplot(gs[0:-3, 0])
-        ax12 = f.add_subplot(gs[0:-3, 1])
-        ax13 = f.add_subplot(gs[0:-3, 2])
-        ax2 = f.add_subplot(gs[2, :])
-        ax3 = f.add_subplot(gs[3, :])
-        ax4 = f.add_subplot(gs[4, :])
-        ax2.axhline(
-            meantiltdir,
-            ls='--',
-            label=r'Mean: {0:.0f} $\pm$ {1:.0f}'.format(
-                meantiltdir, stdetiltdir))
-        ax2.axhline(
-            mediantiltdir,
-            ls=':',
-            label='Median: {0:.0f}'.format(mediantiltdir))
-        ax3.axhline(
-            meantiltang,
-            ls='--',
-            label=r'Mean: {0:.2f} $\pm$ {1:.2f}'.format(
-                meantiltang, stdetiltang))
-        ax3.axhline(
-            mediantiltang,
-            ls=':',
-            label='Median: {0:.2f}'.format(mediantiltang))
-        for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
-            mcoh = np.max(co)
-            ax11.plot(direc, co, c=colors[i])
-            ax12.plot(direc, p*180./np.pi, c=colors[i])
-            ax13.plot(direc, a, c=colors[i])
-            ax2.plot(d, td, 'o', c=colors[i])
-            ax3.plot(d, ta, 'o', c=colors[i])
-            ax4.plot(d, mcoh, 'o', c=colors[i])
-        ax11.set_ylabel('Coherence Z-H1')
-        ax11.set_ylim((0, 1.))
-        ax11.set_xlabel('Angle CW from H1 ($^{\circ}$)')
-        ax12.set_ylabel('Phase Z-H1')
-        ax12.set_xlabel('Angle CW from H1 ($^{\circ}$)')
-        ax13.set_ylabel('Admittance Z-H1')
-        ax13.set_xlabel('Angle CW from H1 ($^{\circ}$)')
-        ax2.legend(loc='best', fontsize=8)
-        ax2.set_xticklabels([])
-        ax2.set_ylabel('Tilt dir. ($^{\circ}$)')
-        ax2.set_ylim(-10, 370)
-        ax3.legend(loc='best', fontsize=8)
-        ax3.set_xticklabels([])
-        ax3.set_ylabel('Tilt angle ($^{\circ}$)')
-        # ax3.set_ylim(0., 5.0)
-        ax4.set_ylabel('Coherence')
-        ax4.set_ylim(-0.1, 1.1)
+    return plt
 
-    else:
-        plt.figure()
-        plt.subplot(121)
-        plt.plot(direc, coh, c=colors[0])
-        plt.ylim((0, 1.))
-        plt.subplot(122)
-        plt.plot(direc, ph*180./np.pi, c=colors[0])
-        plt.title(
-            'Tilt dir. {0:.0f} \nTilt ang. {1:.2f}'.format(tilt_dir, tilt_ang))
-        plt.tight_layout()
+
+def fig_tilt_day(coh_phi, ph_phi, ad_phi, phi,
+                 coh_spec, ph_spec, ad_spec, f, f_tilt,
+                 tilt_dir, tilt_ang):
+    """
+    Function to plot the coherence, phase and admittance between the rotated
+    H and Z components, used to characterize the tilt orientation, for a
+    single day. The figure also includes the transfer function components.
+
+    Parameters
+    ----------
+    coh_phi : :mod:`~numpy.ndarray`
+        Coherence between rotated H and Z components as function of the
+        direction phi
+    ph_phi : :mod:`~numpy.ndarray`
+        Phase between rotated H and Z components as function of the
+        direction phi
+    ad_phi : :mod:`~numpy.ndarray`
+        Admittance between rotated H and Z components as function of the
+        direction phi
+    phi : :mod:`~numpy.ndarray`
+        Directions phi considered in maximizing coherence between H and Z
+    coh_spec : :mod:`~numpy.ndarray`
+        Coherence spectrum between rotated H and Z components at the direction
+        where coherence is maximum, as function of frequency
+    ph_spec : :mod:`~numpy.ndarray`
+        Phase spectrum between rotated H and Z components at the direction
+        where coherence is maximum, as function of frequency
+    ad_spec : :mod:`~numpy.ndarray`
+        Admittance spectrum between rotated H and Z components at the direction
+        where coherence is maximum, as function of frequency
+    f : :mod:`~numpy.ndarray`
+        Frequency axis
+    f_tilt : :mod:`~numpy.ndarray`
+        Frequencies used in tilt calculation
+    tilt_dir : float
+        Tilt direction
+    tilt_ang : float
+        Tilt angle
+
+    """
+
+    fig = plt.figure(layout='constrained')
+    gs = GridSpec(2, 3, figure=fig)
+    ax11 = fig.add_subplot(gs[0, 0])
+    ax12 = fig.add_subplot(gs[0, 1])
+    ax13 = fig.add_subplot(gs[0, 2])
+    ax21 = fig.add_subplot(gs[1, 0])
+    ax22 = fig.add_subplot(gs[1, 1])
+    ax23 = fig.add_subplot(gs[1, 2])
+
+    ax21.plot(phi, coh_phi)
+    ax21.axvline(tilt_dir, c='C1')
+    ax21.set_ylim((0, 1.))
+    ax21.set_ylabel('Mean coherence')
+    ax21.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+
+    ax22.plot(phi, ph_phi*180./np.pi)
+    ax22.axvline(tilt_dir, c='C1')
+    ax22.set_ylabel('Mean phase')
+    ax22.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+
+    ax23.plot(phi, np.log10(ad_phi))
+    ax23.axvline(tilt_dir, c='C1')
+    ax23.set_ylabel('Mean log(admittance)')
+    ax23.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+
+    freqs2 = (f > 0.) & (f < 0.1)
+    freqs = (f > f_tilt[0]) & (f < f_tilt[1])
+
+    ax11.plot(f[freqs2], coh_spec[freqs2], '.')
+    ax11.plot(f[freqs], coh_spec[freqs], '.')
+    ax11.axhline(np.mean(coh_spec[freqs]), c='C2')
+    ax11.set_ylabel('Coherence spectrum')
+    ax11.set_xlabel('Frequency (Hz)')
+
+    ax12.plot(f[freqs2], ph_spec[freqs2]*180/np.pi, '.')
+    ax12.plot(f[freqs], ph_spec[freqs]*180/np.pi, '.')
+    ax12.axhline(
+        circmean(
+            ph_spec[freqs], low=-np.pi, high=np.pi)*180/np.pi, c='C2')
+    ax12.set_ylabel('Phase spectrum')
+    ax12.set_xlabel('Frequency (Hz)')
+
+    ax13.plot(f[freqs2], np.log10(ad_spec[freqs2]), '.')
+    ax13.plot(f[freqs], np.log10(ad_spec[freqs]), '.')
+    ax13.axhline(np.log10(np.mean(ad_spec[freqs])), c='C2')
+    ax13.set_ylabel('log(Admittance) spectrum')
+    ax13.set_xlabel('Frequency (Hz)')
+
+    plt.suptitle(
+        'Tilt direction {0:.1f} \nTilt angle {1:.2f}'.format(
+            tilt_dir, tilt_ang))
 
     return plt
 

@@ -386,12 +386,6 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs,
         Two floats representing the frequency band at which the mean
         coherence, phase and admittance are calculated to determine the
         tile orientation
-    fig_trf : boolean
-        Whether or not to show the components of the complex transfer function
-        as a function of frequency, shown at the maximum coherence between
-        rotated H1 and Z.
-    savefig : :class:`~pathlib.Path` object
-        Relative path to figures folder
 
     Returns
     -------
@@ -549,50 +543,6 @@ def calculate_tilt(ft1, ft2, ftZ, ftP, f, goodwins, tiltfreqs,
                       np.conj(ftP[goodwins, :]), axis=0)[0:len(f)]
     else:
         cHP = None
-
-    if fig_trf:
-        freqs2 = (f > 0.) & (f < 0.1)
-
-        # Re-calculate the components of the transfer function
-        Ad = admittance(cHZ, cHH)
-        Co = coherence(cHZ, cHH, cZZ)
-        Ph = phase(cHZ/cHH)
-
-        # Figure
-        fig = plt.figure(figsize=(8, 2.5))
-
-        # First is coherence
-        plt.subplot(131)
-        plt.plot(f[freqs2], Co[freqs2], '.')
-        plt.plot(f[freqs], Co[freqs], '.')
-        plt.axhline(np.mean(Co[freqs]))
-        plt.ylabel('Coherence')
-        plt.xlabel('Frequency (Hz)')
-
-        # Second is admittance
-        plt.subplot(132)
-        plt.plot(f[freqs2], np.log10(Ad[freqs2]), '.')
-        plt.plot(f[freqs], np.log10(Ad[freqs]), '.')
-        plt.axhline(np.log10(np.mean(Ad[freqs])))
-        plt.ylabel('log(Admittance)')
-        plt.xlabel('Frequency (Hz)')
-
-        # Third is phase
-        plt.subplot(133)
-        plt.plot(f[freqs2], Ph[freqs2], '.')
-        plt.plot(f[freqs], Ph[freqs], '.')
-        plt.axhline(circmean(Ph[freqs], low=-np.pi, high=np.pi))
-        plt.ylabel('Phase shift (cycles)')
-        plt.xlabel('Frequency (Hz)')
-
-        plt.tight_layout()
-        if savefig is not None:
-            plt.savefig(
-                str(savefig),
-                dpi=300,
-                bbox_inches='tight',
-                format=form)
-        plt.show()
 
     return cHH, cHZ, cHP, coh, ph, ad, phi, tilt_dir, tilt_ang, coh_value, phase_value, admit_value
 

@@ -220,16 +220,10 @@ def get_dailyspec_arguments(argv=None):
         dest="fig_tilt",
         default=False,
         help="Plot mean coherence and phase figure as function of azimuth" +
-        "measured clockwise from H1. [Default does not plot figure]")
-    FigureGroup.add_argument(
-        "--figTFcomp",
-        action="store_true",
-        dest="fig_trf",
-        default=False,
-        help="Plot components of the transfer function between rotated " +
-        "H1 and HZ at the tilt direction. Use this option to determine " +
+        "measured clockwise from H1. Also plot components of the transfer " +
+        "function at the tilt direction. Use this option to determine " +
         "the frequencies to use in determining the tilt orientation " +
-        "(option --tilt-freqs). [Default does not plot figure]")
+        "(option --tilt-freqs).[Default does not plot figure]")
     FigureGroup.add_argument(
         "--save-fig",
         action="store_true",
@@ -247,6 +241,7 @@ def get_dailyspec_arguments(argv=None):
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
     args = parser.parse_args(argv)
+    print(args)
 
     # Check inputs
     if not exist(args.indb):
@@ -475,7 +470,6 @@ def main(args=None):
                 tiltfreqs=args.tf,
                 fig_average=args.fig_average,
                 fig_tilt=args.fig_tilt,
-                fig_trf=args.fig_trf,
                 save=plotpath,
                 form=args.form)
 

@@ -611,8 +611,8 @@ def main(args=None):
                 plot.show()
 
         if args.fig_tilt and stanoise.phi is not None:
-            fname = stkey + '.' + 'coh_ph'
-            plot = plotting.fig_tilt(
+            fname = stkey + '.' + 'tilt_date'
+            plot = plotting.fig_tilt_date(
                 coh_all,
                 ph_all,
                 ad_all,

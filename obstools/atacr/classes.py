@@ -630,7 +630,6 @@ class DayNoise(object):
                               tiltfreqs=[0.005, 0.035],
                               fig_average=False,
                               fig_tilt=False,
-                              fig_trf=False,
                               save=None,
                               form='png'):
         """
@@ -653,11 +652,7 @@ class DayNoise(object):
         fig_tilt : boolean
             Whether or not to produce a figure showing the maximum coherence
             and phase between H1 and HZ as function of azimuth measured CW
-            from H1
-        fig_trf : boolean
-            Whether or not to produce a figure showing the components of the
-            complex transfer function between H1 and HZ measured at the tilt
-            direction
+            from H1, and the spectra for these components
         save : :class:`~pathlib.Path` object
             Relative path to figures folder
         form : str
@@ -797,19 +792,21 @@ class DayNoise(object):
                 plot.show()
 
         if calc_rotation and self.ncomp >= 3:
-            fname = self.key + '.' + self.tkey + '.' + 'trf.' + form
-            if isinstance(save, Path):
-                fname = save / fname
             cHH, cHZ, cHP, coh, ph, ad, phi, tilt_dir, tilt_ang, coh_value, phase_value, admit_value = \
                 utils.calculate_tilt(
                     self.ft1, self.ft2, self.ftZ, self.ftP, self.f,
-                    self.goodwins, tiltfreqs, fig_trf=fig_trf, savefig=fname)
+                    self.goodwins, tiltfreqs)
             self.rotation = Rotation(
                 cHH, cHZ, cHP, coh, ph, ad, tilt_dir, tilt_ang, coh_value, phase_value, admit_value, phi)
 
             if fig_tilt:
-                plot = plotting.fig_tilt(
-                    coh, ph, ad, phi, tilt_dir, tilt_ang)
+                Co = utils.coherence(cHZ, cHH, cZZ)
+                Ad = utils.admittance(cHZ, cHH)
+                Ph = utils.phase(cHZ)
+                plot = plotting.fig_tilt_day(
+                    coh, ph, ad, phi,
+                    Co, Ph, Ad, self.f,
+                    tiltfreqs, tilt_dir, tilt_ang)
 
                 # Save or show figure
                 if save:
