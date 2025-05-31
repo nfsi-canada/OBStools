@@ -487,12 +487,6 @@
 <span class="sd">        Two floats representing the frequency band at which the mean</span>
 <span class="sd">        coherence, phase and admittance are calculated to determine the</span>
 <span class="sd">        tile orientation</span>
-<span class="sd">    fig_trf : boolean</span>
-<span class="sd">        Whether or not to show the components of the complex transfer function</span>
-<span class="sd">        as a function of frequency, shown at the maximum coherence between</span>
-<span class="sd">        rotated H1 and Z.</span>
-<span class="sd">    savefig : :class:`~pathlib.Path` object</span>
-<span class="sd">        Relative path to figures folder</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -650,50 +644,6 @@
                       <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">ftP</span><span class="p">[</span><span class="n">goodwins</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">cHP</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="n">fig_trf</span><span class="p">:</span>
-        <span class="n">freqs2</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)</span>
-
-        <span class="c1"># Re-calculate the components of the transfer function</span>
-        <span class="n">Ad</span> <span class="o">=</span> <span class="n">admittance</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">)</span>
-        <span class="n">Co</span> <span class="o">=</span> <span class="n">coherence</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">)</span>
-        <span class="n">Ph</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="o">/</span><span class="n">cHH</span><span class="p">)</span>
-
-        <span class="c1"># Figure</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">))</span>
-
-        <span class="c1"># First is coherence</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">Co</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">Co</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Co</span><span class="p">[</span><span class="n">freqs</span><span class="p">]))</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Coherence&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
-
-        <span class="c1"># Second is admittance</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs2</span><span class="p">]),</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs</span><span class="p">]),</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ad</span><span class="p">[</span><span class="n">freqs</span><span class="p">])))</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;log(Admittance)&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
-
-        <span class="c1"># Third is phase</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">Ph</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">Ph</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">circmean</span><span class="p">(</span><span class="n">Ph</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Phase shift (cycles)&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
-
-        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">savefig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">savefig</span><span class="p">),</span>
-                <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-                <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span>
-                <span class="nb">format</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">admit_value</span></div>
 

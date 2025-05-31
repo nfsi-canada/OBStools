@@ -730,7 +730,6 @@
                               <span class="n">tiltfreqs</span><span class="o">=</span><span class="p">[</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.035</span><span class="p">],</span>
                               <span class="n">fig_average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                               <span class="n">fig_tilt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                              <span class="n">fig_trf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                               <span class="n">save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                               <span class="n">form</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -753,11 +752,7 @@
 <span class="sd">        fig_tilt : boolean</span>
 <span class="sd">            Whether or not to produce a figure showing the maximum coherence</span>
 <span class="sd">            and phase between H1 and HZ as function of azimuth measured CW</span>
-<span class="sd">            from H1</span>
-<span class="sd">        fig_trf : boolean</span>
-<span class="sd">            Whether or not to produce a figure showing the components of the</span>
-<span class="sd">            complex transfer function between H1 and HZ measured at the tilt</span>
-<span class="sd">            direction</span>
+<span class="sd">            from H1, and the spectra for these components</span>
 <span class="sd">        save : :class:`~pathlib.Path` object</span>
 <span class="sd">            Relative path to figures folder</span>
 <span class="sd">        form : str</span>
@@ -897,19 +892,21 @@
                 <span class="n">plot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">calc_rotation</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncomp</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tkey</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="s1">&#39;trf.&#39;</span> <span class="o">+</span> <span class="n">form</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-                <span class="n">fname</span> <span class="o">=</span> <span class="n">save</span> <span class="o">/</span> <span class="n">fname</span>
             <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">admit_value</span> <span class="o">=</span> \
                 <span class="n">utils</span><span class="o">.</span><span class="n">calculate_tilt</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">ft1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ft2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftZ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">goodwins</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="p">,</span> <span class="n">fig_trf</span><span class="o">=</span><span class="n">fig_trf</span><span class="p">,</span> <span class="n">savefig</span><span class="o">=</span><span class="n">fname</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">goodwins</span><span class="p">,</span> <span class="n">tiltfreqs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span>
                 <span class="n">cHH</span><span class="p">,</span> <span class="n">cHZ</span><span class="p">,</span> <span class="n">cHP</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">coh_value</span><span class="p">,</span> <span class="n">phase_value</span><span class="p">,</span> <span class="n">admit_value</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">fig_tilt</span><span class="p">:</span>
-                <span class="n">plot</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">fig_tilt</span><span class="p">(</span>
-                    <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">)</span>
+                <span class="n">Co</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">coherence</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">,</span> <span class="n">cZZ</span><span class="p">)</span>
+                <span class="n">Ad</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">admittance</span><span class="p">(</span><span class="n">cHZ</span><span class="p">,</span> <span class="n">cHH</span><span class="p">)</span>
+                <span class="n">Ph</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase</span><span class="p">(</span><span class="n">cHZ</span><span class="p">)</span>
+                <span class="n">plot</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">fig_tilt_day</span><span class="p">(</span>
+                    <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span>
+                    <span class="n">Co</span><span class="p">,</span> <span class="n">Ph</span><span class="p">,</span> <span class="n">Ad</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+                    <span class="n">tiltfreqs</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">)</span>
 
                 <span class="c1"># Save or show figure</span>
                 <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
