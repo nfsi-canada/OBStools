@@ -274,15 +274,28 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     tilt_ang = tilt_ang[gooddays]
     date = date[gooddays]
 
+    # Set color palette
     colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
-    # tilt stats
-    meantiltdir = np.mean(tilt_dir)
-    stdetiltdir = np.std(tilt_dir, ddof=1)/np.sqrt(coh.shape[0])
+    # Robust tilt dir stats
     mediantiltdir = np.median(tilt_dir)
-    meantiltang = np.mean(tilt_ang)
-    stdetiltang = np.std(tilt_ang, ddof=1)/np.sqrt(coh.shape[0])
+    madtiltdir = 1.4826*np.median(np.abs(tilt_dir - mediantiltdir))
+    rsutiltdir = (tilt_dir - mediantiltdir)/madtiltdir
+    robusttiltdir = tilt_dir[np.abs(rsutiltdir) < 2.]
+
+    # Mean + stde tilt dir
+    meantiltdir = np.mean(robusttiltdir)
+    stdetiltdir = np.std(robusttiltdir, ddof=1)/np.sqrt(len(robusttiltdir))
+
+    # Robust tilt ang stats
     mediantiltang = np.median(tilt_ang)
+    madtiltang = 1.4826*np.median(np.abs(tilt_ang - mediantiltang))
+    rsutiltang = (tilt_ang - mediantiltang)/madtiltang
+    robusttiltang = tilt_ang[np.abs(rsutiltang) < 2.]
+
+    # Mean + stde tilt ang
+    meantiltang = np.mean(robusttiltang)
+    stdetiltang = np.std(robusttiltang, ddof=1)/np.sqrt(len(robusttiltang))
 
     plt.rcParams['date.converter'] = 'concise'
     f = plt.figure(layout='constrained')
@@ -296,17 +309,17 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     ax2.axhline(
         meantiltdir,
         ls='--',
-        label=r'Mean: {0:.0f} $\pm$ {1:.0f}'.format(
-            meantiltdir, stdetiltdir))
+        label=r'Mean $\pm$ 2$\sigma$: {0:.1f} $\pm$ {1:.1f}'.format(
+            meantiltdir, 2.*stdetiltdir))
     ax2.axhline(
         mediantiltdir,
         ls=':',
-        label='Median: {0:.0f}'.format(mediantiltdir))
+        label='Median: {0:.1f}'.format(mediantiltdir))
     ax3.axhline(
         meantiltang,
         ls='--',
-        label=r'Mean: {0:.2f} $\pm$ {1:.2f}'.format(
-            meantiltang, stdetiltang))
+        label=r'Mean $\pm$ 2$\sigma$: {0:.2f} $\pm$ {1:.2f}'.format(
+            meantiltang, 2.*stdetiltang))
     ax3.axhline(
         mediantiltang,
         ls=':',
@@ -315,7 +328,7 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
         mcoh = np.max(co)
         ax11.plot(phi, co, c=colors[i])
         ax12.plot(phi, p*180./np.pi, c=colors[i])
-        ax13.plot(phi, a, c=colors[i])
+        ax13.plot(phi, np.log10(a), c=colors[i])
         ax2.plot(d, td, 'o', c=colors[i])
         ax3.plot(d, ta, 'o', c=colors[i])
         ax4.plot(d, mcoh, 'o', c=colors[i])
@@ -324,7 +337,7 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     ax11.set_xlabel('Angle CW from H1 ($^{\circ}$)')
     ax12.set_ylabel('Phase')
     ax12.set_xlabel('Angle CW from H1 ($^{\circ}$)')
-    ax13.set_ylabel('Admittance')
+    ax13.set_ylabel('log(Admittance)')
     ax13.set_xlabel('Angle CW from H1 ($^{\circ}$)')
     ax2.legend(loc='best', fontsize=8)
     ax2.set_xticklabels([])
