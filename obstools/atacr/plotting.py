@@ -239,7 +239,7 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     return plt
 
 
-def fig_tilt_date(coh, ph, ad, phi, tilt_dir, tilt_ang, date):
+def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     """
     Function to plot the coherence, phase and admittance between the rotated
     H and Z components, used to characterize the tilt orientation, for
@@ -247,6 +247,8 @@ def fig_tilt_date(coh, ph, ad, phi, tilt_dir, tilt_ang, date):
 
     Parameters
     ----------
+    gooddays : :mod:`~numpy.ndarray`
+        Array of gooddays to use in showing the results
     coh : :mod:`~numpy.ndarray`
         Coherence between rotated H and Z components
     ph : :mod:`~numpy.ndarray`
@@ -263,6 +265,14 @@ def fig_tilt_date(coh, ph, ad, phi, tilt_dir, tilt_ang, date):
         List of datetime dates for plotting as function of time
 
     """
+
+    # Keep only good days in all arrays
+    coh = coh[gooddays]
+    ph = ph[gooddays]
+    ad = ad[gooddays]
+    tilt_dir = tilt_dir[gooddays]
+    tilt_ang = tilt_ang[gooddays]
+    date = date[gooddays]
 
     colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
@@ -384,17 +394,17 @@ def fig_tilt_day(coh_phi, ph_phi, ad_phi, phi,
     ax21.axvline(tilt_dir, c='C1')
     ax21.set_ylim((0, 1.))
     ax21.set_ylabel('Mean coherence')
-    ax21.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax21.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
 
     ax22.plot(phi, ph_phi*180./np.pi)
     ax22.axvline(tilt_dir, c='C1')
     ax22.set_ylabel('Mean phase')
-    ax22.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax22.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
 
     ax23.plot(phi, np.log10(ad_phi))
     ax23.axvline(tilt_dir, c='C1')
     ax23.set_ylabel('Mean log(admittance)')
-    ax23.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax23.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
 
     freqs2 = (f > 0.) & (f < 0.1)
     freqs = (f > f_tilt[0]) & (f < f_tilt[1])

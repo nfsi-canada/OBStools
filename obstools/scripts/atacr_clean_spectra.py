@@ -512,6 +512,9 @@ def main(args=None):
         coh_all = np.array(coh_all)
         ad_all = np.array(ad_all)
         ph_all = np.array(ph_all)
+        tiltdir_list = np.array(tiltdir_list)
+        tiltang_list = np.array(tiltang_list)
+        date_list = np.array(date_list)
         coh_12_all = np.array(coh_12_all)
         coh_1Z_all = np.array(coh_1Z_all)
         coh_1P_all = np.array(coh_1P_all)
@@ -613,6 +616,7 @@ def main(args=None):
         if args.fig_tilt and stanoise.phi is not None:
             fname = stkey + '.' + 'tilt_date'
             plot = plotting.fig_tilt_date(
+                stanoise.gooddays,
                 coh_all,
                 ph_all,
                 ad_all,
