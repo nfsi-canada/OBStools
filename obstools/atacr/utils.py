@@ -657,6 +657,25 @@ def phase(Gxy):
 
 
 def rotate_dir(x, y, theta):
+    """
+    Rotates (x, y) data clockwise by an angle theta. Returns the
+    rotated component y.
+
+    Parameters
+    ----------
+    x : :class:`~numpy.ndarray`
+        Array of values along the `x` coordinate
+    y : :class:`~numpy.ndarray`
+        Array of values along the `y` coordinate
+    theta : :class:`~numpy.ndarray`
+        Angle in degrees
+
+    Returns
+    -------
+    y_rotated: :class:`~numpy.ndarray`
+        Rotated array of component `y`
+
+    """
 
     d = theta*np.pi/180.
     rot_mat = [[np.cos(d), np.sin(d)],
@@ -688,6 +707,22 @@ def ftest(res1, pars1, res2, pars2):
 
 
 def robust(array):
+    """
+    Calculates robust quantities using the robust standard units.
+
+    Parameters
+    ----------
+    array : :class:`~numpy.ndarray`
+        Array of values
+
+    Returns
+    -------
+    robust_array: :class:`~numpy.ndarray`
+        Array with outliers removed
+    outliers : :class:`~numpy.ndarray`
+        Array of outlier values
+
+    """
 
     median_array = np.median(array)
     mad_array = 1.4826*np.median(np.abs(array - median_array))
