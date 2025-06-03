@@ -277,25 +277,17 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     # Set color palette
     colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
-    # Robust tilt dir stats
-    mediantiltdir = np.median(tilt_dir)
-    madtiltdir = 1.4826*np.median(np.abs(tilt_dir - mediantiltdir))
-    rsutiltdir = (tilt_dir - mediantiltdir)/madtiltdir
-    robusttiltdir = tilt_dir[np.abs(rsutiltdir) < 2.]
+    # Get arrays of robust values
+    rtiltdir, outtiltdir = utils.robust(tilt_dir)
+    rtiltang, outtiltang = utils.robust(tilt_ang)
 
     # Mean + stde tilt dir
-    meantiltdir = np.mean(robusttiltdir)
-    stdetiltdir = np.std(robusttiltdir, ddof=1)/np.sqrt(len(robusttiltdir))
-
-    # Robust tilt ang stats
-    mediantiltang = np.median(tilt_ang)
-    madtiltang = 1.4826*np.median(np.abs(tilt_ang - mediantiltang))
-    rsutiltang = (tilt_ang - mediantiltang)/madtiltang
-    robusttiltang = tilt_ang[np.abs(rsutiltang) < 2.]
+    meantiltdir = np.mean(rtiltdir)
+    stdetiltdir = np.std(rtiltdir, ddof=1)/np.sqrt(len(rtiltdir))
 
     # Mean + stde tilt ang
-    meantiltang = np.mean(robusttiltang)
-    stdetiltang = np.std(robusttiltang, ddof=1)/np.sqrt(len(robusttiltang))
+    meantiltang = np.mean(rtiltang)
+    stdetiltang = np.std(rtiltang, ddof=1)/np.sqrt(len(rtiltang))
 
     plt.rcParams['date.converter'] = 'concise'
     f = plt.figure(layout='constrained')
@@ -311,19 +303,11 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
         ls='--',
         label=r'Mean $\pm$ 2$\sigma$: {0:.1f} $\pm$ {1:.1f}'.format(
             meantiltdir, 2.*stdetiltdir))
-    ax2.axhline(
-        mediantiltdir,
-        ls=':',
-        label='Median: {0:.1f}'.format(mediantiltdir))
     ax3.axhline(
         meantiltang,
         ls='--',
         label=r'Mean $\pm$ 2$\sigma$: {0:.2f} $\pm$ {1:.2f}'.format(
             meantiltang, 2.*stdetiltang))
-    ax3.axhline(
-        mediantiltang,
-        ls=':',
-        label='Median: {0:.2f}'.format(mediantiltang))
     for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
         mcoh = np.max(co)
         ax11.plot(phi, co, c=colors[i])
@@ -332,12 +316,15 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
         ax2.plot(d, td, 'o', c=colors[i])
         ax3.plot(d, ta, 'o', c=colors[i])
         ax4.plot(d, mcoh, 'o', c=colors[i])
+    ax11.axvline(meantiltdir, c='grey', ls=':')
+    ax12.axvline(meantiltdir, c='grey', ls=':')
+    ax13.axvline(meantiltdir, c='grey', ls=':')
     ax11.set_ylabel('Coherence')
     ax11.set_ylim((0, 1.))
     ax11.set_xlabel('Angle CW from H1 ($^{\circ}$)')
     ax12.set_ylabel('Phase')
     ax12.set_xlabel('Angle CW from H1 ($^{\circ}$)')
-    ax13.set_ylabel('log(Admittance)')
+    ax13.set_ylabel('log$_{10}$(Admittance)')
     ax13.set_xlabel('Angle CW from H1 ($^{\circ}$)')
     ax2.legend(loc='best', fontsize=8)
     ax2.set_xticklabels([])
@@ -349,6 +336,69 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     # ax3.set_ylim(0., 5.0)
     ax4.set_ylabel('Coherence')
     ax4.set_ylim(-0.1, 1.1)
+
+    # Create secondary axis for admittance
+    ax13twin = ax13.twinx()
+
+    # Set the secondary y-axis with the same tick locs as the primary y-axis
+    ax13twin.set_ylabel('Tilt ang. ($^{\circ}$)')
+
+    # Get current ticks on the primary y-axis
+    primary_ticks = ax13.get_yticks()
+
+    # Set the secondary axis to have the same tick locations
+    ax13twin.set_yticks(primary_ticks)
+
+    # Optional: Format the labels to show the transformed values
+    ax13twin.set_yticklabels(
+        [f'{np.arctan(10**val)*180./np.pi:.2f}' for val in primary_ticks])
+
+    # Sync limits if necessary
+    ax13twin.set_ylim(ax13.get_ylim())
+
+    return plt
+
+
+def fig_tilt_polar_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
+
+    # Keep only good days in all arrays
+    coh = coh[gooddays]
+    ph = ph[gooddays]
+    ad = ad[gooddays]
+    tilt_dir = tilt_dir[gooddays]
+    tilt_ang = tilt_ang[gooddays]
+    date = date[gooddays]
+
+    # Get arrays of robust values
+    rtiltdir, outtiltang = utils.robust(tilt_dir)
+    rtiltang, outtiltang = utils.robust(tilt_ang)
+
+    # Mean + stde tilt dir
+    meantiltdir = np.mean(rtiltdir)
+    stdetiltdir = np.std(rtiltdir, ddof=1)/np.sqrt(len(rtiltdir))
+
+    # Mean + stde tilt ang
+    meantiltang = np.mean(rtiltang)
+    stdetiltang = np.std(rtiltang, ddof=1)/np.sqrt(len(rtiltang))
+
+    # Set color palette
+    colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
+
+    # Create polar plot
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, layout='constrained')
+
+    # Set the direction to clockwise
+    ax.set_theta_direction(-1)  # Clockwise
+
+    # Set zero location to top (north)
+    ax.set_theta_zero_location('N')
+
+    ax.scatter(tilt_dir*np.pi/180., tilt_ang, c=colors)
+
+    # ax.set_ylim(0, 2)
+    ax.set_title(
+        'Tilt direction {0:.1f} $\pm$ {1:.1f} \nTilt angle {2:.2f} $\pm$ {3:.2f}'.format(
+            meantiltdir, 2*stdetiltdir, meantiltang, 2*stdetiltang))
 
     return plt
 
@@ -416,7 +466,7 @@ def fig_tilt_day(coh_phi, ph_phi, ad_phi, phi,
 
     ax23.plot(phi, np.log10(ad_phi))
     ax23.axvline(tilt_dir, c='C1')
-    ax23.set_ylabel('Mean log(admittance)')
+    ax23.set_ylabel('Mean log$_{10}$(admittance)')
     ax23.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
 
     freqs2 = (f > 0.) & (f < 0.1)
@@ -439,8 +489,26 @@ def fig_tilt_day(coh_phi, ph_phi, ad_phi, phi,
     ax13.plot(f[freqs2], np.log10(ad_spec[freqs2]), '.')
     ax13.plot(f[freqs], np.log10(ad_spec[freqs]), '.')
     ax13.axhline(np.log10(np.mean(ad_spec[freqs])), c='C2')
-    ax13.set_ylabel('log(Admittance) spectrum')
+    ax13.set_ylabel('log$_{10}$(Admittance) spectrum')
     ax13.set_xlabel('Frequency (Hz)')
+
+    # Create secondary axis for admittance
+    ax13twin = ax13.twinx()
+
+    # Set the secondary y-axis to have the same tick locations as the primary y-axis
+    ax13twin.set_ylabel('Tilt ang. ($^{\circ}$)')
+
+    # Get current ticks on the primary y-axis
+    primary_ticks = ax13.get_yticks()
+
+    # Set the secondary axis to have the same tick locations
+    ax13twin.set_yticks(primary_ticks)
+
+    # Optional: Format the labels to show the transformed values
+    ax13twin.set_yticklabels([f'{np.arctan(10**val)*180./np.pi:.2f}' for val in primary_ticks])
+
+    # Sync limits if necessary
+    ax13twin.set_ylim(ax13.get_ylim())
 
     plt.suptitle(
         'Tilt direction {0:.1f} \nTilt angle {1:.2f}'.format(

@@ -141,6 +141,13 @@ def get_cleanspec_arguments(argv=None):
         title='Figure Settings',
         description="Flags for plotting figures")
     FigureGroup.add_argument(
+        "--allFigs",
+        action="store_true",
+        dest="allfigs",
+        default=False,
+        help="Plot all figures, except for those created by '--debug'. " +
+        "Supercedes all other figure creation arguments. [Default False]")
+    FigureGroup.add_argument(
         "--debug",
         action="store_true",
         dest="debug",
@@ -162,6 +169,13 @@ def get_cleanspec_arguments(argv=None):
         help="Plot daily average figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
+        "--figCross",
+        action="store_true",
+        dest="fig_av_cross",
+        default=False,
+        help="Plot cross-spectra figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
         "--figTilt",
         action="store_true",
         dest="fig_tilt",
@@ -169,11 +183,11 @@ def get_cleanspec_arguments(argv=None):
         help="Plot coherence, phase and tilt orientation figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
-        "--figCross",
+        "--figTiltPolar",
         action="store_true",
-        dest="fig_av_cross",
+        dest="fig_tilt_polar",
         default=False,
-        help="Plot cross-spectra figure. " +
+        help="Plot tilt orientation figure in a polar projection. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--save-fig",
@@ -232,6 +246,13 @@ def get_cleanspec_arguments(argv=None):
             raise Exception(
                 "Error: --freq-band should contain 2 " +
                 "comma-separated floats")
+
+    if args.allfigs:
+        args.fig_QC = True
+        args.fig_average = True
+        args.fig_av_cross = True
+        args.fig_tilt = True
+        args.fig_tilt_polar = True
 
     return args
 
@@ -559,7 +580,7 @@ def main(args=None):
             form=args.form)
 
         if args.fig_av_cross:
-            fname = stkey + '.' + 'av_coherence'
+            fname = stkey + '.' + dstart + dend + 'av_coherence'
             plot = plotting.fig_av_cross(
                 stanoise.f,
                 coh, stanoise.gooddays,
@@ -576,7 +597,7 @@ def main(args=None):
             else:
                 plot.show()
 
-            fname = stkey + '.' + 'av_admittance'
+            fname = stkey + '.' + dstart + dend + 'av_admittance'
             plot = plotting.fig_av_cross(
                 stanoise.f,
                 ad,
@@ -594,7 +615,7 @@ def main(args=None):
             else:
                 plot.show()
 
-            fname = stkey + '.' + 'av_phase'
+            fname = stkey + '.' + dstart + dend + 'av_phase'
             plot = plotting.fig_av_cross(
                 stanoise.f,
                 ph,
@@ -614,8 +635,28 @@ def main(args=None):
                 plot.show()
 
         if args.fig_tilt and stanoise.phi is not None:
-            fname = stkey + '.' + 'tilt_date'
+            fname = stkey + '.' + dstart + dend + 'tilt_date'
             plot = plotting.fig_tilt_date(
+                stanoise.gooddays,
+                coh_all,
+                ph_all,
+                ad_all,
+                stanoise.phi,
+                tiltdir_list,
+                tiltang_list,
+                date_list)
+
+            if plotpath:
+                plot.savefig(
+                    str(plotpath / (fname + '.' + args.form)),
+                    dpi=300, bbox_inches='tight', format=args.form)
+                plot.close()
+            else:
+                plot.show()
+
+        if args.fig_tilt_polar and stanoise.phi is not None:
+            fname = stkey + '.' + dstart + dend + 'tilt_polar'
+            plot = plotting.fig_tilt_polar_date(
                 stanoise.gooddays,
                 coh_all,
                 ph_all,

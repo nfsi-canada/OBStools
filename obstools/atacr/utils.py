@@ -685,3 +685,18 @@ def ftest(res1, pars1, res2, pars2):
     P = 1. - (f_dist.cdf(Fobs, dof1, dof2) - f_dist.cdf(1./Fobs, dof1, dof2))
 
     return P
+
+
+def robust(array):
+
+    median_array = np.median(array)
+    mad_array = 1.4826*np.median(np.abs(array - median_array))
+    if mad_array > 0.:
+        rsu_array = (array - median_array)/mad_array
+        robust_array = array[np.abs(rsu_array) < 2.]
+        outliers = array[np.abs(rsu_array) >= 2.]
+    else:
+        robust_array = array
+        outliers = None
+
+    return robust_array, outliers
