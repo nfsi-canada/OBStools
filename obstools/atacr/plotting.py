@@ -266,6 +266,27 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
 
     """
 
+    # Initialize figure and add axes
+    plt.rcParams['date.converter'] = 'concise'
+    f = plt.figure(layout='constrained')
+    gs = GridSpec(5, 3, figure=f)
+    ax11 = f.add_subplot(gs[0:-3, 0])
+    ax12 = f.add_subplot(gs[0:-3, 1])
+    ax13 = f.add_subplot(gs[0:-3, 2])
+    ax2 = f.add_subplot(gs[2, :])
+    ax3 = f.add_subplot(gs[3, :])
+    ax4 = f.add_subplot(gs[4, :])
+
+    # Plot all data in grey - good estimates will be plotted in color
+    for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
+        mcoh = np.max(co)
+        ax11.plot(phi, co, c='grey', lw=0.5, ls=':')
+        ax12.plot(phi, p*180./np.pi, c='grey', lw=0.5, ls=':')
+        ax13.plot(phi, np.log10(a), c='grey', lw=0.5, ls=':')
+        ax2.plot(d, td, 'x', mec='grey', markersize=3.5)
+        ax3.plot(d, ta, 'x', mec='grey', markersize=3.5)
+        ax4.plot(d, mcoh, 'x', mec='grey', markersize=3.5)
+
     # Keep only good days in all arrays
     coh = coh[gooddays]
     ph = ph[gooddays]
@@ -289,15 +310,6 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     meantiltang = np.mean(rtiltang)
     stdetiltang = np.std(rtiltang, ddof=1)/np.sqrt(len(rtiltang))
 
-    plt.rcParams['date.converter'] = 'concise'
-    f = plt.figure(layout='constrained')
-    gs = GridSpec(5, 3, figure=f)
-    ax11 = f.add_subplot(gs[0:-3, 0])
-    ax12 = f.add_subplot(gs[0:-3, 1])
-    ax13 = f.add_subplot(gs[0:-3, 2])
-    ax2 = f.add_subplot(gs[2, :])
-    ax3 = f.add_subplot(gs[3, :])
-    ax4 = f.add_subplot(gs[4, :])
     ax2.axhline(
         meantiltdir,
         ls='--',
@@ -308,6 +320,8 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
         ls='--',
         label=r'Mean $\pm$ 2$\sigma$: {0:.2f} $\pm$ {1:.2f}'.format(
             meantiltang, 2.*stdetiltang))
+
+    # Now plot good days in color
     for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
         mcoh = np.max(co)
         ax11.plot(phi, co, c=colors[i])
@@ -316,6 +330,8 @@ def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
         ax2.plot(d, td, 'o', c=colors[i])
         ax3.plot(d, ta, 'o', c=colors[i])
         ax4.plot(d, mcoh, 'o', c=colors[i])
+
+    # Add lines, labels, legends and title
     ax11.axvline(meantiltdir, c='grey', ls=':')
     ax12.axvline(meantiltdir, c='grey', ls=':')
     ax13.axvline(meantiltdir, c='grey', ls=':')
