@@ -84,6 +84,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.admittance"><code class="docutils literal notranslate"><span class="pre">admittance()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.coherence"><code class="docutils literal notranslate"><span class="pre">coherence()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.phase"><code class="docutils literal notranslate"><span class="pre">phase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.rotate_dir"><code class="docutils literal notranslate"><span class="pre">rotate_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#obstools.atacr.utils.robust"><code class="docutils literal notranslate"><span class="pre">robust()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-obstools.atacr.plotting">Plotting functions</a><ul>
@@ -1986,6 +1988,46 @@ of a boxcar function with the PSD</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="obstools.atacr.utils.rotate_dir">
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">rotate_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#rotate_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.rotate_dir" title="Link to this definition"></a></dt>
+<dd><p>Rotates (x, y) data clockwise by an angle theta. Returns the
+rotated component y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of values along the <cite>x</cite> coordinate</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of values along the <cite>y</cite> coordinate</p></li>
+<li><p><strong>theta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Angle in degrees</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y_rotated</strong> – Rotated array of component <cite>y</cite></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="obstools.atacr.utils.robust">
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.utils.</span></span><span class="sig-name descname"><span class="pre">robust</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/utils.html#robust"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.utils.robust" title="Link to this definition"></a></dt>
+<dd><p>Calculates robust quantities using the robust standard units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>array</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>robust_array</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array with outliers removed</p></li>
+<li><p><strong>outliers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of outlier values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-obstools.atacr.plotting">
 <span id="plotting-functions"></span><h3>Plotting functions<a class="headerlink" href="#module-obstools.atacr.plotting" title="Link to this heading"></a></h3>
@@ -2054,13 +2096,14 @@ Otherwise semilogx</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="obstools.atacr.plotting.fig_tilt_date">
-<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_tilt_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_ang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_tilt_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_tilt_date" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">obstools.atacr.plotting.</span></span><span class="sig-name descname"><span class="pre">fig_tilt_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gooddays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_ang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/obstools/atacr/plotting.html#fig_tilt_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obstools.atacr.plotting.fig_tilt_date" title="Link to this definition"></a></dt>
 <dd><p>Function to plot the coherence, phase and admittance between the rotated
 H and Z components, used to characterize the tilt orientation, for
 a range of dates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>gooddays</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of gooddays to use in showing the results</p></li>
 <li><p><strong>coh</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Coherence between rotated H and Z components</p></li>
 <li><p><strong>ph</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Phase between rotated H and Z components</p></li>
 <li><p><strong>ad</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">ndarray</span></code>) – Admittance between rotated H and Z components</p></li>

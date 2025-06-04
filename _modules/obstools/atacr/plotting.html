@@ -334,7 +334,7 @@
 
 <div class="viewcode-block" id="fig_tilt_date">
 <a class="viewcode-back" href="../../../atacr.html#obstools.atacr.plotting.fig_tilt_date">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">fig_tilt_date</span><span class="p">(</span><span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_tilt_date</span><span class="p">(</span><span class="n">gooddays</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to plot the coherence, phase and admittance between the rotated</span>
 <span class="sd">    H and Z components, used to characterize the tilt orientation, for</span>
@@ -342,6 +342,8 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
+<span class="sd">    gooddays : :mod:`~numpy.ndarray`</span>
+<span class="sd">        Array of gooddays to use in showing the results</span>
 <span class="sd">    coh : :mod:`~numpy.ndarray`</span>
 <span class="sd">        Coherence between rotated H and Z components</span>
 <span class="sd">    ph : :mod:`~numpy.ndarray`</span>
@@ -359,16 +361,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">cividis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-
-    <span class="c1"># tilt stats</span>
-    <span class="n">meantiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">)</span>
-    <span class="n">stdetiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">mediantiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">)</span>
-    <span class="n">meantiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tilt_ang</span><span class="p">)</span>
-    <span class="n">stdetiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">tilt_ang</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">mediantiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">tilt_ang</span><span class="p">)</span>
-
+    <span class="c1"># Initialize figure and add axes</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;date.converter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;concise&#39;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">&#39;constrained&#39;</span><span class="p">)</span>
     <span class="n">gs</span> <span class="o">=</span> <span class="n">GridSpec</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
@@ -378,38 +371,71 @@
     <span class="n">ax2</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:])</span>
     <span class="n">ax3</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">:])</span>
     <span class="n">ax4</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="c1"># Plot all data in grey - good estimates will be plotted in color</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">co</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">ta</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">)):</span>
+        <span class="n">mcoh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">co</span><span class="p">)</span>
+        <span class="n">ax11</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">co</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">ax12</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">p</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">ax13</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ta</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+        <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">mcoh</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+
+    <span class="c1"># Keep only good days in all arrays</span>
+    <span class="n">coh</span> <span class="o">=</span> <span class="n">coh</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">ph</span> <span class="o">=</span> <span class="n">ph</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">ad</span> <span class="o">=</span> <span class="n">ad</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">tilt_dir</span> <span class="o">=</span> <span class="n">tilt_dir</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">tilt_ang</span> <span class="o">=</span> <span class="n">tilt_ang</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+
+    <span class="c1"># Set color palette</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">cividis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="c1"># Get arrays of robust values</span>
+    <span class="n">rtiltdir</span><span class="p">,</span> <span class="n">outtiltdir</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">robust</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">)</span>
+    <span class="n">rtiltang</span><span class="p">,</span> <span class="n">outtiltang</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">robust</span><span class="p">(</span><span class="n">tilt_ang</span><span class="p">)</span>
+
+    <span class="c1"># Mean + stde tilt dir</span>
+    <span class="n">meantiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rtiltdir</span><span class="p">)</span>
+    <span class="n">stdetiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rtiltdir</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rtiltdir</span><span class="p">))</span>
+
+    <span class="c1"># Mean + stde tilt ang</span>
+    <span class="n">meantiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rtiltang</span><span class="p">)</span>
+    <span class="n">stdetiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rtiltang</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rtiltang</span><span class="p">))</span>
+
     <span class="n">ax2</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
         <span class="n">meantiltdir</span><span class="p">,</span>
         <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Mean: </span><span class="si">{0:.0f}</span><span class="s1"> $\pm$ </span><span class="si">{1:.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">meantiltdir</span><span class="p">,</span> <span class="n">stdetiltdir</span><span class="p">))</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
-        <span class="n">mediantiltdir</span><span class="p">,</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Median: </span><span class="si">{0:.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mediantiltdir</span><span class="p">))</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Mean $\pm$ 2$\sigma$: </span><span class="si">{0:.1f}</span><span class="s1"> $\pm$ </span><span class="si">{1:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">meantiltdir</span><span class="p">,</span> <span class="mf">2.</span><span class="o">*</span><span class="n">stdetiltdir</span><span class="p">))</span>
     <span class="n">ax3</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
         <span class="n">meantiltang</span><span class="p">,</span>
         <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Mean: </span><span class="si">{0:.2f}</span><span class="s1"> $\pm$ </span><span class="si">{1:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">meantiltang</span><span class="p">,</span> <span class="n">stdetiltang</span><span class="p">))</span>
-    <span class="n">ax3</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
-        <span class="n">mediantiltang</span><span class="p">,</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Median: </span><span class="si">{0:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mediantiltang</span><span class="p">))</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Mean $\pm$ 2$\sigma$: </span><span class="si">{0:.2f}</span><span class="s1"> $\pm$ </span><span class="si">{1:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">meantiltang</span><span class="p">,</span> <span class="mf">2.</span><span class="o">*</span><span class="n">stdetiltang</span><span class="p">))</span>
+
+    <span class="c1"># Now plot good days in color</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">co</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">ta</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">)):</span>
         <span class="n">mcoh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">co</span><span class="p">)</span>
         <span class="n">ax11</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">co</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">ax12</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">p</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        <span class="n">ax13</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">ax13</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ta</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">mcoh</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Add lines, labels, legends and title</span>
+    <span class="n">ax11</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">meantiltdir</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="n">ax12</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">meantiltdir</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="n">ax13</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">meantiltdir</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
     <span class="n">ax11</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Coherence&#39;</span><span class="p">)</span>
     <span class="n">ax11</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
     <span class="n">ax11</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle CW from H1 ($^{\circ}$)&#39;</span><span class="p">)</span>
     <span class="n">ax12</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Phase&#39;</span><span class="p">)</span>
     <span class="n">ax12</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle CW from H1 ($^{\circ}$)&#39;</span><span class="p">)</span>
-    <span class="n">ax13</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Admittance&#39;</span><span class="p">)</span>
+    <span class="n">ax13</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;log$_</span><span class="si">{10}</span><span class="s1">$(Admittance)&#39;</span><span class="p">)</span>
     <span class="n">ax13</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle CW from H1 ($^{\circ}$)&#39;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
@@ -422,8 +448,71 @@
     <span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Coherence&#39;</span><span class="p">)</span>
     <span class="n">ax4</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
 
+    <span class="c1"># Create secondary axis for admittance</span>
+    <span class="n">ax13twin</span> <span class="o">=</span> <span class="n">ax13</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+    <span class="c1"># Set the secondary y-axis with the same tick locs as the primary y-axis</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Tilt ang. ($^{\circ}$)&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Get current ticks on the primary y-axis</span>
+    <span class="n">primary_ticks</span> <span class="o">=</span> <span class="n">ax13</span><span class="o">.</span><span class="n">get_yticks</span><span class="p">()</span>
+
+    <span class="c1"># Set the secondary axis to have the same tick locations</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">primary_ticks</span><span class="p">)</span>
+
+    <span class="c1"># Optional: Format the labels to show the transformed values</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span>
+        <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">val</span><span class="p">)</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">primary_ticks</span><span class="p">])</span>
+
+    <span class="c1"># Sync limits if necessary</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ax13</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+
     <span class="k">return</span> <span class="n">plt</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fig_tilt_polar_date</span><span class="p">(</span><span class="n">gooddays</span><span class="p">,</span> <span class="n">coh</span><span class="p">,</span> <span class="n">ph</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tilt_dir</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+
+    <span class="c1"># Keep only good days in all arrays</span>
+    <span class="n">coh</span> <span class="o">=</span> <span class="n">coh</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">ph</span> <span class="o">=</span> <span class="n">ph</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">ad</span> <span class="o">=</span> <span class="n">ad</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">tilt_dir</span> <span class="o">=</span> <span class="n">tilt_dir</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">tilt_ang</span> <span class="o">=</span> <span class="n">tilt_ang</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="p">[</span><span class="n">gooddays</span><span class="p">]</span>
+
+    <span class="c1"># Get arrays of robust values</span>
+    <span class="n">rtiltdir</span><span class="p">,</span> <span class="n">outtiltang</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">robust</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">)</span>
+    <span class="n">rtiltang</span><span class="p">,</span> <span class="n">outtiltang</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">robust</span><span class="p">(</span><span class="n">tilt_ang</span><span class="p">)</span>
+
+    <span class="c1"># Mean + stde tilt dir</span>
+    <span class="n">meantiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rtiltdir</span><span class="p">)</span>
+    <span class="n">stdetiltdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rtiltdir</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rtiltdir</span><span class="p">))</span>
+
+    <span class="c1"># Mean + stde tilt ang</span>
+    <span class="n">meantiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rtiltang</span><span class="p">)</span>
+    <span class="n">stdetiltang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rtiltang</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rtiltang</span><span class="p">))</span>
+
+    <span class="c1"># Set color palette</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">cividis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="c1"># Create polar plot</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;projection&#39;</span><span class="p">:</span> <span class="s1">&#39;polar&#39;</span><span class="p">},</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;constrained&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set the direction to clockwise</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Clockwise</span>
+
+    <span class="c1"># Set zero location to top (north)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tilt_dir</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">,</span> <span class="n">tilt_ang</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+    <span class="c1"># ax.set_ylim(0, 2)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+        <span class="s1">&#39;Tilt direction </span><span class="si">{0:.1f}</span><span class="s1"> $\pm$ </span><span class="si">{1:.1f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">Tilt angle </span><span class="si">{2:.2f}</span><span class="s1"> $\pm$ </span><span class="si">{3:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">meantiltdir</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">stdetiltdir</span><span class="p">,</span> <span class="n">meantiltang</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">stdetiltang</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">plt</span>
 
 
 <div class="viewcode-block" id="fig_tilt_day">
@@ -482,17 +571,17 @@
     <span class="n">ax21</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
     <span class="n">ax21</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
     <span class="n">ax21</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mean coherence&#39;</span><span class="p">)</span>
-    <span class="n">ax21</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle CW from H1 ($^{\circ}$)&#39;</span><span class="p">)</span>
+    <span class="n">ax21</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Tilt dir. ($^{\circ}$ CW from H1)&#39;</span><span class="p">)</span>
 
     <span class="n">ax22</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">ph_phi</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
     <span class="n">ax22</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
     <span class="n">ax22</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mean phase&#39;</span><span class="p">)</span>
-    <span class="n">ax22</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle CW from H1 ($^{\circ}$)&#39;</span><span class="p">)</span>
+    <span class="n">ax22</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Tilt dir. ($^{\circ}$ CW from H1)&#39;</span><span class="p">)</span>
 
     <span class="n">ax23</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ad_phi</span><span class="p">))</span>
     <span class="n">ax23</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">tilt_dir</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
-    <span class="n">ax23</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mean log(admittance)&#39;</span><span class="p">)</span>
-    <span class="n">ax23</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle CW from H1 ($^{\circ}$)&#39;</span><span class="p">)</span>
+    <span class="n">ax23</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mean log$_</span><span class="si">{10}</span><span class="s1">$(admittance)&#39;</span><span class="p">)</span>
+    <span class="n">ax23</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Tilt dir. ($^{\circ}$ CW from H1)&#39;</span><span class="p">)</span>
 
     <span class="n">freqs2</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)</span>
     <span class="n">freqs</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="n">f_tilt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;</span> <span class="n">f_tilt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -514,8 +603,26 @@
     <span class="n">ax13</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ad_spec</span><span class="p">[</span><span class="n">freqs2</span><span class="p">]),</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
     <span class="n">ax13</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">freqs</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ad_spec</span><span class="p">[</span><span class="n">freqs</span><span class="p">]),</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
     <span class="n">ax13</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ad_spec</span><span class="p">[</span><span class="n">freqs</span><span class="p">])),</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">)</span>
-    <span class="n">ax13</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;log(Admittance) spectrum&#39;</span><span class="p">)</span>
+    <span class="n">ax13</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;log$_</span><span class="si">{10}</span><span class="s1">$(Admittance) spectrum&#39;</span><span class="p">)</span>
     <span class="n">ax13</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create secondary axis for admittance</span>
+    <span class="n">ax13twin</span> <span class="o">=</span> <span class="n">ax13</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+    <span class="c1"># Set the secondary y-axis to have the same tick locations as the primary y-axis</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Tilt ang. ($^{\circ}$)&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Get current ticks on the primary y-axis</span>
+    <span class="n">primary_ticks</span> <span class="o">=</span> <span class="n">ax13</span><span class="o">.</span><span class="n">get_yticks</span><span class="p">()</span>
+
+    <span class="c1"># Set the secondary axis to have the same tick locations</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">primary_ticks</span><span class="p">)</span>
+
+    <span class="c1"># Optional: Format the labels to show the transformed values</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">val</span><span class="p">)</span><span class="o">*</span><span class="mf">180.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">primary_ticks</span><span class="p">])</span>
+
+    <span class="c1"># Sync limits if necessary</span>
+    <span class="n">ax13twin</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ax13</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
         <span class="s1">&#39;Tilt direction </span><span class="si">{0:.1f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">Tilt angle </span><span class="si">{1:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
