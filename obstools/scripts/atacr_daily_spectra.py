@@ -29,8 +29,7 @@ import pickle
 import stdb
 import copy
 
-from obspy import UTCDateTime
-
+from obspy import UTCDateTime, read_inventory
 from obstools.atacr import utils, DayNoise
 
 from pathlib import Path
@@ -241,7 +240,6 @@ def get_dailyspec_arguments(argv=None):
         "matplotlib formats: 'png', 'jpg', 'eps', 'pdf'. [Default 'png']")
 
     args = parser.parse_args(argv)
-    print(args)
 
     # Check inputs
     if not exist(args.indb):
@@ -321,27 +319,40 @@ def main(args=None):
         # Run Input Parser
         args = get_dailyspec_arguments()
 
-    # Load Database
-    # stdb>0.1.3
-    try:
-        db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
+    # Check Extension
+    ext = args.indb.split('.')[-1]
 
-    # stdb=0.1.3
-    except Exception:
-        db = stdb.io.load_db(fname=args.indb)
+    if ext not in ['pkl', 'xml']:
+        print(
+            "Error: Must supply a station list in .pkl or .xml format ")
+        exit()
 
-        # Construct station key loop
-        allkeys = db.keys()
-        sorted(allkeys)
+    if ext == 'pkl':
+        # Load Database
+        # stdb>0.1.3
+        try:
+            db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
-        # Extract key subset
-        if len(args.stkeys) > 0:
-            stkeys = []
-            for skey in args.stkeys:
-                stkeys.extend([s for s in allkeys if skey in s])
-        else:
-            stkeys = db.keys()
-            sorted(stkeys)
+        # stdb=0.1.3
+        except Exception:
+            db = stdb.io.load_db(fname=args.indb)
+
+            # Construct station key loop
+            allkeys = db.keys()
+            sorted(allkeys)
+
+            # Extract key subset
+            if len(args.stkeys) > 0:
+                stkeys = []
+                for skey in args.stkeys:
+                    stkeys.extend([s for s in allkeys if skey in s])
+            else:
+                stkeys = db.keys()
+                sorted(stkeys)
+
+    elif ext == 'xml':
+        inv = read_inventory(args.indb)
+        db, stkeys = utils.inv2stdb(inv, keys=args.stkeys)
 
     # Loop over station keys
     for stkey in list(stkeys):
