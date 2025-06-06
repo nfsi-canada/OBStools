@@ -334,7 +334,6 @@ def main(args=None):
         # Filename for output transfer functions
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-        fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
         # Find all files in directories
         p = specpath.glob('*spectra.pkl')
@@ -343,9 +342,11 @@ def main(args=None):
             p = avstpath.glob('*avg_sta.pkl')
             average_files = [x for x in p if x.is_file()]
 
-        if not args.skip_daily:
+        day_transfer_functions = []
+        sta_transfer_functions = None
+        stanoise = StaNoise()
 
-            day_transfer_functions = []
+        if not args.skip_daily:
 
             # Cycle through available files
             for filespec in spectra_files:

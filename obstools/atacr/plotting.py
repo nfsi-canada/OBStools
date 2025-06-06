@@ -533,7 +533,7 @@ def fig_tilt_day(coh_phi, ph_phi, ad_phi, phi,
     return plt
 
 
-def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
+def fig_TF(f, day_trfs, day_list, sta_trfs={}, sta_list={}, skey=''):
     """
     Function to plot the transfer functions available.
 
@@ -579,13 +579,13 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
 
         ax = fig.add_subplot(ntf, 1, j)
 
-        if day_list[key]:
+        if key in day_list.keys():
             for i in range(len(day_trfs)):
                 ax.loglog(
                     f[faxis],
                     np.abs(day_trfs[i][key]['TF_'+key][faxis]),
                     'gray', lw=0.5)
-        if sta_list[key]:
+        if key in sta_list.keys():
             ax.loglog(
                 f[faxis],
                 np.abs(sta_trfs[key]['TF_'+key][faxis]),
@@ -671,8 +671,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
     comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
 
     # Get max number of subplot
-    nkeys_day = sum(day_list[key] for key in comp_list)
-    nkeys_sta = sum(sta_list[key] for key in comp_list)
+    nkeys_day = sum(day_list[key] for key in comp_list if key in day_list.keys())
+    nkeys_sta = sum(sta_list[key] for key in comp_list if key in sta_list.keys())
     ncomps = max(nkeys_day, nkeys_sta)
 
     if ncomps == 1:
@@ -682,14 +682,14 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
 
     for j, key in enumerate(comp_list):
 
-        if not day_list[key] and not sta_list[key]:
+        if key not in day_list.keys() and key not in sta_list.keys():
             continue
 
         ax = fig.add_subplot(ncomps, 2, j*2+1)
         ax.tick_params(labelsize=8)
         ax.yaxis.get_offset_text().set_fontsize(8)
 
-        if day_list[key]:
+        if key in day_list.keys():
             compliance_list = []
             coherence_list = []
             for i in range(len(day_comps)):
@@ -717,7 +717,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
             ybot = 0/8*np.min(compliance_mean[(f > f_0) & (f < f_c)])
             ax.set_ylim(ybot, ytop)
 
-        if sta_list[key]:
+        if key in sta_list.keys():
             for i in range(len(sta_comps)):
                 compliance = np.abs(sta_comps[i][key][0])
                 ax.plot(
@@ -747,7 +747,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         ax = fig.add_subplot(ncomps, 2, j*2+2)
         ax.tick_params(labelsize=8)
 
-        if day_list[key]:
+        if key in day_list.keys():
             # for i in range(len(day_comps)):
             ax.fill_between(
                 f[faxis],
@@ -759,7 +759,7 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
                 f[faxis],
                 coherence_mean[faxis],
                 c='royalblue', lw=0.75)
-        if sta_list[key]:
+        if key in sta_list.keys():
             for i in range(len(sta_comps)):
                 ax.plot(
                     f[faxis], 
@@ -770,12 +770,15 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         if key == 'ZP':
             ax.set_title(skey+' Coherence: ZP',
                          fontdict={'fontsize': 8})
+            ax.set_ylim(0., 1.)
         elif key == 'ZP-21':
             ax.set_title(skey+' Coherence: ZP-21',
                          fontdict={'fontsize': 8})
+            ax.set_ylim(0., 1.)
         elif key == 'ZP-H':
             ax.set_title(skey+' Coherence: ZP-H',
                          fontdict={'fontsize': 8})
+            ax.set_ylim(0., 1.)
 
         if f_0:
             ax.axvline(f_0, ls='--', c='k', lw=0.75)

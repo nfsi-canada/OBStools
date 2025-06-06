@@ -31,7 +31,7 @@ import stdb
 import copy
 
 from obspy import UTCDateTime, read_inventory
-from obstools.atacr import Rotation, plotting
+from obstools.atacr import Rotation, plotting, utils
 from obstools.comply import Comply
 
 from pathlib import Path
@@ -354,7 +354,6 @@ def main(args=None):
         # Filename for output transfer functions
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-        fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
         # Find all files in directories
         p = specpath.glob('*spectra.pkl')
@@ -462,10 +461,24 @@ def main(args=None):
 
         if args.fig:
             fname = stkey + '.' + 'compliance'
-            plot = plotting.fig_comply(
-                f, day_comply_functions, daycomply.tf_list,
-                sta_comply_functions, stacomply.tf_list, skey=stkey,
-                elev=sta.elevation*1.e3, f_0=args.f0)
+            if not args.skip_daily:
+                plot = plotting.fig_comply(
+                    f, day_comply_functions, daycomply.tf_list,
+                    [], {}, skey=stkey,
+                    # elev=sta.elevation*1.e3, f_0=args.f0)
+                    elev=sta.elevation, f_0=args.f0)
+            elif not args.skip_clean:
+                plot = plotting.fig_comply(
+                    f, [], {},
+                    sta_comply_functions, stacomply.tf_list, skey=stkey,
+                    elev=sta.elevation, f_0=args.f0)
+                    # elev=sta.elevation*1.e3, f_0=args.f0)
+            else:
+                plot = plotting.fig_comply(
+                    f, day_comply_functions, daycomply.tf_list,
+                    sta_comply_functions, stacomply.tf_list, skey=stkey,
+                    elev=sta.elevation, f_0=args.f0)
+                    # elev=sta.elevation*1.e3, f_0=args.f0)
 
             if plotpath:
                 plot.savefig(plotpath / (fname + '.' + args.form),

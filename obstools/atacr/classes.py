@@ -958,6 +958,7 @@ class StaNoise(object):
         self.initialized = False
         self.QC = False
         self.av = False
+        self.tf_list = {}
 
         if isinstance(daylist, DayNoise):
             daylist = [daylist]
@@ -1590,7 +1591,7 @@ class TFNoise(object):
         self.c2Z = objnoise.cross.c2Z
         self.c2P = objnoise.cross.c2P
         self.cZP = objnoise.cross.cZP
-        self.tilt = objnoise.rotation.tilt
+        self.tilt = objnoise.rotation.tilt_dir
         self.tf_list = objnoise.tf_list
 
     class TfDict(dict):
@@ -1847,7 +1848,7 @@ class EventStream(object):
     """
 
     def __init__(self, tr1=Trace(), tr2=Trace(), trZ=Trace(), trP=Trace(),
-        correct=False):
+                 correct=False):
 
         if tr1 == 'demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
@@ -2019,9 +2020,9 @@ class EventStream(object):
         f = np.fft.fftfreq(self.npts, d=self.dt)
 
         if not np.allclose(f, tfnoise.f):
-            raise(Exception(
+            raise Exception(
                 'Frequency axes are different: ', f, tfnoise.f,
-                ' - the noise and event windows are not the same, aborting'))
+                ' - the noise and event windows are not the same, aborting')
 
         for key, value in tf_list.items():
 

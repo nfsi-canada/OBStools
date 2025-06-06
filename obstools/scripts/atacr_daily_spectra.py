@@ -321,6 +321,7 @@ def main(args=None):
 
     # Check Extension
     ext = args.indb.split('.')[-1]
+    print(ext)
 
     if ext not in ['pkl', 'xml']:
         print(

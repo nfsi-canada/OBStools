@@ -75,7 +75,7 @@ def inv2stdb(inventory, keys=None):
     for key in stkeys:
         net = key.split('.')[0]
         sta = key.split('.')[1]
-        cha = '[CH]*'
+        cha = '?H?'
         inv = inventory.select(network=net, station=sta, channel=cha)
         seed_id = inv.get_contents()['channels'][0]
         coords = inv.get_coordinates(seed_id)
