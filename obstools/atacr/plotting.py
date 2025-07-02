@@ -630,7 +630,7 @@ def fig_TF(f, day_trfs, day_list, sta_trfs={}, sta_list={}, skey=''):
 
 
 def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
-               elev=-1000., f_0=None):
+               elev=-1000., f_0=None, f_1=None, log=False):
     """
     Function to plot the transfer functions available.
 
@@ -652,6 +652,10 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         Station elevation in meters (OBS stations have negative elevations)
     f_0 : float
         Lowest frequency to consider in plot (Hz)
+    f_1 : float
+        Highest frequency to consider in plot (Hz)
+    log : boolean
+        Show a logarithmic frequency axis for compliance
 
     """
 
@@ -666,6 +670,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
 
     # Calculate theoretical frequency limit for infra-gravity waves
     f_c = np.sqrt(9.81/np.pi/elev)/2.
+    if f_1 is not None:
+        f_c = f_1
 
     # Define all possible combinations
     comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
@@ -693,8 +699,8 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
             compliance_list = []
             coherence_list = []
             for i in range(len(day_comps)):
-                compliance = np.abs(day_comps[i][key][0])
-                coherence = np.abs(day_comps[i][key][1])
+                compliance = np.abs(day_comps[i][key][0])[faxis]/f[faxis]/2./np.pi
+                coherence = np.abs(day_comps[i][key][2])[faxis]
                 if not np.isnan(compliance).any():
                     compliance_list.append(compliance)
                     coherence_list.append(coherence)
@@ -705,16 +711,17 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
 
             ax.fill_between(
                 f[faxis], 
-                compliance_mean[faxis]-compliance_std[faxis], 
-                compliance_mean[faxis]+compliance_std[faxis], 
+                compliance_mean-compliance_std, 
+                compliance_mean+compliance_std, 
                 fc='royalblue', alpha=0.3, label=r'$\pm$ Std daily'
                 )
             ax.plot(
-                f[faxis], compliance_mean[faxis], c='royalblue', 
+                # f[faxis], compliance_mean[faxis], c='royalblue', 
+                f[faxis], compliance_mean, c='royalblue', 
                 lw=0.5, label='Mean daily')
             ax.set_xlim(f_0, f_c)
-            ytop = 1.2*np.max(compliance_mean[(f > f_0) & (f < f_c)])
-            ybot = 0/8*np.min(compliance_mean[(f > f_0) & (f < f_c)])
+            ytop = 1.2*np.max(compliance_mean[(f[faxis] > f_0) & (f[faxis] < f_c)])
+            ybot = 0.8*np.min(compliance_mean[(f[faxis] > f_0) & (f[faxis] < f_c)])
             ax.set_ylim(ybot, ytop)
 
         if key in sta_list.keys():
@@ -722,9 +729,12 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
                 compliance = np.abs(sta_comps[i][key][0])
                 ax.plot(
                     f[faxis],
-                    compliance[faxis],
+                    compliance,
                     'red', lw=0.5, alpha=0.5,
                     label='Sta average')
+        if log:
+            ax.set_xscale('log')
+            ax.set_yscale('log')
 
         if key == 'ZP':
             ax.set_title(skey+' Compliance: ZP',
@@ -748,22 +758,21 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         ax.tick_params(labelsize=8)
 
         if key in day_list.keys():
-            # for i in range(len(day_comps)):
             ax.fill_between(
                 f[faxis],
-                coherence_mean[faxis]-coherence_std[faxis],
-                coherence_mean[faxis]+coherence_std[faxis],
+                coherence_mean-coherence_std,
+                coherence_mean+coherence_std,
                 fc='royalblue', alpha=0.3
                 )
             ax.plot(
                 f[faxis],
-                coherence_mean[faxis],
+                coherence_mean,
                 c='royalblue', lw=0.75)
         if key in sta_list.keys():
             for i in range(len(sta_comps)):
                 ax.plot(
                     f[faxis], 
-                    np.abs(sta_comps[i][key][1][faxis]),
+                    np.abs(sta_comps[i][key][2][faxis]),
                     'red', lw=0.5, alpha=0.5)
         ax.set_xscale('log')
 
