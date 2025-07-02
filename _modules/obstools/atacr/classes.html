@@ -1065,6 +1065,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QC</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tf_list</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">daylist</span><span class="p">,</span> <span class="n">DayNoise</span><span class="p">):</span>
             <span class="n">daylist</span> <span class="o">=</span> <span class="p">[</span><span class="n">daylist</span><span class="p">]</span>
@@ -1712,7 +1713,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">c2Z</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c2Z</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c2P</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">c2P</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cZP</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">cross</span><span class="o">.</span><span class="n">cZP</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tilt</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">tilt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilt</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">rotation</span><span class="o">.</span><span class="n">tilt_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tf_list</span> <span class="o">=</span> <span class="n">objnoise</span><span class="o">.</span><span class="n">tf_list</span>
 
 <div class="viewcode-block" id="TFNoise.TfDict">
@@ -1981,7 +1982,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr1</span><span class="o">=</span><span class="n">Trace</span><span class="p">(),</span> <span class="n">tr2</span><span class="o">=</span><span class="n">Trace</span><span class="p">(),</span> <span class="n">trZ</span><span class="o">=</span><span class="n">Trace</span><span class="p">(),</span> <span class="n">trP</span><span class="o">=</span><span class="n">Trace</span><span class="p">(),</span>
-        <span class="n">correct</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">correct</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">tr1</span> <span class="o">==</span> <span class="s1">&#39;demo&#39;</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Uploading demo earthquake data - March 09, 2012, &quot;</span> <span class="o">+</span>
@@ -2158,9 +2159,9 @@
         <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">npts</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">tfnoise</span><span class="o">.</span><span class="n">f</span><span class="p">):</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s1">&#39;Frequency axes are different: &#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">tfnoise</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
-                <span class="s1">&#39; - the noise and event windows are not the same, aborting&#39;</span><span class="p">))</span>
+                <span class="s1">&#39; - the noise and event windows are not the same, aborting&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tf_list</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
