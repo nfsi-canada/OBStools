@@ -38,13 +38,13 @@ from obspy import read, Stream, Trace, UTCDateTime
 from obspy.core import AttribDict
 
 
-def get_stkeys(inventory, keys=None):
+def get_stkeys(inventory, keys=[]):
 
     allkeys = []
     station_list = inventory.get_contents()['stations']
     allkeys = [s.split(' ')[0] for s in station_list]
 
-    if keys is not None:
+    if len(keys) > 0:
         # Extract key subset
 
         stkeys = []
@@ -67,7 +67,7 @@ def get_stkeys(inventory, keys=None):
     return stkeys
 
 
-def inv2stdb(inventory, keys=None):
+def inv2stdb(inventory, keys=[]):
 
     stkeys = get_stkeys(inventory, keys)
 
