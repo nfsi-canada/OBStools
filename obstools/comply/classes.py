@@ -222,8 +222,9 @@ class Comply(object):
                 if value:
                     admit_ZP = utils.admittance(self.cZP, self.cPP)
                     compl_ZP = k*admit_ZP
+                    phase_ZP = utils.phase(self.cZP/self.cPP)
                     coh_ZP = utils.coherence(self.cZP, self.cPP, self.cZZ)
-                    complyfunc.add('ZP', [compl_ZP, coh_ZP])
+                    complyfunc.add('ZP', [compl_ZP, phase_ZP, coh_ZP])
 
             elif key == 'ZP-21':
                 if value:
@@ -259,10 +260,12 @@ class Comply(object):
                     admit_ZP_21 = utils.admittance(
                         gcPcZ_c1c2, gcPcP_c1c2)
                     compl_ZP_21 = k*admit_ZP_21
+                    phase_ZP_21 = utils.phase(
+                        gcPcZ_c1c2/gcPcP_c1c2)
                     coh_ZP_21 = utils.coherence(
                         gcPcZ_c1c2, gcPcP_c1c2, gcZcZ_c1c2)
 
-                    complyfunc.add('ZP-21', [compl_ZP_21, coh_ZP_21])
+                    complyfunc.add('ZP-21', [compl_ZP_21, phase_ZP_21, coh_ZP_21])
 
             elif key == 'ZP-H':
                 if value:
@@ -277,9 +280,10 @@ class Comply(object):
 
                     admit_ZP_H = utils.admittance(gcPcZ_cH, gcPcP_cH)
                     compl_ZP_H = k*admit_ZP_H
+                    phase_ZP_H = utils.phase(gcPcZ_cH/gcPcP_cH)
                     coh_ZP_H = utils.coherence(gcPcZ_cH, gcPcP_cH, gcZcZ_cH)
 
-                    complyfunc.add('ZP-H', [compl_ZP_H, coh_ZP_H])
+                    complyfunc.add('ZP-H', [compl_ZP_H, phase_ZP_H, coh_ZP_H])
 
             self.complyfunc = complyfunc
 
@@ -342,23 +346,29 @@ class Comply(object):
                 df = pd.DataFrame(
                     {'Frequency': self.f,
                      'Compliance ZP': self.complyfunc['ZP'][0],
-                     'Coherence ZP': self.complyfunc['ZP'][1],
+                     'Phase ZP': self.complyfunc['ZP'][1],
+                     'Coherence ZP': self.complyfunc['ZP'][2],
                      'Compliance ZP-21': self.complyfunc['ZP-21'][0],
-                     'Coherence ZP-21': self.complyfunc['ZP-21'][1],
+                     'Phase ZP-21': self.complyfunc['ZP-21'][1],
+                     'Coherence ZP-21': self.complyfunc['ZP-21'][2],
                      'Compliance ZP-H': self.complyfunc['ZP-H'][0],
-                     'Coherence ZP-H': self.complyfunc['ZP-H'][1]})
+                     'Phase ZP-H': self.complyfunc['ZP-H'][1],
+                     'Coherence ZP-H': self.complyfunc['ZP-H'][2]})
             elif 'ZP-21' in self.complyfunc:
                 df = pd.DataFrame(
                     {'Frequency': self.f,
                      'Compliance ZP': self.complyfunc['ZP'][0],
-                     'Coherence ZP': self.complyfunc['ZP'][1],
+                     'Phase ZP': self.complyfunc['ZP'][1],
+                     'Coherence ZP': self.complyfunc['ZP'][2],
                      'Compliance ZP-21': self.complyfunc['ZP-21'][0],
-                     'Coherence ZP-21': self.complyfunc['ZP-21'][1]})
+                     'Phase ZP-21': self.complyfunc['ZP-21'][1],
+                     'Coherence ZP-21': self.complyfunc['ZP-21'][2]})
             else:
                 df = pd.DataFrame(
                     {'Frequency': self.f,
                      'Compliance ZP': self.complyfunc['ZP'][0],
-                     'Coherence ZP': self.complyfunc['ZP'][1]})
+                     'Phase ZP': self.complyfunc['ZP'][1],
+                     'Coherence ZP': self.complyfunc['ZP'][2]})
 
             df.to_csv(filename.parent / (filename.name +
                       '.' + form), index=False)
