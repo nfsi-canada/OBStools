@@ -109,9 +109,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
@@ -120,64 +118,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">obspy</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Trace</span><span class="p">,</span> <span class="n">UTCDateTime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">obspy.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttribDict</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">get_stkeys</span><span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">[]):</span>
-
-    <span class="n">allkeys</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">station_list</span> <span class="o">=</span> <span class="n">inventory</span><span class="o">.</span><span class="n">get_contents</span><span class="p">()[</span><span class="s1">&#39;stations&#39;</span><span class="p">]</span>
-    <span class="n">allkeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">station_list</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># Extract key subset</span>
-
-        <span class="n">stkeys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="c1"># Convert the pattern to a regex pattern</span>
-            <span class="c1"># Replace &#39;.&#39; with &#39;\.&#39; to match literal dots</span>
-            <span class="c1"># Replace &#39;*&#39; with &#39;.*&#39; to match any sequence of characters</span>
-            <span class="c1"># Replace &#39;?&#39; with &#39;.&#39; to match any single character</span>
-            <span class="n">pattern</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;.*&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-
-            <span class="c1"># Compile the regex pattern</span>
-            <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;^.*</span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s1">.*$&#39;</span><span class="p">)</span>
-
-            <span class="c1"># Filter allkeys based on the compiled regex</span>
-            <span class="n">stkeys</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">allkeys</span> <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">key</span><span class="p">)])</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">stkeys</span> <span class="o">=</span> <span class="n">allkeys</span>
-
-    <span class="k">return</span> <span class="n">stkeys</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">inv2stdb</span><span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">[]):</span>
-
-    <span class="n">stkeys</span> <span class="o">=</span> <span class="n">get_stkeys</span><span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
-
-    <span class="n">stations</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">stkeys</span><span class="p">:</span>
-        <span class="n">net</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">cha</span> <span class="o">=</span> <span class="s1">&#39;?H?&#39;</span>
-        <span class="n">inv</span> <span class="o">=</span> <span class="n">inventory</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">network</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">station</span><span class="o">=</span><span class="n">sta</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">cha</span><span class="p">)</span>
-        <span class="n">seed_id</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_contents</span><span class="p">()[</span><span class="s1">&#39;channels&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">coords</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">seed_id</span><span class="p">)</span>
-
-        <span class="n">stdb_element</span> <span class="o">=</span> <span class="n">StDbElement</span><span class="p">(</span>
-            <span class="n">station</span><span class="o">=</span><span class="n">sta</span><span class="p">,</span>
-            <span class="n">network</span><span class="o">=</span><span class="n">net</span><span class="p">,</span>
-            <span class="n">channel</span><span class="o">=</span><span class="n">seed_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span>
-            <span class="n">location</span><span class="o">=</span><span class="n">seed_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">],</span>
-            <span class="n">latitude</span><span class="o">=</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
-            <span class="n">longitude</span><span class="o">=</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span>
-            <span class="n">elevation</span><span class="o">=</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">],</span>
-            <span class="n">startdate</span><span class="o">=</span><span class="n">inv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span>
-            <span class="n">enddate</span><span class="o">=</span><span class="n">inv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_date</span>
-            <span class="p">)</span>
-        <span class="n">stations</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stdb_element</span>
-
-    <span class="k">return</span> <span class="n">stations</span><span class="p">,</span> <span class="n">stkeys</span>
 
 
 <div class="viewcode-block" id="traceshift">
