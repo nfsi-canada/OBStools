@@ -25,9 +25,7 @@ class methods of `~obstools.atacr.classes`.
 
 """
 
-
 import os
-import re
 import math
 import numpy as np
 import fnmatch
@@ -36,64 +34,6 @@ from scipy.stats import circmean
 from matplotlib import pyplot as plt
 from obspy import read, Stream, Trace, UTCDateTime
 from obspy.core import AttribDict
-
-
-def get_stkeys(inventory, keys=[]):
-
-    allkeys = []
-    station_list = inventory.get_contents()['stations']
-    allkeys = [s.split(' ')[0] for s in station_list]
-
-    if len(keys) > 0:
-        # Extract key subset
-
-        stkeys = []
-        for key in keys:
-            # Convert the pattern to a regex pattern
-            # Replace '.' with '\.' to match literal dots
-            # Replace '*' with '.*' to match any sequence of characters
-            # Replace '?' with '.' to match any single character
-            pattern = key.replace('.', r'\.').replace('*', '.*').replace('?', '.')
-
-            # Compile the regex pattern
-            regex = re.compile(f'^.*{pattern}.*$')
-
-            # Filter allkeys based on the compiled regex
-            stkeys.extend([key for key in allkeys if regex.match(key)])
-
-    else:
-        stkeys = allkeys
-
-    return stkeys
-
-
-def inv2stdb(inventory, keys=[]):
-
-    stkeys = get_stkeys(inventory, keys)
-
-    stations = {}
-    for key in stkeys:
-        net = key.split('.')[0]
-        sta = key.split('.')[1]
-        cha = '?H?'
-        inv = inventory.select(network=net, station=sta, channel=cha)
-        seed_id = inv.get_contents()['channels'][0]
-        coords = inv.get_coordinates(seed_id)
-
-        stdb_element = StDbElement(
-            station=sta,
-            network=net,
-            channel=seed_id.split('.')[3][0:2],
-            location=seed_id.split('.')[2],
-            latitude=coords['latitude'],
-            longitude=coords['longitude'],
-            elevation=coords['elevation'],
-            startdate=inv[0].stations[0].start_date,
-            enddate=inv[0].stations[0].end_date
-            )
-        stations[key] = stdb_element
-
-    return stations, stkeys
 
 
 def traceshift(trace, tt):

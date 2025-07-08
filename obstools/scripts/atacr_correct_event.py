@@ -188,6 +188,12 @@ def get_correct_arguments(argv=None):
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
 
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
+
     # create station key list
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
@@ -239,40 +245,25 @@ def main(args=None):
         # Run Input Parser
         args = get_correct_arguments()
 
-    # Check Extension
-    ext = args.indb.split('.')[-1]
+    try:
+        db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
-    if ext not in ['pkl', 'xml']:
-        print(
-            "Error: Must supply a station list in .pkl or .xml format ")
-        exit()
+    # stdb=0.1.3
+    except Exception:
+        db = stdb.io.load_db(fname=args.indb)
 
-    if ext == 'pkl':
-        # Load Database
-        # stdb>0.1.3
-        try:
-            db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
+        # Construct station key loop
+        allkeys = db.keys()
+        sorted(allkeys)
 
-        # stdb=0.1.3
-        except Exception:
-            db = stdb.io.load_db(fname=args.indb)
-
-            # Construct station key loop
-            allkeys = db.keys()
-            sorted(allkeys)
-
-            # Extract key subset
-            if len(args.stkeys) > 0:
-                stkeys = []
-                for skey in args.stkeys:
-                    stkeys.extend([s for s in allkeys if skey in s])
-            else:
-                stkeys = db.keys()
-                sorted(stkeys)
-
-    elif ext == 'xml':
-        inv = read_inventory(args.indb)
-        db, stkeys = utils.inv2stdb(inv, keys=args.stkeys)
+        # Extract key subset
+        if len(args.stkeys) > 0:
+            stkeys = []
+            for skey in args.stkeys:
+                stkeys.extend([s for s in allkeys if skey in s])
+        else:
+            stkeys = db.keys()
+            sorted(stkeys)
 
     # Loop over station keys
     for stkey in list(stkeys):
