@@ -52,7 +52,8 @@ def get_dailyspec_arguments(argv=None):
         "steps and use all available components.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings

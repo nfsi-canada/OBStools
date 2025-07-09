@@ -56,7 +56,8 @@ def get_correct_arguments(argv=None):
         "data are stored to disk in a new 'CORRECTED' folder.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
