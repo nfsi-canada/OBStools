@@ -114,7 +114,7 @@ Station Metadata
 ++++++++++++++++
 
 If you have data stored locally on your drive, it is likely you also
-have a station`XML <https://www.fdsn.org/xml/station/>`_ file
+have a station `XML <https://www.fdsn.org/xml/station/>`_ file
 containing the metadata. The corresponding ObsPy documentation is
 `here <https://docs.obspy.org/packages/obspy.core.inventory.html>`_. 
 
