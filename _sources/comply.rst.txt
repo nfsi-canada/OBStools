@@ -123,7 +123,8 @@ Usage
     are stored to disk.
 
     positional arguments:
-      indb                  Station Database to process from.
+      indb                  Station Database to process from. Available formats are: 
+                            StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help            show this help message and exit

@@ -233,7 +233,8 @@ Usage
     are processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb                  Station Database to process from.
+      indb                  Station Database to process from. Available formats are: 
+                            StDb (.pkl or .csv) or stationXML (.xml)
 
     options:
       -h, --help            show this help message and exit
@@ -337,7 +338,8 @@ Usage
     look for data saved in the previous steps and use all available components.
 
     positional arguments:
-      indb               Station Database to process from
+      indb               Station Database to process from. Available formats are: 
+                         StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help         show this help message and exit
@@ -442,7 +444,8 @@ Usage
     stations are processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb             Station Database to process from.
+      indb             Station Database to process from. Available formats are: 
+                       StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -533,7 +536,8 @@ Usage
     processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb             Station Database to process from.
+      indb             Station Database to process from. Available formats are: 
+                       StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -613,7 +617,8 @@ Usage
     stations are processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb                  Station Database to process from.
+      indb                  Station Database to process from. Available formats are: 
+                            StDb (.pkl or .csv) or stationXML (.xml)
 
     options:
       -h, --help            show this help message and exit
@@ -737,7 +742,8 @@ Usage
     folder.
 
     positional arguments:
-      indb             Station Database to process from.
+      indb             Station Database to process from. Available formats are: 
+                       StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help       show this help message and exit
