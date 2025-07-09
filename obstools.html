@@ -118,8 +118,8 @@ SOFTWARE.</p>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/schaefferaj/StDb">stdb</a></p></li>
-<li><p><a class="reference external" href="https://github.com/obspy/obspy">obspy</a></p></li>
+<li><p><a class="reference external" href="https://github.com/schaefferaj/StDb">StDb</a></p></li>
+<li><p><a class="reference external" href="https://github.com/obspy/obspy">ObsPy</a></p></li>
 </ul>
 </section>
 <section id="conda-environment">
@@ -133,7 +133,7 @@ where <code class="docutils literal notranslate"><span class="pre">OBStools</spa
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>obs
 </pre></div>
 </div>
-<p>Install dependency:</p>
+<p>Install StDb:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/schaefferaj/stdb
 </pre></div>
 </div>
@@ -168,19 +168,19 @@ through and <code class="docutils literal notranslate"><span class="pre">ObsPy</
 data locally stored on your hard drive, the scripts can use a <cite>Client</cite>
 that reads a <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.clients.filesystem.sds.html">SeisComP Data Structure</a>
 archive containing SAC or miniSEED waveform data. Check out the scripts
-<code class="docutils literal notranslate"><span class="pre">bng_calc</span></code> and <code class="docutils literal notranslate"><span class="pre">dl_calc</span></code> below and the argument <code class="docutils literal notranslate"><span class="pre">--local-data</span></code> and
+<code class="docutils literal notranslate"><span class="pre">bng_calc</span></code> and <code class="docutils literal notranslate"><span class="pre">dl_calc</span></code> below and the argument <code class="docutils literal notranslate"><span class="pre">--SDS-path</span></code> and
 <code class="docutils literal notranslate"><span class="pre">--dtype</span></code> for more details.</p>
 <section id="station-metadata">
 <h2>Station Metadata<a class="headerlink" href="#station-metadata" title="Link to this heading"></a></h2>
 <p>If you have data stored locally on your drive, it is likely you also
-have a station <a class="reference external" href="https://www.fdsn.org/xml/station/">XML</a> file
+have a station`XML &lt;<a class="reference external" href="https://www.fdsn.org/xml/station/">https://www.fdsn.org/xml/station/</a>&gt;`_ file
 containing the metadata. The corresponding ObsPy documentation is
 <a class="reference external" href="https://docs.obspy.org/packages/obspy.core.inventory.html">here</a>.</p>
-<p>To convert the station <cite>XML</cite> file to an input that can be read by
-<code class="docutils literal notranslate"><span class="pre">OrientPy</span></code>, you run the command <code class="docutils literal notranslate"><span class="pre">gen_stdb</span> <span class="pre">station.xml</span></code> (only
-available on StDb version 0.2.7), which will create the file
-<code class="docutils literal notranslate"><span class="pre">station.pkl</span></code>. If you don’t have a station <cite>XML</cite> file but you have
-a dataless SEED file, you can convert it first to <cite>XML</cite> using <a class="reference external" href="https://seiscode.iris.washington.edu/projects/stationxml-converter">this
+<p>You can now use a stationXML (<cite>.xml</cite>) file instead of the StDb <cite>.pkl</cite> format.
+Alternatively, you can convert the stationXML file to an StDb <cite>.pkl</cite> file
+by running the command <code class="docutils literal notranslate"><span class="pre">gen_stdb</span> <span class="pre">station.xml</span></code> (these options are only
+available on StDb version 0.2.7. If you don’t have a station <cite>XML</cite> file but you have
+a dataless SEED file, you can convert it first to XML using <a class="reference external" href="https://seiscode.iris.washington.edu/projects/stationxml-converter">this
 tools</a>.</p>
 </section>
 <section id="waveform-data">
