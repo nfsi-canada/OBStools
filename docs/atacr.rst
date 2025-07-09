@@ -233,7 +233,8 @@ Usage
     are processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb                  Station Database to process from.
+      indb                  Station Database to process from. Available formats are: 
+                            StDb (.pkl or .csv) or stationXML (.xml)
 
     options:
       -h, --help            show this help message and exit
@@ -247,7 +248,7 @@ Usage
                             Specify the Vertical Component Channel Identifier. [Default Z].
 
     Server Settings:
-      Settings associated with which datacenter to log into.
+      Settings associated with FDSN datacenters for archived data.
 
       --server SERVER       Base URL of FDSN web service compatible server (e.g.
                             “http://service.iris.edu”) or key string for recognized server (one
@@ -268,16 +269,13 @@ Usage
                             PGP message in it. [Default None]
 
     Local Data Settings:
-      Settings associated with defining and using a local data base of pre-downloaded day-long
-      SAC or MSEED files.
+      Settings associated with a SeisComP database for locally archived data.
 
-      --local-data LOCALDATA
-                            Specify absolute path to a SeisComP Data Structure (SDS) archive
-                            containing day-long SAC or MSEED files(e.g., --local-
-                            data=/Home/username/Data/SDS). See
-                            https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html
-                            for details on the SDS format. If this option is used, it takes
-                            precedence over the --server-wf settings.
+      --SDS-path LOCALDATA  Specify absolute path to a SeisComP Data Structure (SDS) archive containing
+                            day-long SAC or MSEED files(e.g., --SDS-path=/Home/username/Data/SDS). See
+                            https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html for
+                            details on the SDS format. If this option is used, it takes precedence over
+                            the --server settings.
       --dtype DTYPE         Specify the data archive file type, either SAC or MSEED. Note the
                             default behaviour is to search for SAC files. Local archive files
                             must have extensions of '.SAC' or '.MSEED'. These are case dependent,
@@ -340,7 +338,8 @@ Usage
     look for data saved in the previous steps and use all available components.
 
     positional arguments:
-      indb               Station Database to process from
+      indb               Station Database to process from. Available formats are: 
+                         StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help         show this help message and exit
@@ -445,7 +444,8 @@ Usage
     stations are processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb             Station Database to process from.
+      indb             Station Database to process from. Available formats are: 
+                       StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -536,7 +536,8 @@ Usage
     processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb             Station Database to process from.
+      indb             Station Database to process from. Available formats are: 
+                       StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -616,7 +617,8 @@ Usage
     stations are processed one by one and the data are stored to disk.
 
     positional arguments:
-      indb                  Station Database to process from.
+      indb                  Station Database to process from. Available formats are: 
+                            StDb (.pkl or .csv) or stationXML (.xml)
 
     options:
       -h, --help            show this help message and exit
@@ -629,7 +631,7 @@ Usage
       --zcomp ZCOMP         Specify the Vertical Component Channel Identifier. [Default Z].
 
     Server Settings:
-      Settings associated with which datacenter to log into.
+      Settings associated with FDSN datacenters for archived data.
 
       --server SERVER       Base URL of FDSN web service compatible server (e.g.
                             “http://service.iris.edu”) or key string for recognized server (one
@@ -650,16 +652,13 @@ Usage
                             PGP message in it. [Default None]
 
     Local Data Settings:
-      Settings associated with defining and using a local data base of pre-downloaded day-long
-      SAC or MSEED files.
+      Settings associated with a SeisComP database for locally archived data.
 
-      --local-data LOCALDATA
-                            Specify absolute path to a SeisComP Data Structure (SDS) archive
-                            containing day-long SAC or MSEED files(e.g., --local-
-                            data=/Home/username/Data/SDS). See
-                            https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html
-                            for details on the SDS format. If this option is used, it takes
-                            precedence over the --server-wf settings.
+      --SDS-path LOCALDATA  Specify absolute path to a SeisComP Data Structure (SDS) archive containing
+                            day-long SAC or MSEED files(e.g., --SDS-path=/Home/username/Data/SDS). See
+                            https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html for
+                            details on the SDS format. If this option is used, it takes precedence over
+                            the --server settings.
       --dtype DTYPE         Specify the data archive file type, either SAC or MSEED. Note the
                             default behaviour is to search for SAC files. Local archive files
                             must have extensions of '.SAC' or '.MSEED'. These are case dependent,
@@ -743,7 +742,8 @@ Usage
     folder.
 
     positional arguments:
-      indb             Station Database to process from.
+      indb             Station Database to process from. Available formats are: 
+                       StDb (.pkl or .csv) or stationXML (.xml)
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -1020,6 +1020,20 @@ pass the quality control are colored red.
 
 Figure 3b: Daily average PSD of bad (red) and good (black) windows.
 
+You can also choose to plot the tilt estimate for DayNoise objects. For intance, you can run:
+
+.. code-block:: 
+
+    $ atacr_daily_spectra -O --fig-tilt --tilt-freqs=0.,0.005 --start=2012-03-04 --end=2012-03-05 M08A.pkl > logfile
+
+which will produce the figure:
+
+.. figure:: ../obstools/examples/figures/Figure_tilt_064.png
+   :align: center
+
+Figure 3c: Estimates of tilt direction (degrees clockwise from H1) and tilt angle. Top: coherence, phase and admittance spectra from the daily average spectra. Orange dots show the narrow bandwidth (``tilt-freqs``) used to calculate mean values (bottom row). The plots on the top row are shown at the tilt direction. Bottom: Mean coherence, phase and admittance as a function ot the tilt direction. The correct coherence peak is selected as the direction for which the phase is within +/- 90 degrees from 0. The admittance is used to calculate the tilt angle. 
+
+
 3. QC for clean station averages
 ++++++++++++++++++++++++++++++++
 
@@ -1098,15 +1112,15 @@ Several figures are also produced, including Figures 4, 6-9.
 .. figure:: ../obstools/examples/figures/Figure_4.png
    :align: center
 
-Figure 4: The orientation of maximum coherence between the vertical and the two
-horizontal components for M08A during March 2012. (Left) Coherence as a function
-of angle from the H1 component. (Right) Phase as a function of the angle. 
-(Bottom) Tilt direction measured from the H1 component as a function of time. 
-In this example, the coherence is low indicating low tilt noise.
+Figure 4: Tilt orientation estimates for M08A during March 2012. (Left) Coherence as a function
+of azimuth measured clockwise from the H1 component. (Middle) Phase as a function of the azimuth. 
+(Right) Admittance and related tilt angle as a function of the azimuth. Dotted lines indicate estimates for "bad" days (i.e., with too few good windows).
+(Bottom) Tilt direction, tilt angle and maximum coherence as a function of time. Symbols marked by an "x" indicate estimates for "bad" days.
+The legends show the mean and 2-sigma error on the "good" estimates.
 
 .. note ::
 
-    In the MATLAB version of ``ATaCR``, the "Angle from H1" (Figure 4 in the manual) corresponds to a counter-clockwise rotation of H1 and H2, and the orientation is chosen at the lowest phase. Here, the angle corresponds to a clockwise rotation and the estimate is chosen to lie between 0 and 180 degrees. There is therefore a 225-degree difference between those two estimates, and the plots are mirrored.
+    In the MATLAB version of ``ATaCR``, the "Angle from H1" (Figure 4 in the manual) corresponds to a counter-clockwise rotation of H1 and H2. Here, the angle corresponds to a clockwise rotation and the estimate is chosen to lie within +/- 90 degrees from a phase value of 0. Furthermore, we use a circular mean (as opposed to a linear mean) to calculate the phase, and consider a narrower range of tilt frequencies closer to 0 Hz, where tilt effects are most pronounced. This results in a different plot between the ``OBStools`` version and the MATLAB ``ATaCR`` version, but these differences should not affect the tilt noise removal process.
 
 .. figure:: ../obstools/examples/figures/Figure_6.png
    :align: center

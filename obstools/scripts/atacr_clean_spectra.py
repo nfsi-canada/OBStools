@@ -29,8 +29,7 @@ import pickle
 import stdb
 import copy
 
-from obspy import UTCDateTime
-
+from obspy import UTCDateTime, read_inventory
 from obstools.atacr import StaNoise, Power, Cross, Rotation
 from obstools.atacr import utils, plotting
 
@@ -52,7 +51,8 @@ def get_cleanspec_arguments(argv=None):
         "one by one and the data are stored to disk.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -141,18 +141,25 @@ def get_cleanspec_arguments(argv=None):
         title='Figure Settings',
         description="Flags for plotting figures")
     FigureGroup.add_argument(
-        "--figQC",
+        "--allFigs",
         action="store_true",
-        dest="fig_QC",
+        dest="allfigs",
         default=False,
-        help="Plot Quality-Control figure. " +
-        "[Default does not plot figure]")
+        help="Plot all figures, except for those created by '--debug'. " +
+        "Supercedes all other figure creation arguments. [Default False]")
     FigureGroup.add_argument(
         "--debug",
         action="store_true",
         dest="debug",
         default=False,
         help="Plot intermediate steps for debugging. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figQC",
+        action="store_true",
+        dest="fig_QC",
+        default=False,
+        help="Plot Quality-Control figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--figAverage",
@@ -162,18 +169,25 @@ def get_cleanspec_arguments(argv=None):
         help="Plot daily average figure. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
-        "--figTilt",
-        action="store_true",
-        dest="fig_tilt",
-        default=False,
-        help="Plot coherence, phase and tilt direction figure. " +
-        "[Default does not plot figure]")
-    FigureGroup.add_argument(
         "--figCross",
         action="store_true",
         dest="fig_av_cross",
         default=False,
         help="Plot cross-spectra figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figTilt",
+        action="store_true",
+        dest="fig_tilt",
+        default=False,
+        help="Plot coherence, phase and tilt orientation figure. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
+        "--figTiltPolar",
+        action="store_true",
+        dest="fig_tilt_polar",
+        default=False,
+        help="Plot tilt orientation figure in a polar projection. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
         "--save-fig",
@@ -196,6 +210,12 @@ def get_cleanspec_arguments(argv=None):
     # Check inputs
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
+
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
 
     # create station key list
     if len(args.stkeys) > 0:
@@ -233,6 +253,13 @@ def get_cleanspec_arguments(argv=None):
                 "Error: --freq-band should contain 2 " +
                 "comma-separated floats")
 
+    if args.allfigs:
+        args.fig_QC = True
+        args.fig_average = True
+        args.fig_av_cross = True
+        args.fig_tilt = True
+        args.fig_tilt_polar = True
+
     return args
 
 
@@ -254,8 +281,6 @@ def main(args=None):
         # Run Input Parser
         args = get_cleanspec_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
@@ -358,6 +383,7 @@ def main(args=None):
 
         # Containers for power and cross spectra
         coh_all = []
+        ad_all = []
         ph_all = []
         coh_12_all = []
         coh_1Z_all = []
@@ -386,7 +412,8 @@ def main(args=None):
 
         # Date + tilt list
         date_list = []
-        tilt_list = []
+        tiltdir_list = []
+        tiltang_list = []
         coh_list = []
 
         # Loop through each day withing time range
@@ -407,7 +434,8 @@ def main(args=None):
                 file = open(filespec, 'rb')
                 daynoise = pickle.load(file)
                 file.close()
-                tilt_list.append(daynoise.rotation.tilt)
+                tiltdir_list.append(daynoise.rotation.tilt_dir)
+                tiltang_list.append(daynoise.rotation.tilt_ang)
                 date_list.append(t1.date)
                 coh_list.append(daynoise.rotation.coh_value)
                 stanoise += daynoise
@@ -416,6 +444,7 @@ def main(args=None):
                 continue
 
             coh_all.append(daynoise.rotation.coh)
+            ad_all.append(daynoise.rotation.ad)
             ph_all.append(daynoise.rotation.ph)
 
             # Coherence
@@ -506,7 +535,11 @@ def main(args=None):
 
         # Convert to numpy arrays
         coh_all = np.array(coh_all)
+        ad_all = np.array(ad_all)
         ph_all = np.array(ph_all)
+        tiltdir_list = np.array(tiltdir_list)
+        tiltang_list = np.array(tiltang_list)
+        date_list = np.array(date_list)
         coh_12_all = np.array(coh_12_all)
         coh_1Z_all = np.array(coh_1Z_all)
         coh_1P_all = np.array(coh_1P_all)
@@ -551,7 +584,7 @@ def main(args=None):
             form=args.form)
 
         if args.fig_av_cross:
-            fname = stkey + '.' + 'av_coherence'
+            fname = stkey + '.' + dstart + dend + 'av_coherence'
             plot = plotting.fig_av_cross(
                 stanoise.f,
                 coh, stanoise.gooddays,
@@ -568,7 +601,7 @@ def main(args=None):
             else:
                 plot.show()
 
-            fname = stkey + '.' + 'av_admittance'
+            fname = stkey + '.' + dstart + dend + 'av_admittance'
             plot = plotting.fig_av_cross(
                 stanoise.f,
                 ad,
@@ -586,7 +619,7 @@ def main(args=None):
             else:
                 plot.show()
 
-            fname = stkey + '.' + 'av_phase'
+            fname = stkey + '.' + dstart + dend + 'av_phase'
             plot = plotting.fig_av_cross(
                 stanoise.f,
                 ph,
@@ -606,12 +639,35 @@ def main(args=None):
                 plot.show()
 
         if args.fig_tilt and stanoise.phi is not None:
-            fname = stkey + '.' + 'coh_ph'
-            plot = plotting.fig_coh_ph(
+            fname = stkey + '.' + dstart + dend + 'tilt_date'
+            plot = plotting.fig_tilt_date(
+                stanoise.gooddays,
                 coh_all,
                 ph_all,
+                ad_all,
                 stanoise.phi,
-                tilt_list,
+                tiltdir_list,
+                tiltang_list,
+                date_list)
+
+            if plotpath:
+                plot.savefig(
+                    str(plotpath / (fname + '.' + args.form)),
+                    dpi=300, bbox_inches='tight', format=args.form)
+                plot.close()
+            else:
+                plot.show()
+
+        if args.fig_tilt_polar and stanoise.phi is not None:
+            fname = stkey + '.' + dstart + dend + 'tilt_polar'
+            plot = plotting.fig_tilt_polar_date(
+                stanoise.gooddays,
+                coh_all,
+                ph_all,
+                ad_all,
+                stanoise.phi,
+                tiltdir_list,
+                tiltang_list,
                 date_list)
 
             if plotpath:
@@ -630,14 +686,15 @@ def main(args=None):
 
         # Write out events
         print()
-        print("* Tilt direction and coherence as function of time saved to: ")
+        print("* Tilt orientation and coherence as function of time saved to: ")
         print("*   "+str(filetilt))
         print()
         fid = open(filetilt, 'w')
-        fid.writelines("Date, Tilt dir. (deg CW from H1), Max coherence\n")
-        for i in range(len(tilt_list)):
-            line1 = "{0},{1:4.1f},{2:4.2f}\n".format(
-                date_list[i], tilt_list[i], coh_list[i])
+        fid.writelines("Date, Tilt dir. (deg CW from H1), " +
+                       "Tilt ang. (deg CW from H1), Max coherence\n")
+        for i in range(len(tiltdir_list)):
+            line1 = "{0},{1:4.1f},{2:4.2f},{3:4.2f}\n".format(
+                date_list[i], tiltdir_list[i], tiltang_list[i], coh_list[i])
             fid.writelines(line1.replace(" ", ""))
         fid.close()
 

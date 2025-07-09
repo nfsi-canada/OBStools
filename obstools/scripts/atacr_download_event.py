@@ -57,7 +57,8 @@ def get_event_arguments(argv=None):
         "stored to disk.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -92,8 +93,7 @@ def get_event_arguments(argv=None):
     # Server Settings
     ServerGroup = parser.add_argument_group(
         title="Server Settings",
-        description="Settings associated with which "
-        "datacenter to log into.")
+        description="Settings associated with FDSN datacenters for archived data.")
     ServerGroup.add_argument(
         "--server",
         action="store",
@@ -132,18 +132,17 @@ def get_event_arguments(argv=None):
     # Use local data directory
     DataGroup = parser.add_argument_group(
         title="Local Data Settings",
-        description="Settings associated with defining " +
-        "and using a local data base of pre-downloaded " +
-        "day-long SAC or MSEED files.")
+        description="Settings associated with a SeisComP database " +
+        "for locally archived data.")
     DataGroup.add_argument(
-        "--local-data",
+        "--SDS-path",
         action="store",
         type=str,
         dest="localdata",
         default=None,
         help="Specify absolute path to a SeisComP Data Structure (SDS) " +
         "archive containing day-long SAC or MSEED files" +
-        "(e.g., --local-data=/Home/username/Data/SDS). See " +
+        "(e.g., --SDS-path=/Home/username/Data/SDS). See " +
         "https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
         "for details on the SDS format. If this option is used, it takes " +
         "precedence over the --server settings.")
@@ -284,6 +283,12 @@ def get_event_arguments(argv=None):
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
 
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
+
     # create station key list
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
@@ -368,8 +373,6 @@ def main(args=None):
         # Run Input Parser
         args = get_event_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 

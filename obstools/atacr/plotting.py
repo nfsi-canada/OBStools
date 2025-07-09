@@ -30,6 +30,7 @@ from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
 from obstools.atacr import utils
 from obspy import Trace
+from scipy.stats import circmean
 
 
 def fig_QC(f, power, gooddays, ncomp, key=''):
@@ -238,80 +239,301 @@ def fig_av_cross(f, field, gooddays, ftype, ncomp, key='',
     return plt
 
 
-def fig_coh_ph(coh, ph, direc, tilt, date):
+def fig_tilt_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
     """
-    Function to plot the coherence and phase between the rotated H and Z
-    components, used to characterize the tilt direction.
+    Function to plot the coherence, phase and admittance between the rotated
+    H and Z components, used to characterize the tilt orientation, for
+    a range of dates.
 
     Parameters
     ----------
+    gooddays : :mod:`~numpy.ndarray`
+        Array of gooddays to use in showing the results
     coh : :mod:`~numpy.ndarray`
         Coherence between rotated H and Z components
     ph : :mod:`~numpy.ndarray`
         Phase between rotated H and Z components
-    direc : :mod:`~numpy.ndarray`
+    ad : :mod:`~numpy.ndarray`
+        Admittance between rotated H and Z components
+    phi : :mod:`~numpy.ndarray`
         Directions considered in maximizing coherence between H and Z
+    tilt_dir : list
+        List of tilt directions determined for each date
+    tilt_ang : list
+        List of tilt angles determined for each date
     date : list
         List of datetime dates for plotting as function of time
-    tilt : list
-        List of tilt azimuths determined for each date
 
     """
 
+    # Initialize figure and add axes
+    plt.rcParams['date.converter'] = 'concise'
+    f = plt.figure(layout='constrained')
+    gs = GridSpec(5, 3, figure=f)
+    ax11 = f.add_subplot(gs[0:-3, 0])
+    ax12 = f.add_subplot(gs[0:-3, 1])
+    ax13 = f.add_subplot(gs[0:-3, 2])
+    ax2 = f.add_subplot(gs[2, :])
+    ax3 = f.add_subplot(gs[3, :])
+    ax4 = f.add_subplot(gs[4, :])
+
+    # Plot all data in grey - good estimates will be plotted in color
+    for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
+        mcoh = np.max(co)
+        ax11.plot(phi, co, c='grey', lw=0.5, ls=':')
+        ax12.plot(phi, p*180./np.pi, c='grey', lw=0.5, ls=':')
+        ax13.plot(phi, np.log10(a), c='grey', lw=0.5, ls=':')
+        ax2.plot(d, td, 'x', mec='grey', markersize=3.5)
+        ax3.plot(d, ta, 'x', mec='grey', markersize=3.5)
+        ax4.plot(d, mcoh, 'x', mec='grey', markersize=3.5)
+
+    # Keep only good days in all arrays
+    coh = coh[gooddays]
+    ph = ph[gooddays]
+    ad = ad[gooddays]
+    tilt_dir = tilt_dir[gooddays]
+    tilt_ang = tilt_ang[gooddays]
+    date = date[gooddays]
+
+    # Set color palette
     colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
 
-    if coh.ndim > 1:
+    # Get arrays of robust values
+    rtiltdir, outtiltdir = utils.robust(tilt_dir)
+    rtiltang, outtiltang = utils.robust(tilt_ang)
 
-        meantilt = np.mean(tilt)
-        stdetilt = np.std(tilt, ddof=1)/np.sqrt(coh.shape[0])
-        mediantilt = np.median(tilt)
+    # Mean + stde tilt dir
+    meantiltdir = np.mean(rtiltdir)
+    stdetiltdir = np.std(rtiltdir, ddof=1)/np.sqrt(len(rtiltdir))
 
-        plt.rcParams['date.converter'] = 'concise'
-        f = plt.figure(layout='constrained')
-        gs = GridSpec(4, 2, figure=f)
-        ax1 = f.add_subplot(gs[0:-2, 0])
-        ax2 = f.add_subplot(gs[0:-2, 1])
-        ax3 = f.add_subplot(gs[2, :])
-        ax4 = f.add_subplot(gs[3, :])
-        ax3.axhline(
-            meantilt,
-            ls='--',
-            label=r'Mean: {0:.0f} $\pm$ {1:.1f}'.format(meantilt, stdetilt))
-        ax3.axhline(
-            mediantilt,
-            ls=':',
-            label='Median: {0:.0f}'.format(mediantilt))
-        for i, (co, p, d, t) in enumerate(zip(coh, ph, date, tilt)):
-            mcoh = np.max(co)
-            ax1.plot(direc, co, c=colors[i])
-            ax2.plot(direc, p*180./np.pi, c=colors[i])
-            ax3.plot(d, t, 'o', c=colors[i])
-            ax4.plot(d, mcoh, 'o', c=colors[i])
-        ax1.set_ylabel('Coherence Z-H1')
-        ax1.set_ylim((0, 1.))
-        ax1.set_xlabel('Angle clockwise from H1 (deg)')
-        ax2.set_ylabel('Phase Z-H1')
-        ax2.set_xlabel('Angle clockwise from H1 (deg)')
-        ax3.legend(loc='best', fontsize=8)
-        ax3.set_xticklabels([])
-        ax3.set_ylabel('Tilt dir. (deg)')
-        ax3.set_ylim(-10, 190)
-        ax4.set_ylabel('Coherence')
-        ax4.set_ylim(-0.1, 1.1)
+    # Mean + stde tilt ang
+    meantiltang = np.mean(rtiltang)
+    stdetiltang = np.std(rtiltang, ddof=1)/np.sqrt(len(rtiltang))
 
-    else:
-        plt.figure()
-        plt.subplot(121)
-        plt.plot(direc, coh, c=colors[0])
-        plt.ylim((0, 1.))
-        plt.subplot(122)
-        plt.plot(direc, ph*180./np.pi, c=colors[0])
-        plt.tight_layout()
+    ax2.axhline(
+        meantiltdir,
+        ls='--',
+        label=r'Mean $\pm$ 2$\sigma$: {0:.1f} $\pm$ {1:.1f}'.format(
+            meantiltdir, 2.*stdetiltdir))
+    ax3.axhline(
+        meantiltang,
+        ls='--',
+        label=r'Mean $\pm$ 2$\sigma$: {0:.2f} $\pm$ {1:.2f}'.format(
+            meantiltang, 2.*stdetiltang))
+
+    # Now plot good days in color
+    for i, (co, p, a, d, td, ta) in enumerate(zip(coh, ph, ad, date, tilt_dir, tilt_ang)):
+        mcoh = np.max(co)
+        ax11.plot(phi, co, c=colors[i])
+        ax12.plot(phi, p*180./np.pi, c=colors[i])
+        ax13.plot(phi, np.log10(a), c=colors[i])
+        ax2.plot(d, td, 'o', c=colors[i])
+        ax3.plot(d, ta, 'o', c=colors[i])
+        ax4.plot(d, mcoh, 'o', c=colors[i])
+
+    # Add lines, labels, legends and title
+    ax11.axvline(meantiltdir, c='grey', ls=':')
+    ax12.axvline(meantiltdir, c='grey', ls=':')
+    ax13.axvline(meantiltdir, c='grey', ls=':')
+    ax11.set_ylabel('Coherence')
+    ax11.set_ylim((0, 1.))
+    ax11.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax12.set_ylabel('Phase')
+    ax12.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax13.set_ylabel('log$_{10}$(Admittance)')
+    ax13.set_xlabel('Angle CW from H1 ($^{\circ}$)')
+    ax2.legend(loc='best', fontsize=8)
+    ax2.set_xticklabels([])
+    ax2.set_ylabel('Tilt dir. ($^{\circ}$)')
+    ax2.set_ylim(-10, 370)
+    ax3.legend(loc='best', fontsize=8)
+    ax3.set_xticklabels([])
+    ax3.set_ylabel('Tilt angle ($^{\circ}$)')
+    # ax3.set_ylim(0., 5.0)
+    ax4.set_ylabel('Coherence')
+    ax4.set_ylim(-0.1, 1.1)
+
+    # Create secondary axis for admittance
+    ax13twin = ax13.twinx()
+
+    # Set the secondary y-axis with the same tick locs as the primary y-axis
+    ax13twin.set_ylabel('Tilt ang. ($^{\circ}$)')
+
+    # Get current ticks on the primary y-axis
+    primary_ticks = ax13.get_yticks()
+
+    # Set the secondary axis to have the same tick locations
+    ax13twin.set_yticks(primary_ticks)
+
+    # Optional: Format the labels to show the transformed values
+    ax13twin.set_yticklabels(
+        [f'{np.arctan(10**val)*180./np.pi:.2f}' for val in primary_ticks])
+
+    # Sync limits if necessary
+    ax13twin.set_ylim(ax13.get_ylim())
 
     return plt
 
 
-def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
+def fig_tilt_polar_date(gooddays, coh, ph, ad, phi, tilt_dir, tilt_ang, date):
+
+    # Keep only good days in all arrays
+    coh = coh[gooddays]
+    ph = ph[gooddays]
+    ad = ad[gooddays]
+    tilt_dir = tilt_dir[gooddays]
+    tilt_ang = tilt_ang[gooddays]
+    date = date[gooddays]
+
+    # Get arrays of robust values
+    rtiltdir, outtiltang = utils.robust(tilt_dir)
+    rtiltang, outtiltang = utils.robust(tilt_ang)
+
+    # Mean + stde tilt dir
+    meantiltdir = np.mean(rtiltdir)
+    stdetiltdir = np.std(rtiltdir, ddof=1)/np.sqrt(len(rtiltdir))
+
+    # Mean + stde tilt ang
+    meantiltang = np.mean(rtiltang)
+    stdetiltang = np.std(rtiltang, ddof=1)/np.sqrt(len(rtiltang))
+
+    # Set color palette
+    colors = plt.cm.cividis(np.linspace(0, 1, coh.shape[0]))
+
+    # Create polar plot
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, layout='constrained')
+
+    # Set the direction to clockwise
+    ax.set_theta_direction(-1)  # Clockwise
+
+    # Set zero location to top (north)
+    ax.set_theta_zero_location('N')
+
+    ax.scatter(tilt_dir*np.pi/180., tilt_ang, c=colors)
+
+    # ax.set_ylim(0, 2)
+    ax.set_title(
+        'Tilt direction {0:.1f} $\pm$ {1:.1f} \nTilt angle {2:.2f} $\pm$ {3:.2f}'.format(
+            meantiltdir, 2*stdetiltdir, meantiltang, 2*stdetiltang))
+
+    return plt
+
+
+def fig_tilt_day(coh_phi, ph_phi, ad_phi, phi,
+                 coh_spec, ph_spec, ad_spec, f, f_tilt,
+                 tilt_dir, tilt_ang):
+    """
+    Function to plot the coherence, phase and admittance between the rotated
+    H and Z components, used to characterize the tilt orientation, for a
+    single day. The figure also includes the transfer function components.
+
+    Parameters
+    ----------
+    coh_phi : :mod:`~numpy.ndarray`
+        Coherence between rotated H and Z components as function of the
+        direction phi
+    ph_phi : :mod:`~numpy.ndarray`
+        Phase between rotated H and Z components as function of the
+        direction phi
+    ad_phi : :mod:`~numpy.ndarray`
+        Admittance between rotated H and Z components as function of the
+        direction phi
+    phi : :mod:`~numpy.ndarray`
+        Directions phi considered in maximizing coherence between H and Z
+    coh_spec : :mod:`~numpy.ndarray`
+        Coherence spectrum between rotated H and Z components at the direction
+        where coherence is maximum, as function of frequency
+    ph_spec : :mod:`~numpy.ndarray`
+        Phase spectrum between rotated H and Z components at the direction
+        where coherence is maximum, as function of frequency
+    ad_spec : :mod:`~numpy.ndarray`
+        Admittance spectrum between rotated H and Z components at the direction
+        where coherence is maximum, as function of frequency
+    f : :mod:`~numpy.ndarray`
+        Frequency axis
+    f_tilt : :mod:`~numpy.ndarray`
+        Frequencies used in tilt calculation
+    tilt_dir : float
+        Tilt direction
+    tilt_ang : float
+        Tilt angle
+
+    """
+
+    fig = plt.figure(layout='constrained')
+    gs = GridSpec(2, 3, figure=fig)
+    ax11 = fig.add_subplot(gs[0, 0])
+    ax12 = fig.add_subplot(gs[0, 1])
+    ax13 = fig.add_subplot(gs[0, 2])
+    ax21 = fig.add_subplot(gs[1, 0])
+    ax22 = fig.add_subplot(gs[1, 1])
+    ax23 = fig.add_subplot(gs[1, 2])
+
+    ax21.plot(phi, coh_phi)
+    ax21.axvline(tilt_dir, c='C1')
+    ax21.set_ylim((0, 1.))
+    ax21.set_ylabel('Mean coherence')
+    ax21.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
+
+    ax22.plot(phi, ph_phi*180./np.pi)
+    ax22.axvline(tilt_dir, c='C1')
+    ax22.set_ylabel('Mean phase')
+    ax22.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
+
+    ax23.plot(phi, np.log10(ad_phi))
+    ax23.axvline(tilt_dir, c='C1')
+    ax23.set_ylabel('Mean log$_{10}$(admittance)')
+    ax23.set_xlabel('Tilt dir. ($^{\circ}$ CW from H1)')
+
+    freqs2 = (f > 0.) & (f < 0.1)
+    freqs = (f > f_tilt[0]) & (f < f_tilt[1])
+
+    ax11.plot(f[freqs2], coh_spec[freqs2], '.')
+    ax11.plot(f[freqs], coh_spec[freqs], '.')
+    ax11.axhline(np.mean(coh_spec[freqs]), c='C2')
+    ax11.set_ylabel('Coherence spectrum')
+    ax11.set_xlabel('Frequency (Hz)')
+
+    ax12.plot(f[freqs2], ph_spec[freqs2]*180/np.pi, '.')
+    ax12.plot(f[freqs], ph_spec[freqs]*180/np.pi, '.')
+    ax12.axhline(
+        circmean(
+            ph_spec[freqs], low=-np.pi, high=np.pi)*180/np.pi, c='C2')
+    ax12.set_ylabel('Phase spectrum')
+    ax12.set_xlabel('Frequency (Hz)')
+
+    ax13.plot(f[freqs2], np.log10(ad_spec[freqs2]), '.')
+    ax13.plot(f[freqs], np.log10(ad_spec[freqs]), '.')
+    ax13.axhline(np.log10(np.mean(ad_spec[freqs])), c='C2')
+    ax13.set_ylabel('log$_{10}$(Admittance) spectrum')
+    ax13.set_xlabel('Frequency (Hz)')
+
+    # Create secondary axis for admittance
+    ax13twin = ax13.twinx()
+
+    # Set the secondary y-axis to have the same tick locations as the primary y-axis
+    ax13twin.set_ylabel('Tilt ang. ($^{\circ}$)')
+
+    # Get current ticks on the primary y-axis
+    primary_ticks = ax13.get_yticks()
+
+    # Set the secondary axis to have the same tick locations
+    ax13twin.set_yticks(primary_ticks)
+
+    # Optional: Format the labels to show the transformed values
+    ax13twin.set_yticklabels([f'{np.arctan(10**val)*180./np.pi:.2f}' for val in primary_ticks])
+
+    # Sync limits if necessary
+    ax13twin.set_ylim(ax13.get_ylim())
+
+    plt.suptitle(
+        'Tilt direction {0:.1f} \nTilt angle {1:.2f}'.format(
+            tilt_dir, tilt_ang))
+
+    return plt
+
+
+def fig_TF(f, day_trfs, day_list, sta_trfs={}, sta_list={}, skey=''):
     """
     Function to plot the transfer functions available.
 
@@ -357,13 +579,13 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
 
         ax = fig.add_subplot(ntf, 1, j)
 
-        if day_list[key]:
+        if key in day_list.keys():
             for i in range(len(day_trfs)):
                 ax.loglog(
                     f[faxis],
                     np.abs(day_trfs[i][key]['TF_'+key][faxis]),
                     'gray', lw=0.5)
-        if sta_list[key]:
+        if key in sta_list.keys():
             ax.loglog(
                 f[faxis],
                 np.abs(sta_trfs[key]['TF_'+key][faxis]),
@@ -408,7 +630,7 @@ def fig_TF(f, day_trfs, day_list, sta_trfs, sta_list, skey=''):
 
 
 def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
-    elev=-1000., f_0=None):
+               elev=-1000., f_0=None, f_1=None, log=False):
     """
     Function to plot the transfer functions available.
 
@@ -430,6 +652,10 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         Station elevation in meters (OBS stations have negative elevations)
     f_0 : float
         Lowest frequency to consider in plot (Hz)
+    f_1 : float
+        Highest frequency to consider in plot (Hz)
+    log : boolean
+        Show a logarithmic frequency axis for compliance
 
     """
 
@@ -444,13 +670,15 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
 
     # Calculate theoretical frequency limit for infra-gravity waves
     f_c = np.sqrt(9.81/np.pi/elev)/2.
+    if f_1 is not None:
+        f_c = f_1
 
     # Define all possible combinations
     comp_list = {'ZP': True, 'ZP-21': True, 'ZP-H': True}
 
     # Get max number of subplot
-    nkeys_day = sum(day_list[key] for key in comp_list)
-    nkeys_sta = sum(sta_list[key] for key in comp_list)
+    nkeys_day = sum(day_list[key] for key in comp_list if key in day_list.keys())
+    nkeys_sta = sum(sta_list[key] for key in comp_list if key in sta_list.keys())
     ncomps = max(nkeys_day, nkeys_sta)
 
     if ncomps == 1:
@@ -460,19 +688,19 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
 
     for j, key in enumerate(comp_list):
 
-        if not day_list[key] and not sta_list[key]:
+        if key not in day_list.keys() and key not in sta_list.keys():
             continue
 
         ax = fig.add_subplot(ncomps, 2, j*2+1)
         ax.tick_params(labelsize=8)
         ax.yaxis.get_offset_text().set_fontsize(8)
 
-        if day_list[key]:
+        if key in day_list.keys():
             compliance_list = []
             coherence_list = []
             for i in range(len(day_comps)):
-                compliance = np.abs(day_comps[i][key][0])
-                coherence = np.abs(day_comps[i][key][1])
+                compliance = np.abs(day_comps[i][key][0])[faxis]/f[faxis]/2./np.pi
+                coherence = np.abs(day_comps[i][key][2])[faxis]
                 if not np.isnan(compliance).any():
                     compliance_list.append(compliance)
                     coherence_list.append(coherence)
@@ -483,26 +711,30 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
 
             ax.fill_between(
                 f[faxis], 
-                compliance_mean[faxis]-compliance_std[faxis], 
-                compliance_mean[faxis]+compliance_std[faxis], 
+                compliance_mean-compliance_std, 
+                compliance_mean+compliance_std, 
                 fc='royalblue', alpha=0.3, label=r'$\pm$ Std daily'
                 )
             ax.plot(
-                f[faxis], compliance_mean[faxis], c='royalblue', 
+                # f[faxis], compliance_mean[faxis], c='royalblue', 
+                f[faxis], compliance_mean, c='royalblue', 
                 lw=0.5, label='Mean daily')
             ax.set_xlim(f_0, f_c)
-            ytop = 1.2*np.max(compliance_mean[(f > f_0) & (f < f_c)])
-            ybot = 0/8*np.min(compliance_mean[(f > f_0) & (f < f_c)])
+            ytop = 1.2*np.max(compliance_mean[(f[faxis] > f_0) & (f[faxis] < f_c)])
+            ybot = 0.8*np.min(compliance_mean[(f[faxis] > f_0) & (f[faxis] < f_c)])
             ax.set_ylim(ybot, ytop)
 
-        if sta_list[key]:
+        if key in sta_list.keys():
             for i in range(len(sta_comps)):
                 compliance = np.abs(sta_comps[i][key][0])
                 ax.plot(
                     f[faxis],
-                    compliance[faxis],
+                    compliance,
                     'red', lw=0.5, alpha=0.5,
                     label='Sta average')
+        if log:
+            ax.set_xscale('log')
+            ax.set_yscale('log')
 
         if key == 'ZP':
             ax.set_title(skey+' Compliance: ZP',
@@ -525,35 +757,37 @@ def fig_comply(f, day_comps, day_list, sta_comps, sta_list, skey=None,
         ax = fig.add_subplot(ncomps, 2, j*2+2)
         ax.tick_params(labelsize=8)
 
-        if day_list[key]:
-            # for i in range(len(day_comps)):
+        if key in day_list.keys():
             ax.fill_between(
                 f[faxis],
-                coherence_mean[faxis]-coherence_std[faxis],
-                coherence_mean[faxis]+coherence_std[faxis],
+                coherence_mean-coherence_std,
+                coherence_mean+coherence_std,
                 fc='royalblue', alpha=0.3
                 )
             ax.plot(
                 f[faxis],
-                coherence_mean[faxis],
+                coherence_mean,
                 c='royalblue', lw=0.75)
-        if sta_list[key]:
+        if key in sta_list.keys():
             for i in range(len(sta_comps)):
                 ax.plot(
                     f[faxis], 
-                    np.abs(sta_comps[i][key][1][faxis]),
+                    np.abs(sta_comps[i][key][2][faxis]),
                     'red', lw=0.5, alpha=0.5)
         ax.set_xscale('log')
 
         if key == 'ZP':
             ax.set_title(skey+' Coherence: ZP',
                          fontdict={'fontsize': 8})
+            ax.set_ylim(0., 1.)
         elif key == 'ZP-21':
             ax.set_title(skey+' Coherence: ZP-21',
                          fontdict={'fontsize': 8})
+            ax.set_ylim(0., 1.)
         elif key == 'ZP-H':
             ax.set_title(skey+' Coherence: ZP-H',
                          fontdict={'fontsize': 8})
+            ax.set_ylim(0., 1.)
 
         if f_0:
             ax.axvline(f_0, ls='--', c='k', lw=0.75)

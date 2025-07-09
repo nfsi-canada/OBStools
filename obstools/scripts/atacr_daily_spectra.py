@@ -29,8 +29,7 @@ import pickle
 import stdb
 import copy
 
-from obspy import UTCDateTime
-
+from obspy import UTCDateTime, read_inventory
 from obstools.atacr import utils, DayNoise
 
 from pathlib import Path
@@ -53,7 +52,8 @@ def get_dailyspec_arguments(argv=None):
         "steps and use all available components.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -194,13 +194,6 @@ def get_dailyspec_arguments(argv=None):
         title='Figure Settings',
         description="Flags for plotting figures")
     FigureGroup.add_argument(
-        "--figQC",
-        action="store_true",
-        dest="fig_QC",
-        default=False,
-        help="Plot Quality-Control figure. " +
-        "[Default does not plot figure]")
-    FigureGroup.add_argument(
         "--debug",
         action="store_true",
         dest="debug",
@@ -208,19 +201,29 @@ def get_dailyspec_arguments(argv=None):
         help="Plot intermediate steps for debugging. " +
         "[Default does not plot figure]")
     FigureGroup.add_argument(
+        "--figQC",
+        action="store_true",
+        dest="fig_QC",
+        default=False,
+        help="Plot Quality-Control figure to visualize good vs bad windows. " +
+        "[Default does not plot figure]")
+    FigureGroup.add_argument(
         "--figAverage",
         action="store_true",
         dest="fig_average",
         default=False,
-        help="Plot daily average figure. " +
-        "[Default does not plot figure]")
+        help="Plot daily average figure calculated by taking the mean of " +
+        "good or bad windows. [Default does not plot figure]")
     FigureGroup.add_argument(
-        "--figCoh",
+        "--figTilt",
         action="store_true",
-        dest="fig_coh_ph",
+        dest="fig_tilt",
         default=False,
-        help="Plot Coherence and Phase figure. " +
-        "[Default does not plot figure]")
+        help="Plot mean coherence and phase figure as function of azimuth" +
+        "measured clockwise from H1. Also plot components of the transfer " +
+        "function at the tilt direction. Use this option to determine " +
+        "the frequencies to use in determining the tilt orientation " +
+        "(option --tilt-freqs).[Default does not plot figure]")
     FigureGroup.add_argument(
         "--save-fig",
         action="store_true",
@@ -242,6 +245,12 @@ def get_dailyspec_arguments(argv=None):
     # Check inputs
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
+
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
 
     # create station key list
     if len(args.stkeys) > 0:
@@ -317,8 +326,6 @@ def main(args=None):
         # Run Input Parser
         args = get_dailyspec_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
@@ -442,9 +449,14 @@ def main(args=None):
 
             # Quality control to identify outliers
             daynoise.QC_daily_spectra(
-                pd=args.pd, tol=args.tol, alpha=args.alpha,
-                smooth=args.smooth, fig_QC=args.fig_QC,
-                save=plotpath, form=args.form, debug=args.debug)
+                pd=args.pd,
+                tol=args.tol,
+                alpha=args.alpha,
+                smooth=args.smooth,
+                fig_QC=args.fig_QC,
+                save=plotpath,
+                form=args.form,
+                debug=args.debug)
 
             # Check if we have enough good windows
             nwin = np.sum(daynoise.goodwins)
@@ -460,8 +472,9 @@ def main(args=None):
                 calc_rotation=args.calc_rotation,
                 tiltfreqs=args.tf,
                 fig_average=args.fig_average,
-                fig_coh_ph=args.fig_coh_ph,
-                save=plotpath, form=args.form)
+                fig_tilt=args.fig_tilt,
+                save=plotpath,
+                form=args.form)
 
             # Save to file
             daynoise.save(filename)

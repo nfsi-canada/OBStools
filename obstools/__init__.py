@@ -50,8 +50,8 @@ Installation
 Dependencies
 ++++++++++++
 
-- `stdb <https://github.com/schaefferaj/StDb>`_
-- `obspy <https://github.com/obspy/obspy>`_
+- `StDb <https://github.com/schaefferaj/StDb>`_
+- `ObsPy <https://github.com/obspy/obspy>`_
 
 Conda environment
 +++++++++++++++++
@@ -69,7 +69,7 @@ Activate the newly created environment:
 
    conda activate obs
 
-Install dependency:
+Install StDb:
 
 .. sourcecode:: bash
 
@@ -107,7 +107,7 @@ data locally stored on your hard drive, the scripts can use a `Client`
 that reads a `SeisComP Data Structure 
 <https://docs.obspy.org/packages/autogen/obspy.clients.filesystem.sds.html>`_ 
 archive containing SAC or miniSEED waveform data. Check out the scripts 
-``bng_calc`` and ``dl_calc`` below and the argument ``--local-data`` and 
+``bng_calc`` and ``dl_calc`` below and the argument ``--SDS-path`` and 
 ``--dtype`` for more details.
 
 Station Metadata
@@ -118,11 +118,11 @@ have a station `XML <https://www.fdsn.org/xml/station/>`_ file
 containing the metadata. The corresponding ObsPy documentation is
 `here <https://docs.obspy.org/packages/obspy.core.inventory.html>`_. 
 
-To convert the station `XML` file to an input that can be read by
-``OrientPy``, you run the command ``gen_stdb station.xml`` (only
-available on StDb version 0.2.7), which will create the file
-``station.pkl``. If you don't have a station `XML` file but you have
-a dataless SEED file, you can convert it first to `XML` using `this
+You can now use a stationXML (`.xml`) file instead of the StDb `.pkl` format. 
+Alternatively, you can convert the stationXML file to an StDb `.pkl` file
+by running the command ``gen_stdb station.xml`` (these options are only
+available on StDb version 0.2.7. If you don't have a station `XML` file but you have
+a dataless SEED file, you can convert it first to XML using `this
 tools <https://seiscode.iris.washington.edu/projects/stationxml-converter>`_.
 
 Waveform Data

@@ -29,8 +29,7 @@ import pickle
 import stdb
 import copy
 
-from obspy import UTCDateTime, Stream
-
+from obspy import UTCDateTime, Stream, read_inventory
 from obstools.atacr import EventStream
 from obstools.atacr import utils, plotting
 
@@ -57,7 +56,8 @@ def get_correct_arguments(argv=None):
         "data are stored to disk in a new 'CORRECTED' folder.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -189,6 +189,12 @@ def get_correct_arguments(argv=None):
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
 
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
+
     # create station key list
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
@@ -240,8 +246,6 @@ def main(args=None):
         # Run Input Parser
         args = get_correct_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 

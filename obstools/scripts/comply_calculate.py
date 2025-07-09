@@ -30,9 +30,8 @@ import pickle
 import stdb
 import copy
 
-from obspy import UTCDateTime
-
-from obstools.atacr import Rotation, plotting
+from obspy import UTCDateTime, read_inventory
+from obstools.atacr import Rotation, plotting, utils
 from obstools.comply import Comply
 
 from pathlib import Path
@@ -57,7 +56,8 @@ def get_comply_arguments(argv=None):
         "one by one and the data are stored to disk.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -179,6 +179,12 @@ def get_comply_arguments(argv=None):
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
 
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
+
     # create station key list
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
@@ -234,8 +240,6 @@ def main(args=None):
         # Run Input Parser
         args = get_comply_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
@@ -342,7 +346,6 @@ def main(args=None):
         # Filename for output transfer functions
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-        fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
         # Find all files in directories
         p = specpath.glob('*spectra.pkl')
@@ -450,10 +453,24 @@ def main(args=None):
 
         if args.fig:
             fname = stkey + '.' + 'compliance'
-            plot = plotting.fig_comply(
-                f, day_comply_functions, daycomply.tf_list,
-                sta_comply_functions, stacomply.tf_list, skey=stkey,
-                elev=sta.elevation*1.e3, f_0=args.f0)
+            if not args.skip_daily:
+                plot = plotting.fig_comply(
+                    f, day_comply_functions, daycomply.tf_list,
+                    [], {}, skey=stkey,
+                    # elev=sta.elevation*1.e3, f_0=args.f0)
+                    elev=sta.elevation, f_0=args.f0)
+            elif not args.skip_clean:
+                plot = plotting.fig_comply(
+                    f, [], {},
+                    sta_comply_functions, stacomply.tf_list, skey=stkey,
+                    elev=sta.elevation, f_0=args.f0)
+                    # elev=sta.elevation*1.e3, f_0=args.f0)
+            else:
+                plot = plotting.fig_comply(
+                    f, day_comply_functions, daycomply.tf_list,
+                    sta_comply_functions, stacomply.tf_list, skey=stkey,
+                    elev=sta.elevation, f_0=args.f0)
+                    # elev=sta.elevation*1.e3, f_0=args.f0)
 
             if plotpath:
                 plot.savefig(plotpath / (fname + '.' + args.form),

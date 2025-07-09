@@ -27,6 +27,7 @@
 import numpy as np
 import pickle
 import stdb
+from stdb.io import frominv
 import copy
 
 from obspy.clients.fdsn import Client as FDSN_Client
@@ -54,7 +55,8 @@ def get_daylong_arguments(argv=None):
         "are processed one by one and the data are stored to disk.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -89,8 +91,7 @@ def get_daylong_arguments(argv=None):
     # Server Settings
     ServerGroup = parser.add_argument_group(
         title="Server Settings",
-        description="Settings associated with which "
-        "datacenter to log into.")
+        description="Settings associated with FDSN datacenters for archived data.")
     ServerGroup.add_argument(
         "--server",
         action="store",
@@ -129,18 +130,17 @@ def get_daylong_arguments(argv=None):
     # Use local data directory
     DataGroup = parser.add_argument_group(
         title="Local Data Settings",
-        description="Settings associated with defining " +
-        "and using a local data base of pre-downloaded " +
-        "day-long SAC or MSEED files.")
+        description="Settings associated with a SeisComP database " +
+        "for locally archived data.")
     DataGroup.add_argument(
-        "--local-data",
+        "--SDS-path",
         action="store",
         type=str,
         dest="localdata",
         default=None,
         help="Specify absolute path to a SeisComP Data Structure (SDS) " +
         "archive containing day-long SAC or MSEED files" +
-        "(e.g., --local-data=/Home/username/Data/SDS). " +
+        "(e.g., --SDS-path=/Home/username/Data/SDS). " +
         "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
         "for details on the SDS format. If this option is used, it takes " +
         "precedence over the --server settings.")
@@ -215,6 +215,12 @@ def get_daylong_arguments(argv=None):
     # Check inputs
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
+
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
 
     # create station key list
     if len(args.stkeys) > 0:
@@ -300,8 +306,6 @@ def main(args=None):
         # Run Input Parser
         args = get_daylong_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
@@ -443,7 +447,7 @@ def main(args=None):
                     t2 += dt
                     continue
 
-            print("*   " + tstamp + ".*.SAC")
+            print("*   " + tstamp + ".*.SAC\n")
             # Get waveforms from client, one channel at a time
             try:
                 cha = sta.channel.upper() + '1'
@@ -547,6 +551,7 @@ def main(args=None):
                       "Continuing")
                 pass
 
+            print("*   -> Merging streams")
             st = (st1.merge(fill_value='latest') +
                   st2.merge(fill_value='latest') +
                   stz.merge(fill_value='latest') +
@@ -555,6 +560,7 @@ def main(args=None):
                 raise Exception("Error: number of available traces is: " +
                                 str(len(st)))
 
+            print("*   -> Resampling")
             # Detrend, filter
             st.detrend('demean')
             st.detrend('linear')
@@ -566,6 +572,7 @@ def main(args=None):
             st.resample(args.new_sampling_rate)
 
             # Check streams
+            print("*   -> Performing QC")
             is_ok, st = utils.QC_streams(t1, t2, st)
             if not is_ok:
                 t1 += dt
@@ -573,9 +580,9 @@ def main(args=None):
                 continue
 
             # Extracting seismic data components
-            sth = st.select(component='1') + \
-                  st.select(component='2') + \
-                  st.select(component=args.zcomp)
+            sth = (st.select(component='1') +
+                   st.select(component='2') +
+                   st.select(component=args.zcomp))
 
             # Remove responses
             print("*   -> Removing responses - Seismic data")
@@ -589,8 +596,8 @@ def main(args=None):
                       "response")
 
             # Extract traces - Z
+            print("*   -> Updating seismic metadata and writing files")
             trZ = sth.select(component=args.zcomp)[0]
-
             trZ = utils.update_stats(
                 trZ,
                 sta.latitude,
@@ -623,18 +630,19 @@ def main(args=None):
             # Extract traces - P
             try:
 
-                stp = st.select(component='H')
+                trP = stp.select(component='H')[0]
 
                 print("*   -> Removing responses - Pressure data")
                 try:
-                    stp.remove_response(
+                    trP.remove_response(
                         inventory=inv,
                         pre_filt=args.pre_filt,
                         output='DEF')
                 except Exception:
-                    print("*   -> Inventory not found: Cannot remove "+
-                          "instrument response")
-                trP = stp[0]
+                    print("*   -> Inventory not found: Cannot " +
+                          "remove instrument response")
+
+                print("*   -> Updating pressure metadata and writing file")
                 trP = utils.update_stats(
                     trP,
                     sta.latitude,
@@ -643,6 +651,8 @@ def main(args=None):
                     sta.channel[0]+'DH')
                 trP.write(str(fileP), format='SAC')
             except Exception:
+                print("*   -> No pressure data to write. " +
+                      "Continuing")
                 pass
 
             t1 += dt

@@ -101,31 +101,41 @@ class Rotation(object):
     cHP : :class:`~numpy.ndarray`
         Cross-power spectral density for components H and P (any shape)
     coh : :class:`~numpy.ndarray`
-        Coherence between horizontal components
+        Coherence between horizontal-vertical components
     ph : :class:`~numpy.ndarray`
-        Phase of cross-power spectrum between horizontal components
-    tilt : float
-        Angle (azimuth) of tilt axis
+        Phase of cross-power spectrum between horizontal-vertical components
+    ad : :class:`~numpy.ndarray`
+        Admittance between horizontal-vertical components
+    tilt_dir : float
+        Azimuth of the tilt axis
+    tilt_ang : float
+        Angle of the tilt axis
     coh_value : float
         Maximum coherence
     phase_value : float
         Phase at maximum coherence
+    admit_value : float
+        Admittance value at maximum coherence
     phi : :class:`~numpy.ndarray`
         Directions for which the coherence is calculated
 
     """
 
     def __init__(self, cHH=None, cHZ=None, cHP=None, coh=None, ph=None,
-                 tilt=None, coh_value=None, phase_value=None, phi=None):
+                 ad=None, tilt_dir=None, tilt_ang=None, coh_value=None,
+                 phase_value=None, admit_value=None, phi=None):
 
         self.cHH = cHH
         self.cHZ = cHZ
         self.cHP = cHP
         self.coh = coh
         self.ph = ph
-        self.tilt = tilt
+        self.ad = ad
+        self.tilt_dir = tilt_dir
+        self.tilt_ang = tilt_ang
         self.coh_value = coh_value
         self.phase_value = phase_value
+        self.admit_value = admit_value
         self.phi = phi
 
 
@@ -146,7 +156,7 @@ class DayNoise(object):
     Attributes
     ----------
     tr1, tr2, trZ, trP : :class:`~obspy.core.Trace` object
-        Corresponding trace objects for components H1, H2, HZ and HP. 
+        Corresponding trace objects for components H1, H2, HZ and HP.
         Traces can be empty (i.e., ``Trace()``) for missing components.
     window : float
         Length of time window in seconds
@@ -222,8 +232,8 @@ class DayNoise(object):
         # Check that all traces are valid Trace objects
         for tr in [tr1, tr2, trZ, trP]:
             if not isinstance(tr, Trace):
-                raise(Exception("Error initializing DayNoise object - "
-                                + str(tr)+" is not a Trace object"))
+                raise Exception("Error initializing DayNoise object - "
+                                + str(tr)+" is not a Trace object")
 
         # Unpack everything
         self.tr1 = tr1
@@ -616,15 +626,18 @@ class DayNoise(object):
 
         self.QC = True
 
-    def average_daily_spectra(self, calc_rotation=True, tiltfreqs=[0.005, 0.035],
-                              fig_average=False, fig_coh_ph=False, save=None,
+    def average_daily_spectra(self, calc_rotation=True,
+                              tiltfreqs=[0.005, 0.035],
+                              fig_average=False,
+                              fig_tilt=False,
+                              save=None,
                               form='png'):
         """
         Method to average the daily spectra for good windows. By default, the
-        method will attempt to calculate the azimuth of maximum coherence
-        between horizontal components and the vertical component (for maximum
-        tilt direction), and use the rotated horizontals in the transfer
-        function calculations.
+        method will attempt to calculate the tilt orientation from the
+        maximum coherence between component H1 and the vertical component HZ
+        and use the rotated horizontals in the transfer function calculations
+        for tilt noise removal.
 
         Parameters
         ----------
@@ -636,9 +649,10 @@ class DayNoise(object):
         fig_average : boolean
             Whether or not to produce a figure showing the average daily
             spectra
-        fig_coh_ph : boolean
+        fig_tilt : boolean
             Whether or not to produce a figure showing the maximum coherence
-            between H and Z
+            and phase between H1 and HZ as function of azimuth measured CW
+            from H1, and the spectra for these components
         save : :class:`~pathlib.Path` object
             Relative path to figures folder
         form : str
@@ -778,19 +792,25 @@ class DayNoise(object):
                 plot.show()
 
         if calc_rotation and self.ncomp >= 3:
-            cHH, cHZ, cHP, coh, ph, phi, tilt, coh_value, phase_value = \
+            cHH, cHZ, cHP, coh, ph, ad, phi, tilt_dir, tilt_ang, coh_value, phase_value, admit_value = \
                 utils.calculate_tilt(
                     self.ft1, self.ft2, self.ftZ, self.ftP, self.f,
                     self.goodwins, tiltfreqs)
             self.rotation = Rotation(
-                cHH, cHZ, cHP, coh, ph, tilt, coh_value, phase_value, phi)
+                cHH, cHZ, cHP, coh, ph, ad, tilt_dir, tilt_ang, coh_value, phase_value, admit_value, phi)
 
-            if fig_coh_ph:
-                plot = plotting.fig_coh_ph(coh, ph, phi)
+            if fig_tilt:
+                Co = utils.coherence(cHZ, cHH, cZZ)
+                Ad = utils.admittance(cHZ, cHH)
+                Ph = utils.phase(cHZ)
+                plot = plotting.fig_tilt_day(
+                    coh, ph, ad, phi,
+                    Co, Ph, Ad, self.f,
+                    tiltfreqs, tilt_dir, tilt_ang)
 
                 # Save or show figure
                 if save:
-                    fname = self.key + '.' + self.tkey + '.' + 'coh_ph.' + form
+                    fname = self.key + '.' + self.tkey + '.' + 'tilt.' + form
                     if isinstance(save, Path):
                         fname = save / fname
                     plot.savefig(
@@ -938,6 +958,7 @@ class StaNoise(object):
         self.initialized = False
         self.QC = False
         self.av = False
+        self.tf_list = {}
 
         if isinstance(daylist, DayNoise):
             daylist = [daylist]
@@ -1024,8 +1045,11 @@ class StaNoise(object):
             2P, ZZ, ZP, PP, HH, HZ, HP]
         phi : `numpy.ndarray`
             Array of azimuths used in determining the tilt direction
-        tilt : float
+        tilt_dir : float
             Tilt direction from maximum coherence between rotated `H1` and
+            `HZ` components
+        tilt_ang : float
+            Tilt angle from maximum coherence between rotated `H1` and
             `HZ` components
         QC : bool
             Whether or not the method
@@ -1054,17 +1078,17 @@ class StaNoise(object):
         AttributeError: 'StaNoise' object has no attribute 'daylist'
         >>> stanoise.__dict__.keys()
         dict_keys(['initialized', 'c11', 'c22', 'cZZ', 'cPP', 'c12', 'c1Z',
-        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'phi', 'tilt', 'f',
-        'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
+        'c1P', 'c2Z', 'c2P', 'cZP', 'cHH', 'cHZ', 'cHP', 'phi', 'tilt_dir',
+        'tilt_ang', 'f', 'nwins', 'ncomp', 'key', 'tf_list', 'QC', 'av'])
 
         """
 
         # First, check that the StaNoise object contains at least two
         # DayNoise objects
         if len(self.daylist) < 2:
-            raise(Exception(
+            raise Exception(
                 "StaNoise requires at least two DayNoise objects to execute " +
-                "its methods"))
+                "its methods")
 
         for dn in self.daylist:
             if not dn.QC:
@@ -1087,7 +1111,8 @@ class StaNoise(object):
         self.cHZ = np.array([dn.rotation.cHZ for dn in self.daylist]).T
         self.cHP = np.array([dn.rotation.cHP for dn in self.daylist]).T
         self.phi = self.daylist[0].rotation.phi
-        self.tilt = self.daylist[0].rotation.tilt
+        self.tilt_dir = self.daylist[0].rotation.tilt_dir
+        self.tilt_ang = self.daylist[0].rotation.tilt_ang
         self.f = self.daylist[0].f
         self.nwins = np.array([np.sum(dn.goodwins) for dn in self.daylist])
         self.ncomp = np.min([dn.ncomp for dn in self.daylist])
@@ -1158,9 +1183,9 @@ class StaNoise(object):
         """
 
         if self.initialized:
-            raise(Exception("Object has been initialized already - " +
+            raise Exception("Object has been initialized already - " +
                             "list of DayNoise objects has been lost and " +
-                            "method cannot proceed"))
+                            "method cannot proceed")
         else:
             self.init()
 
@@ -1244,21 +1269,16 @@ class StaNoise(object):
 
             penalty = np.sum(ubernorm, axis=0)
 
-            plt.figure(4)
-            for i in range(self.ncomp):
-                plt.plot(range(0, np.sum(gooddays)), detrend(
-                    ubernorm, type='constant')[i], 'o-')
             if debug:
+                plt.figure(4)
+                for i in range(self.ncomp):
+                    plt.plot(range(0, np.sum(gooddays)), detrend(
+                        ubernorm, type='constant')[i], 'o-')
                 plt.show()
-            else:
-                plt.close(4)
-            plt.figure(5)
-            plt.plot(range(0, np.sum(gooddays)),
-                     np.sum(ubernorm, axis=0), 'o-')
-            if debug:
+                plt.figure(5)
+                plt.plot(range(0, np.sum(gooddays)),
+                         np.sum(ubernorm, axis=0), 'o-')
                 plt.show()
-            else:
-                plt.close(5)
 
             kill = penalty > tol*np.std(penalty)
             if np.sum(kill) == 0:
@@ -1553,9 +1573,9 @@ class TFNoise(object):
             raise TypeError(msg)
 
         if not objnoise.av:
-            raise(Exception(
+            raise Exception(
                 "Error: Noise object has not been processed (QC and " +
-                "averaging) - aborting"))
+                "averaging) - aborting")
 
         self.f = objnoise.f
         self.c11 = objnoise.power.c11
@@ -1571,7 +1591,7 @@ class TFNoise(object):
         self.c2Z = objnoise.cross.c2Z
         self.c2P = objnoise.cross.c2P
         self.cZP = objnoise.cross.cZP
-        self.tilt = objnoise.rotation.tilt
+        self.tilt = objnoise.rotation.tilt_dir
         self.tf_list = objnoise.tf_list
 
     class TfDict(dict):
@@ -1695,7 +1715,7 @@ class TFNoise(object):
                     transfunc.add('ZP-H', tf_ZP_H)
 
             else:
-                raise(Exception('Incorrect key'))
+                raise Exception('Incorrect key')
 
             self.transfunc = transfunc
 
@@ -1828,7 +1848,7 @@ class EventStream(object):
     """
 
     def __init__(self, tr1=Trace(), tr2=Trace(), trZ=Trace(), trP=Trace(),
-        correct=False):
+                 correct=False):
 
         if tr1 == 'demo':
             print("Uploading demo earthquake data - March 09, 2012, " +
@@ -1843,9 +1863,9 @@ class EventStream(object):
 
         ncomp = np.sum([np.any(tr.data) for tr in [tr1, tr2, trZ, trP]])
         if ncomp <= 1 or len(trZ.data) == 0:
-            raise(Exception(
+            raise Exception(
                 "Incorrect initialization of EventStream object: " +
-                "missing a vertical component or too few components"))
+                "missing a vertical component or too few components")
 
         self.tr1 = tr1
         self.tr2 = tr2
@@ -1964,9 +1984,8 @@ class EventStream(object):
         """
 
         if not tfnoise.transfunc:
-            raise(
-                Exception("Error: Object TFNoise has no transfunc " +
-                          "attribute - aborting"))
+            raise Exception("Error: Object TFNoise has no transfunc " +
+                            "attribute - aborting")
 
         correct = self.CorrectDict()
 
@@ -2001,9 +2020,9 @@ class EventStream(object):
         f = np.fft.fftfreq(self.npts, d=self.dt)
 
         if not np.allclose(f, tfnoise.f):
-            raise(Exception(
+            raise Exception(
                 'Frequency axes are different: ', f, tfnoise.f,
-                ' - the noise and event windows are not the same, aborting'))
+                ' - the noise and event windows are not the same, aborting')
 
         for key, value in tf_list.items():
 

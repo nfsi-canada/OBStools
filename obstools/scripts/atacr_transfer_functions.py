@@ -27,10 +27,10 @@
 import numpy as np
 import pickle
 import stdb
+from stdb.io import frominv
 import copy
 
-from obspy import UTCDateTime
-
+from obspy import UTCDateTime, read_inventory
 from obstools.atacr import StaNoise, Power, Cross, Rotation, TFNoise
 from obstools.atacr import utils, plotting
 
@@ -57,7 +57,8 @@ def get_transfer_arguments(argv=None):
         "one by one and the data are stored to disk.")
     parser.add_argument(
         "indb",
-        help="Station Database to process from.",
+        help="Station Database to process from. Available formats are: " +
+             "StDb (.pkl or .csv) or stationXML (.xml)",
         type=str)
 
     # General Settings
@@ -163,6 +164,12 @@ def get_transfer_arguments(argv=None):
     if not exist(args.indb):
         parser.error("Input file " + args.indb + " does not exist")
 
+    # Check Extension
+    ext = args.indb.split('.')[-1]
+
+    if ext not in ['pkl', 'xml', 'csv']:
+        parser.error("Must supply a station list in .pkl, .csv or .xml format ")
+
     # create station key list
     if len(args.stkeys) > 0:
         args.stkeys = args.stkeys.split(',')
@@ -214,8 +221,6 @@ def main(args=None):
         # Run Input Parser
         args = get_transfer_arguments()
 
-    # Load Database
-    # stdb>0.1.3
     try:
         db, stkeys = stdb.io.load_db(fname=args.indb, keys=args.stkeys)
 
@@ -322,7 +327,6 @@ def main(args=None):
         # Filename for output transfer functions
         dstart = str(tstart.year).zfill(4)+'.'+str(tstart.julday).zfill(3)+'-'
         dend = str(tend.year).zfill(4)+'.'+str(tend.julday).zfill(3)+'.'
-        fileavst = avstpath / (dstart+dend+'avg_sta.pkl')
 
         # Find all files in directories
         p = specpath.glob('*spectra.pkl')
@@ -331,9 +335,11 @@ def main(args=None):
             p = avstpath.glob('*avg_sta.pkl')
             average_files = [x for x in p if x.is_file()]
 
-        if not args.skip_daily:
+        day_transfer_functions = []
+        sta_transfer_functions = None
+        stanoise = StaNoise()
 
-            day_transfer_functions = []
+        if not args.skip_daily:
 
             # Cycle through available files
             for filespec in spectra_files:
