@@ -90,8 +90,7 @@ def get_daylong_arguments(argv=None):
     # Server Settings
     ServerGroup = parser.add_argument_group(
         title="Server Settings",
-        description="Settings associated with which "
-        "datacenter to log into.")
+        description="Settings associated with FDSN datacenters for archived data.")
     ServerGroup.add_argument(
         "--server",
         action="store",
@@ -130,18 +129,17 @@ def get_daylong_arguments(argv=None):
     # Use local data directory
     DataGroup = parser.add_argument_group(
         title="Local Data Settings",
-        description="Settings associated with defining " +
-        "and using a local data base of pre-downloaded " +
-        "day-long SAC or MSEED files.")
+        description="Settings associated with a SeisComP database " +
+        "for locally archived data.")
     DataGroup.add_argument(
-        "--local-data",
+        "--SDS-path",
         action="store",
         type=str,
         dest="localdata",
         default=None,
         help="Specify absolute path to a SeisComP Data Structure (SDS) " +
         "archive containing day-long SAC or MSEED files" +
-        "(e.g., --local-data=/Home/username/Data/SDS). " +
+        "(e.g., --SDS-path=/Home/username/Data/SDS). " +
         "See https://www.seiscomp.de/seiscomp3/doc/applications/slarchive/SDS.html " +
         "for details on the SDS format. If this option is used, it takes " +
         "precedence over the --server settings.")
