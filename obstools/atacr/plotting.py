@@ -579,13 +579,13 @@ def fig_TF(f, day_trfs, day_list, sta_trfs={}, sta_list={}, skey=''):
 
         ax = fig.add_subplot(ntf, 1, j)
 
-        if key in day_list.keys():
+        if day_list[key]:
             for i in range(len(day_trfs)):
                 ax.loglog(
                     f[faxis],
                     np.abs(day_trfs[i][key]['TF_'+key][faxis]),
                     'gray', lw=0.5)
-        if key in sta_list.keys():
+        if sta_list[key]:
             ax.loglog(
                 f[faxis],
                 np.abs(sta_trfs[key]['TF_'+key][faxis]),
