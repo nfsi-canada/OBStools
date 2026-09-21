@@ -662,15 +662,18 @@ def main(args=None):
                     print("*      ...done")
                 except Exception:
                     print("*      Warning: Component ?DH not found. " +
-                          "Continuing")
-                    continue
+                          "Continuing without pressure")
+                    stp = Stream()
 
             except Exception:
                 print(" Client exception: Unable to download ?DH " +
-                      "component. Continuing")
-                continue
+                      "component. Continuing without pressure")
+                stp = Stream()
 
-            st = st1.merge() + st2.merge() + stz.merge() + stp.merge()
+            st = st1.merge() + st2.merge() + stz.merge()
+
+            if len(stp) > 0:
+                st += stp.merge()
 
             # Detrend, filter
             st.detrend('demean')
@@ -740,8 +743,9 @@ def main(args=None):
                 pass
 
             # Pressure channel
-            try:
-                stp = st.select(component='H')
+
+            stp = st.select(component='H')
+            if len(stp) > 0:
                 print("*   -> Removing responses - Pressure data")
                 try:
                     stp.remove_response(
@@ -761,8 +765,6 @@ def main(args=None):
                     evla=lat,
                     evlo=lon)
                 trP.write(str(fileP), format='SAC')
-            except Exception:
-                pass
 
 
 if __name__ == "__main__":
